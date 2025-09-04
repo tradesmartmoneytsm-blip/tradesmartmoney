@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Activity, Building2, Users, BarChart3 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, Building2, Users, BarChart3, RefreshCw } from 'lucide-react';
+import { marketDataService, type SectorData } from '@/services/marketDataService';
+import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
 
 interface MarketSubSection {
   id: string;
@@ -16,6 +18,10 @@ interface MarketProps {
 
 export function Market({ initialSubSection }: MarketProps) {
   const [activeSubSection, setActiveSubSection] = useState(initialSubSection || 'sector-performance');
+  const [sectorData, setSectorData] = useState<SectorData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Update active subsection when initialSubSection prop changes
   useEffect(() => {
@@ -23,6 +29,23 @@ export function Market({ initialSubSection }: MarketProps) {
       setActiveSubSection(initialSubSection);
     }
   }, [initialSubSection]);
+
+  // Subscribe to real-time sector data updates
+  useEffect(() => {
+    const handleSectorUpdate = (data: SectorData[]) => {
+      setSectorData(data);
+      setLastUpdated(new Date());
+      setIsLoading(false);
+      setIsRefreshing(false);
+    };
+
+    const unsubscribe = marketDataService.subscribe(handleSectorUpdate);
+
+    // Initial data load
+    marketDataService.getSectorData().then(handleSectorUpdate);
+
+    return unsubscribe;
+  }, []);
 
   const subSections: MarketSubSection[] = [
     { id: 'sector-performance', label: 'Sector Performance', icon: <BarChart3 className="w-4 h-4" />, description: 'Real-time sector analysis' },
@@ -33,16 +56,16 @@ export function Market({ initialSubSection }: MarketProps) {
     { id: 'short-buildup', label: 'Short Build Up', icon: <Building2 className="w-4 h-4" />, description: 'Bearish positions' },
   ];
 
-  const sectorData = [
-    { name: 'IT', change: 2.45, value: '₹32,450' },
-    { name: 'Banking', change: 1.23, value: '₹45,320' },
-    { name: 'Pharma', change: -0.89, value: '₹28,150' },
-    { name: 'Auto', change: 3.12, value: '₹15,680' },
-    { name: 'FMCG', change: 0.67, value: '₹52,340' },
-    { name: 'Energy', change: -1.45, value: '₹18,920' },
-    { name: 'Metals', change: 1.89, value: '₹21,470' },
-    { name: 'Realty', change: -0.34, value: '₹12,850' },
-  ];
+  // Manual refresh function
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await marketDataService.refreshNow();
+    } catch (error) {
+      console.error('Failed to refresh sector data:', error);
+      setIsRefreshing(false);
+    }
+  };
 
   const fiiDiiData = [
     { date: '2024-01-31', fii: -1250.5, dii: 890.3 },
@@ -89,22 +112,61 @@ export function Market({ initialSubSection }: MarketProps) {
       case 'sector-performance':
         return (
           <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 lg:p-6">
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 font-serif">Sector Performance</h3>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-              {sectorData.map((sector) => (
-                <div key={sector.name} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-all duration-300">
-                  <div className="flex flex-col space-y-1">
-                    <h4 className="text-sm lg:text-base font-semibold text-gray-900 font-serif">{sector.name}</h4>
-                    <p className="text-xs lg:text-sm text-gray-600">{sector.value}</p>
-                    <div className={`text-right ${sector.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      <span className="font-bold text-sm lg:text-base">
-                        {sector.change >= 0 ? '+' : ''}{sector.change}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg lg:text-xl font-bold text-gray-900 font-serif">Sector Performance</h3>
+              <div className="flex items-center gap-4">
+                {lastUpdated && (
+                  <span className="text-xs text-gray-500">
+                    Updated {formatTimeAgo(lastUpdated)}
+                  </span>
+                )}
+                <button
+                  onClick={handleManualRefresh}
+                  disabled={isRefreshing}
+                  className="flex items-center gap-2 px-3 py-1 text-xs bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  Refresh
+                </button>
+              </div>
             </div>
+            
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="flex items-center gap-2 text-gray-500">
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Loading sector data...
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+                  {sectorData.map((sector) => (
+                    <div key={sector.name} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-all duration-300">
+                      <div className="flex flex-col space-y-1">
+                        <h4 className="text-sm lg:text-base font-semibold text-gray-900 font-serif">{sector.name}</h4>
+                        <p className="text-xs lg:text-sm text-gray-600">{sector.value}</p>
+                        <div className={`text-right ${sector.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <span className="font-bold text-sm lg:text-base">
+                            {sector.change >= 0 ? '+' : ''}{sector.change}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 text-center">
+                  <p className="text-xs text-gray-500">
+                    📊 Data refreshes automatically every 5 minutes
+                    {lastUpdated && (
+                      <span className="ml-2">
+                        • Next update: {formatNextUpdate(lastUpdated)}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         );
 
