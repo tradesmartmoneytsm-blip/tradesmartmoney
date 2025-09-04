@@ -43,15 +43,14 @@ export function Market({ initialSubSection }: MarketProps) {
         console.log('✅ Received sector data:', result.data.length, 'sectors');
         setSectorData(result.data);
         setLastUpdated(new Date());
-        setIsLoading(false);
       } else {
         throw new Error(result.error || 'Failed to fetch sector data');
       }
     } catch (error) {
       console.error('❌ Failed to fetch sector data:', error);
       setSectorData([]);
-      setIsLoading(false);
     } finally {
+      setIsLoading(false);
       setIsRefreshing(false);
     }
   };
@@ -168,7 +167,7 @@ export function Market({ initialSubSection }: MarketProps) {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+                                      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
                   {sectorData.map((sector) => (
                     <div key={sector.name} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-all duration-300">
                       <div className="flex flex-col space-y-1">

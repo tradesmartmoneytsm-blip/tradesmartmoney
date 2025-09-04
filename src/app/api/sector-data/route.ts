@@ -28,7 +28,7 @@ export async function GET() {
     const html = await response.text();
     const $ = cheerio.load(html);
     
-    // NSE Index mapping
+    // NSE Index mapping - expanded to include major indices
     const nseIndexMapping: Record<string, string> = {
       'IT': 'NIFTY IT',
       'Banking': 'NIFTY BANK', 
@@ -37,7 +37,14 @@ export async function GET() {
       'FMCG': 'NIFTY FMCG',
       'Energy': 'NIFTY ENERGY',
       'Metals': 'NIFTY METAL',
-      'Realty': 'NIFTY REALTY'
+      'Realty': 'NIFTY REALTY',
+      'Nifty 50': 'NIFTY 50',
+      'Finnifty': 'FINNIFTY',
+      'Healthcare': 'NIFTY HEALTHCARE',
+      'Consumption': 'NIFTY CONSUMPTION', 
+      'Consumer Durables': 'NIFTY CONSUMER DURABLE',
+      'Infrastructure': 'NIFTY INFRA',
+      'Media': 'NIFTY MEDIA'
     };
     
     const scrapedSectors: SectorData[] = [];
@@ -50,9 +57,9 @@ export async function GET() {
         const ltpText = $(cells[1]).text().trim();
         const changeText = $(cells[2]).text().trim();
         
-        // Find matching sector for this NSE index
+        // Find matching sector for this NSE index (exact match to avoid duplicates)
         for (const [sectorName, nseIndex] of Object.entries(nseIndexMapping)) {
-          if (indexNameText.toLowerCase().includes(nseIndex.toLowerCase())) {
+          if (indexNameText.toLowerCase() === nseIndex.toLowerCase()) {
             const ltp = parseFloat(ltpText.replace(/[^0-9.-]/g, ''));
             const changeMatch = changeText.match(/([-+]?\d+\.?\d*)/);
             const change = changeMatch ? parseFloat(changeMatch[1]) : 0;
