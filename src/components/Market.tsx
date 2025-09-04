@@ -167,8 +167,8 @@ export function Market({ initialSubSection }: MarketProps) {
               </div>
             ) : (
               <>
-                                      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
-                  {sectorData.map((sector) => (
+                                                            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
+                        {[...sectorData].sort((a, b) => b.change - a.change).map((sector) => (
                     <div key={sector.name} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-all duration-300">
                       <div className="flex flex-col space-y-1">
                         <h4 className="text-sm lg:text-base font-semibold text-gray-900 font-serif">{sector.name}</h4>
