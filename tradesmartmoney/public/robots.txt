@@ -1,0 +1,28 @@
+# TradeSmartMoney - Professional Trading Platform
+# https://tradesmartmoney.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://tradesmartmoney.com/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Disallow admin and private areas (if any in future)
+Disallow: /admin/
+Disallow: /api/private/
+Disallow: /temp/
+Disallow: /*.json$
+
+# Allow important pages
+Allow: /market/
+Allow: /swing-trades/
+Allow: /intraday-trades/
+Allow: /news/
+Allow: /eodscans/
+Allow: /algo-trading/
+
+# Host directive
+Host: https://tradesmartmoney.com 

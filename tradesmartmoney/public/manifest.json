@@ -1,0 +1,75 @@
+{
+  "name": "TradeSmartMoney - Professional Trading Platform",
+  "short_name": "TradeSmartMoney",
+  "description": "Advanced trading platform with market analysis, trading signals, and educational resources for smart trading decisions.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180", 
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop view of TradeSmartMoney trading platform"
+    },
+    {
+      "src": "/screenshot-mobile.png", 
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile view of TradeSmartMoney trading platform"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Market Analysis",
+      "short_name": "Market",
+      "description": "View live market data and sector performance",
+      "url": "/market",
+      "icons": [
+        {
+          "src": "/shortcut-market.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Trading Signals",
+      "short_name": "Signals", 
+      "description": "Access swing and intraday trading opportunities",
+      "url": "/swing-trades",
+      "icons": [
+        {
+          "src": "/shortcut-trading.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+} 
