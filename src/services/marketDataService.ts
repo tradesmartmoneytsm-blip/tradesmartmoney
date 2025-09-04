@@ -1,4 +1,7 @@
 // Market Data Service for fetching real-time sector performance
+// Scraping real NSE sector indices data from Dhan.co
+import * as cheerio from 'cheerio';
+
 interface SectorData {
   name: string;
   change: number;
@@ -7,32 +10,11 @@ interface SectorData {
   lastUpdated?: Date;
 }
 
-interface ApiSectorResponse {
-  ticker: string;
-  company: string;
-  price: number;
-  percent_change: number;
-  net_change: number;
-  volume: string;
-}
-
 class MarketDataService {
   private cache: Map<string, { data: SectorData[], timestamp: number }> = new Map();
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
   private refreshInterval: NodeJS.Timeout | null = null;
   private subscribers: Array<(data: SectorData[]) => void> = [];
-
-  // Sector mapping for Indian markets
-  private sectorMapping = {
-    'IT': ['TCS', 'INFY', 'WIPRO', 'HCLTECH', 'TECHM'],
-    'Banking': ['HDFCBANK', 'ICICIBANK', 'SBIN', 'KOTAKBANK', 'AXISBANK'],
-    'Pharma': ['SUNPHARMA', 'DRREDDY', 'CIPLA', 'AUROPHARMA', 'LUPIN'],
-    'Auto': ['MARUTI', 'M&M', 'TATAMOTORS', 'BAJAJ-AUTO', 'EICHERMOT'],
-    'FMCG': ['HINDUNILVR', 'ITC', 'NESTLEIND', 'BRITANNIA', 'DABUR'],
-    'Energy': ['RELIANCE', 'ONGC', 'BPCL', 'IOC', 'GAIL'],
-    'Metals': ['TATASTEEL', 'JSWSTEEL', 'HINDALCO', 'VEDL', 'COALINDIA'],
-    'Realty': ['DLF', 'GODREJPROP', 'OBEROIRLTY', 'PRESTIGE', 'SOBHA']
-  };
 
   constructor() {
     this.startAutoRefresh();
@@ -40,138 +22,86 @@ class MarketDataService {
 
   // Subscribe to sector data updates
   subscribe(callback: (data: SectorData[]) => void) {
+    console.log(`➕ Adding subscriber (total: ${this.subscribers.length + 1})`);
     this.subscribers.push(callback);
     
     // Return unsubscribe function
     return () => {
+      console.log(`➖ Removing subscriber (remaining: ${this.subscribers.length - 1})`);
       this.subscribers = this.subscribers.filter(cb => cb !== callback);
     };
   }
 
   // Notify all subscribers of data updates
   private notifySubscribers(data: SectorData[]) {
+    console.log(`📢 Notifying ${this.subscribers.length} subscribers with ${data?.length || 0} sectors`);
     this.subscribers.forEach(callback => callback(data));
   }
 
-  // Fetch sector performance data from Indian Stock API
+  // Main method to fetch sector performance data
   async fetchSectorPerformance(): Promise<SectorData[]> {
     try {
-      const sectorData: SectorData[] = [];
+      // Scrape all sector data from Dhan
+      const scrapedData = await this.scrapeAllSectorData();
       
-      // Fetch data for each sector by getting representative stocks
-      for (const [sectorName, stocks] of Object.entries(this.sectorMapping)) {
-        try {
-          const sectorPerformance = await this.calculateSectorAverage(sectorName, stocks);
-          sectorData.push(sectorPerformance);
-        } catch (error) {
-          console.warn(`Failed to fetch data for ${sectorName}:`, error);
-          // Use fallback data if API fails
-          sectorData.push(this.getFallbackData(sectorName));
-        }
+      if (scrapedData.length > 0) {
+        console.log('✅ Successfully scraped real NSE sector data from Dhan');
+        
+        // Update cache
+        this.cache.set('sectors', {
+          data: scrapedData,
+          timestamp: Date.now()
+        });
+
+        this.notifySubscribers(scrapedData);
+        return scrapedData;
       }
 
-      // Update cache
-      this.cache.set('sectors', {
-        data: sectorData,
-        timestamp: Date.now()
-      });
-
-      this.notifySubscribers(sectorData);
-      return sectorData;
+      throw new Error('No sector data scraped from Dhan');
     } catch (error) {
       console.error('Failed to fetch sector performance:', error);
-      return this.getCachedOrFallbackData();
-    }
-  }
-
-  // Calculate sector average from multiple stocks
-  private async calculateSectorAverage(sectorName: string, stocks: string[]): Promise<SectorData> {
-    try {
-      // Try using Indian Stock API trending endpoint which gives percentage changes
-      const response = await fetch('https://indian-stock.vercel.app/api/trending');
-      const data = await response.json();
       
-      const allStocks = [...(data.trending_stocks?.top_gainers || []), ...(data.trending_stocks?.top_losers || [])];
-      const sectorStocks = allStocks.filter((stock: ApiSectorResponse) => 
-        stocks.some(sectorStock => stock.ticker?.includes(sectorStock))
-      );
-
-      if (sectorStocks.length > 0) {
-        const avgChange = sectorStocks.reduce((sum: number, stock: ApiSectorResponse) => 
-          sum + (stock.percent_change || 0), 0) / sectorStocks.length;
-        
-        const totalValue = sectorStocks.reduce((sum: number, stock: ApiSectorResponse) => 
-          sum + (stock.price || 0), 0);
-
-        return {
-          name: sectorName,
-          change: Number(avgChange.toFixed(2)),
-          value: `₹${Math.round(totalValue).toLocaleString('en-IN')}`,
-          lastUpdated: new Date()
-        };
+      // Return cached data if available
+      const cached = this.cache.get('sectors');
+      if (cached) {
+        console.log('📋 Using cached sector data');
+        return cached.data;
       }
       
-      // Fallback to individual stock lookup if trending doesn't have sector stocks
-      return await this.fetchIndividualSectorData(sectorName, stocks[0]);
-    } catch (error) {
-      throw new Error(`Failed to calculate sector average for ${sectorName}: ${error}`);
+      // If no cache available, return empty array
+      return [];
     }
   }
 
-  // Fetch individual stock data as sector representative
-  private async fetchIndividualSectorData(sectorName: string, representativeStock: string): Promise<SectorData> {
-    try {
-      const response = await fetch(`https://indian-stock.vercel.app/api/stock?name=${representativeStock}`);
-      const data = await response.json();
-      
-      if (data && data.percentChange !== undefined) {
-        return {
-          name: sectorName,
-          change: Number(data.percentChange.toFixed(2)),
-          value: `₹${Math.round(data.currentPrice?.NSE || data.currentPrice?.BSE || 0).toLocaleString('en-IN')}`,
-          lastUpdated: new Date()
-        };
-      }
-      
-      throw new Error('Invalid API response');
-    } catch (error) {
-      throw new Error(`Failed to fetch individual stock data: ${error}`);
-    }
-  }
-
-  // Get cached data or fallback if no cache available
-  private getCachedOrFallbackData(): SectorData[] {
-    const cached = this.cache.get('sectors');
-    if (cached && (Date.now() - cached.timestamp) < this.CACHE_DURATION) {
-      return cached.data;
-    }
+  // Fetch sector data from our API route (server-side scraping)
+  private async scrapeAllSectorData(): Promise<SectorData[]> {
+    console.log('🌐 Fetching sector data from API route...');
     
-    return this.getAllFallbackData();
-  }
+    const response = await fetch('/api/sector-data', {
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    });
 
-  // Fallback data for when API is unavailable
-  private getFallbackData(sectorName: string): SectorData {
-    const fallbackMap: { [key: string]: { change: number, value: string } } = {
-      'IT': { change: 2.45, value: '₹32,450' },
-      'Banking': { change: 1.23, value: '₹45,320' },
-      'Pharma': { change: -0.89, value: '₹28,150' },
-      'Auto': { change: 3.12, value: '₹15,680' },
-      'FMCG': { change: 0.67, value: '₹52,340' },
-      'Energy': { change: -1.45, value: '₹18,920' },
-      'Metals': { change: 1.89, value: '₹21,470' },
-      'Realty': { change: -0.34, value: '₹12,850' }
-    };
+    if (!response.ok) {
+      throw new Error(`API responded with ${response.status}: ${response.statusText}`);
+    }
 
-    return {
-      name: sectorName,
-      change: fallbackMap[sectorName]?.change || 0,
-      value: fallbackMap[sectorName]?.value || '₹0',
-      lastUpdated: new Date()
-    };
-  }
+    const result = await response.json();
+    
+    if (!result.success) {
+      throw new Error(`API error: ${result.error}`);
+    }
 
-  private getAllFallbackData(): SectorData[] {
-    return Object.keys(this.sectorMapping).map(sector => this.getFallbackData(sector));
+    console.log(`✅ Received ${result.data?.length || 0} sectors from API`);
+    
+    // Convert lastUpdated strings back to Date objects
+    const sectors = result.data.map((sector: any) => ({
+      ...sector,
+      lastUpdated: new Date(sector.lastUpdated)
+    }));
+
+    return sectors;
   }
 
   // Start auto-refresh every 5 minutes
@@ -188,7 +118,7 @@ class MarketDataService {
       this.fetchSectorPerformance();
     }, this.CACHE_DURATION);
 
-    console.log('Sector performance auto-refresh started (5-minute interval)');
+    console.log('🔄 Sector performance auto-refresh started (5-minute interval) - Live NSE data from Dhan');
   }
 
   // Stop auto-refresh

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Activity, Building2, Users, BarChart3, RefreshCw } from 'lucide-react';
-import { marketDataService, type SectorData } from '@/services/marketDataService';
+import type { SectorData } from '@/services/marketDataService';
 import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
 
 interface MarketSubSection {
@@ -30,21 +30,40 @@ export function Market({ initialSubSection }: MarketProps) {
     }
   }, [initialSubSection]);
 
-  // Subscribe to real-time sector data updates
-  useEffect(() => {
-    const handleSectorUpdate = (data: SectorData[]) => {
-      setSectorData(data);
-      setLastUpdated(new Date());
+  // Fetch sector data directly from API
+  const fetchSectorData = async () => {
+    try {
+      setIsRefreshing(true);
+      console.log('📡 Fetching sector data from API...');
+      
+      const response = await fetch('/api/sector-data');
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        console.log('✅ Received sector data:', result.data.length, 'sectors');
+        setSectorData(result.data);
+        setLastUpdated(new Date());
+        setIsLoading(false);
+      } else {
+        throw new Error(result.error || 'Failed to fetch sector data');
+      }
+    } catch (error) {
+      console.error('❌ Failed to fetch sector data:', error);
+      setSectorData([]);
       setIsLoading(false);
+    } finally {
       setIsRefreshing(false);
-    };
+    }
+  };
 
-    const unsubscribe = marketDataService.subscribe(handleSectorUpdate);
-
-    // Initial data load
-    marketDataService.getSectorData().then(handleSectorUpdate);
-
-    return unsubscribe;
+  // Initial data load and auto-refresh setup
+  useEffect(() => {
+    fetchSectorData();
+    
+    // Set up auto-refresh every 5 minutes
+    const intervalId = setInterval(fetchSectorData, 5 * 60 * 1000);
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   const subSections: MarketSubSection[] = [
@@ -58,13 +77,7 @@ export function Market({ initialSubSection }: MarketProps) {
 
   // Manual refresh function
   const handleManualRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      await marketDataService.refreshNow();
-    } catch (error) {
-      console.error('Failed to refresh sector data:', error);
-      setIsRefreshing(false);
-    }
+    await fetchSectorData();
   };
 
   const fiiDiiData = [
@@ -138,6 +151,21 @@ export function Market({ initialSubSection }: MarketProps) {
                   Loading sector data...
                 </div>
               </div>
+            ) : sectorData.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8">
+                <div className="text-gray-500 text-center">
+                  <p className="text-lg mb-2">No sector data available</p>
+                  <p className="text-sm mb-4">Unable to fetch live NSE sector indices</p>
+                  <button
+                    onClick={handleManualRefresh}
+                    disabled={isRefreshing}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    Try Again
+                  </button>
+                </div>
+              </div>
             ) : (
               <>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
@@ -157,7 +185,7 @@ export function Market({ initialSubSection }: MarketProps) {
                 </div>
                 <div className="mt-4 text-center">
                   <p className="text-xs text-gray-500">
-                    📊 Data refreshes automatically every 5 minutes
+                    📊 Live NSE sector indices data • Refreshes every 5 minutes
                     {lastUpdated && (
                       <span className="ml-2">
                         • Next update: {formatNextUpdate(lastUpdated)}
