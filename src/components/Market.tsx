@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Activity, Building2, Users, BarChart3, RefreshCw } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, Building2, Users, BarChart3, RefreshCw, Globe, ArrowUpDown } from 'lucide-react';
 import type { SectorData } from '@/services/marketDataService';
 import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
+import { FiiDiiActivity } from '@/components/FiiDiiActivity';
 
 interface MarketSubSection {
   id: string;
@@ -67,7 +68,7 @@ export function Market({ initialSubSection }: MarketProps) {
 
   const subSections: MarketSubSection[] = [
     { id: 'sector-performance', label: 'Sector Performance', icon: <BarChart3 className="w-4 h-4" />, description: 'Real-time sector analysis' },
-    { id: 'fii-dii-activity', label: 'FII DII Activity', icon: <Users className="w-4 h-4" />, description: 'Institutional flows' },
+    { id: 'fii-dii-activity', label: 'FII/DII Activity', icon: <ArrowUpDown className="w-4 h-4" />, description: 'Institutional investor flows' },
     { id: 'top-gainers', label: 'Top Gainers', icon: <TrendingUp className="w-4 h-4" />, description: 'Best performers' },
     { id: 'top-losers', label: 'Top Losers', icon: <TrendingDown className="w-4 h-4" />, description: 'Worst performers' },
     { id: 'long-buildup', label: 'Long Built Up', icon: <Activity className="w-4 h-4" />, description: 'Bullish positions' },
@@ -79,13 +80,7 @@ export function Market({ initialSubSection }: MarketProps) {
     await fetchSectorData();
   };
 
-  const fiiDiiData = [
-    { date: '2024-01-31', fii: -1250.5, dii: 890.3 },
-    { date: '2024-01-30', fii: 750.2, dii: -456.8 },
-    { date: '2024-01-29', fii: -890.7, dii: 1200.5 },
-    { date: '2024-01-28', fii: 1450.3, dii: -678.9 },
-    { date: '2024-01-27', fii: -567.8, dii: 345.6 },
-  ];
+
 
   const gainersData = [
     { symbol: 'RELIANCE', ltp: 2450.80, change: 4.56, volume: '2.3M' },
@@ -198,35 +193,7 @@ export function Market({ initialSubSection }: MarketProps) {
         );
 
       case 'fii-dii-activity':
-        return (
-          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 lg:p-6">
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 font-serif">FII DII Activity</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">Date</th>
-                    <th className="text-right py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">FII (₹Cr)</th>
-                    <th className="text-right py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">DII (₹Cr)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {fiiDiiData.map((item) => (
-                    <tr key={item.date} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="py-2 lg:py-3 px-3 lg:px-4 text-gray-900 font-medium">{new Date(item.date).toLocaleDateString()}</td>
-                      <td className={`py-2 lg:py-3 px-3 lg:px-4 text-right font-semibold ${item.fii >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {item.fii >= 0 ? '+' : ''}{item.fii}
-                      </td>
-                      <td className={`py-2 lg:py-3 px-3 lg:px-4 text-right font-semibold ${item.dii >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {item.dii >= 0 ? '+' : ''}{item.dii}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
+        return <FiiDiiActivity />;
 
       case 'top-gainers':
         return (

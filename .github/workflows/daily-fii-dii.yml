@@ -1,0 +1,34 @@
+name: Daily FII/DII Data Collection
+
+on:
+  schedule:
+    # Runs at 6:30 PM IST (1:00 PM UTC) on weekdays
+    - cron: '0 13 * * 1-5'
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  collect-fii-dii-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Collect FII/DII Data
+        run: |
+          echo "🕐 Starting FII/DII data collection..."
+          
+          # Call your deployed Vercel app's cron endpoint
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.VERCEL_APP_URL }}/api/cron/daily-fii-dii" \
+            -H "Content-Type: application/json")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n -1)
+          
+          echo "Response: $body"
+          echo "HTTP Code: $http_code"
+          
+          if [ "$http_code" -eq 200 ]; then
+            echo "✅ FII/DII data collection successful!"
+          else
+            echo "❌ FII/DII data collection failed!"
+            exit 1
+          fi 
