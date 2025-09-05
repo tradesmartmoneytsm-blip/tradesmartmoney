@@ -53,27 +53,39 @@ async function scrapeFiiDiiData(): Promise<FiiDiiData[]> {
 
 async function fetchGrowwFiiDii(): Promise<FiiDiiData[]> {
   try {
-    const response = await fetch('https://groww.in/v1/api/search/v3/query/fii_dii/st_fii_dii?period=daily&segment=Cash%20Market', {
+    console.log('🔄 Starting Groww API call...');
+    const url = 'https://groww.in/v1/api/search/v3/query/fii_dii/st_fii_dii?period=daily&segment=Cash%20Market';
+    
+    const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'application/json, text/plain, */*',
         'Accept-Language': 'en-US,en;q=0.9',
         'Referer': 'https://groww.in/',
         'Origin': 'https://groww.in'
-      }
+      },
+      method: 'GET'
     });
     
+    console.log(`📊 Groww API response: ${response.status} ${response.statusText}`);
+    
     if (!response.ok) {
-      throw new Error(`Groww API failed: ${response.status} ${response.statusText}`);
+      const errorText = await response.text().catch(() => 'Unable to read error response');
+      console.log(`❌ Groww API error body: ${errorText}`);
+      throw new Error(`Groww API failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
     
     const apiResponse = await response.json();
-    console.log('📊 Groww API response received');
+    console.log('📊 Groww API response received and parsed successfully');
     
     return parseGrowwData(apiResponse);
     
   } catch (error) {
-    console.error('❌ Groww API failed:', error);
+    console.error('❌ Groww API failed with detailed error:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      type: typeof error
+    });
     throw error;
   }
 }
