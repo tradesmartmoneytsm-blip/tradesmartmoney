@@ -78,7 +78,25 @@ async function fetchGrowwFiiDii(): Promise<FiiDiiData[]> {
   }
 }
 
-function parseGrowwData(apiResponse: any): FiiDiiData[] {
+interface GrowwApiResponse {
+  data?: {
+    data?: Array<{
+      date?: string;
+      fii?: {
+        grossBuy?: number;
+        grossSell?: number;
+        netBuySell?: number;
+      };
+      dii?: {
+        grossBuy?: number;
+        grossSell?: number;
+        netBuySell?: number;
+      };
+    }>;
+  };
+}
+
+function parseGrowwData(apiResponse: GrowwApiResponse): FiiDiiData[] {
   const results: FiiDiiData[] = [];
   
   try {
@@ -124,11 +142,6 @@ function parseGrowwData(apiResponse: any): FiiDiiData[] {
     console.error('❌ Failed to parse Groww data:', error);
     throw new Error('Failed to parse FII/DII data from Groww API');
   }
-}
-
-async function scrapeNseFiiDii(): Promise<FiiDiiData[]> {
-  // Direct call to Groww - no fallbacks, no sample data
-  return await fetchGrowwFiiDii();
 }
 
 async function storeFiiDiiData(data: FiiDiiData[]) {
