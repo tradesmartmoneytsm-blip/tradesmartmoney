@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
-import type { FiiDiiData } from '@/lib/supabase';
+import { FiiDiiData } from '@/lib/supabase';
 
 export async function GET() {
   try {
@@ -23,9 +23,9 @@ export async function GET() {
     
     return NextResponse.json({
       success: true,
+      message: 'FII/DII data collected successfully',
       data: fiiDiiData,
-      message: `Successfully stored ${fiiDiiData.length} FII/DII records`,
-      scrapedAt: new Date().toISOString()
+      timestamp: new Date().toISOString()
     });
     
   } catch (error) {
@@ -40,70 +40,96 @@ export async function GET() {
 }
 
 async function scrapeFiiDiiData(): Promise<FiiDiiData[]> {
-  console.log('📊 Trying to fetch FII/DII data from NSE...');
-  const nseData = await scrapeNseFiiDii();
+  console.log('📊 Fetching FII/DII data from Groww API...');
+  const growwData = await fetchGrowwFiiDii();
   
-  if (nseData.length === 0) {
-    throw new Error('No FII/DII data found from NSE API');
+  if (growwData.length === 0) {
+    throw new Error('No FII/DII data found from Groww API');
   }
   
-  console.log(`✅ NSE: Found ${nseData.length} records`);
-  return nseData;
+  console.log(`✅ Groww: Found ${growwData.length} records`);
+  return growwData;
+}
+
+async function fetchGrowwFiiDii(): Promise<FiiDiiData[]> {
+  try {
+    const response = await fetch('https://groww.in/v1/api/search/v3/query/fii_dii/st_fii_dii?period=daily&segment=Cash%20Market', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer': 'https://groww.in/',
+        'Origin': 'https://groww.in'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Groww API failed: ${response.status} ${response.statusText}`);
+    }
+    
+    const apiResponse = await response.json();
+    console.log('📊 Groww API response received');
+    
+    return parseGrowwData(apiResponse);
+    
+  } catch (error) {
+    console.error('❌ Groww API failed:', error);
+    throw error;
+  }
+}
+
+function parseGrowwData(apiResponse: any): FiiDiiData[] {
+  const results: FiiDiiData[] = [];
+  
+  try {
+    if (!apiResponse?.data?.data || !Array.isArray(apiResponse.data.data)) {
+      throw new Error('Invalid Groww API response format');
+    }
+    
+    // Get the latest data (first entry in the array)
+    const latestData = apiResponse.data.data[0];
+    if (!latestData) {
+      throw new Error('No FII/DII data in Groww response');
+    }
+    
+    const date = latestData.date || new Date().toISOString().split('T')[0];
+    
+    // Extract FII data
+    if (latestData.fii) {
+      results.push({
+        date: date,
+        category: 'FII',
+        buy_value: Number(latestData.fii.grossBuy) || 0,
+        sell_value: Number(latestData.fii.grossSell) || 0,
+        net_value: Number(latestData.fii.netBuySell) || 0
+      });
+    }
+    
+    // Extract DII data
+    if (latestData.dii) {
+      results.push({
+        date: date,
+        category: 'DII', 
+        buy_value: Number(latestData.dii.grossBuy) || 0,
+        sell_value: Number(latestData.dii.grossSell) || 0,
+        net_value: Number(latestData.dii.netBuySell) || 0
+      });
+    }
+    
+    console.log(`✅ Parsed FII/DII data for ${date}: FII net ₹${latestData.fii?.netBuySell} cr, DII net ₹${latestData.dii?.netBuySell} cr`);
+    
+    return results;
+    
+  } catch (error) {
+    console.error('❌ Failed to parse Groww data:', error);
+    throw new Error('Failed to parse FII/DII data from Groww API');
+  }
 }
 
 async function scrapeNseFiiDii(): Promise<FiiDiiData[]> {
-  const response = await fetch('https://www.nseindia.com/api/fiidiiTradeReact', {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'Accept': 'application/json, text/plain, */*',
-      'Accept-Language': 'en-US,en;q=0.9',
-      'Referer': 'https://www.nseindia.com/',
-      'X-Requested-With': 'XMLHttpRequest'
-    }
-  });
-  
-  if (!response.ok) {
-    throw new Error(`NSE API failed: ${response.status} ${response.statusText}`);
-  }
-  
-  const data = await response.json();
-  
-  // Parse NSE FII/DII response format
-  const results: FiiDiiData[] = [];
-  const today = new Date().toISOString().split('T')[0];
-  
-  if (data && Array.isArray(data)) {
-    // NSE typically returns recent data, parse the latest entry
-    const latestData = data[0];
-    if (latestData) {
-      // Extract FII data
-      if (latestData.fiiGrossP && latestData.fiiGrossS) {
-        results.push({
-          date: today,
-          category: 'FII',
-          buy_value: parseFloat(latestData.fiiGrossP) || 0,
-          sell_value: parseFloat(latestData.fiiGrossS) || 0,
-          net_value: (parseFloat(latestData.fiiGrossP) || 0) - (parseFloat(latestData.fiiGrossS) || 0)
-        });
-      }
-      
-      // Extract DII data
-      if (latestData.diiGrossP && latestData.diiGrossS) {
-        results.push({
-          date: today,
-          category: 'DII',
-          buy_value: parseFloat(latestData.diiGrossP) || 0,
-          sell_value: parseFloat(latestData.diiGrossS) || 0,
-          net_value: (parseFloat(latestData.diiGrossP) || 0) - (parseFloat(latestData.diiGrossS) || 0)
-        });
-      }
-    }
-  }
-  
-  return results;
+  // Direct call to Groww - no fallbacks, no sample data
+  return await fetchGrowwFiiDii();
 }
-
-
 
 async function storeFiiDiiData(data: FiiDiiData[]) {
   if (!isSupabaseConfigured()) {
@@ -119,21 +145,26 @@ async function storeFiiDiiData(data: FiiDiiData[]) {
     });
     
   if (error) {
-    throw new Error(`Failed to store FII/DII data: ${error.message}`);
+    throw new Error(`Failed to store data: ${error.message}`);
   }
 }
 
 async function cleanupOldData() {
   if (!isSupabaseConfigured()) {
-    console.log('⚠️ Supabase not configured, skipping data cleanup');
+    console.log('⚠️ Supabase not configured, skipping cleanup');
     return;
   }
 
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  
   const { error } = await supabaseAdmin
-    .rpc('cleanup_old_fii_dii_data');
+    .from('fii_dii_data')
+    .delete()
+    .lt('date', thirtyDaysAgo.toISOString().split('T')[0]);
     
   if (error) {
-    console.warn('⚠️ Failed to cleanup old FII/DII data:', error.message);
+    console.error('Failed to cleanup old data:', error);
   } else {
     console.log('🧹 Cleaned up FII/DII data older than 30 days');
   }
