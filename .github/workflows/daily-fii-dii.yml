@@ -15,20 +15,55 @@ jobs:
         run: |
           echo "🕐 Starting FII/DII data collection..."
           
-          # Call your deployed Vercel app's cron endpoint
-          response=$(curl -s -w "\n%{http_code}" -X POST \
-            "${{ secrets.VERCEL_APP_URL }}/api/cron/daily-fii-dii" \
-            -H "Content-Type: application/json")
+          # Ensure URL has https:// and proper format
+          VERCEL_URL="${{ secrets.VERCEL_APP_URL }}"
+          
+          # Add https if not present
+          if [[ ! "$VERCEL_URL" =~ ^https?:// ]]; then
+            VERCEL_URL="https://$VERCEL_URL"
+          fi
+          
+          # Remove trailing slash if present
+          VERCEL_URL="${VERCEL_URL%/}"
+          
+          echo "📡 Calling: $VERCEL_URL/api/cron/daily-fii-dii"
+          
+          # Call the endpoint with follow redirects and better error handling
+          response=$(curl -L -s -w "\n%{http_code}" -X POST \
+            "$VERCEL_URL/api/cron/daily-fii-dii" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions-FII-DII-Collector" \
+            --max-time 30 \
+            --retry 2)
           
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | head -n -1)
           
-          echo "Response: $body"
-          echo "HTTP Code: $http_code"
+          echo "📊 Response Body: $body"
+          echo "🔢 HTTP Code: $http_code"
+          
+          # Also try GET method if POST fails
+          if [ "$http_code" -eq 308 ] || [ "$http_code" -eq 405 ]; then
+            echo "🔄 Trying GET method instead..."
+            response=$(curl -L -s -w "\n%{http_code}" -X GET \
+              "$VERCEL_URL/api/cron/daily-fii-dii" \
+              -H "User-Agent: GitHub-Actions-FII-DII-Collector" \
+              --max-time 30)
+            
+            http_code=$(echo "$response" | tail -n1)
+            body=$(echo "$response" | head -n -1)
+            
+            echo "📊 GET Response Body: $body"
+            echo "🔢 GET HTTP Code: $http_code"
+          fi
           
           if [ "$http_code" -eq 200 ]; then
             echo "✅ FII/DII data collection successful!"
           else
             echo "❌ FII/DII data collection failed!"
+            echo "🐛 Debug info:"
+            echo "   URL used: $VERCEL_URL/api/cron/daily-fii-dii"
+            echo "   HTTP Code: $http_code"
+            echo "   Response: $body"
             exit 1
           fi 
