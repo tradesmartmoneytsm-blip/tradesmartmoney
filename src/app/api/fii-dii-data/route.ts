@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import type { FiiDiiData } from '@/lib/supabase';
 
 export async function GET() {
@@ -40,32 +40,15 @@ export async function GET() {
 }
 
 async function scrapeFiiDiiData(): Promise<FiiDiiData[]> {
-  const results: FiiDiiData[] = [];
+  console.log('📊 Trying to fetch FII/DII data from NSE...');
+  const nseData = await scrapeNseFiiDii();
   
-  // Try NSE first
-  try {
-    console.log('📊 Trying NSE FII/DII data...');
-    const nseData = await scrapeNseFiiDii();
-    if (nseData.length > 0) {
-      results.push(...nseData);
-      console.log(`✅ NSE: Found ${nseData.length} records`);
-      return results;
-    }
-  } catch (error) {
-    console.warn('⚠️ NSE scraping failed:', error);
+  if (nseData.length === 0) {
+    throw new Error('No FII/DII data found from NSE API');
   }
   
-  // Fallback: Generate realistic sample data for testing
-  try {
-    console.log('📊 Using fallback FII/DII data...');
-    const fallbackData = generateSampleFiiDiiData();
-    results.push(...fallbackData);
-    console.log(`✅ Fallback: Generated ${fallbackData.length} records`);
-  } catch (error) {
-    console.error('❌ Even fallback data generation failed:', error);
-  }
-  
-  return results;
+  console.log(`✅ NSE: Found ${nseData.length} records`);
+  return nseData;
 }
 
 async function scrapeNseFiiDii(): Promise<FiiDiiData[]> {
@@ -120,38 +103,14 @@ async function scrapeNseFiiDii(): Promise<FiiDiiData[]> {
   return results;
 }
 
-function generateSampleFiiDiiData(): FiiDiiData[] {
-  const today = new Date().toISOString().split('T')[0];
-  
-  // Generate realistic FII/DII data based on typical Indian market patterns
-  const fiiNetVariation = (Math.random() - 0.6) * 3000; // FIIs often sell (-ve bias)
-  const diiNetVariation = (Math.random() - 0.3) * 2000; // DIIs often buy (+ve bias)
-  
-  const fiiGrossBuy = Math.random() * 15000 + 5000; // 5,000-20,000 crores
-  const fiiGrossSell = fiiGrossBuy - fiiNetVariation;
-  
-  const diiGrossBuy = Math.random() * 12000 + 3000; // 3,000-15,000 crores  
-  const diiGrossSell = diiGrossBuy - diiNetVariation;
-  
-  return [
-    {
-      date: today,
-      category: 'FII',
-      buy_value: Number(fiiGrossBuy.toFixed(2)),
-      sell_value: Number(fiiGrossSell.toFixed(2)),
-      net_value: Number(fiiNetVariation.toFixed(2))
-    },
-    {
-      date: today,
-      category: 'DII', 
-      buy_value: Number(diiGrossBuy.toFixed(2)),
-      sell_value: Number(diiGrossSell.toFixed(2)),
-      net_value: Number(diiNetVariation.toFixed(2))
-    }
-  ];
-}
+
 
 async function storeFiiDiiData(data: FiiDiiData[]) {
+  if (!isSupabaseConfigured()) {
+    console.log('⚠️ Supabase not configured, skipping data storage');
+    return;
+  }
+
   const { error } = await supabaseAdmin
     .from('fii_dii_data')
     .upsert(data, { 
@@ -165,6 +124,11 @@ async function storeFiiDiiData(data: FiiDiiData[]) {
 }
 
 async function cleanupOldData() {
+  if (!isSupabaseConfigured()) {
+    console.log('⚠️ Supabase not configured, skipping data cleanup');
+    return;
+  }
+
   const { error } = await supabaseAdmin
     .rpc('cleanup_old_fii_dii_data');
     

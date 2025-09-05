@@ -1,6 +1,5 @@
 // Market Data Service for fetching real-time sector performance
 // Scraping real NSE sector indices data from Dhan.co
-import * as cheerio from 'cheerio';
 
 interface SectorData {
   name: string;
@@ -96,9 +95,9 @@ class MarketDataService {
     console.log(`✅ Received ${result.data?.length || 0} sectors from API`);
     
     // Convert lastUpdated strings back to Date objects
-    const sectors = result.data.map((sector: any) => ({
+    const sectors = result.data.map((sector: SectorData) => ({
       ...sector,
-      lastUpdated: new Date(sector.lastUpdated)
+      lastUpdated: new Date(sector.lastUpdated || new Date())
     }));
 
     return sectors;

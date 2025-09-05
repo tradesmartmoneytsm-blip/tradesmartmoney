@@ -1,10 +1,29 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import type { FiiDiiData, FiiDiiSummary } from '@/lib/supabase';
 
 export async function GET() {
   try {
     console.log('🔄 API: Fetching FII/DII historical data from database...');
+    
+    // Check if Supabase is configured
+    if (!isSupabaseConfigured()) {
+      console.log('⚠️ Supabase not configured, using sample data');
+      const sampleData = generateSampleHistoricalData();
+      return NextResponse.json({
+        success: true,
+        data: {
+          raw: [],
+          summary: sampleData,
+          stats: {
+            total_days: sampleData.length,
+            latest_date: sampleData[0]?.date || null,
+            total_records: 0,
+            note: 'Using sample data - configure Supabase for real historical data'
+          }
+        }
+      });
+    }
     
     // Fetch last 30 days of FII/DII data
     const { data: rawData, error } = await supabase

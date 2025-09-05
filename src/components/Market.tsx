@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Activity, Building2, Users, BarChart3, RefreshCw, Globe, ArrowUpDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, Building2, BarChart3, RefreshCw, ArrowUpDown } from 'lucide-react';
 import type { SectorData } from '@/services/marketDataService';
 import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
 import { FiiDiiActivity } from '@/components/FiiDiiActivity';
