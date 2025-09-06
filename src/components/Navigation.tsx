@@ -11,16 +11,25 @@ export function Navigation({
   onSectionChange: (section: string, subSection?: string) => void;
 }) {
   const [currentTime, setCurrentTime] = useState('');
+  const [isMarketOpen, setIsMarketOpen] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMarketMenu, setShowMarketMenu] = useState(false);
   const [showEodScansMenu, setShowEodScansMenu] = useState(false);
   const [showAlgoTradingMenu, setShowAlgoTradingMenu] = useState(false);
 
   useEffect(() => {
-    setCurrentTime(new Date().toLocaleTimeString());
-    const timer = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString());
-    }, 1000);
+    const updateTimeAndMarketStatus = () => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString());
+      
+      // Check if it's a weekday (Monday = 1, Friday = 5)
+      const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+      const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+      setIsMarketOpen(isWeekday);
+    };
+
+    updateTimeAndMarketStatus();
+    const timer = setInterval(updateTimeAndMarketStatus, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -118,8 +127,17 @@ export function Navigation({
         <div className="flex items-center justify-between px-4 lg:px-6 py-2 border-b border-gray-100 mb-4" role="banner">
           <div className="flex items-center space-x-4 lg:space-x-6 text-xs lg:text-sm text-gray-600">
             <div className="flex items-center space-x-1 lg:space-x-2" aria-label="Market status">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true"></div>
-              <span className="font-medium">Market Open</span>
+              <div 
+                className={`w-2 h-2 rounded-full ${
+                  isMarketOpen 
+                    ? 'bg-green-500 animate-pulse' 
+                    : 'bg-red-500'
+                }`} 
+                aria-hidden="true"
+              ></div>
+              <span className="font-medium">
+                {isMarketOpen ? 'Market Open' : 'Market Closed'}
+              </span>
             </div>
             <div className="hidden sm:flex items-center space-x-4 lg:space-x-6" role="group" aria-label="Market indices">
               <span>Nifty: <span className="font-semibold text-green-600">22,245.80 (+0.85%)</span></span>
