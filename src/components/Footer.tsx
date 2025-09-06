@@ -197,7 +197,7 @@ export function Footer() {
             <p className="text-gray-600 text-xs">
               Platform v1.0.0 • Built with Next.js & Real-time Data APIs • 
               <span className="ml-2">
-                Last updated: {new Date().toLocaleDateString()}
+                Last updated: {new Date().toISOString().split('T')[0]}
               </span>
             </p>
           </div>

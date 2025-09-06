@@ -107,12 +107,12 @@ export async function GET() {
       const html = await response.text();
       const $ = cheerio.load(html);
 
-      const targetIndices = {
-        'NIFTY 50': 'Nifty',
-        'Bank Nifty': 'Bank Nifty', 
-        'BSE Sensex': 'BSE Sensex',
-        'Finnifty': 'Finnifty'
-      };
+             const targetIndices = {
+         'Nifty 50': 'Nifty',
+         'Nifty Bank': 'Bank Nifty',
+         'BSE Sensex': 'Sensex', 
+         'Finnifty': 'Finnifty'
+       };
 
       // Parse table rows
       $('table tr').each((_, row) => {
