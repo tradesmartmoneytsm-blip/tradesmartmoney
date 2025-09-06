@@ -30,36 +30,20 @@ export function Navigation({
   // Fetch market indices data
   const fetchMarketIndices = async () => {
     try {
-      console.log('🔄 [FRONTEND] Fetching market indices...');
       const response = await fetch('/api/market-indices');
-      console.log('🔄 [FRONTEND] Response status:', response.status, response.statusText);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
       const data = await response.json();
-      console.log('📊 [FRONTEND] Received data:', JSON.stringify(data, null, 2));
       
       if (data.success && data.data && Array.isArray(data.data)) {
-        console.log('✅ [FRONTEND] Setting market indices state with', data.data.length, 'items:', data.data);
         setMarketIndices(data.data);
         setLastUpdated(new Date());
-        console.log('✅ [FRONTEND] State update completed');
-      } else {
-        console.error('❌ [FRONTEND] Invalid data structure:', data);
-        console.error('❌ [FRONTEND] data.success:', data.success);
-        console.error('❌ [FRONTEND] data.data:', data.data);
-        console.error('❌ [FRONTEND] Array.isArray(data.data):', Array.isArray(data.data));
       }
     } catch (error) {
-      console.error('❌ [FRONTEND] Error fetching market indices:', error);
-      if (error instanceof Error) {
-        console.error('❌ [FRONTEND] Error details:', {
-          message: error.message,
-          stack: error.stack
-        });
-      }
+      console.error('Error fetching market indices:', error);
     }
   };
 
@@ -85,14 +69,6 @@ export function Navigation({
     const indicesTimer = setInterval(fetchMarketIndices, 15 * 60 * 1000); // 15 minutes
     return () => clearInterval(indicesTimer);
   }, []);
-
-  // Debug: Track marketIndices state changes
-  useEffect(() => {
-    console.log('🖥️ [FRONTEND] marketIndices state changed:', {
-      length: marketIndices.length,
-      data: marketIndices
-    });
-  }, [marketIndices]);
 
   useEffect(() => {
     setShowMarketMenu(false);
@@ -200,7 +176,7 @@ export function Navigation({
                 {isMarketOpen ? 'Market Open' : 'Market Closed'}
               </span>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6 overflow-x-auto" role="group" aria-label="Market indices">
+            <div className="flex items-center space-x-1 sm:space-x-3 lg:space-x-4 overflow-x-auto scrollbar-hide" role="group" aria-label="Market indices">
               {marketIndices.length > 0 ? (
                 marketIndices.map((index) => {
                   const isPositive = index.changePercent >= 0;
@@ -217,9 +193,9 @@ export function Navigation({
                   // Nifty and Bank Nifty: always visible (no class needed)
                   
                   return (
-                    <span key={index.name} className={`whitespace-nowrap ${visibilityClass}`}>
-                      <span className="hidden sm:inline">{index.displayName}: </span>
-                      <span className="sm:hidden">{index.displayName.charAt(0)}: </span>
+                    <span key={index.name} className={`flex-shrink-0 text-xs sm:text-sm ${visibilityClass}`}>
+                      <span className="font-medium">{index.displayName}</span>
+                      <span className="mx-1">:</span>
                       <span className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
                         <span className="hidden sm:inline">
                           {index.current.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({isPositive ? '+' : ''}{index.changePercent.toFixed(2)}%)
@@ -234,21 +210,25 @@ export function Navigation({
               ) : (
                 // Fallback while loading - responsive
                 <>
-                  <span className="whitespace-nowrap">
-                    <span className="hidden sm:inline">Nifty: </span>
-                    <span className="sm:hidden">N: </span>
+                  <span className="flex-shrink-0 text-xs sm:text-sm">
+                    <span className="font-medium">Nifty</span>
+                    <span className="mx-1">:</span>
                     <span className="font-semibold text-gray-500">Loading...</span>
                   </span>
-                  <span className="whitespace-nowrap hidden sm:inline">
-                    Sensex: <span className="font-semibold text-gray-500">Loading...</span>
-                  </span>
-                  <span className="whitespace-nowrap">
-                    <span className="hidden sm:inline">Bank Nifty: </span>
-                    <span className="sm:hidden">B: </span>
+                  <span className="flex-shrink-0 text-xs sm:text-sm hidden sm:inline">
+                    <span className="font-medium">Sensex</span>
+                    <span className="mx-1">:</span>
                     <span className="font-semibold text-gray-500">Loading...</span>
                   </span>
-                  <span className="whitespace-nowrap hidden md:inline">
-                    Finnifty: <span className="font-semibold text-gray-500">Loading...</span>
+                  <span className="flex-shrink-0 text-xs sm:text-sm">
+                    <span className="font-medium">Bank Nifty</span>
+                    <span className="mx-1">:</span>
+                    <span className="font-semibold text-gray-500">Loading...</span>
+                  </span>
+                  <span className="flex-shrink-0 text-xs sm:text-sm hidden md:inline">
+                    <span className="font-medium">Finnifty</span>
+                    <span className="mx-1">:</span>
+                    <span className="font-semibold text-gray-500">Loading...</span>
                   </span>
                 </>
               )}
