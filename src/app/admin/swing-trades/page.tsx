@@ -3,12 +3,130 @@
 import { useState, useEffect } from 'react';
 import { 
   Plus, Edit, Trash2, Save, X, Upload, RefreshCw, 
-  DollarSign, Calendar, Target, Activity, TrendingUp 
+  DollarSign, Calendar, Target, Activity, TrendingUp, Lock, LogOut, Eye, EyeOff 
 } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
 
 const STRATEGIES = ['BIT', 'Swing Angle', 'Bottom Formation'] as const;
 const STATUSES = ['Running', 'SL Hit', 'Trade Successful', 'Cancelled'] as const;
+
+// Authentication component
+function AdminLogin({ onLogin }: { onLogin: () => void }) {
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Store auth token in localStorage
+        localStorage.setItem('swing_admin_auth', result.token);
+        onLogin();
+      } else {
+        setError(result.error || 'Invalid password');
+      }
+    } catch (err) {
+      setError('Authentication failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <div className="mx-auto h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+            <Lock className="h-6 w-6 text-blue-600" />
+          </div>
+          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+            Admin Access Required
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Enter the admin password to manage swing trades
+          </p>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="password" className="sr-only">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="relative block w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter admin password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-gray-400" />
+                ) : (
+                  <Eye className="h-4 w-4 text-gray-400" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading || !password}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <RefreshCw className="w-4 h-4 animate-spin" />
+              ) : (
+                'Access Admin Panel'
+              )}
+            </button>
+          </div>
+        </form>
+
+        <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="text-sm text-yellow-700">
+            <p className="font-medium">Security Note:</p>
+            <p className="mt-1">
+              Set your admin password in environment variables:
+            </p>
+            <code className="block mt-2 text-xs bg-yellow-100 p-2 rounded font-mono">
+              SWING_ADMIN_PASSWORD=your_secure_password
+            </code>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface FormData {
   id?: string;
@@ -52,6 +170,8 @@ const initialFormData: FormData = {
 };
 
 export default function AdminSwingTrades() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [trades, setTrades] = useState<SwingTrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -60,13 +180,74 @@ export default function AdminSwingTrades() {
   const [editingTrade, setEditingTrade] = useState<SwingTrade | null>(null);
   const [formData, setFormData] = useState<FormData>(initialFormData);
 
+  // Check authentication status on mount
+  useEffect(() => {
+    const authToken = localStorage.getItem('swing_admin_auth');
+    if (authToken) {
+      // Verify token with backend
+      verifyAuthToken(authToken);
+    } else {
+      setCheckingAuth(false);
+    }
+  }, []);
+
+  const verifyAuthToken = async (token: string) => {
+    try {
+      const response = await fetch('/api/admin/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setIsAuthenticated(true);
+      } else {
+        localStorage.removeItem('swing_admin_auth');
+        setIsAuthenticated(false);
+      }
+    } catch (err) {
+      localStorage.removeItem('swing_admin_auth');
+      setIsAuthenticated(false);
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    setCheckingAuth(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('swing_admin_auth');
+    setIsAuthenticated(false);
+    setTrades([]);
+    setShowForm(false);
+    setEditingTrade(null);
+  };
+
+  // Get auth headers for API calls
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('swing_admin_auth');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+  };
+
   // Fetch trades
   const fetchTrades = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/swing-trades');
+      const response = await fetch('/api/swing-trades', {
+        headers: getAuthHeaders(),
+      });
       const result = await response.json();
       
       if (result.success) {
@@ -83,8 +264,10 @@ export default function AdminSwingTrades() {
   };
 
   useEffect(() => {
-    fetchTrades();
-  }, []);
+    if (isAuthenticated) {
+      fetchTrades();
+    }
+  }, [isAuthenticated]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -98,9 +281,7 @@ export default function AdminSwingTrades() {
       
       const response = await fetch('/api/swing-trades', {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(payload),
       });
 
@@ -129,6 +310,7 @@ export default function AdminSwingTrades() {
     try {
       const response = await fetch(`/api/swing-trades?id=${id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
 
       const result = await response.json();
@@ -196,6 +378,23 @@ export default function AdminSwingTrades() {
     }
   }, [formData.entry_price, formData.target_price, formData.potential_return]);
 
+  // Show loading while checking authentication
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <RefreshCw className="w-8 h-8 mx-auto mb-4 animate-spin text-blue-600" />
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login form if not authenticated
+  if (!isAuthenticated) {
+    return <AdminLogin onLogin={handleLogin} />;
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Running': return 'bg-blue-100 text-blue-800';
@@ -234,6 +433,13 @@ export default function AdminSwingTrades() {
             <p className="text-gray-600 mt-2">Manage swing trading opportunities across all strategies</p>
           </div>
           <div className="flex gap-3">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
             <button
               onClick={fetchTrades}
               disabled={loading}

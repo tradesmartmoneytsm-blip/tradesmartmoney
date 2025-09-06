@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
+import crypto from 'crypto';
 
 export interface SwingTrade {
   id: string;
@@ -24,7 +25,58 @@ export interface SwingTrade {
   updated_at: string;
 }
 
-// GET - Fetch all swing trades or filter by strategy
+// Authentication helper
+function verifyAuthToken(token: string, password: string): boolean {
+  try {
+    const [timestamp, hash] = token.split('_');
+    
+    if (!timestamp || !hash) {
+      return false;
+    }
+
+    // Check if token is not too old (24 hours)
+    const tokenTime = parseInt(timestamp);
+    const currentTime = Date.now();
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+
+    if (currentTime - tokenTime > maxAge) {
+      return false;
+    }
+
+    // Verify hash
+    const expectedHash = crypto.createHash('sha256').update(password + timestamp).digest('hex');
+    return hash === expectedHash;
+
+  } catch (error) {
+    return false;
+  }
+}
+
+// Middleware to check authentication for protected operations
+async function checkAuth(request: Request): Promise<{ isAuthenticated: boolean; error?: string }> {
+  const authHeader = request.headers.get('Authorization');
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { isAuthenticated: false, error: 'Missing or invalid authorization header' };
+  }
+
+  const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+  
+  const adminPassword = process.env.SWING_ADMIN_PASSWORD;
+  if (!adminPassword) {
+    return { isAuthenticated: false, error: 'Admin authentication not configured' };
+  }
+
+  const isValid = verifyAuthToken(token, adminPassword);
+  
+  if (!isValid) {
+    return { isAuthenticated: false, error: 'Invalid or expired token' };
+  }
+
+  return { isAuthenticated: true };
+}
+
+// GET - Fetch all swing trades or filter by strategy (no auth required for reading)
 export async function GET(request: Request) {
   try {
     console.log('🔄 API: Fetching swing trades...');
@@ -78,11 +130,20 @@ export async function GET(request: Request) {
   }
 }
 
-// POST - Create new swing trade
+// POST - Create new swing trade (AUTH REQUIRED)
 export async function POST(request: Request) {
   try {
     console.log('🔄 API: Creating new swing trade...');
     
+    // Check authentication
+    const authResult = await checkAuth(request);
+    if (!authResult.isAuthenticated) {
+      return NextResponse.json({
+        success: false,
+        error: authResult.error || 'Authentication required'
+      }, { status: 401 });
+    }
+
     if (!isSupabaseConfigured()) {
       return NextResponse.json({
         success: false,
@@ -167,11 +228,20 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT - Update existing swing trade
+// PUT - Update existing swing trade (AUTH REQUIRED)
 export async function PUT(request: Request) {
   try {
     console.log('🔄 API: Updating swing trade...');
     
+    // Check authentication
+    const authResult = await checkAuth(request);
+    if (!authResult.isAuthenticated) {
+      return NextResponse.json({
+        success: false,
+        error: authResult.error || 'Authentication required'
+      }, { status: 401 });
+    }
+
     if (!isSupabaseConfigured()) {
       return NextResponse.json({
         success: false,
@@ -245,11 +315,20 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE - Remove swing trade
+// DELETE - Remove swing trade (AUTH REQUIRED)
 export async function DELETE(request: Request) {
   try {
     console.log('🔄 API: Deleting swing trade...');
     
+    // Check authentication
+    const authResult = await checkAuth(request);
+    if (!authResult.isAuthenticated) {
+      return NextResponse.json({
+        success: false,
+        error: authResult.error || 'Authentication required'
+      }, { status: 401 });
+    }
+
     if (!isSupabaseConfigured()) {
       return NextResponse.json({
         success: false,
