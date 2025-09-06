@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   Plus, Edit, Trash2, Save, X, RefreshCw, 
-  TrendingUp, Lock, LogOut, Eye, EyeOff 
+  TrendingUp, Lock, LogOut, Eye, EyeOff, Upload, ImageIcon, Clipboard, AlertTriangle 
 } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
 
@@ -40,8 +40,8 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
       } else {
         setError(result.error || 'Invalid password');
       }
-         } catch {
-       setError('Authentication failed. Please try again.');
+    } catch {
+      setError('Authentication failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -157,6 +157,193 @@ const initialFormData: FormData = {
   potential_return: ''
 };
 
+// Image paste handler component
+function ImagePasteArea({ onImagePaste, currentImage }: { 
+  onImagePaste: (base64: string) => void; 
+  currentImage?: string;
+}) {
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [pasteHint, setPasteHint] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handlePaste = async (e: ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        e.preventDefault();
+        const file = items[i].getAsFile();
+        if (file) {
+          const base64 = await convertToBase64(file);
+          onImagePaste(base64);
+          setPasteHint(false);
+        }
+      }
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    const imageFile = files.find(file => file.type.startsWith('image/'));
+    
+    if (imageFile) {
+      const base64 = await convertToBase64(imageFile);
+      onImagePaste(base64);
+    }
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const base64 = await convertToBase64(file);
+      onImagePaste(base64);
+    }
+  };
+
+  useEffect(() => {
+    const handleGlobalPaste = (e: ClipboardEvent) => {
+      if (pasteHint) {
+        handlePaste(e);
+      }
+    };
+
+    document.addEventListener('paste', handleGlobalPaste);
+    return () => document.removeEventListener('paste', handleGlobalPaste);
+  }, [pasteHint]);
+
+  return (
+    <div className="space-y-3">
+      <label className="block text-sm font-medium text-gray-700">
+        Chart Image
+      </label>
+      
+      {currentImage && (
+        <div className="mb-4">
+          <img 
+            src={currentImage} 
+            alt="Chart preview" 
+            className="w-full h-48 object-cover rounded border border-gray-200"
+          />
+          <button
+            type="button"
+            onClick={() => onImagePaste('')}
+            className="mt-2 text-sm text-red-600 hover:text-red-700"
+          >
+            Remove Image
+          </button>
+        </div>
+      )}
+
+      <div
+        className={`
+          border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
+          ${isDragOver 
+            ? 'border-blue-400 bg-blue-50' 
+            : pasteHint 
+              ? 'border-green-400 bg-green-50' 
+              : 'border-gray-300 hover:border-gray-400'
+          }
+        `}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragOver(true);
+        }}
+        onDragLeave={() => setIsDragOver(false)}
+        onDrop={handleDrop}
+        onClick={() => {
+          if (!pasteHint) {
+            setPasteHint(true);
+            setTimeout(() => setPasteHint(false), 5000);
+          }
+          fileInputRef.current?.click();
+        }}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        
+        <div className="space-y-2">
+          <div className="flex justify-center">
+            {pasteHint ? (
+              <Clipboard className="w-8 h-8 text-green-600" />
+            ) : (
+              <ImageIcon className="w-8 h-8 text-gray-400" />
+            )}
+          </div>
+          
+          {pasteHint ? (
+            <div>
+              <p className="text-sm font-medium text-green-700">Ready to paste!</p>
+              <p className="text-xs text-green-600">Copy a chart image and press Ctrl/Cmd+V</p>
+            </div>
+          ) : (
+            <div>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Click to select</span> or drag and drop
+              </p>
+              <p className="text-xs text-gray-500">
+                Or click here then paste from clipboard (Ctrl/Cmd+V)
+              </p>
+            </div>
+          )}
+          
+          <div className="flex items-center justify-center space-x-4 text-xs text-gray-400">
+            <span className="flex items-center">
+              <Upload className="w-3 h-3 mr-1" />
+              Upload
+            </span>
+            <span className="flex items-center">
+              <Clipboard className="w-3 h-3 mr-1" />
+              Paste
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* URL Input as fallback */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Or enter image URL
+        </label>
+        <input
+          type="url"
+          value={currentImage && !currentImage.startsWith('data:') ? currentImage : ''}
+          onChange={(e) => onImagePaste(e.target.value)}
+          placeholder="https://example.com/chart.jpg"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      {currentImage && currentImage.length > 100000 && (
+        <div className="flex items-start space-x-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+          <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+          <div className="text-xs text-yellow-700">
+            <p className="font-medium">Large image detected</p>
+            <p>Consider compressing the image for better performance. Current size: ~{Math.round(currentImage.length / 1024)}KB</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminSwingTrades() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -255,7 +442,7 @@ export default function AdminSwingTrades() {
     if (isAuthenticated) {
       fetchTrades();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, fetchTrades]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -352,6 +539,11 @@ export default function AdminSwingTrades() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Handle image paste
+  const handleImagePaste = (base64OrUrl: string) => {
+    setFormData(prev => ({ ...prev, chart_image_url: base64OrUrl }));
   };
 
   // Auto-calculate potential return when target and entry prices change
@@ -690,21 +882,13 @@ export default function AdminSwingTrades() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Chart Image URL
-                    </label>
-                    <input
-                      type="url"
-                      name="chart_image_url"
-                      value={formData.chart_image_url}
-                      onChange={handleInputChange}
-                      placeholder="https://example.com/chart.jpg"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
                 </div>
+
+                {/* Chart Image Section */}
+                <ImagePasteArea 
+                  onImagePaste={handleImagePaste}
+                  currentImage={formData.chart_image_url}
+                />
 
                 {/* Text Areas */}
                 <div className="space-y-4">
