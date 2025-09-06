@@ -73,7 +73,7 @@ export function Market({ initialSubSection }: MarketProps) {
 
     const interval = setInterval(fetchSectorData, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [activeSubSection]);
 
   const subSections: MarketSubSection[] = [
     { id: 'sector-performance', label: 'Sector Performance', icon: <BarChart3 className="w-4 h-4" />, description: 'Real-time sector analysis' },

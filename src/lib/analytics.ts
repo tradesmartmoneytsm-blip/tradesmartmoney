@@ -34,7 +34,7 @@ export const trackPageView = (page_path: string, page_title?: string) => {
 // Track custom events
 export const trackEvent = (
   event_name: string, 
-  parameters?: Record<string, any>
+  parameters?: Record<string, string | number | boolean>
 ) => {
   if (!isGoogleAnalyticsConfigured()) return;
 
@@ -80,6 +80,6 @@ export const trackBusinessEvent = {
 // Declare gtag for TypeScript
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void;
+    gtag: (command: string, targetId: string | Date, config?: Record<string, unknown>) => void;
   }
 } 
