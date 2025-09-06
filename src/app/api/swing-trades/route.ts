@@ -179,6 +179,15 @@ export async function POST(request: Request) {
       potential_return = ((body.target_price - body.entry_price) / body.entry_price) * 100;
     }
 
+    // Parse potential return to number if it exists
+    let parsedPotentialReturn = null;
+    if (potential_return) {
+      const numValue = parseFloat(potential_return);
+      if (!isNaN(numValue)) {
+        parsedPotentialReturn = Math.round(numValue * 100) / 100; // Round to 2 decimal places
+      }
+    }
+
     const swingTradeData = {
       strategy: body.strategy,
       stock_name: body.stock_name,
@@ -192,11 +201,11 @@ export async function POST(request: Request) {
       setup_description: body.setup_description || null,
       risk_reward_ratio: body.risk_reward_ratio || null,
       timeframe: body.timeframe || null,
-      entry_date: body.entry_date || new Date().toISOString().split('T')[0],
-      exit_date: body.exit_date || null,
+      entry_date: (body.entry_date && body.entry_date.trim() !== '') ? body.entry_date : new Date().toISOString().split('T')[0],
+      exit_date: (body.exit_date && body.exit_date.trim() !== '') ? body.exit_date : null,
       chart_image_url: body.chart_image_url || null,
       notes: body.notes || null,
-      potential_return: potential_return ? parseFloat(potential_return.toFixed(2)) : null
+      potential_return: parsedPotentialReturn
     };
 
     const { data: newTrade, error } = await supabaseAdmin
@@ -274,6 +283,9 @@ export async function PUT(request: Request) {
           updateData[field] = body[field] ? parseFloat(body[field]) : null;
         } else if (field === 'stock_symbol') {
           updateData[field] = body[field].toUpperCase();
+        } else if (field.includes('date')) {
+          // Handle date fields: convert empty strings to null
+          updateData[field] = body[field] && body[field].trim() !== '' ? body[field] : null;
         } else {
           updateData[field] = body[field];
         }

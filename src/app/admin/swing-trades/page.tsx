@@ -546,14 +546,14 @@ export default function AdminSwingTrades() {
     setFormData(prev => ({ ...prev, chart_image_url: base64OrUrl }));
   };
 
-  // Auto-calculate potential return when target and entry prices change
+  // Auto-calculate expected return when target and entry prices change
   useEffect(() => {
     if (formData.entry_price && formData.target_price && !formData.potential_return) {
       const entry = parseFloat(formData.entry_price);
       const target = parseFloat(formData.target_price);
       if (!isNaN(entry) && !isNaN(target) && entry > 0) {
-        const potentialReturn = ((target - entry) / entry) * 100;
-        setFormData(prev => ({ ...prev, potential_return: potentialReturn.toFixed(2) }));
+        const expectedReturn = ((target - entry) / entry) * 100;
+        setFormData(prev => ({ ...prev, potential_return: expectedReturn.toFixed(2) }));
       }
     }
   }, [formData.entry_price, formData.target_price, formData.potential_return]);
@@ -780,6 +780,7 @@ export default function AdminSwingTrades() {
                     />
                   </div>
 
+                  {/* Current Price field hidden as it's not updated daily
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Current Price
@@ -794,6 +795,7 @@ export default function AdminSwingTrades() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
+                  */}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -812,7 +814,7 @@ export default function AdminSwingTrades() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Potential Return (%)
+                      Expected Return (%)
                     </label>
                     <input
                       type="number"
@@ -994,7 +996,7 @@ export default function AdminSwingTrades() {
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Return
+                      Expected Return
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions

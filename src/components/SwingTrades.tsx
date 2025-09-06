@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
 
 interface GroupedTrades {
@@ -15,6 +15,7 @@ export function SwingTrades() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [selectedImage, setSelectedImage] = useState<{ url: string; symbol: string } | null>(null);
 
   const fetchTrades = async () => {
     try {
@@ -159,12 +160,14 @@ export function SwingTrades() {
           )}
         </div>
         <div className="space-y-2">
+          {/* Current price hidden as it's not updated daily
           {trade.current_price && (
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Current:</span>
               <span className="font-semibold text-gray-900">{formatCurrency(trade.current_price)}</span>
             </div>
           )}
+          */}
           {trade.exit_price && (
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Exit:</span>
@@ -173,7 +176,7 @@ export function SwingTrades() {
           )}
           {trade.potential_return && (
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Return:</span>
+              <span className="text-gray-600">Expected Return:</span>
               <span className={`font-semibold ${trade.potential_return >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {trade.potential_return.toFixed(2)}%
               </span>
@@ -203,16 +206,33 @@ export function SwingTrades() {
 
       {trade.chart_image_url && (
         <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <Image className="w-4 h-4" />
-            <span>Chart Analysis</span>
+          <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+            <div className="flex items-center gap-2">
+              <Image className="w-4 h-4" />
+              <span>Chart Analysis</span>
+            </div>
+            <button
+              onClick={() => setSelectedImage({ url: trade.chart_image_url!, symbol: trade.stock_symbol })}
+              className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <ZoomIn className="w-3 h-3" />
+              <span className="text-xs">Expand</span>
+            </button>
           </div>
-          <img 
-            src={trade.chart_image_url} 
-            alt={`${trade.stock_symbol} chart`}
-            className="w-full h-32 object-cover rounded border border-gray-200"
-            loading="lazy"
-          />
+          <div 
+            className="relative cursor-pointer group"
+            onClick={() => setSelectedImage({ url: trade.chart_image_url!, symbol: trade.stock_symbol })}
+          >
+            <img 
+              src={trade.chart_image_url} 
+              alt={`${trade.stock_symbol} chart`}
+              className="w-full h-48 object-contain rounded border border-gray-200 group-hover:border-blue-300 transition-colors"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 rounded flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <ZoomIn className="w-6 h-6 text-white" />
+            </div>
+          </div>
         </div>
       )}
 
@@ -371,6 +391,35 @@ export function SwingTrades() {
           </div>
         </div>
       </div>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-5xl max-h-full w-full">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 z-10 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="bg-white rounded-lg p-2">
+              <div className="flex items-center justify-between mb-2 px-2">
+                <h3 className="font-semibold text-gray-900">{selectedImage.symbol} Chart Analysis</h3>
+                <span className="text-sm text-gray-600">Click outside to close</span>
+              </div>
+              <img
+                src={selectedImage.url}
+                alt={`${selectedImage.symbol} chart`}
+                className="w-full max-h-[80vh] object-contain rounded"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
