@@ -111,18 +111,6 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
             </button>
           </div>
         </form>
-
-        <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="text-sm text-yellow-700">
-            <p className="font-medium">Security Note:</p>
-            <p className="mt-1">
-              Set your admin password in environment variables:
-            </p>
-            <code className="block mt-2 text-xs bg-yellow-100 p-2 rounded font-mono">
-              SWING_ADMIN_PASSWORD=your_secure_password
-            </code>
-          </div>
-        </div>
       </div>
     </div>
   );
