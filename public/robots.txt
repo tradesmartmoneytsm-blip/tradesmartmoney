@@ -1,28 +1,35 @@
-# TradeSmartMoney - Professional Trading Platform
-# https://tradesmartmoney.com
+# robots.txt for TradeSmartMoney - Smart Money Trading Platform
 
 User-agent: *
 Allow: /
 
+# SEO Landing Pages - High Priority for Search Engines
+Allow: /smart-money-concepts
+Allow: /ai-powered-trading
+Allow: /algo-trading
+
+# Business & Legal Pages
+Allow: /about
+Allow: /contact
+Allow: /faq
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /disclaimer
+
+# Block API routes from search engines
+Disallow: /api/
+
+# Block temporary files
+Disallow: /_next/
+Disallow: /static/
+
+# Block development files
+Disallow: /*.map$
+Disallow: /debug/
+Disallow: /test/
+
 # Sitemap location
 Sitemap: https://tradesmartmoney.com/sitemap.xml
 
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
-
-# Disallow admin and private areas (if any in future)
-Disallow: /admin/
-Disallow: /api/private/
-Disallow: /temp/
-Disallow: /*.json$
-
-# Allow important pages
-Allow: /market/
-Allow: /swing-trades/
-Allow: /intraday-trades/
-Allow: /news/
-Allow: /eodscans/
-Allow: /algo-trading/
-
-# Host directive
-Host: https://tradesmartmoney.com 
+# Crawl-delay (be respectful)
+Crawl-delay: 1 
