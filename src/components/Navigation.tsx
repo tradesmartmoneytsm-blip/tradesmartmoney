@@ -30,17 +30,36 @@ export function Navigation({
   // Fetch market indices data
   const fetchMarketIndices = async () => {
     try {
+      console.log('🔄 [FRONTEND] Fetching market indices...');
       const response = await fetch('/api/market-indices');
-      const data = await response.json();
+      console.log('🔄 [FRONTEND] Response status:', response.status, response.statusText);
       
-      if (data.success && data.data) {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('📊 [FRONTEND] Received data:', JSON.stringify(data, null, 2));
+      
+      if (data.success && data.data && Array.isArray(data.data)) {
+        console.log('✅ [FRONTEND] Setting market indices state with', data.data.length, 'items:', data.data);
         setMarketIndices(data.data);
         setLastUpdated(new Date());
+        console.log('✅ [FRONTEND] State update completed');
       } else {
-        console.error('Failed to fetch market indices:', data.error);
+        console.error('❌ [FRONTEND] Invalid data structure:', data);
+        console.error('❌ [FRONTEND] data.success:', data.success);
+        console.error('❌ [FRONTEND] data.data:', data.data);
+        console.error('❌ [FRONTEND] Array.isArray(data.data):', Array.isArray(data.data));
       }
     } catch (error) {
-      console.error('Error fetching market indices:', error);
+      console.error('❌ [FRONTEND] Error fetching market indices:', error);
+      if (error instanceof Error) {
+        console.error('❌ [FRONTEND] Error details:', {
+          message: error.message,
+          stack: error.stack
+        });
+      }
     }
   };
 
@@ -66,6 +85,14 @@ export function Navigation({
     const indicesTimer = setInterval(fetchMarketIndices, 15 * 60 * 1000); // 15 minutes
     return () => clearInterval(indicesTimer);
   }, []);
+
+  // Debug: Track marketIndices state changes
+  useEffect(() => {
+    console.log('🖥️ [FRONTEND] marketIndices state changed:', {
+      length: marketIndices.length,
+      data: marketIndices
+    });
+  }, [marketIndices]);
 
   useEffect(() => {
     setShowMarketMenu(false);
