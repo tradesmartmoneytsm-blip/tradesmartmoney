@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { trackPageView, trackEvent } from '@/lib/analytics';
-import { Mail, Phone, MapPin, Clock, MessageSquare, Send } from 'lucide-react';
+import { Mail, Phone, Clock, MessageSquare, Send } from 'lucide-react';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -52,7 +52,7 @@ export default function Contact() {
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              Have questions about our platform or need support? We're here to help you succeed in your trading journey.
+              Have questions about our platform or need support? We&apos;re here to help you succeed in your trading journey.
             </p>
           </div>
         </div>

@@ -145,7 +145,7 @@ export default function About() {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">User-Centric</h3>
               <p className="text-gray-700 text-sm">
-                Every feature is designed with our users' success in mind, prioritizing usability and effectiveness.
+                Every feature is designed with our users&apos; success in mind, prioritizing usability and effectiveness.
               </p>
             </div>
             <div className="text-center">
@@ -164,8 +164,8 @@ export default function About() {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">Ready to Start Smart Trading?</h2>
           <p className="text-blue-100 mb-6">
-            Join thousands of traders who trust TradeSmartMoney for their market analysis and trading decisions.
-          </p>
+                Constantly evolving our platform with the latest technology and market insights.
+              </p>
           <a 
             href="/contact" 
             className="bg-white text-blue-600 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition-colors inline-block"
