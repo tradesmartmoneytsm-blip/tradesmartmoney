@@ -96,37 +96,27 @@ export function Market({ initialSubSection }: MarketProps) {
 
 
 
-  const gainersData = [
-    { symbol: 'RELIANCE', ltp: 2450.80, change: 4.56, volume: '2.3M' },
-    { symbol: 'TCS', ltp: 3680.45, change: 3.89, volume: '1.8M' },
-    { symbol: 'INFY', ltp: 1590.25, change: 3.12, volume: '3.1M' },
-    { symbol: 'HDFC', ltp: 1680.90, change: 2.98, volume: '2.7M' },
-    { symbol: 'ICICI', ltp: 990.55, change: 2.45, volume: '4.2M' },
-  ];
-
-  const losersData = [
-    { symbol: 'YES BANK', ltp: 18.45, change: -5.67, volume: '8.9M' },
-    { symbol: 'ADANIPORTS', ltp: 680.25, change: -4.32, volume: '3.4M' },
-    { symbol: 'NTPC', ltp: 195.80, change: -3.89, volume: '5.1M' },
-    { symbol: 'POWERGRID', ltp: 245.30, change: -3.45, volume: '2.8M' },
-    { symbol: 'ONGC', ltp: 178.90, change: -2.98, volume: '6.2M' },
-  ];
-
-  const longBuildupData = [
-    { symbol: 'BAJFINANCE', price: 6420.30, oi_change: 12.5, volume_change: 18.7 },
-    { symbol: 'MARUTI', price: 8950.75, oi_change: 15.3, volume_change: 22.1 },
-    { symbol: 'WIPRO', price: 445.80, oi_change: 8.9, volume_change: 14.5 },
-    { symbol: 'TATAMOTORS', price: 890.25, oi_change: 11.2, volume_change: 19.8 },
-    { symbol: 'TECHM', price: 1680.45, oi_change: 9.7, volume_change: 16.3 },
-  ];
-
-  const shortBuildupData = [
-    { symbol: 'ZOMATO', price: 145.30, oi_change: 14.8, volume_change: 21.5 },
-    { symbol: 'PAYTM', price: 890.25, oi_change: 18.2, volume_change: 25.7 },
-    { symbol: 'NYKAA', price: 1890.75, oi_change: 12.4, volume_change: 17.9 },
-    { symbol: 'POLICYBZR', price: 1245.60, oi_change: 16.1, volume_change: 23.8 },
-    { symbol: 'ASIANPAINT', price: 3450.25, oi_change: 9.8, volume_change: 15.3 },
-  ];
+  // Coming soon component for future features
+  const ComingSoonCard = ({ title, description, icon }: { title: string; description: string; icon: React.ReactNode }) => (
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 lg:p-8">
+      <div className="text-center py-8 lg:py-12">
+        <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-4">
+          <div className="text-blue-600 w-8 h-8">
+            {icon}
+          </div>
+        </div>
+        <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">{title}</h3>
+        <p className="text-gray-600 mb-6 max-w-md mx-auto">{description}</p>
+        <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-full">
+          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse mr-2"></div>
+          <span className="text-blue-700 font-semibold text-sm">Coming Soon</span>
+        </div>
+        <div className="mt-4 text-xs text-gray-500">
+          Feature under development • Stay tuned for updates
+        </div>
+      </div>
+    </div>
+  );
 
   const renderSubSection = () => {
     switch (activeSubSection) {
@@ -211,108 +201,38 @@ export function Market({ initialSubSection }: MarketProps) {
 
       case 'top-gainers':
         return (
-          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 lg:p-6">
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 font-serif">Top Gainers</h3>
-            <div className="space-y-2 lg:space-y-3">
-              {gainersData.map((stock, index) => (
-                <div key={stock.symbol} className="flex items-center justify-between p-3 lg:p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-300">
-                  <div className="flex items-center space-x-3 lg:space-x-4">
-                    <span className="text-lg lg:text-xl font-bold text-green-600 w-6">#{index + 1}</span>
-                    <div>
-                      <h4 className="font-bold text-sm lg:text-base text-gray-900 font-serif">{stock.symbol}</h4>
-                      <p className="text-xs lg:text-sm text-gray-600">Vol: {stock.volume}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-sm lg:text-base text-gray-900">₹{stock.ltp}</p>
-                    <p className="text-green-600 font-bold text-xs lg:text-sm">+{stock.change}%</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ComingSoonCard
+            title="Top Gainers"
+            description="Real-time tracking of best performing stocks with live price movements and volume analysis."
+            icon={<TrendingUp className="w-8 h-8" />}
+          />
         );
 
       case 'top-losers':
         return (
-          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 lg:p-6">
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 font-serif">Top Losers</h3>
-            <div className="space-y-2 lg:space-y-3">
-              {losersData.map((stock, index) => (
-                <div key={stock.symbol} className="flex items-center justify-between p-3 lg:p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-300">
-                  <div className="flex items-center space-x-3 lg:space-x-4">
-                    <span className="text-lg lg:text-xl font-bold text-red-600 w-6">#{index + 1}</span>
-                    <div>
-                      <h4 className="font-bold text-sm lg:text-base text-gray-900 font-serif">{stock.symbol}</h4>
-                      <p className="text-xs lg:text-sm text-gray-600">Vol: {stock.volume}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-sm lg:text-base text-gray-900">₹{stock.ltp}</p>
-                    <p className="text-red-600 font-bold text-xs lg:text-sm">{stock.change}%</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ComingSoonCard
+            title="Top Losers"
+            description="Comprehensive analysis of underperforming stocks with detailed decline patterns and volume insights."
+            icon={<TrendingDown className="w-8 h-8" />}
+          />
         );
 
       case 'long-buildup':
         return (
-          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 lg:p-6">
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 font-serif">Long Built Up</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">Symbol</th>
-                    <th className="text-right py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">LTP</th>
-                    <th className="text-right py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">OI Change %</th>
-                    <th className="text-right py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">Volume %</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {longBuildupData.map((item) => (
-                    <tr key={item.symbol} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="py-2 lg:py-3 px-3 lg:px-4 font-bold text-gray-900 font-serif">{item.symbol}</td>
-                      <td className="py-2 lg:py-3 px-3 lg:px-4 text-right text-gray-900 font-semibold">₹{item.price}</td>
-                      <td className="py-2 lg:py-3 px-3 lg:px-4 text-right font-bold text-green-600">+{item.oi_change}%</td>
-                      <td className="py-2 lg:py-3 px-3 lg:px-4 text-right font-bold text-green-600">+{item.volume_change}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <ComingSoonCard
+            title="Long Built Up"
+            description="Advanced analysis of stocks with increasing long positions and bullish momentum indicators."
+            icon={<Activity className="w-8 h-8" />}
+          />
         );
 
       case 'short-buildup':
         return (
-          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 lg:p-6">
-            <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 font-serif">Short Build Up</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">Symbol</th>
-                    <th className="text-right py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">LTP</th>
-                    <th className="text-right py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">OI Change %</th>
-                    <th className="text-right py-2 lg:py-3 px-3 lg:px-4 font-semibold text-gray-900 font-serif">Volume %</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {shortBuildupData.map((item) => (
-                    <tr key={item.symbol} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="py-2 lg:py-3 px-3 lg:px-4 font-bold text-gray-900 font-serif">{item.symbol}</td>
-                      <td className="py-2 lg:py-3 px-3 lg:px-4 text-right text-gray-900 font-semibold">₹{item.price}</td>
-                      <td className="py-2 lg:py-3 px-3 lg:px-4 text-right font-bold text-red-600">+{item.oi_change}%</td>
-                      <td className="py-2 lg:py-3 px-3 lg:px-4 text-right font-bold text-red-600">+{item.volume_change}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <ComingSoonCard
+            title="Short Build Up"
+            description="Detailed tracking of stocks with growing short positions and bearish sentiment analysis."
+            icon={<Building2 className="w-8 h-8" />}
+          />
         );
 
       default:

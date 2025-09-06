@@ -215,11 +215,6 @@ export function Navigation({
                     <span className="mx-1">:</span>
                     <span className="font-semibold text-gray-500">Loading...</span>
                   </span>
-                  <span className="flex-shrink-0 text-xs sm:text-sm hidden sm:inline">
-                    <span className="font-medium">Sensex</span>
-                    <span className="mx-1">:</span>
-                    <span className="font-semibold text-gray-500">Loading...</span>
-                  </span>
                   <span className="flex-shrink-0 text-xs sm:text-sm">
                     <span className="font-medium">Bank Nifty</span>
                     <span className="mx-1">:</span>
