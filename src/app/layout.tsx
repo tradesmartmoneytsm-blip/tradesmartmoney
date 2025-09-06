@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
+import { Footer } from '@/components/Footer';
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -31,7 +32,11 @@ export const metadata: Metadata = {
     "market news",
     "trading education",
     "portfolio management",
-    "risk management"
+    "risk management",
+    "smart money",
+    "smart money concepts",
+    "smc",
+    "trade smart money",
   ],
   authors: [{ name: "TradeSmartMoney Team" }],
   creator: "TradeSmartMoney",
@@ -187,6 +192,7 @@ export default function RootLayout({
         <main role="main" id="main-content">
           {children}
         </main>
+        <Footer />
       </body>
     </html>
   );
