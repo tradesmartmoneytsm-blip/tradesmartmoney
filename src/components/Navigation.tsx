@@ -3,6 +3,14 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown, Bell, User, Menu, X, TrendingUp, BarChart3, Newspaper, Building2, Microscope, Bot } from 'lucide-react';
 
+interface MarketIndex {
+  name: string;
+  displayName: string;
+  current: number;
+  change: number;
+  changePercent: number;
+}
+
 export function Navigation({ 
   activeSection, 
   onSectionChange 
@@ -12,10 +20,29 @@ export function Navigation({
 }) {
   const [currentTime, setCurrentTime] = useState('');
   const [isMarketOpen, setIsMarketOpen] = useState(false);
+  const [marketIndices, setMarketIndices] = useState<MarketIndex[]>([]);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMarketMenu, setShowMarketMenu] = useState(false);
   const [showEodScansMenu, setShowEodScansMenu] = useState(false);
   const [showAlgoTradingMenu, setShowAlgoTradingMenu] = useState(false);
+
+  // Fetch market indices data
+  const fetchMarketIndices = async () => {
+    try {
+      const response = await fetch('/api/market-indices');
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        setMarketIndices(data.data);
+        setLastUpdated(new Date());
+      } else {
+        console.error('Failed to fetch market indices:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching market indices:', error);
+    }
+  };
 
   useEffect(() => {
     const updateTimeAndMarketStatus = () => {
@@ -31,6 +58,13 @@ export function Navigation({
     updateTimeAndMarketStatus();
     const timer = setInterval(updateTimeAndMarketStatus, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Fetch market indices on mount and every 15 minutes
+  useEffect(() => {
+    fetchMarketIndices(); // Initial fetch
+    const indicesTimer = setInterval(fetchMarketIndices, 15 * 60 * 1000); // 15 minutes
+    return () => clearInterval(indicesTimer);
   }, []);
 
   useEffect(() => {
@@ -140,9 +174,26 @@ export function Navigation({
               </span>
             </div>
             <div className="hidden sm:flex items-center space-x-4 lg:space-x-6" role="group" aria-label="Market indices">
-              <span>Nifty: <span className="font-semibold text-green-600">22,245.80 (+0.85%)</span></span>
-              <span>Sensex: <span className="font-semibold text-green-600">73,427.59 (+0.92%)</span></span>
-              <span className="hidden md:inline">Bank Nifty: <span className="font-semibold text-red-600">48,234.15 (-0.23%)</span></span>
+              {marketIndices.length > 0 ? (
+                marketIndices.map((index) => {
+                  const isPositive = index.changePercent >= 0;
+                  return (
+                    <span key={index.name} className={['Bank Nifty', 'Finnifty'].includes(index.displayName) ? 'hidden md:inline' : ''}>
+                      {index.displayName}: <span className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                        {index.current.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({isPositive ? '+' : ''}{index.changePercent.toFixed(2)}%)
+                      </span>
+                    </span>
+                  );
+                })
+              ) : (
+                // Fallback while loading
+                <>
+                  <span>Nifty: <span className="font-semibold text-gray-500">Loading...</span></span>
+                  <span>Sensex: <span className="font-semibold text-gray-500">Loading...</span></span>
+                  <span className="hidden md:inline">Bank Nifty: <span className="font-semibold text-gray-500">Loading...</span></span>
+                  <span className="hidden md:inline">Finnifty: <span className="font-semibold text-gray-500">Loading...</span></span>
+                </>
+              )}
             </div>
           </div>
           <div className="text-right text-xs lg:text-sm">
@@ -172,20 +223,25 @@ export function Navigation({
             <p className="text-xs lg:text-sm text-gray-600 mt-1 font-light tracking-wide uppercase">Professional Trading Platform</p>
           </div>
 
-          {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center justify-end space-x-4">
-            <button 
-              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-              aria-label="Notifications"
-            >
-              <Bell className="w-4 h-4 lg:w-5 lg:h-5" aria-hidden="true" />
-            </button>
-            <button 
-              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-              aria-label="User account"
-            >
-              <User className="w-4 h-4 lg:w-5 lg:h-5" aria-hidden="true" />
-            </button>
+          {/* Actions */}
+          <div className="flex items-center justify-end space-x-2">
+            {/* Desktop Actions */}
+            <div className="hidden lg:flex items-center space-x-4">
+              <button 
+                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                aria-label="Notifications"
+              >
+                <Bell className="w-4 h-4 lg:w-5 lg:h-5" aria-hidden="true" />
+              </button>
+              <button 
+                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                aria-label="User account"
+              >
+                <User className="w-4 h-4 lg:w-5 lg:h-5" aria-hidden="true" />
+              </button>
+            </div>
+            
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="lg:hidden p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
