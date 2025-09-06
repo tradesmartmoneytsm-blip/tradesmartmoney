@@ -5,6 +5,7 @@ import { TrendingUp, TrendingDown, Activity, Building2, BarChart3, RefreshCw, Ar
 import type { SectorData } from '@/services/marketDataService';
 import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
 import { FiiDiiActivity } from '@/components/FiiDiiActivity';
+import { trackBusinessEvent, trackPageView } from '@/lib/analytics';
 
 interface MarketSubSection {
   id: string;
@@ -60,10 +61,18 @@ export function Market({ initialSubSection }: MarketProps) {
   useEffect(() => {
     fetchSectorData();
     
-    // Set up auto-refresh every 5 minutes
-    const intervalId = setInterval(fetchSectorData, 5 * 60 * 1000);
+    // Track page view
+    trackPageView('/market', 'Market Analysis');
     
-    return () => clearInterval(intervalId);
+    // Track specific section views
+    if (activeSubSection === 'fii-dii-activity') {
+      trackBusinessEvent.viewFiiDiiData();
+    } else {
+      trackBusinessEvent.viewSectorPerformance();
+    }
+
+    const interval = setInterval(fetchSectorData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const subSections: MarketSubSection[] = [
@@ -77,6 +86,11 @@ export function Market({ initialSubSection }: MarketProps) {
 
   // Manual refresh function
   const handleManualRefresh = async () => {
+    // Track manual refresh action
+    const sectionName = activeSubSection === 'fii-dii-activity' ? 'FII/DII Activity' : 'Sector Performance';
+    trackBusinessEvent.manualRefresh(sectionName);
+    
+    setIsRefreshing(true);
     await fetchSectorData();
   };
 
