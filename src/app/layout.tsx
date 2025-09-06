@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     "automated trading",
     "quantitative trading",
     "machine learning trading",
-    "trading signals",
+    "trading signals", 
     "market analysis",
     "intraday trading",
     "financial data",

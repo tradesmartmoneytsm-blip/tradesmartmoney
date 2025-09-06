@@ -12,16 +12,6 @@ export default function AlgoTradingPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* SEO Meta Tags */}
-      <head>
-        <title>Algo Trading Platform | Smart Money Algorithmic Trading Systems | TradeSmartMoney</title>
-        <meta 
-          name="description" 
-          content="Master algorithmic trading with our comprehensive algo trading platform. Advanced smart money algorithms, swing trading systems, and automated trading strategies for professional results." 
-        />
-        <meta name="keywords" content="algo trading, algorithmic trading, smart money algo, automated trading, trading algorithms, quantitative trading, systematic trading, backtesting" />
-        <link rel="canonical" href="https://tradesmartmoney.com/algo-trading" />
-      </head>
 
       {/* Navigation Header */}
       <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">

@@ -168,19 +168,19 @@ export function Market({ initialSubSection }: MarketProps) {
               <>
                                                             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
                         {[...sectorData].sort((a, b) => b.change - a.change).map((sector) => (
-                    <div key={sector.name} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-all duration-300">
-                      <div className="flex flex-col space-y-1">
-                        <h4 className="text-sm lg:text-base font-semibold text-gray-900 font-serif">{sector.name}</h4>
-                        <p className="text-xs lg:text-sm text-gray-600">{sector.value}</p>
-                        <div className={`text-right ${sector.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          <span className="font-bold text-sm lg:text-base">
-                            {sector.change >= 0 ? '+' : ''}{sector.change}%
-                          </span>
-                        </div>
-                      </div>
+                <div key={sector.name} className="border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-all duration-300">
+                  <div className="flex flex-col space-y-1">
+                    <h4 className="text-sm lg:text-base font-semibold text-gray-900 font-serif">{sector.name}</h4>
+                    <p className="text-xs lg:text-sm text-gray-600">{sector.value}</p>
+                    <div className={`text-right ${sector.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <span className="font-bold text-sm lg:text-base">
+                        {sector.change >= 0 ? '+' : ''}{sector.change}%
+                      </span>
                     </div>
-                  ))}
+                  </div>
                 </div>
+              ))}
+            </div>
                 <div className="mt-4 text-center">
                   <p className="text-xs text-gray-500">
                     📊 Live NSE sector indices data • Refreshes every 5 minutes

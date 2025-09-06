@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn, BarChart3, Zap, TrendingUp as TrendingUpIcon } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
 
 interface GroupedTrades {
@@ -16,6 +16,7 @@ export function SwingTrades() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [selectedImage, setSelectedImage] = useState<{ url: string; symbol: string } | null>(null);
+  const [activeStrategy, setActiveStrategy] = useState<string>('BIT');
 
   const fetchTrades = async () => {
     try {
@@ -55,15 +56,15 @@ export function SwingTrades() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Running':
-        return 'text-blue-600 bg-blue-50 border-blue-200';
+        return 'text-blue-800 bg-gradient-to-r from-blue-100 to-blue-200 border-blue-300 ring-1 ring-blue-400/20';
       case 'Trade Successful':
-        return 'text-green-600 bg-green-50 border-green-200';
+        return 'text-emerald-800 bg-gradient-to-r from-emerald-100 to-green-200 border-emerald-300 ring-1 ring-emerald-400/20';
       case 'SL Hit':
-        return 'text-red-600 bg-red-50 border-red-200';
+        return 'text-red-800 bg-gradient-to-r from-red-100 to-red-200 border-red-300 ring-1 ring-red-400/20';
       case 'Cancelled':
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return 'text-slate-800 bg-gradient-to-r from-gray-100 to-gray-200 border-gray-300 ring-1 ring-gray-400/20';
       default:
-        return 'text-blue-600 bg-blue-50 border-blue-200';
+        return 'text-blue-800 bg-gradient-to-r from-blue-100 to-blue-200 border-blue-300 ring-1 ring-blue-400/20';
     }
   };
 
@@ -117,6 +118,75 @@ export function SwingTrades() {
     }).format(amount);
   };
 
+  // Calculate statistics for a group of trades
+  const calculateStats = (trades: SwingTrade[]) => {
+    const totalTrades = trades.length;
+    const runningTrades = trades.filter(t => t.status === 'Running').length;
+    const successfulTrades = trades.filter(t => t.status === 'Trade Successful').length;
+    const slHitTrades = trades.filter(t => t.status === 'SL Hit').length;
+    const completedTrades = successfulTrades + slHitTrades;
+    
+    const winningRatio = completedTrades > 0 ? (successfulTrades / completedTrades) * 100 : 0;
+    
+    // Calculate total profit/loss
+    const totalProfitLoss = trades.reduce((total, trade) => {
+      if (trade.status === 'Trade Successful' && trade.exit_price && trade.entry_price) {
+        return total + ((trade.exit_price - trade.entry_price) / trade.entry_price) * 100;
+      } else if (trade.status === 'SL Hit' && trade.stop_loss && trade.entry_price) {
+        return total + ((trade.stop_loss - trade.entry_price) / trade.entry_price) * 100;
+      }
+      return total;
+    }, 0);
+
+    return {
+      totalTrades,
+      runningTrades,
+      successfulTrades,
+      slHitTrades,
+      completedTrades,
+      winningRatio,
+      totalProfitLoss
+    };
+  };
+
+  // Sort trades: Running first, then by entry date
+  const sortTrades = (trades: SwingTrade[]) => {
+    return [...trades].sort((a, b) => {
+      // Priority: Running > Trade Successful > SL Hit > Cancelled
+      const statusPriority = { 'Running': 0, 'Trade Successful': 1, 'SL Hit': 2, 'Cancelled': 3 };
+      const aPriority = statusPriority[a.status as keyof typeof statusPriority] ?? 4;
+      const bPriority = statusPriority[b.status as keyof typeof statusPriority] ?? 4;
+      
+      if (aPriority !== bPriority) {
+        return aPriority - bPriority;
+      }
+      
+      // Secondary sort: by entry date (newest first for same status)
+      return new Date(b.entry_date).getTime() - new Date(a.entry_date).getTime();
+    });
+  };
+
+  const strategies = [
+    { 
+      id: 'BIT', 
+      label: 'BIT Strategy', 
+      icon: <BarChart3 className="w-4 h-4" />, 
+      description: 'Buyer Initiated Trades Analysis' 
+    },
+    { 
+      id: 'Swing Angle', 
+      label: 'Swing Angle', 
+      icon: <Zap className="w-4 h-4" />, 
+      description: 'Angular Momentum Strategy' 
+    },
+    { 
+      id: 'Bottom Formation', 
+      label: 'Bottom Formation', 
+      icon: <TrendingUpIcon className="w-4 h-4" />, 
+      description: 'Reversal Pattern Strategy' 
+    }
+  ];
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-IN', {
       year: 'numeric',
@@ -125,41 +195,92 @@ export function SwingTrades() {
     });
   };
 
-  const TradeCard = ({ trade }: { trade: SwingTrade }) => (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
-      <div className="flex justify-between items-start mb-3">
-        <div>
-          <h4 className="text-lg font-bold text-gray-900">{trade.stock_name}</h4>
-          <p className="text-sm text-gray-600 font-mono">{trade.stock_symbol}</p>
+  // Risk calculation based on stop loss distance and position size
+  const calculateRiskLevel = (trade: SwingTrade) => {
+    const riskPercent = ((trade.entry_price - trade.stop_loss) / trade.entry_price) * 100;
+    if (riskPercent <= 5) return { level: 'Low', color: 'green', bgColor: 'bg-green-100', textColor: 'text-green-800', icon: '🟢' };
+    if (riskPercent <= 10) return { level: 'Medium', color: 'yellow', bgColor: 'bg-yellow-100', textColor: 'text-yellow-800', icon: '🟡' };
+    return { level: 'High', color: 'red', bgColor: 'bg-red-100', textColor: 'text-red-800', icon: '🔴' };
+  };
+
+  // Calculate expected return from entry and exit/target prices
+  const calculateExpectedReturn = (trade: SwingTrade): number => {
+    // If trade has exit price (completed trade), calculate actual return
+    if (trade.exit_price) {
+      return ((trade.exit_price - trade.entry_price) / trade.entry_price) * 100;
+    }
+    // If trade is running, calculate potential return using target price
+    if (trade.target_price) {
+      return ((trade.target_price - trade.entry_price) / trade.entry_price) * 100;
+    }
+    // Fallback to stored potential_return if available
+    return trade.potential_return || 0;
+  };
+
+  // Performance trend indicator
+  const getPerformanceTrend = (trade: SwingTrade) => {
+    const expectedReturn = calculateExpectedReturn(trade);
+    if (expectedReturn > 10) return { icon: '🚀', label: 'High Potential', color: 'text-green-600' };
+    if (expectedReturn > 5) return { icon: '📈', label: 'Good Potential', color: 'text-blue-600' };
+    if (expectedReturn > 0) return { icon: '↗️', label: 'Moderate', color: 'text-yellow-600' };
+    return { icon: '⚠️', label: 'Risk', color: 'text-red-600' };
+  };
+
+  const TradeCard = ({ trade }: { trade: SwingTrade }) => {
+    const riskLevel = calculateRiskLevel(trade);
+    const performanceTrend = getPerformanceTrend(trade);
+    const expectedReturn = calculateExpectedReturn(trade);
+
+    return (
+    <div className="group bg-white rounded-lg shadow-md border border-gray-100 p-4 hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-gray-50 to-white">
+              <div className="flex justify-between items-start mb-3">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <h4 className="text-lg font-bold text-gray-800 group-hover:text-blue-900 transition-colors">{trade.stock_name}</h4>
+            {performanceTrend && (
+              <div className={`flex items-center gap-1 text-xs font-medium ${performanceTrend.color}`}>
+                <span>{performanceTrend.icon}</span>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-gray-500 font-mono tracking-wider">{trade.stock_symbol}</p>
+            <div className={`px-2 py-1 rounded-full text-xs font-semibold ${riskLevel.bgColor} ${riskLevel.textColor} flex items-center gap-1`}>
+              <span>{riskLevel.icon}</span>
+              <span>{riskLevel.level} Risk</span>
+            </div>
+          </div>
         </div>
-        <div className={`px-2 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${getStatusColor(trade.status)}`}>
+        <div className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm ${getStatusColor(trade.status)}`}>
           {getStatusIcon(trade.status)}
-          {trade.status}
+          <span className="tracking-wide">{trade.status}</span>
         </div>
       </div>
 
       {trade.setup_description && (
-        <p className="text-sm text-gray-700 mb-3 italic">{trade.setup_description}</p>
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 mb-3 border-l-4 border-blue-400">
+          <p className="text-sm text-blue-900 font-medium italic leading-relaxed">{trade.setup_description}</p>
+        </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3 mb-3">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Entry:</span>
-            <span className="font-semibold text-green-600">{formatCurrency(trade.entry_price)}</span>
+      <div className="grid grid-cols-2 gap-4 mb-3">
+        <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Entry:</span>
+            <span className="font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md text-sm">{formatCurrency(trade.entry_price)}</span>
           </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Stop Loss:</span>
-            <span className="font-semibold text-red-600">{formatCurrency(trade.stop_loss)}</span>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Stop Loss:</span>
+            <span className="font-bold text-red-700 bg-red-100 px-2 py-1 rounded-md text-sm">{formatCurrency(trade.stop_loss)}</span>
           </div>
           {trade.target_price && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Target:</span>
-              <span className="font-semibold text-blue-600">{formatCurrency(trade.target_price)}</span>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">Target:</span>
+              <span className="font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded-md text-sm">{formatCurrency(trade.target_price)}</span>
             </div>
           )}
         </div>
-        <div className="space-y-2">
+        <div className="bg-gray-50 rounded-lg p-3 space-y-2">
           {/* Current price hidden as it's not updated daily
           {trade.current_price && (
             <div className="flex items-center justify-between text-sm">
@@ -169,53 +290,86 @@ export function SwingTrades() {
           )}
           */}
           {trade.exit_price && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Exit:</span>
-              <span className="font-semibold text-purple-600">{formatCurrency(trade.exit_price)}</span>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">Exit:</span>
+              <span className="font-bold text-purple-700 bg-purple-100 px-2 py-1 rounded-md text-sm">{formatCurrency(trade.exit_price)}</span>
             </div>
           )}
-          {trade.potential_return && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Expected Return:</span>
-              <span className={`font-semibold ${trade.potential_return >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {trade.potential_return.toFixed(2)}%
-              </span>
+          {(expectedReturn !== 0 || trade.target_price || trade.exit_price) && (
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">
+                  {trade.exit_price ? 'Actual Return:' : 'Expected Return:'}
+                </span>
+                <div className="flex items-center gap-2">
+                  {performanceTrend && (
+                    <span className="text-xs">{performanceTrend.icon}</span>
+                  )}
+                  <span className={`font-bold px-3 py-1.5 rounded-lg text-sm ${expectedReturn >= 0 ? 'text-emerald-800 bg-gradient-to-r from-emerald-100 to-green-200' : 'text-red-800 bg-gradient-to-r from-red-100 to-red-200'}`}>
+                    {expectedReturn.toFixed(1)}%
+                  </span>
+                </div>
+              </div>
+              {/* Mini Progress Bar for Expected Return */}
+              <div className="w-full">
+                <div className="bg-gray-200 rounded-full h-1.5">
+                  <div 
+                    className={`h-1.5 rounded-full transition-all duration-1000 ${expectedReturn >= 0 ? 'bg-gradient-to-r from-emerald-400 to-green-500' : 'bg-gradient-to-r from-red-400 to-red-500'}`}
+                    style={{ width: `${Math.min(Math.abs(expectedReturn) * 10, 100)}%` }}
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      <div className="flex justify-between items-center text-xs text-gray-500 pt-2 border-t border-gray-100">
+      <div className="flex justify-between items-center text-sm text-gray-600 pt-3 border-t border-gradient-to-r from-transparent via-gray-200 to-transparent bg-gradient-to-r from-gray-50 to-gray-100 rounded-md px-3 py-2 mt-3">
         <div className="flex items-center gap-1">
-          <Calendar className="w-3 h-3" />
+          <Calendar className="w-2.5 h-2.5" />
           <span>Entry: {formatDate(trade.entry_date)}</span>
         </div>
         {trade.risk_reward_ratio && (
-          <div className="flex items-center gap-1">
-            <Target className="w-3 h-3" />
-            <span>R:R {trade.risk_reward_ratio}</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <Target className="w-2.5 h-2.5" />
+              <span>R:R {trade.risk_reward_ratio}</span>
+            </div>
+            {/* Risk-Reward Visual Indicator */}
+            <div className="flex items-center gap-0.5">
+              <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+              <div className="w-px h-3 bg-gray-300"></div>
+              {parseFloat(trade.risk_reward_ratio.split(':')[1] || '1') >= 2 ? (
+                <>
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                </>
+              ) : (
+                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+              )}
+            </div>
           </div>
         )}
         {trade.timeframe && (
           <div className="flex items-center gap-1">
-            <Clock className="w-3 h-3" />
+            <Clock className="w-2.5 h-2.5" />
             <span>{trade.timeframe}</span>
           </div>
         )}
       </div>
 
       {trade.chart_image_url && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-            <div className="flex items-center gap-2">
-              <Image className="w-4 h-4" />
+        <div className="mt-2 pt-2 border-t border-gray-100">
+          <div className="flex items-center justify-between text-xs text-gray-600 mb-1.5">
+            <div className="flex items-center gap-1.5">
+              <Image className="w-3 h-3" />
               <span>Chart Analysis</span>
             </div>
             <button
               onClick={() => setSelectedImage({ url: trade.chart_image_url!, symbol: trade.stock_symbol })}
-              className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+              className="flex items-center gap-0.5 text-blue-600 hover:text-blue-800 transition-colors"
             >
-              <ZoomIn className="w-3 h-3" />
+              <ZoomIn className="w-2.5 h-2.5" />
               <span className="text-xs">Expand</span>
             </button>
           </div>
@@ -226,57 +380,206 @@ export function SwingTrades() {
             <img 
               src={trade.chart_image_url} 
               alt={`${trade.stock_symbol} chart`}
-              className="w-full h-48 object-contain rounded border border-gray-200 group-hover:border-blue-300 transition-colors"
+              className="w-full h-36 object-contain rounded border border-gray-200 group-hover:border-blue-300 transition-colors"
               loading="lazy"
             />
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 rounded flex items-center justify-center opacity-0 group-hover:opacity-100">
-              <ZoomIn className="w-6 h-6 text-white" />
+              <ZoomIn className="w-5 h-5 text-white" />
             </div>
           </div>
         </div>
       )}
 
       {trade.notes && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-2 pt-2 border-t border-gray-100">
           <p className="text-xs text-gray-600">{trade.notes}</p>
         </div>
       )}
     </div>
   );
+  };
 
-  const StrategySection = ({ strategy, trades: strategyTrades }: { strategy: keyof GroupedTrades; trades: SwingTrade[] }) => (
-    <div className={`rounded-lg border-l-4 ${getStrategyColor(strategy)} p-6 mb-8`}>
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">{strategy}</h3>
-          <p className="text-sm text-gray-600">{getStrategyDescription(strategy)}</p>
-        </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-gray-900">{strategyTrades.length}</div>
-          <div className="text-sm text-gray-600">
-            {strategyTrades.length === 1 ? 'Trade' : 'Trades'}
+  const StrategySection = ({ strategy, trades: strategyTrades }: { strategy: keyof GroupedTrades; trades: SwingTrade[] }) => {
+    const stats = calculateStats(strategyTrades);
+    const sortedTrades = sortTrades(strategyTrades);
+
+    return (
+      <div className={`rounded-lg border-l-4 ${getStrategyColor(strategy)} p-4 mb-6`}>
+        {/* Header with Strategy Name */}
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">{strategy}</h3>
+            <p className="text-xs text-gray-600">{getStrategyDescription(strategy)}</p>
+          </div>
+          <div className="text-right">
+            <div className="text-xl font-semibold text-gray-900">{stats.totalTrades}</div>
+            <div className="text-xs text-gray-600">Total</div>
           </div>
         </div>
-      </div>
 
-      {strategyTrades.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          <TrendingUp className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p>No trades available for this strategy</p>
+        {/* Statistics Dashboard */}
+        {stats.totalTrades > 0 && (
+          <div className="bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-xl shadow-lg border border-blue-100 px-6 py-4 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+              <div className="group cursor-default">
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg p-3 mb-2 shadow-md group-hover:shadow-lg transition-shadow">
+                  <div className="text-xl font-black">{stats.runningTrades}</div>
+                  <div className="flex items-center justify-center mt-1">
+                    <span className="text-xs">⚡ Active</span>
+                  </div>
+                </div>
+                <div className="text-sm font-semibold text-blue-700">Running</div>
+              </div>
+              <div className="group cursor-default">
+                <div className="bg-gradient-to-br from-emerald-500 to-green-600 text-white rounded-lg p-3 mb-2 shadow-md group-hover:shadow-lg transition-shadow">
+                  <div className="text-xl font-black">{stats.successfulTrades}</div>
+                  <div className="flex items-center justify-center mt-1">
+                    {stats.successfulTrades > 0 ? (
+                      <span className="text-xs">🎯 Profitable</span>
+                    ) : (
+                      <span className="text-xs">🎲 Pending</span>
+                    )}
+                  </div>
+                </div>
+                <div className="text-sm font-semibold text-emerald-700">Success</div>
+              </div>
+              <div className="group cursor-default">
+                <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-lg p-3 mb-2 shadow-md group-hover:shadow-lg transition-shadow">
+                  <div className="text-xl font-black">{stats.slHitTrades}</div>
+                  <div className="flex items-center justify-center mt-1">
+                    {stats.slHitTrades > 0 ? (
+                      <span className="text-xs">🛡️ Protected</span>
+                    ) : (
+                      <span className="text-xs">🎯 Clean</span>
+                    )}
+                  </div>
+                </div>
+                <div className="text-sm font-semibold text-red-700">SL Hit</div>
+              </div>
+              <div className="group cursor-default">
+                <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg p-3 mb-2 shadow-md group-hover:shadow-lg transition-shadow">
+                  <div className="text-xl font-black">{stats.winningRatio.toFixed(0)}%</div>
+                  {/* Progress Bar for Win Rate */}
+                  <div className="mt-2 bg-white/20 rounded-full h-2">
+                    <div 
+                      className="bg-white rounded-full h-2 transition-all duration-1000"
+                      style={{ width: `${Math.min(stats.winningRatio, 100)}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="text-sm font-semibold text-purple-700">Win Rate</div>
+              </div>
+              <div className="group cursor-default">
+                <div className={`text-white rounded-lg p-3 mb-2 shadow-md group-hover:shadow-lg transition-shadow ${stats.totalProfitLoss >= 0 ? 'bg-gradient-to-br from-emerald-500 to-green-600' : 'bg-gradient-to-br from-red-500 to-red-600'}`}>
+                  <div className="text-xl font-black">
+                    {stats.totalProfitLoss >= 0 ? '+' : ''}{stats.totalProfitLoss.toFixed(1)}%
+                  </div>
+                  {/* Performance Indicator */}
+                  <div className="flex items-center justify-center mt-1">
+                    {stats.totalProfitLoss > 10 ? (
+                      <span className="text-xs">🚀 Excellent</span>
+                    ) : stats.totalProfitLoss > 5 ? (
+                      <span className="text-xs">📈 Good</span>
+                    ) : stats.totalProfitLoss > 0 ? (
+                      <span className="text-xs">↗️ Positive</span>
+                    ) : (
+                      <span className="text-xs">📉 Negative</span>
+                    )}
+                  </div>
+                </div>
+                <div className={`text-sm font-semibold ${stats.totalProfitLoss >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>P&L</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Trades Display */}
+        {strategyTrades.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <TrendingUp className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p>No trades available for this strategy</p>
+          </div>
+        ) : (
+          <>
+            {/* Running Trades Section */}
+            {stats.runningTrades > 0 && (
+              <div className="mb-4">
+                <h4 className="text-base font-medium text-gray-900 mb-2 flex items-center">
+                  <Activity className="w-4 h-4 mr-1 text-blue-600" />
+                  Running ({stats.runningTrades})
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {sortedTrades.filter(trade => trade.status === 'Running').map((trade) => (
+                    <TradeCard key={trade.id} trade={trade} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Completed Trades Section */}
+            {stats.completedTrades > 0 && (
+              <div>
+                <h4 className="text-base font-medium text-gray-900 mb-2 flex items-center">
+                  <Target className="w-4 h-4 mr-1 text-gray-600" />
+                  Completed ({stats.completedTrades})
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {sortedTrades.filter(trade => ['Trade Successful', 'SL Hit', 'Cancelled'].includes(trade.status)).map((trade) => (
+                    <TradeCard key={trade.id} trade={trade} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    );
+  };
+
+  // Tab Navigation Component
+  const TabNavigation = () => (
+    <div className="mb-8">
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-2">
+        <div className="flex flex-wrap gap-1">
+          {strategies.map((strategy) => {
+            const strategyTrades = groupedTrades[strategy.id as keyof GroupedTrades] || [];
+            const stats = calculateStats(strategyTrades);
+            const isActive = activeStrategy === strategy.id;
+            
+            return (
+              <button
+                key={strategy.id}
+                onClick={() => setActiveStrategy(strategy.id)}
+                className={`
+                  group flex items-center gap-3 px-6 py-4 rounded-lg transition-all duration-300 hover:-translate-y-0.5
+                  ${isActive 
+                    ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg ring-2 ring-blue-400/20 transform scale-105' 
+                    : 'bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 hover:from-blue-50 hover:to-purple-50 hover:text-blue-800 hover:shadow-md'
+                  }
+                `}
+              >
+                <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20' : 'bg-white shadow-sm'}`}>
+                  <div className={`${isActive ? 'text-white' : 'text-blue-600 group-hover:text-blue-700'}`}>
+                    {strategy.icon}
+                  </div>
+                </div>
+                <div className="text-left">
+                  <div className="font-bold text-sm tracking-wide">{strategy.label}</div>
+                  <div className={`text-xs font-medium ${isActive ? 'text-blue-100' : 'text-gray-600 group-hover:text-blue-700'}`}>
+                    {stats.totalTrades} trades • {stats.runningTrades} active
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {strategyTrades.map((trade) => (
-            <TradeCard key={trade.id} trade={trade} />
-          ))}
-        </div>
-      )}
+      </div>
     </div>
   );
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-8">
+      <div className="min-h-screen bg-gray-50 px-4 py-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-12">
             <RefreshCw className="w-8 h-8 mx-auto mb-4 animate-spin text-blue-600" />
@@ -289,7 +592,7 @@ export function SwingTrades() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-8">
+      <div className="min-h-screen bg-gray-50 px-4 py-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-12">
             <AlertCircle className="w-8 h-8 mx-auto mb-4 text-red-600" />
@@ -307,39 +610,36 @@ export function SwingTrades() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Swing Trading Strategies</h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-4">
-            Professional swing trading opportunities across three proven strategies with detailed analysis and risk management.
-          </p>
           <div className="flex justify-center items-center gap-4">
             <button
               onClick={fetchTrades}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              className="group flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-purple-700 transform hover:-translate-y-0.5 transition-all duration-300"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-3 h-3" />
               Refresh
             </button>
             {lastUpdated && (
-              <p className="text-sm text-gray-500">
-                Last updated: {lastUpdated.toLocaleTimeString('en-IN')}
-              </p>
+              <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-full px-4 py-2 shadow-sm">
+                <p className="text-sm font-medium text-gray-700">
+                  ⏰ Updated: {lastUpdated.toLocaleTimeString('en-IN')}
+                </p>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Strategy Sections */}
-        <div className="space-y-8">
-          {(['BIT', 'Swing Angle', 'Bottom Formation'] as const).map((strategy) => (
-            <StrategySection
-              key={strategy}
-              strategy={strategy}
-              trades={groupedTrades[strategy] || []}
-            />
-          ))}
+        {/* Tab Navigation */}
+        <TabNavigation />
+
+        {/* Active Strategy Section */}
+        <div className="space-y-5">
+          <StrategySection
+            strategy={activeStrategy as keyof GroupedTrades}
+            trades={groupedTrades[activeStrategy as keyof GroupedTrades] || []}
+          />
         </div>
 
         {/* Trading Guidelines */}
@@ -390,36 +690,35 @@ export function SwingTrades() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Image Modal */}
-      {selectedImage && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative max-w-5xl max-h-full w-full">
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 z-10 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <div className="bg-white rounded-lg p-2">
-              <div className="flex items-center justify-between mb-2 px-2">
-                <h3 className="font-semibold text-gray-900">{selectedImage.symbol} Chart Analysis</h3>
-                <span className="text-sm text-gray-600">Click outside to close</span>
+        {/* Image Modal */}
+        {selectedImage && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedImage(null)}
+          >
+            <div className="relative max-w-5xl max-h-full w-full">
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="absolute top-4 right-4 z-10 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="bg-white rounded-lg p-2">
+                <div className="flex items-center justify-between mb-2 px-2">
+                  <h3 className="font-semibold text-gray-900">{selectedImage.symbol} Chart Analysis</h3>
+                  <span className="text-sm text-gray-600">Click outside to close</span>
+                </div>
+                <img
+                  src={selectedImage.url}
+                  alt={`${selectedImage.symbol} chart`}
+                  className="w-full max-h-[80vh] object-contain rounded"
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
-              <img
-                src={selectedImage.url}
-                alt={`${selectedImage.symbol} chart`}
-                className="w-full max-h-[80vh] object-contain rounded"
-                onClick={(e) => e.stopPropagation()}
-              />
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
   );
 } 

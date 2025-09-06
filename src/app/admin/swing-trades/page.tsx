@@ -546,17 +546,41 @@ export default function AdminSwingTrades() {
     setFormData(prev => ({ ...prev, chart_image_url: base64OrUrl }));
   };
 
-  // Auto-calculate expected return when target and entry prices change
+  // Auto-calculate expected return when entry, exit, or target prices change
   useEffect(() => {
-    if (formData.entry_price && formData.target_price && !formData.potential_return) {
-      const entry = parseFloat(formData.entry_price);
-      const target = parseFloat(formData.target_price);
-      if (!isNaN(entry) && !isNaN(target) && entry > 0) {
-        const expectedReturn = ((target - entry) / entry) * 100;
-        setFormData(prev => ({ ...prev, potential_return: expectedReturn.toFixed(2) }));
+    const entry = parseFloat(formData.entry_price);
+    if (isNaN(entry) || entry <= 0) return;
+
+    let calculatedReturn = 0;
+    let shouldUpdate = false;
+
+    // Priority 1: If exit price exists (completed trade), calculate actual return
+    if (formData.exit_price) {
+      const exit = parseFloat(formData.exit_price);
+      if (!isNaN(exit)) {
+        calculatedReturn = ((exit - entry) / entry) * 100;
+        shouldUpdate = true;
       }
     }
-  }, [formData.entry_price, formData.target_price, formData.potential_return]);
+    // Priority 2: If no exit price but target price exists, calculate expected return
+    else if (formData.target_price) {
+      const target = parseFloat(formData.target_price);
+      if (!isNaN(target)) {
+        calculatedReturn = ((target - entry) / entry) * 100;
+        shouldUpdate = true;
+      }
+    }
+
+    // Only update if we have a valid calculation and the field is empty or different
+    if (shouldUpdate) {
+      const currentReturn = parseFloat(formData.potential_return || '0');
+      const roundedReturn = Math.round(calculatedReturn * 100) / 100; // Round to 2 decimal places
+      
+      if (Math.abs(currentReturn - roundedReturn) > 0.01) {
+        setFormData(prev => ({ ...prev, potential_return: roundedReturn.toFixed(2) }));
+      }
+    }
+  }, [formData.entry_price, formData.exit_price, formData.target_price]);
 
   // Show loading while checking authentication
   if (checkingAuth) {
@@ -814,17 +838,41 @@ export default function AdminSwingTrades() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Expected Return (%)
+                      {formData.exit_price ? 'Actual Return (%)' : 'Expected Return (%)'} 
+                      <span className="text-xs text-blue-600 ml-2">
+                        {(formData.entry_price && (formData.exit_price || formData.target_price)) ? '🔄 Auto-calculated' : ''}
+                      </span>
                     </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      name="potential_return"
-                      value={formData.potential_return}
-                      onChange={handleInputChange}
-                      placeholder="0.00"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className="relative">
+                      <input
+                        type="number"
+                        step="0.01"
+                        name="potential_return"
+                        value={formData.potential_return}
+                        onChange={handleInputChange}
+                        placeholder="0.00"
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          (formData.entry_price && (formData.exit_price || formData.target_price)) 
+                            ? 'border-blue-300 bg-blue-50' 
+                            : 'border-gray-300'
+                        }`}
+                      />
+                      {(formData.entry_price && (formData.exit_price || formData.target_price)) && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          <span className="text-blue-500 text-xs">✨</span>
+                        </div>
+                      )}
+                    </div>
+                    {(formData.entry_price && formData.exit_price) && (
+                      <p className="text-xs text-gray-600 mt-1">
+                        ℹ️ Based on Entry (₹{formData.entry_price}) → Exit (₹{formData.exit_price})
+                      </p>
+                    )}
+                    {(formData.entry_price && formData.target_price && !formData.exit_price) && (
+                      <p className="text-xs text-gray-600 mt-1">
+                        ℹ️ Based on Entry (₹{formData.entry_price}) → Target (₹{formData.target_price})
+                      </p>
+                    )}
                   </div>
                 </div>
 

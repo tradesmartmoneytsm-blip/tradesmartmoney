@@ -32,4 +32,4 @@ Disallow: /test/
 Sitemap: https://tradesmartmoney.com/sitemap.xml
 
 # Crawl-delay (be respectful)
-Crawl-delay: 1 
+Crawl-delay: 1
