@@ -173,25 +173,49 @@ export function Navigation({
                 {isMarketOpen ? 'Market Open' : 'Market Closed'}
               </span>
             </div>
-            <div className="hidden sm:flex items-center space-x-4 lg:space-x-6" role="group" aria-label="Market indices">
+            <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6 overflow-x-auto" role="group" aria-label="Market indices">
               {marketIndices.length > 0 ? (
                 marketIndices.map((index) => {
                   const isPositive = index.changePercent >= 0;
+                  // Show different indices based on screen size
+                  const mobileClass = index.displayName === 'Nifty' || index.displayName === 'Bank Nifty' ? '' : 'hidden sm:inline';
+                  const tabletClass = ['Bank Nifty', 'Finnifty'].includes(index.displayName) ? 'hidden md:inline' : '';
+                  const finalClass = mobileClass || tabletClass;
+                  
                   return (
-                    <span key={index.name} className={['Bank Nifty', 'Finnifty'].includes(index.displayName) ? 'hidden md:inline' : ''}>
-                      {index.displayName}: <span className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                        {index.current.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({isPositive ? '+' : ''}{index.changePercent.toFixed(2)}%)
+                    <span key={index.name} className={`whitespace-nowrap ${finalClass}`}>
+                      <span className="hidden sm:inline">{index.displayName}: </span>
+                      <span className="sm:hidden">{index.displayName.charAt(0)}: </span>
+                      <span className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                        <span className="hidden sm:inline">
+                          {index.current.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({isPositive ? '+' : ''}{index.changePercent.toFixed(2)}%)
+                        </span>
+                        <span className="sm:hidden">
+                          {index.current.toLocaleString('en-IN', { maximumFractionDigits: 0 })} ({isPositive ? '+' : ''}{index.changePercent.toFixed(1)}%)
+                        </span>
                       </span>
                     </span>
                   );
                 })
               ) : (
-                // Fallback while loading
+                // Fallback while loading - responsive
                 <>
-                  <span>Nifty: <span className="font-semibold text-gray-500">Loading...</span></span>
-                  <span>Sensex: <span className="font-semibold text-gray-500">Loading...</span></span>
-                  <span className="hidden md:inline">Bank Nifty: <span className="font-semibold text-gray-500">Loading...</span></span>
-                  <span className="hidden md:inline">Finnifty: <span className="font-semibold text-gray-500">Loading...</span></span>
+                  <span className="whitespace-nowrap">
+                    <span className="hidden sm:inline">Nifty: </span>
+                    <span className="sm:hidden">N: </span>
+                    <span className="font-semibold text-gray-500">Loading...</span>
+                  </span>
+                  <span className="whitespace-nowrap hidden sm:inline">
+                    Sensex: <span className="font-semibold text-gray-500">Loading...</span>
+                  </span>
+                  <span className="whitespace-nowrap">
+                    <span className="hidden sm:inline">Bank Nifty: </span>
+                    <span className="sm:hidden">B: </span>
+                    <span className="font-semibold text-gray-500">Loading...</span>
+                  </span>
+                  <span className="whitespace-nowrap hidden md:inline">
+                    Finnifty: <span className="font-semibold text-gray-500">Loading...</span>
+                  </span>
                 </>
               )}
             </div>
