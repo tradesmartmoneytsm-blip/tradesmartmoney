@@ -23,8 +23,8 @@ export function Footer() {
             </p>
             <div className="flex items-center text-gray-400 text-sm">
               <Mail className="h-4 w-4 mr-2" />
-              <a href="mailto:support@tradesmartmoney.com" className="hover:text-white transition-colors">
-                support@tradesmartmoney.com
+              <a href="mailto:tradesmartmoneytsm@gmail.com" className="hover:text-white transition-colors">
+                tradesmartmoneytsm@gmail.com
               </a>
             </div>
           </div>
@@ -88,22 +88,22 @@ export function Footer() {
                   FAQ
                 </Link>
               </li>
-              <li>
-                <a 
-                  href="mailto:careers@tradesmartmoney.com" 
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="mailto:business@tradesmartmoney.com" 
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Partnerships
-                </a>
-              </li>
+                             <li>
+                 <a 
+                   href="mailto:tradesmartmoneytsm@gmail.com" 
+                   className="text-gray-300 hover:text-white transition-colors"
+                 >
+                   Careers
+                 </a>
+               </li>
+                             <li>
+                 <a 
+                   href="mailto:tradesmartmoneytsm@gmail.com" 
+                   className="text-gray-300 hover:text-white transition-colors"
+                 >
+                   Partnerships
+                 </a>
+               </li>
             </ul>
           </div>
 

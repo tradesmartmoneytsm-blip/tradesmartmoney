@@ -70,33 +70,33 @@ export default function Contact() {
                 <div className="bg-blue-100 rounded-lg p-3">
                   <Mail className="h-6 w-6 text-blue-600" />
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Email Us</h3>
-                  <p className="text-gray-600">support@tradesmartmoney.com</p>
-                  <p className="text-sm text-gray-500">For general inquiries and support</p>
-                </div>
+                               <div>
+                 <h3 className="font-semibold text-gray-900">Email Us</h3>
+                 <p className="text-gray-600">tradesmartmoneytsm@gmail.com</p>
+                 <p className="text-sm text-gray-500">For general inquiries and support</p>
+               </div>
               </div>
 
               <div className="flex items-start space-x-4">
                 <div className="bg-green-100 rounded-lg p-3">
                   <MessageSquare className="h-6 w-6 text-green-600" />
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Technical Support</h3>
-                  <p className="text-gray-600">tech@tradesmartmoney.com</p>
-                  <p className="text-sm text-gray-500">For platform and technical issues</p>
-                </div>
+                               <div>
+                 <h3 className="font-semibold text-gray-900">Technical Support</h3>
+                 <p className="text-gray-600">tradesmartmoneytsm@gmail.com</p>
+                 <p className="text-sm text-gray-500">For platform and technical issues</p>
+               </div>
               </div>
 
               <div className="flex items-start space-x-4">
                 <div className="bg-purple-100 rounded-lg p-3">
                   <Phone className="h-6 w-6 text-purple-600" />
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Business Inquiries</h3>
-                  <p className="text-gray-600">business@tradesmartmoney.com</p>
-                  <p className="text-sm text-gray-500">For partnerships and business development</p>
-                </div>
+                               <div>
+                 <h3 className="font-semibold text-gray-900">Business Inquiries</h3>
+                 <p className="text-gray-600">tradesmartmoneytsm@gmail.com</p>
+                 <p className="text-sm text-gray-500">For partnerships and business development</p>
+               </div>
               </div>
 
               <div className="flex items-start space-x-4">

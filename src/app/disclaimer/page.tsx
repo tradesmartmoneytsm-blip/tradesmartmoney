@@ -108,7 +108,7 @@ export default function Disclaimer() {
             <p className="text-gray-700 mb-6">
               If you have questions about this disclaimer, please contact us at:
               <br />
-              Email: legal@tradesmartmoney.com
+              Email: tradesmartmoneytsm@gmail.com
             </p>
 
             <p className="text-sm text-gray-500 mt-8 font-semibold">

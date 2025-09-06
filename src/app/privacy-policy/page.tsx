@@ -78,7 +78,7 @@ export default function PrivacyPolicy() {
             <p className="text-gray-700 mb-6">
               If you have any questions about this Privacy Policy, please contact us at:
               <br />
-              Email: privacy@tradesmartmoney.com
+              Email: tradesmartmoneytsm@gmail.com
               <br />
               Address: [Your Business Address]
             </p>

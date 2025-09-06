@@ -102,7 +102,7 @@ export default function TermsOfService() {
             <p className="text-gray-700 mb-6">
               If you have any questions about these Terms of Service, please contact us at:
               <br />
-              Email: legal@tradesmartmoney.com
+              Email: tradesmartmoneytsm@gmail.com
               <br />
               Address: [Your Business Address]
             </p>
