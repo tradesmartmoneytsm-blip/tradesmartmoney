@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
-import { Settings, Activity, BarChart3, Target, Zap, Shield, TrendingUp, Brain, CheckCircle, ArrowRight, Cpu, Code } from 'lucide-react';
+import { Settings, Activity, BarChart3, Target, Zap, Shield, TrendingUp, Brain, CheckCircle, ArrowRight, Cpu, Code, Home } from 'lucide-react';
 
 export default function AlgoTradingPage() {
   useEffect(() => {
@@ -21,6 +22,49 @@ export default function AlgoTradingPage() {
         <meta name="keywords" content="algo trading, algorithmic trading, smart money algo, automated trading, trading algorithms, quantitative trading, systematic trading, backtesting" />
         <link rel="canonical" href="https://tradesmartmoney.com/algo-trading" />
       </head>
+
+      {/* Navigation Header */}
+      <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
+                  TradeSmartMoney
+                </h1>
+                <p className="text-xs text-gray-500">Professional Trading Platform</p>
+              </div>
+            </Link>
+            
+            <div className="flex items-center space-x-4">
+              <Link 
+                href="/" 
+                className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group"
+              >
+                <Home className="w-4 h-4" />
+                <span className="font-medium">Trading Platform</span>
+              </Link>
+              <Link 
+                href="/smart-money-concepts" 
+                className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group"
+              >
+                <span className="text-sm">Smart Money</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <Link 
+                href="/ai-powered-trading" 
+                className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors group"
+              >
+                <span className="text-sm">AI Trading</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
 
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-green-900 via-blue-900 to-teal-900 text-white py-20 px-4">
@@ -332,12 +376,13 @@ export default function AlgoTradingPage() {
             Join thousands of traders using our algo trading platform to automate their success
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-green-600 hover:bg-gray-100 font-semibold py-4 px-8 rounded-lg text-lg transition-colors">
-              Start Free Trial
-            </button>
-            <button className="border-2 border-white text-white hover:bg-white hover:text-green-600 font-semibold py-4 px-8 rounded-lg text-lg transition-all">
-              View Pricing
-            </button>
+            <Link href="/" className="bg-white text-green-600 hover:bg-gray-100 font-semibold py-4 px-8 rounded-lg text-lg transition-colors inline-flex items-center justify-center">
+              <Settings className="w-5 h-5 mr-2" />
+              Access Trading Platform
+            </Link>
+            <Link href="/contact" className="border-2 border-white text-white hover:bg-white hover:text-green-600 font-semibold py-4 px-8 rounded-lg text-lg transition-all">
+              Contact Support
+            </Link>
           </div>
         </div>
       </section>
