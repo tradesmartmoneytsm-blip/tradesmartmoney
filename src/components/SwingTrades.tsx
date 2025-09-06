@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, DollarSign, Activity, Image } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
 
 interface GroupedTrades {

@@ -21,7 +21,7 @@ export function Navigation({
   const [currentTime, setCurrentTime] = useState('');
   const [isMarketOpen, setIsMarketOpen] = useState(false);
   const [marketIndices, setMarketIndices] = useState<MarketIndex[]>([]);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [, setLastUpdated] = useState<Date | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMarketMenu, setShowMarketMenu] = useState(false);
   const [showEodScansMenu, setShowEodScansMenu] = useState(false);

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
-  Plus, Edit, Trash2, Save, X, Upload, RefreshCw, 
-  DollarSign, Calendar, Target, Activity, TrendingUp, Lock, LogOut, Eye, EyeOff 
+  Plus, Edit, Trash2, Save, X, RefreshCw, 
+  TrendingUp, Lock, LogOut, Eye, EyeOff 
 } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
 
@@ -40,8 +40,8 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
       } else {
         setError(result.error || 'Invalid password');
       }
-    } catch (err) {
-      setError('Authentication failed. Please try again.');
+         } catch {
+       setError('Authentication failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -197,7 +197,7 @@ export default function AdminSwingTrades() {
         localStorage.removeItem('swing_admin_auth');
         setIsAuthenticated(false);
       }
-    } catch (err) {
+    } catch {
       localStorage.removeItem('swing_admin_auth');
       setIsAuthenticated(false);
     } finally {
@@ -228,7 +228,7 @@ export default function AdminSwingTrades() {
   };
 
   // Fetch trades
-  const fetchTrades = async () => {
+  const fetchTrades = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -249,7 +249,7 @@ export default function AdminSwingTrades() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {

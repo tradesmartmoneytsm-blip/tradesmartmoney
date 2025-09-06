@@ -38,7 +38,7 @@ export async function GET() {
     const marketIndices: MarketIndex[] = [];
 
     // Parse table rows to find our target indices
-    $('table tr').each((_: number, row: any) => {
+    $('table tr').each((_, row) => {
       const cells = $(row).find('td');
       if (cells.length >= 3) {
         const nameCell = $(cells[0]).text().trim();

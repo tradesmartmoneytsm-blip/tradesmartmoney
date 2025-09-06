@@ -47,7 +47,7 @@ function verifyAuthToken(token: string, password: string): boolean {
     const expectedHash = crypto.createHash('sha256').update(password + timestamp).digest('hex');
     return hash === expectedHash;
 
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -259,7 +259,7 @@ export async function PUT(request: Request) {
     }
 
     // Prepare update data (only include provided fields)
-    const updateData: any = {};
+    const updateData: Partial<Omit<SwingTrade, 'id' | 'created_at' | 'updated_at'>> & Record<string, unknown> = {};
     
     const updateableFields = [
       'strategy', 'stock_name', 'stock_symbol', 'entry_price', 'exit_price',
