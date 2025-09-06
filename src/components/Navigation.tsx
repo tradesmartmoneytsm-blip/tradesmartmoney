@@ -178,12 +178,19 @@ export function Navigation({
                 marketIndices.map((index) => {
                   const isPositive = index.changePercent >= 0;
                   // Show different indices based on screen size
-                  const mobileClass = index.displayName === 'Nifty' || index.displayName === 'Bank Nifty' ? '' : 'hidden sm:inline';
-                  const tabletClass = ['Bank Nifty', 'Finnifty'].includes(index.displayName) ? 'hidden md:inline' : '';
-                  const finalClass = mobileClass || tabletClass;
+                  let visibilityClass = '';
+                  
+                  if (index.displayName === 'Sensex') {
+                    // Sensex: hidden on mobile, visible on sm+
+                    visibilityClass = 'hidden sm:inline';
+                  } else if (index.displayName === 'Finnifty') {
+                    // Finnifty: hidden on mobile and tablet, visible on md+
+                    visibilityClass = 'hidden md:inline';
+                  }
+                  // Nifty and Bank Nifty: always visible (no class needed)
                   
                   return (
-                    <span key={index.name} className={`whitespace-nowrap ${finalClass}`}>
+                    <span key={index.name} className={`whitespace-nowrap ${visibilityClass}`}>
                       <span className="hidden sm:inline">{index.displayName}: </span>
                       <span className="sm:hidden">{index.displayName.charAt(0)}: </span>
                       <span className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
