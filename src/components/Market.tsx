@@ -6,6 +6,7 @@ import type { SectorData } from '@/services/marketDataService';
 import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
 import { FiiDiiActivity } from '@/components/FiiDiiActivity';
 import { trackBusinessEvent, trackPageView } from '@/lib/analytics';
+import { HeaderAd, InContentAd } from '@/components/AdSense';
 
 interface MarketSubSection {
   id: string;
@@ -242,6 +243,9 @@ export function Market({ initialSubSection }: MarketProps) {
 
   return (
     <article className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+      {/* Header Advertisement */}
+      <HeaderAd />
+      
       {/* Compact Page Header */}
       <header className="mb-6 lg:mb-8">
         <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">Market Analysis</h1>
@@ -293,6 +297,9 @@ export function Market({ initialSubSection }: MarketProps) {
           {renderSubSection()}
         </section>
       </div>
+      
+      {/* In-Content Advertisement */}
+      <InContentAd />
 
       {/* Compact Summary Cards */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-6 lg:mt-8" aria-label="Market summary">

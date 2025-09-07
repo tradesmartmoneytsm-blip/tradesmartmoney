@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import NextImage from 'next/image';
 import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn, BarChart3, Zap, TrendingUp as TrendingUpIcon } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
+import { HeaderAd, InContentAd } from '@/components/AdSense';
 
 interface GroupedTrades {
   'BIT': SwingTrade[];
@@ -614,7 +615,10 @@ export function SwingTrades() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
-        {/* Header */}
+      {/* Header Advertisement */}
+      <HeaderAd />
+      
+      {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center items-center gap-4">
             <button
@@ -644,6 +648,9 @@ export function SwingTrades() {
             trades={groupedTrades[activeStrategy as keyof GroupedTrades] || []}
           />
         </div>
+        
+        {/* In-Content Advertisement */}
+        <InContentAd />
 
         {/* Trading Guidelines */}
         <div className="mt-12 bg-white rounded-lg shadow-md p-6">

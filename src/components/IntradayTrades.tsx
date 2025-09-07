@@ -1,6 +1,7 @@
 'use client';
 
 import { Activity, Shield, BarChart3, Clock, Target } from 'lucide-react';
+import { HeaderAd, InContentAd } from '@/components/AdSense';
 
 export function IntradayTrades() {
   const intradaySignals = [
@@ -44,6 +45,9 @@ export function IntradayTrades() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+      {/* Header Advertisement */}
+      <HeaderAd />
+      
       {/* Compact Page Header */}
       <div className="mb-6 lg:mb-8">
         <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">Intraday Trading Signals</h2>
@@ -128,6 +132,9 @@ export function IntradayTrades() {
           </div>
         ))}
       </div>
+      
+      {/* In-Content Advertisement */}
+      <InContentAd />
 
       {/* Compact Trading Guidelines */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 lg:p-6">

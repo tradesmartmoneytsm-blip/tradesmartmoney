@@ -1,6 +1,7 @@
 'use client';
 
 import { TrendingUp, Globe, Clock, BarChart3, Building, FileText } from 'lucide-react';
+import { HeaderAd, InContentAd } from '@/components/AdSense';
 
 export function News() {
   const newsArticles = [
@@ -44,6 +45,9 @@ export function News() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+      {/* Header Advertisement */}
+      <HeaderAd />
+      
       {/* Compact Page Header */}
       <div className="mb-6 lg:mb-8">
         <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">Market News & Updates</h2>
@@ -92,6 +96,9 @@ export function News() {
           </div>
         ))}
       </div>
+      
+      {/* In-Content Advertisement */}
+      <InContentAd />
 
       {/* Compact Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
