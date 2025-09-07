@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 interface RSSItem {
   title: string;
@@ -166,7 +166,7 @@ const fetchNewsFromRSS = async (source: typeof NEWS_SOURCES[0]): Promise<NewsArt
   }
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('🔄 API: Fetching news feeds...');
     

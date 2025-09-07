@@ -171,7 +171,7 @@ export function News() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fallbackArticles]);
 
   // Stock News Functions
   const fetchStockList = useCallback(async () => {
