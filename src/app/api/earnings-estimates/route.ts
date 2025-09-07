@@ -1,4 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+let supabase: ReturnType<typeof createClient> | null = null;
+if (supabaseUrl && supabaseAnonKey) {
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+}
 
 // Interfaces for earnings data
 interface EarningsEstimate {
@@ -37,7 +47,131 @@ interface FilterOptions {
   sortBy?: 'date' | 'performance' | 'marketCap' | 'variance';
 }
 
-// Sample earnings estimates data (in a real app, this would come from a database or external API)
+// Database record interface (data comes as strings from Supabase)
+interface SupabaseEarningsRecord {
+  symbol: string;
+  company_name: string;
+  sector: string;
+  quarter: string;
+  report_date: string;
+  current_price: string | number;
+  price_change: string | number;
+  price_change_percent: string | number;
+  market_cap: string | number;
+  actual_revenue: string | number;
+  estimated_revenue: string | number;
+  actual_net_profit: string | number;
+  estimated_net_profit: string | number;
+  actual_eps: string | number;
+  estimated_eps: string | number;
+  revenue_variance: string | number;
+  profit_variance: string | number;
+  eps_variance: string | number;
+  overall_performance: 'Beat' | 'Missed' | 'Met';
+  performance_percent: string | number;
+  financial_type: string;
+}
+
+// Transform Supabase data to our EarningsEstimate format
+function transformSupabaseData(dbRecord: SupabaseEarningsRecord): EarningsEstimate {
+  return {
+    id: `${dbRecord.symbol}-${dbRecord.quarter}`,
+    companyName: dbRecord.company_name,
+    symbol: dbRecord.symbol,
+    sector: dbRecord.sector || 'Unknown',
+    quarter: dbRecord.quarter,
+    reportDate: dbRecord.report_date,
+    currentPrice: parseFloat(String(dbRecord.current_price || 0)),
+    priceChange: parseFloat(String(dbRecord.price_change || 0)),
+    priceChangePercent: parseFloat(String(dbRecord.price_change_percent || 0)),
+    marketCap: parseFloat(String(dbRecord.market_cap || 0)),
+    
+    actualRevenue: parseFloat(String(dbRecord.actual_revenue || 0)),
+    estimatedRevenue: parseFloat(String(dbRecord.estimated_revenue || 0)),
+    actualNetProfit: parseFloat(String(dbRecord.actual_net_profit || 0)),
+    estimatedNetProfit: parseFloat(String(dbRecord.estimated_net_profit || 0)),
+    actualEPS: parseFloat(String(dbRecord.actual_eps || 0)),
+    estimatedEPS: parseFloat(String(dbRecord.estimated_eps || 0)),
+    
+    revenueVariance: parseFloat(String(dbRecord.revenue_variance || 0)),
+    profitVariance: parseFloat(String(dbRecord.profit_variance || 0)),
+    epsVariance: parseFloat(String(dbRecord.eps_variance || 0)),
+    overallPerformance: dbRecord.overall_performance || 'Met',
+    performancePercent: parseFloat(String(dbRecord.performance_percent || 0)),
+    resultType: (dbRecord.financial_type === 'Standalone' ? 'Standalone' : 'Consolidated') as 'Consolidated' | 'Standalone',
+  };
+}
+
+// Fetch earnings data from Supabase
+async function fetchEarningsFromSupabase(filters: FilterOptions): Promise<{data: EarningsEstimate[], error: string | null}> {
+  if (!supabase) {
+    console.warn('Supabase not initialized - missing environment variables');
+    return { data: [], error: 'Database not configured' };
+  }
+
+  try {
+    console.log('🔄 Fetching earnings data from Supabase...');
+    
+    let query = supabase
+      .from('earnings_estimates')
+      .select('*')
+      .order('report_date', { ascending: false });
+
+    // Apply filters
+    if (filters.sector && filters.sector !== 'all') {
+      query = query.eq('sector', filters.sector);
+    }
+
+    if (filters.performance && filters.performance !== 'all') {
+      const performanceMap = {
+        'beat': 'Beat',
+        'missed': 'Missed', 
+        'met': 'Met'
+      };
+      query = query.eq('overall_performance', performanceMap[filters.performance]);
+    }
+
+    // Apply sorting
+    switch (filters.sortBy) {
+      case 'performance':
+        query = query.order('performance_percent', { ascending: false });
+        break;
+      case 'marketCap':
+        query = query.order('market_cap', { ascending: false });
+        break;
+      case 'variance':
+        // Order by absolute performance percentage
+        query = query.order('performance_percent', { ascending: false });
+        break;
+      default:
+        // Default to date ordering (already applied above)
+        break;
+    }
+
+    const { data: dbData, error } = await query.limit(50); // Limit results for performance
+
+    if (error) {
+      console.error('Supabase query error:', error);
+      return { data: [], error: error.message };
+    }
+
+    if (!dbData || dbData.length === 0) {
+      console.log('⚠️ No earnings data found in Supabase');
+      return { data: [], error: null };
+    }
+
+    const transformedData = dbData.map(transformSupabaseData);
+    console.log(`✅ Retrieved ${transformedData.length} earnings records from Supabase`);
+    
+    return { data: transformedData, error: null };
+
+  } catch (error) {
+    console.error('Failed to fetch from Supabase:', error);
+    return { data: [], error: 'Database query failed' };
+  }
+}
+
+// Sample earnings estimates data (fallback only)
 const SAMPLE_EARNINGS_DATA: EarningsEstimate[] = [
   {
     id: 'RELIANCE-Q2FY25',
@@ -110,126 +244,6 @@ const SAMPLE_EARNINGS_DATA: EarningsEstimate[] = [
     overallPerformance: 'Beat',
     performancePercent: 1.91,
     resultType: 'Consolidated'
-  },
-  {
-    id: 'INFY-Q2FY25',
-    companyName: 'Infosys Limited',
-    symbol: 'INFY',
-    sector: 'IT Services',
-    quarter: 'Q2 FY25',
-    reportDate: '2024-10-17',
-    currentPrice: 1845.30,
-    priceChange: -12.85,
-    priceChangePercent: -0.69,
-    marketCap: 765000,
-    actualRevenue: 40986,
-    estimatedRevenue: 41200,
-    actualNetProfit: 6506,
-    estimatedNetProfit: 6800,
-    actualEPS: 15.65,
-    estimatedEPS: 16.30,
-    revenueVariance: -0.52,
-    profitVariance: -4.32,
-    epsVariance: -3.99,
-    overallPerformance: 'Missed',
-    performancePercent: -2.94,
-    resultType: 'Consolidated'
-  },
-  {
-    id: 'ICICIBANK-Q2FY25',
-    companyName: 'ICICI Bank',
-    symbol: 'ICICIBANK',
-    sector: 'Banking',
-    quarter: 'Q2 FY25',
-    reportDate: '2024-10-26',
-    currentPrice: 1289.75,
-    priceChange: 8.45,
-    priceChangePercent: 0.66,
-    marketCap: 905000,
-    actualRevenue: 42560,
-    estimatedRevenue: 41800,
-    actualNetProfit: 11746,
-    estimatedNetProfit: 11200,
-    actualEPS: 16.80,
-    estimatedEPS: 16.00,
-    revenueVariance: 1.82,
-    profitVariance: 4.88,
-    epsVariance: 5.00,
-    overallPerformance: 'Beat',
-    performancePercent: 3.90,
-    resultType: 'Consolidated'
-  },
-  {
-    id: 'WIPRO-Q2FY25',
-    companyName: 'Wipro Limited',
-    symbol: 'WIPRO',
-    sector: 'IT Services',
-    quarter: 'Q2 FY25',
-    reportDate: '2024-10-16',
-    currentPrice: 562.40,
-    priceChange: -8.25,
-    priceChangePercent: -1.45,
-    marketCap: 305000,
-    actualRevenue: 22300,
-    estimatedRevenue: 22800,
-    actualNetProfit: 2835,
-    estimatedNetProfit: 3100,
-    actualEPS: 5.20,
-    estimatedEPS: 5.70,
-    revenueVariance: -2.19,
-    profitVariance: -8.55,
-    epsVariance: -8.77,
-    overallPerformance: 'Missed',
-    performancePercent: -6.50,
-    resultType: 'Consolidated'
-  },
-  {
-    id: 'BAJFINANCE-Q2FY25',
-    companyName: 'Bajaj Finance',
-    symbol: 'BAJFINANCE',
-    sector: 'NBFC',
-    quarter: 'Q2 FY25',
-    reportDate: '2024-10-21',
-    currentPrice: 7145.85,
-    priceChange: 89.40,
-    priceChangePercent: 1.27,
-    marketCap: 442000,
-    actualRevenue: 16420,
-    estimatedRevenue: 15800,
-    actualNetProfit: 4171,
-    estimatedNetProfit: 3950,
-    actualEPS: 67.50,
-    estimatedEPS: 64.00,
-    revenueVariance: 3.92,
-    profitVariance: 5.59,
-    epsVariance: 5.47,
-    overallPerformance: 'Beat',
-    performancePercent: 4.99,
-    resultType: 'Consolidated'
-  },
-  {
-    id: 'MARUTI-Q2FY25',
-    companyName: 'Maruti Suzuki India',
-    symbol: 'MARUTI',
-    sector: 'Automobile',
-    quarter: 'Q2 FY25',
-    reportDate: '2024-10-25',
-    currentPrice: 12845.20,
-    priceChange: -125.30,
-    priceChangePercent: -0.97,
-    marketCap: 388000,
-    actualRevenue: 37200,
-    estimatedRevenue: 38500,
-    actualNetProfit: 3069,
-    estimatedNetProfit: 3500,
-    actualEPS: 101.50,
-    estimatedEPS: 115.80,
-    revenueVariance: -3.38,
-    profitVariance: -12.31,
-    epsVariance: -12.35,
-    overallPerformance: 'Missed',
-    performancePercent: -9.35,
-    resultType: 'Standalone'
   }
 ];
 
@@ -288,36 +302,68 @@ export async function GET(request: NextRequest) {
       sortBy: (searchParams.get('sortBy') as FilterOptions['sortBy']) || 'date'
     };
 
-    // Apply filters and sorting
-    const filteredData = applyFilters(SAMPLE_EARNINGS_DATA, filters);
+    let earningsData: EarningsEstimate[] = [];
+    let dataSource = 'Sample Data';
+    let dbError: string | null = null;
+
+    // Try to fetch from Supabase first
+    const { data: supabaseData, error } = await fetchEarningsFromSupabase(filters);
+    
+    if (error) {
+      console.error('🔴 Supabase fetch failed:', error);
+      dbError = error;
+    }
+    
+    if (supabaseData && supabaseData.length > 0) {
+      earningsData = supabaseData;
+      dataSource = 'MoneyControl (Supabase)';
+      console.log(`✅ Using live MoneyControl data: ${earningsData.length} records`);
+    } else {
+      // Fallback to sample data
+      console.log('⚠️ Falling back to sample data');
+      earningsData = SAMPLE_EARNINGS_DATA;
+      dataSource = 'Sample Data (Fallback)';
+      
+      // Apply filters to sample data since Supabase filtering wasn't used
+      earningsData = applyFilters(earningsData, filters);
+    }
 
     // Get available sectors for filtering
-    const sectors = [...new Set(SAMPLE_EARNINGS_DATA.map(item => item.sector))].sort();
+    const sectors = [...new Set(earningsData.map(item => item.sector))].sort();
     
     // Performance summary
     const performanceSummary = {
-      total: SAMPLE_EARNINGS_DATA.length,
-      beat: SAMPLE_EARNINGS_DATA.filter(item => item.overallPerformance === 'Beat').length,
-      missed: SAMPLE_EARNINGS_DATA.filter(item => item.overallPerformance === 'Missed').length,
-      met: SAMPLE_EARNINGS_DATA.filter(item => item.overallPerformance === 'Met').length
+      total: earningsData.length,
+      beat: earningsData.filter(item => item.overallPerformance === 'Beat').length,
+      missed: earningsData.filter(item => item.overallPerformance === 'Missed').length,
+      met: earningsData.filter(item => item.overallPerformance === 'Met').length
     };
 
-    return NextResponse.json({
+    const response = {
       success: true,
-      data: filteredData,
+      data: earningsData,
       filters: {
         sectors,
         appliedFilters: filters
       },
       summary: performanceSummary,
-      lastUpdated: new Date().toISOString()
-    });
+      dataSource,
+      dbError,
+      lastUpdated: new Date().toISOString(),
+      totalRecords: earningsData.length
+    };
+
+    console.log(`📊 API Response: ${dataSource}, ${earningsData.length} records`);
+    
+    return NextResponse.json(response);
 
   } catch (error) {
     console.error('Failed to fetch earnings estimates:', error);
     return NextResponse.json({
       success: false,
-      error: 'Failed to fetch earnings estimates data'
+      error: 'Failed to fetch earnings estimates data',
+      dataSource: 'Error',
+      lastUpdated: new Date().toISOString()
     }, { status: 500 });
   }
 } 

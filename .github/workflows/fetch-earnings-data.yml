@@ -1,0 +1,46 @@
+name: Fetch Earnings Data from MoneyControl
+
+on:
+  # Run every 3 days at 2 AM IST (8:30 PM UTC)
+  schedule:
+    - cron: '30 20 */3 * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force update all records'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  fetch-earnings-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Fetch and Store Earnings Data
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        FORCE_UPDATE: ${{ github.event.inputs.force_update }}
+      run: node scripts/fetch-earnings-data.js
+
+    - name: Report Results
+      if: always()
+      run: |
+        echo "✅ Earnings data fetch completed"
+        echo "📊 Check Supabase for updated earnings_estimates table"
+        echo "🔄 Next run: Every 3 days at 2 AM IST" 
