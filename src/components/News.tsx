@@ -1,7 +1,10 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import { Globe, Clock, ExternalLink, RefreshCw, TrendingUp, Building2, FileText, BarChart3, Briefcase, Search, ArrowLeft } from 'lucide-react';
+
+// Lazy load the EarningsEstimates component
+const EarningsEstimates = lazy(() => import('./EarningsEstimates').then(module => ({ default: module.EarningsEstimates })));
 
 interface NewsArticle {
   id: string;
@@ -409,6 +412,29 @@ export function News() {
               </div>
             ) : (
               <>
+                {/* Show Earnings Estimates for Results category */}
+                {activeCategory === 'Results' && (
+                  <div className="mb-8">
+                    <Suspense fallback={
+                      <div className="animate-pulse space-y-4">
+                        <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+                        <div className="h-24 bg-gray-200 rounded"></div>
+                        <div className="h-32 bg-gray-200 rounded"></div>
+                        <div className="h-32 bg-gray-200 rounded"></div>
+                      </div>
+                    }>
+                      <EarningsEstimates />
+                    </Suspense>
+                    
+                    {/* Separator */}
+                    <div className="my-8 border-t border-gray-200">
+                      <div className="relative -top-3 text-center">
+                        <span className="bg-white px-4 text-sm font-medium text-gray-500">Latest Results News</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {filteredArticles.map((article) => (
                     <div key={article.id} className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow">
