@@ -20,9 +20,41 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   
-  // Headers for caching and security
+  // Custom redirects and rewrites
+  async rewrites() {
+    return [
+      // Serve ads.txt directly without redirect
+      {
+        source: '/ads.txt',
+        destination: '/ads.txt',
+        has: [
+          {
+            type: 'host',
+            value: 'tradesmartmoney.com',
+          },
+        ],
+      },
+    ];
+  },
+  
+  // Static file serving for ads.txt
   async headers() {
     return [
+      // Ads.txt specific headers
+      {
+        source: '/ads.txt',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain; charset=utf-8',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, must-revalidate',
+          },
+        ],
+      },
+      // General security headers
       {
         source: '/(.*)',
         headers: [
