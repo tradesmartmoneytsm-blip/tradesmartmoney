@@ -90,7 +90,7 @@ export default function TradingGuide() {
                 <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-6">
                   <li><strong>Bid-Ask Spread:</strong> Difference between highest buyer price and lowest seller price</li>
                   <li><strong>Volume:</strong> Number of shares traded in a given period</li>
-                  <li><strong>Market Cap:</strong> Total value of a company's shares</li>
+                                     <li><strong>Market Cap:</strong> Total value of a company&apos;s shares</li>
                   <li><strong>Volatility:</strong> Measure of price movement intensity</li>
                   <li><strong>Liquidity:</strong> Ease of buying/selling without affecting price</li>
                 </ul>
@@ -110,7 +110,7 @@ export default function TradingGuide() {
               <div className="prose max-w-none">
                 <p className="text-gray-700 mb-6">
                   Technical analysis involves studying price charts and patterns to predict future price movements. 
-                  It's based on the premise that all relevant information is reflected in the stock price.
+                                     It&apos;s based on the premise that all relevant information is reflected in the stock price.
                 </p>
 
                 <h3 className="text-xl font-semibold mb-4">Key Chart Patterns</h3>
@@ -219,8 +219,8 @@ export default function TradingGuide() {
                   <li><strong>Never risk more than 1-2% per trade:</strong> This ensures you can survive losing streaks</li>
                   <li><strong>Set stop losses:</strong> Predefined exit point to limit losses</li>
                   <li><strong>Use position sizing:</strong> Calculate trade size based on your risk tolerance</li>
-                  <li><strong>Diversify:</strong> Don't put all your money in one stock or sector</li>
-                  <li><strong>Keep a trading journal:</strong> Track what works and what doesn't</li>
+                                     <li><strong>Diversify:</strong> Don&apos;t put all your money in one stock or sector</li>
+                                      <li><strong>Keep a trading journal:</strong> Track what works and what doesn&apos;t</li>
                 </ol>
 
                 <h3 className="text-xl font-semibold mb-4">Position Sizing Formula</h3>

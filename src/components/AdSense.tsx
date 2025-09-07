@@ -17,8 +17,8 @@ export function AdSenseAd({ adSlot, adFormat = 'auto', className = '', style }: 
     if (cookieConsent === 'all') {
       // Initialize AdSense ads when consent is given
       try {
-        if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
-          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        if (typeof window !== 'undefined' && (window as unknown as { adsbygoogle?: unknown[] }).adsbygoogle) {
+          ((window as unknown as { adsbygoogle: unknown[] }).adsbygoogle = (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle || []).push({});
         }
       } catch (error) {
         console.error('AdSense error:', error);

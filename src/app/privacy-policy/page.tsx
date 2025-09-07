@@ -40,7 +40,7 @@ export default function PrivacyPolicy() {
             <ul className="list-disc pl-6 text-gray-700 mb-6">
               <li>We use cookies to enable ad delivery and measure ad effectiveness</li>
               <li>Third-party vendors, including Google, use cookies to serve ads based on your past visits</li>
-              <li>Google's use of the DoubleClick cookie enables it and its partners to serve ads based on your visits to our site and/or other sites</li>
+              <li>Google&apos;s use of the DoubleClick cookie enables it and its partners to serve ads based on your visits to our site and/or other sites</li>
               <li>You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a></li>
               <li>You can also opt out through the <a href="http://www.aboutads.info/choices/" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Digital Advertising Alliance</a></li>
             </ul>
