@@ -20,23 +20,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   
-  // Custom redirects and rewrites
-  async rewrites() {
-    return [
-      // Serve ads.txt directly without redirect
-      {
-        source: '/ads.txt',
-        destination: '/ads.txt',
-        has: [
-          {
-            type: 'host',
-            value: 'tradesmartmoney.com',
-          },
-        ],
-      },
-    ];
-  },
-  
   // Static file serving for ads.txt
   async headers() {
     return [
