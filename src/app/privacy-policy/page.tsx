@@ -28,9 +28,24 @@ export default function PrivacyPolicy() {
               <li>Trading preferences and investment goals</li>
               <li>Usage data and analytics through Google Analytics</li>
               <li>Device information (IP address, browser type, operating system)</li>
+              <li>Cookie and tracking data for advertising purposes</li>
+              <li>Ad interaction data and preferences</li>
             </ul>
 
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">2. How We Use Your Information</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">2. Advertising and Cookies</h2>
+            <p className="text-gray-700 mb-4">
+              <strong>Google AdSense:</strong> We use Google AdSense to display advertisements on our website. 
+              Google AdSense uses cookies and similar technologies to serve ads based on your prior visits to our website and other websites.
+            </p>
+            <ul className="list-disc pl-6 text-gray-700 mb-6">
+              <li>We use cookies to enable ad delivery and measure ad effectiveness</li>
+              <li>Third-party vendors, including Google, use cookies to serve ads based on your past visits</li>
+              <li>Google's use of the DoubleClick cookie enables it and its partners to serve ads based on your visits to our site and/or other sites</li>
+              <li>You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a></li>
+              <li>You can also opt out through the <a href="http://www.aboutads.info/choices/" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Digital Advertising Alliance</a></li>
+            </ul>
+
+            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">3. How We Use Your Information</h2>
             <p className="text-gray-700 mb-4">We use the information we collect to:</p>
             <ul className="list-disc pl-6 text-gray-700 mb-6">
               <li>Provide, maintain, and improve our trading analysis services</li>

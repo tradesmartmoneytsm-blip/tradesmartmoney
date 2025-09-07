@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { Footer } from '@/components/Footer';
+import { CookieConsent } from '@/components/CookieConsent';
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -231,6 +232,63 @@ export default function RootLayout({
         
         {/* Google Analytics */}
         <GoogleAnalytics />
+        
+        {/* Google AdSense Account */}
+        <meta name="google-adsense-account" content="ca-pub-6601377389077210" />
+        
+        {/* Google Site Verification - Add your verification code here when you get it */}
+        {/* <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" /> */}
+        
+        {/* Google AdSense */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6601377389077210"
+          crossOrigin="anonymous"
+        />
+        
+        {/* Structured Data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FinancialService",
+              "name": "TradeSmartMoney",
+              "description": "Professional trading platform providing real-time market data, smart money concepts, algorithmic trading, and swing trading opportunities for Indian stock market",
+              "url": "https://tradesmartmoney.com",
+              "logo": "https://tradesmartmoney.com/favicon.ico",
+              "image": "https://tradesmartmoney.com/favicon.ico",
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "IN"
+              },
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "email": "tradesmartmoneytsm@gmail.com",
+                "contactType": "customer service"
+              },
+              "sameAs": [
+                "https://tradesmartmoney.com"
+              ],
+              "serviceType": "Trading Platform",
+              "areaServed": "India",
+              "knowsAbout": [
+                "Stock Trading",
+                "Algorithmic Trading",
+                "Swing Trading",
+                "Smart Money Concepts",
+                "Technical Analysis",
+                "Market Data Analysis",
+                "Risk Management"
+              ],
+              "offers": {
+                "@type": "Service",
+                "name": "Trading Analysis & Education",
+                "description": "Real-time market data, trading signals, and educational content for Indian stock market traders"
+              }
+            })
+          }}
+        />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}>
         {/* Skip link for accessibility */}
@@ -241,6 +299,9 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        
+        {/* Cookie Consent Banner */}
+        <CookieConsent />
       </body>
     </html>
   );

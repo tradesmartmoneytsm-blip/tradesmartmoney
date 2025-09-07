@@ -3,6 +3,7 @@
 import { useState, lazy, Suspense } from 'react';
 import Link from 'next/link';
 import { Navigation } from '@/components/Navigation';
+import { HeaderAd, InContentAd, StickyAd } from '@/components/AdSense';
 
 // Dynamic imports for better performance
 const SwingTrades = lazy(() => import('@/components/SwingTrades').then(module => ({ default: module.SwingTrades })));
@@ -21,6 +22,8 @@ export default function Home() {
   const [activeAlgoTradingSubSection, setActiveAlgoTradingSubSection] = useState('strategy-basics');
 
   const handleSectionChange = (section: string, subSection?: string) => {
+    const previousSection = activeSection;
+    
     setActiveSection(section as 'home' | 'swing' | 'intraday' | 'news' | 'market' | 'eodscans' | 'algo-trading');
 
     // Handle subsections for Market, EodScans, and AlgoTrading
@@ -30,6 +33,17 @@ export default function Home() {
       setActiveEodScansSubSection(subSection);
     } else if (section === 'algo-trading' && subSection) {
       setActiveAlgoTradingSubSection(subSection);
+    }
+
+    // Scroll to top smoothly when navigating to a different main section
+    // Don't scroll when just changing subsections within the same main section
+    if (previousSection !== section) {
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
     }
   };
 
@@ -49,6 +63,11 @@ export default function Home() {
         activeSection={activeSection}
         onSectionChange={handleSectionChange}
       />
+      
+      {/* Header Advertisement */}
+      <div className="bg-gray-50 py-4">
+        <HeaderAd />
+      </div>
       
       {/* Hero Content */}
       <div className="relative pt-20 pb-32 lg:pt-32 lg:pb-40">
@@ -137,6 +156,11 @@ export default function Home() {
                 <h3 className="text-white font-semibold mb-2">Risk Management</h3>
                 <p className="text-blue-200 text-sm">Advanced risk assessment and portfolio protection strategies</p>
               </div>
+            </div>
+            
+            {/* In-Content Advertisement */}
+            <div className="w-full max-w-4xl mx-auto my-12">
+              <InContentAd />
             </div>
             
             {/* Social Proof */}
@@ -233,6 +257,9 @@ export default function Home() {
         </div>
       </main>
       
+      {/* Sticky Advertisement */}
+      <StickyAd />
+      
       {/* Educational Resources Section - Always Visible */}
       <section className="bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 text-white py-16 px-4">
         <div className={`${brandTokens.spacing.page.container}`}>
@@ -247,6 +274,22 @@ export default function Home() {
           </div>
           
           <div className={`${brandTokens.grids.oneToThree} ${brandTokens.spacing.grid.gap.md}`}>
+            <Link href="/trading-guide" className="group">
+              <div className="premium-card bg-white/10 backdrop-blur-sm p-6 hover:bg-white/20 transition-all duration-300 border border-white/20 hover:border-white/40 hover:transform hover:scale-105">
+                <div className="bg-green-500/20 w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:bg-green-500/30 transition-colors">
+                  <BookOpen className={`${brandTokens.icons.xl} text-green-300`} />
+                </div>
+                <h3 className={`${brandTokens.typography.heading.sm} mb-3 group-hover:text-green-300 transition-colors`}>Complete Trading Guide</h3>
+                <p className={`${brandTokens.typography.body.md} text-blue-100 mb-4 group-hover:text-white transition-colors`}>
+                  Master trading fundamentals, technical analysis, risk management, and trading psychology with our comprehensive guide.
+                </p>
+                <div className="flex items-center text-green-300 group-hover:text-white transition-colors">
+                  <span className="text-sm font-medium">Start Learning</span>
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:transform group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+            
             <Link href="/smart-money-concepts" className="group">
               <div className="premium-card bg-white/10 backdrop-blur-sm p-6 hover:bg-white/20 transition-all duration-300 border border-white/20 hover:border-white/40 hover:transform hover:scale-105">
                 <div className="bg-blue-500/20 w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
