@@ -50,7 +50,6 @@ const NEWS_TYPES = [
 const NEWS_CATEGORIES = [
   { id: 'all', name: 'All News', icon: Globe, color: 'blue' },
   { id: 'Markets', name: 'Markets', icon: TrendingUp, color: 'green' },
-  { id: 'Stocks', name: 'Stocks', icon: BarChart3, color: 'purple' },
   { id: 'Results', name: 'Results', icon: FileText, color: 'orange' },
   { id: 'Companies', name: 'Companies', icon: Building2, color: 'indigo' },
   { id: 'Policy', name: 'Policy', icon: Briefcase, color: 'red' }
