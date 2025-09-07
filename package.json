@@ -12,7 +12,6 @@
     "lighthouse": "lighthouse http://localhost:3000 --output html --output-path ./lighthouse-report.html"
   },
   "dependencies": {
-    "@next/third-parties": "^14.2.16",
     "@supabase/supabase-js": "^2.45.1",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.11.0",
