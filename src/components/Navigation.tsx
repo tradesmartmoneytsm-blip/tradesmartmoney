@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronDown, Bell, User, Menu, X, TrendingUp, BarChart3, Newspaper, Building2, Microscope, Bot, Target, Zap, Search } from 'lucide-react';
+import { ChevronDown, Bell, User, Menu, X, TrendingUp, BarChart3, Newspaper, Building2, Microscope, Bot } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
 interface MarketIndex {
@@ -194,7 +194,7 @@ export function Navigation({
       id: 'news',
       label: 'News',
       icon: <Newspaper className={brandTokens.icons.sm} />,
-      description: 'Market news and updates',
+      description: 'Market news and stock-specific updates',
       hasDropdown: false
     },
     {
@@ -244,13 +244,6 @@ export function Navigation({
           description: 'Real-time strategy performance tracking'
         },
       ]
-    },
-    {
-      id: 'stock-news',
-      label: 'Stock News',
-      icon: <Building2 className={brandTokens.icons.sm} />,
-      description: 'News specific to individual stocks',
-      hasDropdown: false
     }
   ];
 
