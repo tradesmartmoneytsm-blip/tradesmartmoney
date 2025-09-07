@@ -12,17 +12,6 @@ export default function AIPoweredTradingPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* SEO Meta Tags */}
-      <head>
-        <title>AI Powered Trading Platform | Advanced AI Trading Algorithms | TradeSmartMoney</title>
-        <meta 
-          name="description" 
-          content="Harness the power of AI for trading with our advanced AI trading algorithms. Machine learning models, automated trading systems, and AI-powered market analysis for professional traders." 
-        />
-        <meta name="keywords" content="ai powered trading, ai trading algorithm, machine learning trading, automated trading systems, algorithmic trading, quantitative trading, artificial intelligence trading" />
-        <link rel="canonical" href="https://tradesmartmoney.com/ai-powered-trading" />
-      </head>
-
       {/* Navigation Header */}
       <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4">

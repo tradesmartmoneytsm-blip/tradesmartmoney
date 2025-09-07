@@ -1,4 +1,4 @@
-import { dt } from '@/lib/design-tokens';
+import { brandTokens } from '@/lib/design-tokens';
 import { cn } from '@/lib/utils';
 
 interface CardProps {
@@ -10,9 +10,9 @@ interface CardProps {
 
 export function Card({ children, className, variant = 'default', size = 'medium' }: CardProps) {
   const sizeClasses = {
-    small: dt.spacing.cardSmall,
-    medium: dt.spacing.card,
-    large: dt.spacing.card,
+    small: brandTokens.spacing.component.padding.xs,
+    medium: brandTokens.spacing.component.padding.sm,
+    large: brandTokens.spacing.component.padding.md,
   };
 
   const variantClasses = {
@@ -24,7 +24,7 @@ export function Card({ children, className, variant = 'default', size = 'medium'
     <div className={cn(
       variantClasses[variant],
       sizeClasses[size],
-      dt.interactive.card,
+      brandTokens.components.card.base,
       className
     )}>
       {children}
@@ -70,14 +70,14 @@ export function SummaryCard({ title, value, subtitle, icon, variant = 'neutral',
     >
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className={cn('font-medium', dt.typography.caption, iconColors[variant])}>{title}</p>
-          <p className={cn(dt.typography.sectionTitle, textColors[variant])}>{value}</p>
+          <p className={cn('font-medium', brandTokens.typography.label.sm, iconColors[variant])}>{title}</p>
+          <p className={cn(brandTokens.typography.heading.md, textColors[variant])}>{value}</p>
           {subtitle && (
-            <p className={cn(dt.typography.caption, iconColors[variant], 'mt-1')}>{subtitle}</p>
+            <p className={cn(brandTokens.typography.label.sm, iconColors[variant], 'mt-1')}>{subtitle}</p>
           )}
         </div>
         {icon && (
-          <div className={cn(dt.icons.large, iconColors[variant])}>
+          <div className={cn(brandTokens.icons.xl, iconColors[variant])}>
             {icon}
           </div>
         )}
@@ -88,20 +88,20 @@ export function SummaryCard({ title, value, subtitle, icon, variant = 'neutral',
 
 interface GridProps {
   children: React.ReactNode;
-  variant?: 'responsive1to3' | 'responsive2to4' | 'responsive2to5' | 'cardGrid';
+  variant?: 'auto' | 'oneToThree' | 'twoToFour' | 'responsive';
   gap?: 'small' | 'medium' | 'large';
   className?: string;
 }
 
-export function Grid({ children, variant = 'cardGrid', gap = 'medium', className }: GridProps) {
+export function Grid({ children, variant = 'auto', gap = 'medium', className }: GridProps) {
   const gapClasses = {
-    small: dt.spacing.gridGapSmall,
-    medium: dt.spacing.gridGap,
-    large: dt.spacing.gridGap,
+    small: brandTokens.spacing.grid.gap.xs,
+    medium: brandTokens.spacing.grid.gap.sm,
+    large: brandTokens.spacing.grid.gap.md,
   };
 
   return (
-    <div className={cn(dt.grids[variant], gapClasses[gap], className)}>
+    <div className={cn(brandTokens.grids[variant], gapClasses[gap], className)}>
       {children}
     </div>
   );

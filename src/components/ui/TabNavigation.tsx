@@ -1,4 +1,4 @@
-import { dt } from '@/lib/design-tokens';
+import { brandTokens } from '@/lib/design-tokens';
 import { cn } from '@/lib/utils';
 
 interface TabItem {
@@ -38,7 +38,7 @@ export function TabNavigation({
   };
 
   return (
-    <div className={cn(dt.spacing.section, className)}>
+    <div className={cn(brandTokens.spacing.section.y, className)}>
       <div className="border-b border-gray-200">
         <nav className="flex space-x-2 sm:space-x-4 lg:space-x-8 overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => (
@@ -49,7 +49,7 @@ export function TabNavigation({
                 'flex items-center space-x-2 py-3 sm:py-4 px-2 sm:px-3 lg:px-4',
                 'border-b-2 font-medium text-sm sm:text-base lg:text-lg',
                 'whitespace-nowrap transition-colors',
-                dt.interactive.button,
+                brandTokens.effects.transition.normal,
                 activeTab === tab.id 
                   ? variantStyles[variant].active
                   : variantStyles[variant].inactive

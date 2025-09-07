@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import { 
   Plus, Edit, Trash2, Save, X, RefreshCw, 
   TrendingUp, Lock, LogOut, Eye, EyeOff, Upload, ImageIcon, Clipboard, AlertTriangle 
@@ -166,16 +167,16 @@ function ImagePasteArea({ onImagePaste, currentImage }: {
   const [pasteHint, setPasteHint] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const convertToBase64 = (file: File): Promise<string> => {
+  const convertToBase64 = useCallback((file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
-  };
+  }, []);
 
-  const handlePaste = async (e: ClipboardEvent) => {
+  const handlePaste = useCallback(async (e: ClipboardEvent) => {
     const items = e.clipboardData?.items;
     if (!items) return;
 
@@ -190,7 +191,7 @@ function ImagePasteArea({ onImagePaste, currentImage }: {
         }
       }
     }
-  };
+  }, [convertToBase64, onImagePaste, setPasteHint]);
 
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
@@ -222,7 +223,7 @@ function ImagePasteArea({ onImagePaste, currentImage }: {
 
     document.addEventListener('paste', handleGlobalPaste);
     return () => document.removeEventListener('paste', handleGlobalPaste);
-  }, [pasteHint]);
+  }, [pasteHint, handlePaste]);
 
   return (
     <div className="space-y-3">
@@ -232,9 +233,11 @@ function ImagePasteArea({ onImagePaste, currentImage }: {
       
       {currentImage && (
         <div className="mb-4">
-          <img 
+          <Image 
             src={currentImage} 
             alt="Chart preview" 
+            width={500}
+            height={192}
             className="w-full h-48 object-cover rounded border border-gray-200"
           />
           <button
@@ -580,7 +583,7 @@ export default function AdminSwingTrades() {
         setFormData(prev => ({ ...prev, potential_return: roundedReturn.toFixed(2) }));
       }
     }
-  }, [formData.entry_price, formData.exit_price, formData.target_price]);
+  }, [formData.entry_price, formData.exit_price, formData.target_price, formData.potential_return]);
 
   // Show loading while checking authentication
   if (checkingAuth) {

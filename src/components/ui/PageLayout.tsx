@@ -1,4 +1,4 @@
-import { dt } from '@/lib/design-tokens';
+import { brandTokens } from '@/lib/design-tokens';
 import { cn } from '@/lib/utils';
 
 interface PageLayoutProps {
@@ -10,11 +10,11 @@ interface PageLayoutProps {
 
 export function PageLayout({ children, title, description, className }: PageLayoutProps) {
   return (
-    <div className={cn(`max-w-7xl mx-auto ${dt.spacing.page} ${dt.spacing.pagePadding}`, className)}>
-      <div className={dt.spacing.section}>
-        <h2 className={dt.typography.pageTitle}>{title}</h2>
+    <div className={cn(`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} ${brandTokens.spacing.page.y}`, className)}>
+      <div className={brandTokens.spacing.section.gap}>
+        <h2 className={brandTokens.typography.heading.xl}>{title}</h2>
         {description && (
-          <p className={cn(dt.typography.body, 'mt-3 sm:mt-4')}>
+          <p className={cn(brandTokens.typography.body.lg, 'mt-3 sm:mt-4')}>
             {description}
           </p>
         )}

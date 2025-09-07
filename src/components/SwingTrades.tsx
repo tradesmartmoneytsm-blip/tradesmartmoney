@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import NextImage from 'next/image';
 import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn, BarChart3, Zap, TrendingUp as TrendingUpIcon } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
 
@@ -231,7 +232,7 @@ export function SwingTrades() {
     const performanceTrend = getPerformanceTrend(trade);
     const expectedReturn = calculateExpectedReturn(trade);
 
-    return (
+  return (
     <div className="group bg-white rounded-lg shadow-md border border-gray-100 p-4 hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-gray-50 to-white">
               <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
@@ -362,7 +363,7 @@ export function SwingTrades() {
         <div className="mt-2 pt-2 border-t border-gray-100">
           <div className="flex items-center justify-between text-xs text-gray-600 mb-1.5">
             <div className="flex items-center gap-1.5">
-              <Image className="w-3 h-3" />
+              <Image className="w-3 h-3" aria-label="Chart icon" />
               <span>Chart Analysis</span>
             </div>
             <button
@@ -377,9 +378,11 @@ export function SwingTrades() {
             className="relative cursor-pointer group"
             onClick={() => setSelectedImage({ url: trade.chart_image_url!, symbol: trade.stock_symbol })}
           >
-            <img 
+            <NextImage 
               src={trade.chart_image_url} 
               alt={`${trade.stock_symbol} chart`}
+              width={400}
+              height={144}
               className="w-full h-36 object-contain rounded border border-gray-200 group-hover:border-blue-300 transition-colors"
               loading="lazy"
             />
@@ -415,7 +418,7 @@ export function SwingTrades() {
             <div className="text-xl font-semibold text-gray-900">{stats.totalTrades}</div>
             <div className="text-xs text-gray-600">Total</div>
           </div>
-        </div>
+            </div>
 
         {/* Statistics Dashboard */}
         {stats.totalTrades > 0 && (
@@ -485,8 +488,8 @@ export function SwingTrades() {
                     ) : (
                       <span className="text-xs">📉 Negative</span>
                     )}
-                  </div>
-                </div>
+              </div>
+            </div>
                 <div className={`text-sm font-semibold ${stats.totalProfitLoss >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>P&L</div>
               </div>
             </div>
@@ -709,9 +712,11 @@ export function SwingTrades() {
                   <h3 className="font-semibold text-gray-900">{selectedImage.symbol} Chart Analysis</h3>
                   <span className="text-sm text-gray-600">Click outside to close</span>
                 </div>
-                <img
+                <NextImage
                   src={selectedImage.url}
                   alt={`${selectedImage.symbol} chart`}
+                  width={800}
+                  height={600}
                   className="w-full max-h-[80vh] object-contain rounded"
                   onClick={(e) => e.stopPropagation()}
                 />
@@ -719,6 +724,6 @@ export function SwingTrades() {
             </div>
           </div>
         )}
-      </div>
+    </div>
   );
 } 

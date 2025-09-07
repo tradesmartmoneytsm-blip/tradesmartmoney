@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ChevronDown, Bell, User, Menu, X, TrendingUp, BarChart3, Newspaper, Building2, Microscope, Bot } from 'lucide-react';
+import { brandTokens } from '@/lib/design-tokens';
 
 interface MarketIndex {
   name: string;
@@ -95,348 +96,342 @@ export function Navigation({
     {
       id: 'market',
       label: 'Market',
-      icon: <Building2 className="w-4 h-4" />,
+      icon: <Building2 className={brandTokens.icons.sm} />,
       description: 'Live market data and analysis',
       hasDropdown: true,
-      dropdownItems: [
-        { id: 'sector-performance', label: 'Sector Performance', description: 'Sector-wise performance analysis' },
-        { id: 'fii-dii-activity', label: 'FII DII Activity', description: 'Foreign and domestic investment flows' },
-        { id: 'top-gainers', label: 'Top Gainers', description: 'Best performing stocks today' },
-        { id: 'top-losers', label: 'Top Losers', description: 'Worst performing stocks today' },
-        { id: 'long-buildup', label: 'Long Built Up', description: 'Stocks with increasing long positions' },
-        { id: 'short-buildup', label: 'Short Build Up', description: 'Stocks with increasing short positions' }
+      subItems: [
+        { 
+          id: 'sector-performance', 
+          label: 'Sector Performance', 
+          icon: <BarChart3 className={brandTokens.icons.sm} />,
+          description: 'Real-time sector analysis and performance metrics'
+        },
+        { 
+          id: 'fii-dii-activity', 
+          label: 'FII DII Activity', 
+          icon: <Building2 className={brandTokens.icons.sm} />,
+          description: 'Foreign and domestic institutional investment flows'
+        },
+        { 
+          id: 'top-gainers', 
+          label: 'Top Gainers', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Stocks with highest price appreciation'
+        },
+        { 
+          id: 'top-losers', 
+          label: 'Top Losers', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Stocks with significant price decline'
+        },
+        { 
+          id: 'long-buildup', 
+          label: 'Long Built Up', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Stocks showing long position accumulation'
+        },
+        { 
+          id: 'short-buildup', 
+          label: 'Short Built Up', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Stocks with increasing short positions'
+        },
       ]
     },
     {
       id: 'swing',
       label: 'Swing Trades',
-      icon: <TrendingUp className="w-4 h-4" />,
+      icon: <TrendingUp className={brandTokens.icons.sm} />,
       description: 'Multi-day trading opportunities',
       hasDropdown: false
     },
     {
       id: 'intraday',
-      label: 'Intraday Trades',
-      icon: <BarChart3 className="w-4 h-4" />,
+      label: 'Intraday',
+      icon: <BarChart3 className={brandTokens.icons.sm} />,
       description: 'Same-day trading signals',
       hasDropdown: false
     },
     {
+      id: 'news',
+      label: 'News',
+      icon: <Newspaper className={brandTokens.icons.sm} />,
+      description: 'Market news and updates',
+      hasDropdown: false
+    },
+    {
       id: 'eodscans',
-      label: 'EodScans',
-      icon: <Microscope className="w-4 h-4" />,
+      label: 'EOD Scans',
+      icon: <Microscope className={brandTokens.icons.sm} />,
       description: 'End-of-day technical analysis',
       hasDropdown: true,
-      dropdownItems: [
-        { id: 'relative-outperformance', label: 'Relative Outperformance', description: 'Stocks outperforming indices' },
-        { id: 'candlestick-scans', label: 'CandlestickScans', description: 'Pattern-based analysis' },
-        { id: 'chart-patterns', label: 'ChartPatterns', description: 'Technical chart formations' }
+      subItems: [
+        { 
+          id: 'relative-outperformance', 
+          label: 'Relative Outperformance', 
+          icon: <BarChart3 className={brandTokens.icons.sm} />,
+          description: 'Stocks outperforming their sector/market'
+        },
+        { 
+          id: 'technical-patterns', 
+          label: 'Technical Patterns', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Chart pattern recognition and analysis'
+        },
       ]
     },
     {
       id: 'algo-trading',
       label: 'Algo Trading',
-      icon: <Bot className="w-4 h-4" />,
-      description: 'Algorithmic trading education',
+      icon: <Bot className={brandTokens.icons.sm} />,
+      description: 'Automated trading strategies',
       hasDropdown: true,
-      dropdownItems: [
-        { id: 'strategy-basics', label: 'Strategy Basics', description: 'Fundamental algo concepts' },
-        { id: 'backtesting', label: 'Backtesting', description: 'Test strategies on historical data' },
-        { id: 'live-strategies', label: 'Live Strategies', description: 'Currently running algorithms' },
-        { id: 'performance-analytics', label: 'Performance Analytics', description: 'Strategy performance analysis' },
-        { id: 'risk-management', label: 'Risk Management', description: 'Automated risk controls' },
-        { id: 'code-examples', label: 'Code Examples', description: 'Sample trading algorithms' }
+      subItems: [
+        { 
+          id: 'strategy-basics', 
+          label: 'Strategy Basics', 
+          icon: <Bot className={brandTokens.icons.sm} />,
+          description: 'Learn fundamental algorithmic trading concepts'
+        },
+        { 
+          id: 'backtesting', 
+          label: 'Backtesting', 
+          icon: <BarChart3 className={brandTokens.icons.sm} />,
+          description: 'Test strategies against historical data'
+        },
+        { 
+          id: 'live-performance', 
+          label: 'Live Performance', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Real-time strategy performance tracking'
+        },
       ]
-    },
-    {
-      id: 'news',
-      label: 'News',
-      icon: <Newspaper className="w-4 h-4" />,
-      description: 'Latest market updates',
-      hasDropdown: false
     }
   ];
 
+  const handleMenuItemClick = (itemId: string, subItemId?: string) => {
+    onSectionChange(itemId, subItemId);
+    setShowMobileMenu(false);
+    
+    // Close dropdown menus
+    setShowMarketMenu(false);
+    setShowEodScansMenu(false);
+    setShowAlgoTradingMenu(false);
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
+  const formatChange = (change: number, changePercent: number) => {
+    const sign = change >= 0 ? '+' : '';
+    const color = change >= 0 ? 'text-green-400' : 'text-red-400';
+    return (
+      <span className={`${color} font-medium text-sm`}>
+        {sign}{change.toFixed(2)} ({sign}{changePercent.toFixed(2)}%)
+      </span>
+    );
+  };
+
   return (
-    <nav className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50 py-4" role="navigation" aria-label="Main navigation">
-      <div className="max-w-7xl mx-auto">
-        {/* Top Status Bar */}
-        <div className="flex items-center justify-between px-4 lg:px-6 py-2 border-b border-gray-100 mb-4" role="banner">
-          <div className="flex items-center space-x-4 lg:space-x-6 text-xs lg:text-sm text-gray-600">
-            <div className="flex items-center space-x-1 lg:space-x-2" aria-label="Market status">
-              <div 
-                className={`w-2 h-2 rounded-full ${
-                  isMarketOpen 
-                    ? 'bg-green-500 animate-pulse' 
-                    : 'bg-red-500'
-                }`} 
-                aria-hidden="true"
-              ></div>
-              <span className="font-medium">
-                {isMarketOpen ? 'Market Open' : 'Market Closed'}
-              </span>
-            </div>
-            <div className="flex items-center space-x-1 sm:space-x-3 lg:space-x-4 overflow-x-auto scrollbar-hide" role="group" aria-label="Market indices">
-              {marketIndices.length > 0 ? (
-                marketIndices.map((index) => {
-                  const isPositive = index.changePercent >= 0;
-                  // Show different indices based on screen size
-                  let visibilityClass = '';
-                  
-                  if (index.displayName === 'Sensex') {
-                    // Sensex: hidden on mobile, visible on sm+
-                    visibilityClass = 'hidden sm:inline';
-                  } else if (index.displayName === 'Finnifty') {
-                    // Finnifty: hidden on mobile and tablet, visible on md+
-                    visibilityClass = 'hidden md:inline';
-                  }
-                  // Nifty and Bank Nifty: always visible (no class needed)
-                  
-                  return (
-                    <span key={index.name} className={`flex-shrink-0 text-xs sm:text-sm ${visibilityClass}`}>
-                      <span className="font-medium">{index.displayName}</span>
-                      <span className="mx-1">:</span>
-                      <span className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                        <span className="hidden sm:inline">
-                          {index.current.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({isPositive ? '+' : ''}{index.changePercent.toFixed(2)}%)
-                        </span>
-                        <span className="sm:hidden">
-                          {index.current.toLocaleString('en-IN', { maximumFractionDigits: 0 })} ({isPositive ? '+' : ''}{index.changePercent.toFixed(1)}%)
-                        </span>
-                      </span>
-                    </span>
-                  );
-                })
-              ) : (
-                // Fallback while loading - responsive
-                <>
-                  <span className="flex-shrink-0 text-xs sm:text-sm">
-                    <span className="font-medium">Nifty</span>
-                    <span className="mx-1">:</span>
-                    <span className="font-semibold text-gray-500">Loading...</span>
-                  </span>
-                  <span className="flex-shrink-0 text-xs sm:text-sm">
-                    <span className="font-medium">Bank Nifty</span>
-                    <span className="mx-1">:</span>
-                    <span className="font-semibold text-gray-500">Loading...</span>
-                  </span>
-                  <span className="flex-shrink-0 text-xs sm:text-sm hidden md:inline">
-                    <span className="font-medium">Finnifty</span>
-                    <span className="mx-1">:</span>
-                    <span className="font-semibold text-gray-500">Loading...</span>
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
-          <div className="text-right text-xs lg:text-sm">
-            <span className="hidden sm:inline text-gray-600">Last Updated: </span>
-            <span className="font-medium text-gray-800">{currentTime}</span>
-          </div>
-        </div>
-
-        {/* Main Header with Logo and Desktop Menu */}
-        <header className="grid grid-cols-3 items-center px-4 lg:px-6">
-          {/* Left spacer */}
-          <div></div>
-          
-          {/* Centered Logo */}
-          <div className="text-center">
-            <div className="flex items-center justify-center space-x-2 lg:space-x-3 mb-1">
-              <div className="relative">
-                <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 rounded-lg flex items-center justify-center shadow-lg">
-                  <TrendingUp className="w-4 h-4 lg:w-5 lg:h-5 text-white" aria-hidden="true" />
+    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-lg">
+      {/* Top Status Bar */}
+      <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white py-2 px-4">
+        <div className={`${brandTokens.spacing.page.container} flex items-center justify-between text-sm`}>
+          {/* Market Status & Time */}
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              {isMarketOpen ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-green-400 font-medium">Market Open</span>
                 </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-green-400 to-green-600 rounded-full border-2 border-white animate-pulse"></div>
-              </div>
-              <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent font-serif tracking-tight">
-                TradeSmartMoney
-              </h1>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                  <span className="text-red-400 font-medium">Market Closed</span>
+                </div>
+              )}
+              <span className="text-white/70">•</span>
+              <span className="text-white/90 font-mono">{currentTime}</span>
             </div>
-            <p className="text-xs lg:text-sm text-gray-600 mt-1 font-light tracking-wide uppercase">Professional Trading Platform</p>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center justify-end space-x-2">
-            {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center space-x-4">
-              <button 
-                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                aria-label="Notifications"
-              >
-                <Bell className="w-4 h-4 lg:w-5 lg:h-5" aria-hidden="true" />
-              </button>
-              <button 
-                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                aria-label="User account"
-              >
-                <User className="w-4 h-4 lg:w-5 lg:h-5" aria-hidden="true" />
-              </button>
-            </div>
-            
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="lg:hidden p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-              aria-label={showMobileMenu ? "Close mobile menu" : "Open mobile menu"}
-              aria-expanded={showMobileMenu}
+          {/* Market Indices - Desktop Only */}
+          <div className="hidden lg:flex items-center space-x-6 scrollbar-thin overflow-x-auto">
+            {marketIndices.length > 0 ? (
+              marketIndices.map((index, idx) => (
+                <div key={idx} className="flex flex-col items-center min-w-0">
+                  <span className="text-white font-medium text-sm whitespace-nowrap">{index.displayName}</span>
+                  <div className="flex items-center space-x-1 text-xs">
+                    <span className="text-white/90 font-mono">{formatCurrency(index.current)}</span>
+                    {formatChange(index.change, index.changePercent)}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center space-x-2">
+                <div className="loading-shimmer w-20 h-4 rounded"></div>
+                <div className="loading-shimmer w-16 h-3 rounded"></div>
+              </div>
+            )}
+          </div>
+
+          {/* User Actions */}
+          <div className="flex items-center space-x-3">
+            <button 
+              className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              aria-label="Notifications"
+              title="Notifications"
             >
-              {showMobileMenu ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
+              <Bell className={brandTokens.icons.sm} />
+            </button>
+            <button 
+              className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              aria-label="User menu"
+              title="User menu"
+            >
+              <User className={brandTokens.icons.sm} />
             </button>
           </div>
-        </header>
+        </div>
+      </div>
 
-        {/* Desktop Navigation Menu */}
-        <div className="hidden lg:flex items-center justify-center p-2 mt-4">
-          <div className="flex items-center space-x-1 bg-white rounded-xl p-3 shadow-lg border border-gray-300 backdrop-blur-sm">
+      {/* Mobile Market Indices Bar */}
+      <div className="lg:hidden bg-slate-800 text-white py-2 px-4 overflow-x-auto scrollbar-thin">
+        <div className="flex space-x-4 min-w-max">
+          {marketIndices.length > 0 ? (
+            marketIndices.map((index, idx) => (
+              <div key={idx} className="flex items-center space-x-2 min-w-0">
+                <span className="text-white font-medium text-xs whitespace-nowrap">{index.displayName}</span>
+                <div className="flex flex-col text-xs">
+                  <span className="text-white/90 font-mono">{formatCurrency(index.current)}</span>
+                  {formatChange(index.change, index.changePercent)}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="flex space-x-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center space-x-2">
+                  <div className="loading-shimmer w-16 h-3 rounded"></div>
+                  <div className="loading-shimmer w-12 h-3 rounded"></div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Main Navigation */}
+      <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} py-4`}>
+        <div className="flex items-center justify-between">
+                     {/* Logo - Clickable to go home */}
+           <button
+             onClick={() => handleMenuItemClick('home')}
+             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+             aria-label="Go to homepage"
+             title="TradeSmartMoney - Go to homepage"
+           >
+             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+               <TrendingUp className="w-6 h-6 text-white" />
+             </div>
+             <div className="hidden sm:block">
+               <h1 className={`${brandTokens.typography.heading.sm} brand-text`}>TradeSmartMoney</h1>
+               <p className={`${brandTokens.typography.body.sm} text-gray-600`}>Professional Trading Platform</p>
+             </div>
+           </button>
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-1">
             {menuItems.map((item) => (
-              <div 
-                key={item.id} 
-                className="relative dropdown-container group"
-              >
-                <button
-                  onClick={() => {
-                    if (!item.hasDropdown) {
-                      onSectionChange(item.id);
-                      setShowMarketMenu(false);
-                      setShowEodScansMenu(false);
-                      setShowAlgoTradingMenu(false);
-                    }
-                  }}
-                  onMouseEnter={() => {
-                    if (item.hasDropdown) {
+              <div key={item.id} className="relative dropdown-container">
+                {item.hasDropdown ? (
+                  <button
+                    onClick={() => {
                       if (item.id === 'market') {
-                        setShowMarketMenu(true);
+                        setShowMarketMenu(!showMarketMenu);
                         setShowEodScansMenu(false);
                         setShowAlgoTradingMenu(false);
                       } else if (item.id === 'eodscans') {
-                        setShowEodScansMenu(true);
+                        setShowEodScansMenu(!showEodScansMenu);
                         setShowMarketMenu(false);
                         setShowAlgoTradingMenu(false);
                       } else if (item.id === 'algo-trading') {
-                        setShowAlgoTradingMenu(true);
+                        setShowAlgoTradingMenu(!showAlgoTradingMenu);
                         setShowMarketMenu(false);
                         setShowEodScansMenu(false);
                       }
-                    }
-                  }}
-                  className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all duration-300 group relative overflow-hidden ${
-                    activeSection === item.id
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg transform hover:scale-105'
-                      : 'text-gray-700 hover:text-blue-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-md hover:scale-105'
-                  }`}
-                >
-                  <div className={`transition-colors duration-300 ${
-                    activeSection === item.id ? 'text-blue-200' : 'text-gray-500 group-hover:text-blue-600'
-                  }`}>
-                    {item.icon}
-                  </div>
-                  <span className="text-base font-semibold font-serif">{item.label}</span>
-                  {item.hasDropdown && (
-                    <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${
-                      (item.id === 'market' && showMarketMenu) || 
+                    }}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 group ${
+                      activeSection === item.id
+                        ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg'
+                        : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    }`}
+                  >
+                    <div className={`p-1.5 rounded-lg ${
+                      activeSection === item.id 
+                        ? 'bg-white/20' 
+                        : 'bg-gray-100 group-hover:bg-blue-100'
+                    }`}>
+                      {item.icon}
+                    </div>
+                    <span>{item.label}</span>
+                    <ChevronDown className={`${brandTokens.icons.sm} transition-transform duration-200 ${
+                      (item.id === 'market' && showMarketMenu) ||
                       (item.id === 'eodscans' && showEodScansMenu) ||
                       (item.id === 'algo-trading' && showAlgoTradingMenu)
                         ? 'rotate-180' : ''
                     }`} />
-                  )}
-                  
-                  {/* Animated underline */}
-                  <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 to-purple-400 transform transition-transform duration-300 ${
-                    activeSection === item.id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                  }`}></div>
-                </button>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleMenuItemClick(item.id)}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 group ${
+                      activeSection === item.id
+                        ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg'
+                        : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    }`}
+                  >
+                    <div className={`p-1.5 rounded-lg ${
+                      activeSection === item.id 
+                        ? 'bg-white/20' 
+                        : 'bg-gray-100 group-hover:bg-blue-100'
+                    }`}>
+                      {item.icon}
+                    </div>
+                    <span>{item.label}</span>
+                  </button>
+                )}
 
-                {/* Invisible bridge to eliminate gap */}
+                {/* Dropdown Menu */}
                 {item.hasDropdown && (
-                  <div className="absolute top-full left-0 w-full h-2 bg-transparent"></div>
-                )}
-
-                {/* Market Dropdown */}
-                {item.id === 'market' && (
-                  <div 
-                    className={`absolute top-full left-0 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-4 px-5 z-50 transition-all duration-300 ${
-                      showMarketMenu ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
-                    }`}
-                    onMouseEnter={() => setShowMarketMenu(true)}
-                    onMouseLeave={() => setShowMarketMenu(false)}
-                  >
-                    <h3 className="text-base font-bold text-gray-900 mb-3 font-serif">Market Analysis</h3>
-                    <div className="space-y-1">
-                      {item.dropdownItems?.map((dropdownItem) => (
-                        <a
-                          key={dropdownItem.id}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            onSectionChange('market', dropdownItem.id);
-                            setShowMarketMenu(false);
-                          }}
-                          className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors duration-200"
+                  <div className={`absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200/50 backdrop-blur-sm transition-all duration-300 ${
+                    (item.id === 'market' && showMarketMenu) ||
+                    (item.id === 'eodscans' && showEodScansMenu) ||
+                    (item.id === 'algo-trading' && showAlgoTradingMenu)
+                      ? 'opacity-100 visible translate-y-0'
+                      : 'opacity-0 invisible -translate-y-2'
+                  }`}>
+                    <div className="p-2">
+                      {item.subItems?.map((subItem) => (
+                        <button
+                          key={subItem.id}
+                          onClick={() => handleMenuItemClick(item.id, subItem.id)}
+                          className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left hover:bg-blue-50 hover:text-blue-600 transition-colors group"
                         >
-                          <div className="font-semibold text-sm">{dropdownItem.label}</div>
-                          <div className="text-xs text-gray-500 mt-1">{dropdownItem.description}</div>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* EodScans Dropdown */}
-                {item.id === 'eodscans' && (
-                  <div 
-                    className={`absolute top-full left-0 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-4 px-5 z-50 transition-all duration-300 ${
-                      showEodScansMenu ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
-                    }`}
-                    onMouseEnter={() => setShowEodScansMenu(true)}
-                    onMouseLeave={() => setShowEodScansMenu(false)}
-                  >
-                    <h3 className="text-base font-bold text-gray-900 mb-3 font-serif">Technical Scans</h3>
-                    <div className="space-y-1">
-                      {item.dropdownItems?.map((dropdownItem) => (
-                        <a
-                          key={dropdownItem.id}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            onSectionChange('eodscans', dropdownItem.id);
-                            setShowEodScansMenu(false);
-                          }}
-                          className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors duration-200"
-                        >
-                          <div className="font-semibold text-sm">{dropdownItem.label}</div>
-                          <div className="text-xs text-gray-500 mt-1">{dropdownItem.description}</div>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Algo Trading Dropdown */}
-                {item.id === 'algo-trading' && (
-                  <div 
-                    className={`absolute top-full left-0 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-4 px-5 z-50 transition-all duration-300 ${
-                      showAlgoTradingMenu ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
-                    }`}
-                    onMouseEnter={() => setShowAlgoTradingMenu(true)}
-                    onMouseLeave={() => setShowAlgoTradingMenu(false)}
-                  >
-                    <h3 className="text-base font-bold text-gray-900 mb-3 font-serif">Algorithmic Trading</h3>
-                    <div className="space-y-1">
-                      {item.dropdownItems?.map((dropdownItem) => (
-                        <a
-                          key={dropdownItem.id}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            onSectionChange('algo-trading', dropdownItem.id);
-                            setShowAlgoTradingMenu(false);
-                          }}
-                          className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors duration-200"
-                        >
-                          <div className="font-semibold text-sm">{dropdownItem.label}</div>
-                          <div className="text-xs text-gray-500 mt-1">{dropdownItem.description}</div>
-                        </a>
+                          <div className="p-2 bg-gray-100 group-hover:bg-blue-100 rounded-lg">
+                            {subItem.icon}
+                          </div>
+                          <div>
+                            <div className="font-medium text-gray-900 group-hover:text-blue-600">{subItem.label}</div>
+                            <div className="text-sm text-gray-500 group-hover:text-blue-500">{subItem.description}</div>
+                          </div>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -444,17 +439,34 @@ export function Navigation({
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Mobile Menu */}
-        {showMobileMenu && (
-          <div className="lg:hidden bg-white border-t border-gray-200 mt-4">
-            <div className="px-4 py-2 space-y-1">
-              {menuItems.map((item) => (
-                <div key={item.id}>
-                  <button
-                    onClick={() => {
-                      if (item.hasDropdown) {
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="lg:hidden p-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            aria-label={showMobileMenu ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={showMobileMenu}
+            title={showMobileMenu ? "Close menu" : "Open menu"}
+          >
+            {showMobileMenu ? (
+              <X className={brandTokens.icons.md} />
+            ) : (
+              <Menu className={brandTokens.icons.md} />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Menu */}
+      {showMobileMenu && (
+        <div className="lg:hidden bg-white border-t border-gray-200/50">
+          <div className="px-4 py-4 space-y-2 max-h-96 overflow-y-auto scrollbar-thin">
+            {menuItems.map((item) => (
+              <div key={item.id}>
+                {item.hasDropdown ? (
+                  <div>
+                    <button
+                      onClick={() => {
                         if (item.id === 'market') {
                           setShowMarketMenu(!showMarketMenu);
                         } else if (item.id === 'eodscans') {
@@ -462,93 +474,84 @@ export function Navigation({
                         } else if (item.id === 'algo-trading') {
                           setShowAlgoTradingMenu(!showAlgoTradingMenu);
                         }
-                      } else {
-                        onSectionChange(item.id);
-                        setShowMobileMenu(false);
-                      }
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors border ${
-                      activeSection === item.id
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'text-gray-700 hover:bg-blue-50 border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2">
-                      {item.icon}
-                      <span className="font-medium">{item.label}</span>
-                    </div>
-                    {item.hasDropdown && (
-                      <ChevronDown className={`w-4 h-4 transition-transform ${
-                        (item.id === 'market' && showMarketMenu) || 
+                      }}
+                      className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                        activeSection === item.id
+                          ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white'
+                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className={`p-2 rounded-lg ${
+                          activeSection === item.id 
+                            ? 'bg-white/20' 
+                            : 'bg-gray-100'
+                        }`}>
+                          {item.icon}
+                        </div>
+                        <div className="text-left">
+                          <div>{item.label}</div>
+                          <div className="text-sm opacity-75">{item.description}</div>
+                        </div>
+                      </div>
+                      <ChevronDown className={`${brandTokens.icons.sm} transition-transform duration-200 ${
+                        (item.id === 'market' && showMarketMenu) ||
                         (item.id === 'eodscans' && showEodScansMenu) ||
                         (item.id === 'algo-trading' && showAlgoTradingMenu)
                           ? 'rotate-180' : ''
                       }`} />
+                    </button>
+                    
+                    {/* Mobile Dropdown Items */}
+                    {((item.id === 'market' && showMarketMenu) ||
+                      (item.id === 'eodscans' && showEodScansMenu) ||
+                      (item.id === 'algo-trading' && showAlgoTradingMenu)) && (
+                      <div className="ml-4 mt-2 space-y-1 border-l-2 border-blue-200 pl-4">
+                        {item.subItems?.map((subItem) => (
+                          <button
+                            key={subItem.id}
+                            onClick={() => handleMenuItemClick(item.id, subItem.id)}
+                            className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          >
+                            <div className="p-1.5 bg-gray-100 rounded">
+                              {subItem.icon}
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900">{subItem.label}</div>
+                              <div className="text-xs text-gray-500">{subItem.description}</div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
                     )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleMenuItemClick(item.id)}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                      activeSection === item.id
+                        ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                    }`}
+                  >
+                    <div className={`p-2 rounded-lg ${
+                      activeSection === item.id 
+                        ? 'bg-white/20' 
+                        : 'bg-gray-100'
+                    }`}>
+                      {item.icon}
+                    </div>
+                    <div className="text-left">
+                      <div>{item.label}</div>
+                      <div className="text-sm opacity-75">{item.description}</div>
+                    </div>
                   </button>
-                  
-                  {/* Mobile Dropdowns */}
-                  {item.hasDropdown && (
-                    <>
-                      {item.id === 'market' && showMarketMenu && (
-                        <div className="ml-4 mt-2 space-y-1">
-                          {item.dropdownItems?.map((dropdownItem) => (
-                            <button
-                              key={dropdownItem.id}
-                              onClick={() => {
-                                onSectionChange('market', dropdownItem.id);
-                                setShowMobileMenu(false);
-                                setShowMarketMenu(false);
-                              }}
-                              className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                            >
-                              {dropdownItem.label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                      {item.id === 'eodscans' && showEodScansMenu && (
-                        <div className="ml-4 mt-2 space-y-1">
-                          {item.dropdownItems?.map((dropdownItem) => (
-                            <button
-                              key={dropdownItem.id}
-                              onClick={() => {
-                                onSectionChange('eodscans', dropdownItem.id);
-                                setShowMobileMenu(false);
-                                setShowEodScansMenu(false);
-                              }}
-                              className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                            >
-                              {dropdownItem.label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                      {item.id === 'algo-trading' && showAlgoTradingMenu && (
-                        <div className="ml-4 mt-2 space-y-1">
-                          {item.dropdownItems?.map((dropdownItem) => (
-                            <button
-                              key={dropdownItem.id}
-                              onClick={() => {
-                                onSectionChange('algo-trading', dropdownItem.id);
-                                setShowMobileMenu(false);
-                                setShowAlgoTradingMenu(false);
-                              }}
-                              className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                            >
-                              {dropdownItem.label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
+                )}
+              </div>
+            ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 } 

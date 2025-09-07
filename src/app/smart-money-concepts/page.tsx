@@ -12,17 +12,6 @@ export default function SmartMoneyConceptsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* SEO Meta Tags */}
-      <head>
-        <title>Smart Money Concepts: Master Institutional Trading Patterns | TradeSmartMoney</title>
-        <meta 
-          name="description" 
-          content="Learn smart money concepts (SMC) and institutional trading patterns. Master order flow analysis, liquidity hunting, and smart money footprint for professional trading success." 
-        />
-        <meta name="keywords" content="smart money concepts, smart money trading, institutional trading, order flow analysis, liquidity analysis, smart money footprint, market structure, supply and demand trading" />
-        <link rel="canonical" href="https://tradesmartmoney.com/smart-money-concepts" />
-      </head>
-
       {/* Navigation Header */}
       <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4">

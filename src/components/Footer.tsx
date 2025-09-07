@@ -155,7 +155,7 @@ export function Footer() {
               <p className="text-gray-400 text-sm">
                 © {currentYear} TradeSmartMoney. All rights reserved.
               </p>
-              <p className="text-gray-500 text-xs mt-1">
+              <p className="text-gray-300 text-xs mt-1">
                 Made with ❤️ for Indian traders and investors
               </p>
             </div>
@@ -174,7 +174,7 @@ export function Footer() {
 
           {/* Compliance Information */}
           <div className="mt-6 pt-6 border-t border-gray-800">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-gray-500">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-gray-300">
               <div>
                 <h4 className="font-semibold text-gray-400 mb-2">Data Sources & Disclaimers</h4>
                 <p className="leading-relaxed">
@@ -194,7 +194,7 @@ export function Footer() {
 
           {/* Version & Build Info */}
           <div className="mt-4 pt-4 border-t border-gray-800 flex justify-center">
-            <p className="text-gray-600 text-xs">
+                          <p className="text-gray-200 text-xs">
               Platform v1.0.0 • Built with Next.js & Real-time Data APIs • 
               <span className="ml-2">
                 Last updated: {new Date().toISOString().split('T')[0]}

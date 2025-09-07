@@ -7,11 +7,15 @@ import { Footer } from '@/components/Footer';
 const geistSans = Geist({
   subsets: ["latin"],
   variable: "--font-geist-sans",
+  display: 'swap',
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
+  display: 'swap',
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -106,6 +110,18 @@ export const metadata: Metadata = {
     yandex: 'your-yandex-verification-code',
     yahoo: 'your-yahoo-verification-code',
   },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+    other: [
+      {
+        rel: 'apple-touch-icon-precomposed',
+        url: '/apple-touch-icon.png',
+      },
+    ],
+  },
+  manifest: '/manifest.json',
   category: 'finance',
 };
 
@@ -128,9 +144,22 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="TradeSmartMoney" />
         
+        {/* Apple Touch Icons */}
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        
         {/* Performance Hints */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://dhan.co" />
+        
+        {/* Preload Critical Resources */}
+        <link rel="preload" href="/favicon.ico" as="image" type="image/x-icon" />
+        
+        {/* Resource Hints */}
+        <meta httpEquiv="X-DNS-Prefetch-Control" content="on" />
+        <meta name="format-detection" content="telephone=no" />
         
         {/* Favicons */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
