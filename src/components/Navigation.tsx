@@ -71,26 +71,64 @@ export function Navigation({
     return () => clearInterval(indicesTimer);
   }, []);
 
+  // Smart submenu management for mobile
   useEffect(() => {
-    setShowMarketMenu(false);
-    setShowEodScansMenu(false);
-    setShowAlgoTradingMenu(false);
-  }, [activeSection]);
-
-  // Close all dropdowns when clicking outside (for mobile)
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Element;
-      if (!target.closest('.dropdown-container')) {
+    // Don't auto-close if mobile menu is open and we're navigating to the same section
+    if (!showMobileMenu) {
+      setShowMarketMenu(false);
+      setShowEodScansMenu(false);
+      setShowAlgoTradingMenu(false);
+    } else {
+      // Auto-open appropriate submenu when mobile menu is open
+      if (activeSection === 'market') {
+        setShowMarketMenu(true);
+        setShowEodScansMenu(false);
+        setShowAlgoTradingMenu(false);
+      } else if (activeSection === 'eodscans') {
+        setShowEodScansMenu(true);
+        setShowMarketMenu(false);
+        setShowAlgoTradingMenu(false);
+      } else if (activeSection === 'algo-trading') {
+        setShowAlgoTradingMenu(true);
+        setShowMarketMenu(false);
+        setShowEodScansMenu(false);
+      } else {
+        // Close all submenus for non-dropdown sections
         setShowMarketMenu(false);
         setShowEodScansMenu(false);
         setShowAlgoTradingMenu(false);
+      }
+    }
+  }, [activeSection, showMobileMenu]);
+
+  // Enhanced click outside handler for mobile menu
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Element;
+      
+      // Close mobile menu when clicking outside
+      if (showMobileMenu && 
+          !target.closest('.lg\\:hidden') && 
+          !target.closest('[aria-label*="navigation menu"]')) {
+        setShowMobileMenu(false);
+        setShowMarketMenu(false);
+        setShowEodScansMenu(false);
+        setShowAlgoTradingMenu(false);
+      }
+      
+      // Close desktop dropdowns when clicking outside
+      if (!target.closest('.dropdown-container')) {
+        if (!showMobileMenu) { // Only close if not on mobile
+          setShowMarketMenu(false);
+          setShowEodScansMenu(false);
+          setShowAlgoTradingMenu(false);
+        }
       }
     };
 
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+  }, [showMobileMenu]);
 
   const menuItems = [
     {
@@ -217,6 +255,23 @@ export function Navigation({
     setShowMarketMenu(false);
     setShowEodScansMenu(false);
     setShowAlgoTradingMenu(false);
+  };
+
+  // Better mobile submenu toggle handler
+  const handleMobileSubmenuToggle = (menuId: string) => {
+    if (menuId === 'market') {
+      setShowMarketMenu(!showMarketMenu);
+      setShowEodScansMenu(false);
+      setShowAlgoTradingMenu(false);
+    } else if (menuId === 'eodscans') {
+      setShowEodScansMenu(!showEodScansMenu);
+      setShowMarketMenu(false);
+      setShowAlgoTradingMenu(false);
+    } else if (menuId === 'algo-trading') {
+      setShowAlgoTradingMenu(!showAlgoTradingMenu);
+      setShowMarketMenu(false);
+      setShowEodScansMenu(false);
+    }
   };
 
   const formatCurrency = (value: number) => {
@@ -457,93 +512,96 @@ export function Navigation({
         </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
+      {/* Improved Mobile Navigation Menu */}
       {showMobileMenu && (
-        <div className="lg:hidden bg-white border-t border-gray-200/50">
-          <div className="px-4 py-4 space-y-2 max-h-96 overflow-y-auto scrollbar-thin">
+        <div className="lg:hidden bg-white border-t border-gray-200/50 shadow-lg">
+          <div className="px-4 py-4 space-y-1 max-h-[70vh] overflow-y-auto scrollbar-thin">
             {menuItems.map((item) => (
-              <div key={item.id}>
+              <div key={item.id} className="rounded-lg overflow-hidden">
                 {item.hasDropdown ? (
                   <div>
+                    {/* Main Menu Button */}
                     <button
-                      onClick={() => {
-                        if (item.id === 'market') {
-                          setShowMarketMenu(!showMarketMenu);
-                        } else if (item.id === 'eodscans') {
-                          setShowEodScansMenu(!showEodScansMenu);
-                        } else if (item.id === 'algo-trading') {
-                          setShowAlgoTradingMenu(!showAlgoTradingMenu);
-                        }
-                      }}
-                      className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                      onClick={() => handleMobileSubmenuToggle(item.id)}
+                      className={`w-full flex items-center justify-between px-4 py-3 font-medium transition-all duration-200 ${
                         activeSection === item.id
-                          ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white'
-                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                          ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-sm'
+                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:bg-blue-100'
+                      } ${
+                        (item.id === 'market' && showMarketMenu) ||
+                        (item.id === 'eodscans' && showEodScansMenu) ||
+                        (item.id === 'algo-trading' && showAlgoTradingMenu)
+                          ? 'rounded-t-lg' : 'rounded-lg'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className={`p-2 rounded-lg ${
+                        <div className={`p-2 rounded-lg transition-colors ${
                           activeSection === item.id 
                             ? 'bg-white/20' 
-                            : 'bg-gray-100'
+                            : 'bg-gray-100 group-hover:bg-blue-100'
                         }`}>
                           {item.icon}
                         </div>
                         <div className="text-left">
-                          <div>{item.label}</div>
-                          <div className="text-sm opacity-75">{item.description}</div>
+                          <div className="font-semibold">{item.label}</div>
+                          <div className="text-xs opacity-75">{item.description}</div>
                         </div>
                       </div>
-                      <ChevronDown className={`${brandTokens.icons.sm} transition-transform duration-200 ${
+                      <ChevronDown className={`${brandTokens.icons.sm} transition-all duration-300 ${
                         (item.id === 'market' && showMarketMenu) ||
                         (item.id === 'eodscans' && showEodScansMenu) ||
                         (item.id === 'algo-trading' && showAlgoTradingMenu)
-                          ? 'rotate-180' : ''
+                          ? 'rotate-180 text-blue-600' : activeSection === item.id ? 'text-white/70' : 'text-gray-400'
                       }`} />
                     </button>
                     
-                    {/* Mobile Dropdown Items */}
-                    {((item.id === 'market' && showMarketMenu) ||
+                    {/* Animated Mobile Dropdown Items */}
+                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      (item.id === 'market' && showMarketMenu) ||
                       (item.id === 'eodscans' && showEodScansMenu) ||
-                      (item.id === 'algo-trading' && showAlgoTradingMenu)) && (
-                      <div className="ml-4 mt-2 space-y-1 border-l-2 border-blue-200 pl-4">
-                        {item.subItems?.map((subItem) => (
-                          <button
-                            key={subItem.id}
-                            onClick={() => handleMenuItemClick(item.id, subItem.id)}
-                            className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                          >
-                            <div className="p-1.5 bg-gray-100 rounded">
-                              {subItem.icon}
-                            </div>
-                            <div>
-                              <div className="font-medium text-gray-900">{subItem.label}</div>
-                              <div className="text-xs text-gray-500">{subItem.description}</div>
-                            </div>
-                          </button>
-                        ))}
+                      (item.id === 'algo-trading' && showAlgoTradingMenu)
+                        ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}>
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-t border-blue-100">
+                        <div className="p-2 space-y-1">
+                          {item.subItems?.map((subItem) => (
+                            <button
+                              key={subItem.id}
+                              onClick={() => handleMenuItemClick(item.id, subItem.id)}
+                              className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left hover:bg-white hover:shadow-sm transition-all duration-200 active:scale-[0.98] group"
+                            >
+                              <div className="p-1.5 bg-white rounded-md shadow-sm group-hover:bg-blue-50 transition-colors">
+                                {subItem.icon}
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900 group-hover:text-blue-900">{subItem.label}</div>
+                                <div className="text-xs text-gray-600 group-hover:text-blue-700">{subItem.description}</div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 ) : (
                   <button
                     onClick={() => handleMenuItemClick(item.id)}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 active:scale-[0.98] ${
                       activeSection === item.id
-                        ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white'
-                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                        ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-sm'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:bg-blue-100'
                     }`}
                   >
-                    <div className={`p-2 rounded-lg ${
+                    <div className={`p-2 rounded-lg transition-colors ${
                       activeSection === item.id 
                         ? 'bg-white/20' 
-                        : 'bg-gray-100'
+                        : 'bg-gray-100 group-hover:bg-blue-100'
                     }`}>
                       {item.icon}
                     </div>
                     <div className="text-left">
-                      <div>{item.label}</div>
-                      <div className="text-sm opacity-75">{item.description}</div>
+                      <div className="font-semibold">{item.label}</div>
+                      <div className="text-xs opacity-75">{item.description}</div>
                     </div>
                   </button>
                 )}
