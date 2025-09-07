@@ -133,6 +133,77 @@ The application is fully responsive and works on:
 - **Tablet** - Optimized grid layouts and touch-friendly controls
 - **Mobile** - Stacked layouts with scrollable tables
 
+## 📢 Advertisement Optimization
+
+### Ad Revenue Optimization Features
+- **Multiple Ad Formats**: Header, sidebar, in-content, footer, sticky, mobile, and video ads
+- **Responsive Design**: All ads adapt to different screen sizes
+- **Cookie Consent Integration**: Ads only show after user consent
+- **Video Ad Support**: Higher CPM video advertisements
+- **Mobile-Optimized**: Specialized mobile ad units for better mobile monetization
+- **Multiple Ad Networks Ready**: Prepared for Google AdSense, Amazon, Facebook, and more
+
+### Production Setup Checklist
+
+#### 1. Google AdSense Setup
+- [ ] Create Google AdSense account
+- [ ] Add domain to AdSense
+- [ ] Get site approved for ads
+- [ ] Create ad units in AdSense dashboard:
+  - [ ] Header Leaderboard (728x90)
+  - [ ] Sidebar Skyscraper (300x600)
+  - [ ] In-Content Rectangle (300x250)
+  - [ ] Footer Banner (728x90)
+  - [ ] Mobile Banner (320x50)
+  - [ ] Sticky Rectangle (300x250)
+  - [ ] Video Ad Unit
+  - [ ] Native Ad Unit
+  - [ ] Mobile Interstitial
+  - [ ] Mobile Anchor
+
+#### 2. Update Ad Slot IDs
+Replace placeholder IDs in `src/components/AdSense.tsx`:
+```typescript
+// Replace these with actual ad unit IDs from AdSense dashboard
+ca-pub-6601377389077210/1001 → YOUR_ACTUAL_AD_UNIT_ID
+ca-pub-6601377389077210/1002 → YOUR_ACTUAL_AD_UNIT_ID
+// ... continue for all ad units
+```
+
+#### 3. Additional Ad Networks (Optional)
+- [ ] Amazon Publisher Services (APS)
+- [ ] Facebook Audience Network
+- [ ] Criteo
+- [ ] Update `public/ads.txt` with actual publisher IDs
+
+#### 4. Testing Checklist
+- [ ] Test ads on desktop
+- [ ] Test ads on mobile
+- [ ] Verify cookie consent integration
+- [ ] Check ad placement doesn't affect UX
+- [ ] Test video ad functionality
+- [ ] Verify ads.txt is accessible
+
+#### 5. SEO & Performance
+- [ ] Ensure ads don't impact page speed
+- [ ] Test Core Web Vitals with ads
+- [ ] Verify ads don't interfere with navigation
+- [ ] Check mobile-friendliness
+
+### Ad Placement Strategy
+1. **Header Ads**: High visibility, good for brand awareness
+2. **In-Content Ads**: Better engagement, higher CTR
+3. **Sticky Ads**: Persistent visibility without being intrusive
+4. **Video Ads**: Higher CPM rates
+5. **Mobile-Specific**: Optimized for mobile user experience
+
+### Revenue Optimization Tips
+- Monitor ad performance in AdSense dashboard
+- A/B test different ad placements
+- Use responsive ad units for better fill rates
+- Consider enabling video ads for higher revenue
+- Maintain good user experience to ensure return visits
+
 ## 🚀 Deployment
 
 ### Production Build

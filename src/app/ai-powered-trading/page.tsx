@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
 import { Bot, Cpu, Zap, TrendingUp, Shield, BarChart3, Brain, Rocket, CheckCircle, ArrowRight, Star, Home } from 'lucide-react';
+import { HeaderAd, InContentAd, FooterAd, MobileAd } from '@/components/AdSense';
 
 export default function AIPoweredTradingPage() {
   useEffect(() => {
@@ -11,7 +12,13 @@ export default function AIPoweredTradingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* Header Advertisement */}
+      <HeaderAd />
+      
+      {/* Mobile Advertisement */}
+      <MobileAd />
+
       {/* Navigation Header */}
       <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4">
@@ -369,6 +376,12 @@ export default function AIPoweredTradingPage() {
           </div>
         </div>
       </section>
+
+      {/* Mid-content Advertisement */}
+      <InContentAd />
+
+      {/* Footer Advertisement */}
+      <FooterAd />
     </div>
   );
 } 

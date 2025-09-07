@@ -3,15 +3,46 @@
 
 # Google AdSense - Your Publisher ID
 google.com, ca-pub-6601377389077210, DIRECT, f08c47fec0942fa0
+googlesyndication.com, ca-pub-6601377389077210, DIRECT, f08c47fec0942fa0
 
-# Additional ad networks can be added here in the format:
-# domain.com, publisher_id, DIRECT/RESELLER, TAG_ID
+# Additional ad networks for better revenue (uncomment when ready to use):
 
-# Example for other ad networks (uncomment and modify when needed):
-# googlesyndication.com, ca-pub-6601377389077210, DIRECT, f08c47fec0942fa0
-# adsystem.amazon.com, XXXXXXXXXX, DIRECT
-# rubiconproject.com, XXXXX, RESELLER, 0bfd66d529a55807
+# Amazon Publisher Services (APS/TAM)
+# aps.amazon.com, YOUR_AMAZON_PUBLISHER_ID, DIRECT
+
+# Facebook Audience Network
+# facebook.com, YOUR_FACEBOOK_PROPERTY_ID, RESELLER
+
+# Criteo
+# criteo.com, YOUR_CRITEO_PUBLISHER_ID, DIRECT
+
+# PubMatic
+# pubmatic.com, YOUR_PUBMATIC_PUBLISHER_ID, RESELLER, 5d62403b186f2ace
+
+# OpenX
+# openx.com, YOUR_OPENX_UNIT_ID, RESELLER, 6a698e2ec38604c6
+
+# Index Exchange
+# indexexchange.com, YOUR_INDEX_SITE_ID, RESELLER, 50b1c356f2c5c8fc
+
+# Rubicon Project
+# rubiconproject.com, YOUR_RUBICON_ACCOUNT_ID, RESELLER, 0bfd66d529a55807
+
+# AppNexus
+# appnexus.com, YOUR_APPNEXUS_MEMBER_ID, RESELLER, f5ab79cb980f11d1
+
+# Sovrn
+# sovrn.com, YOUR_SOVRN_AFFILIATE_ID, DIRECT, fafdf38b16bf6b2b
+
+# Media.net
+# media.net, YOUR_MEDIANET_PUBLISHER_ID, DIRECT
 
 # This file was last updated on: 2025-01-09
 # Domain: tradesmartmoney.com
-# Contact: tradesmartmoneytsm@gmail.com 
+# Contact: tradesmartmoneytsm@gmail.com
+
+# Instructions for production:
+# 1. Create actual ad units in Google AdSense dashboard
+# 2. Replace placeholder ad slot IDs in AdSense.tsx
+# 3. Uncomment and configure additional networks as needed
+# 4. Test all ad placements before going live 

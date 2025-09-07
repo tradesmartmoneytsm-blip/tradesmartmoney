@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
 import { Settings, Activity, BarChart3, Target, Zap, Shield, TrendingUp, Brain, CheckCircle, ArrowRight, Cpu, Code, Home } from 'lucide-react';
+import { HeaderAd, InContentAd, FooterAd, MobileAd } from '@/components/AdSense';
 
 export default function AlgoTradingPage() {
   useEffect(() => {
@@ -11,7 +12,12 @@ export default function AlgoTradingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* Header Advertisement */}
+      <HeaderAd />
+      
+      {/* Mobile Advertisement */}
+      <MobileAd />
 
       {/* Navigation Header */}
       <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -358,6 +364,9 @@ export default function AlgoTradingPage() {
         </div>
       </section>
 
+      {/* Mid-content Advertisement */}
+      <InContentAd />
+
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-green-600 to-teal-600 text-white py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -376,6 +385,9 @@ export default function AlgoTradingPage() {
           </div>
         </div>
       </section>
+
+      {/* Footer Advertisement */}
+      <FooterAd />
     </div>
   );
 } 

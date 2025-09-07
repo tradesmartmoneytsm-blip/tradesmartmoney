@@ -3,7 +3,7 @@
 import { useState, lazy, Suspense } from 'react';
 import Link from 'next/link';
 import { Navigation } from '@/components/Navigation';
-import { HeaderAd, InContentAd, StickyAd } from '@/components/AdSense';
+import { HeaderAd, InContentAd, StickyAd, MobileBannerAd, MobileInterstitialAd, VideoAd } from '@/components/AdSense';
 
 // Dynamic imports for better performance
 const SwingTrades = lazy(() => import('@/components/SwingTrades').then(module => ({ default: module.SwingTrades })));
@@ -257,8 +257,19 @@ export default function Home() {
         </div>
       </main>
       
+      {/* Mobile Banner Ad */}
+      <MobileBannerAd />
+      
       {/* Sticky Advertisement */}
       <StickyAd />
+      
+      {/* Video Advertisement - Higher CPM */}
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <VideoAd />
+      </div>
+      
+      {/* Mobile Interstitial Ad */}
+      <MobileInterstitialAd />
       
       {/* Educational Resources Section - Always Visible */}
       <section className="bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 text-white py-16 px-4">
