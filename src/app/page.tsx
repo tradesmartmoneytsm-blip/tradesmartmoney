@@ -12,6 +12,7 @@ const News = lazy(() => import('@/components/News').then(module => ({ default: m
 const Market = lazy(() => import('@/components/Market').then(module => ({ default: module.Market })));
 const EodScans = lazy(() => import('@/components/EodScans').then(module => ({ default: module.EodScans })));
 const AlgoTrading = lazy(() => import('@/components/AlgoTrading').then(module => ({ default: module.AlgoTrading })));
+const StockNews = lazy(() => import('@/components/StockNews').then(module => ({ default: module.StockNews })));
 import { Brain, Bot, Settings, ArrowRight, BookOpen, TrendingUp, BarChart3, Zap, Shield, Users, Star, Play, ChevronRight } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
@@ -204,6 +205,12 @@ export default function Home() {
         return (
           <Suspense fallback={<LoadingFallback />}>
             <News />
+          </Suspense>
+        );
+      case 'stock-news':
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <StockNews />
           </Suspense>
         );
       case 'market':

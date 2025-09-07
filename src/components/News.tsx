@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { Globe, Clock, ExternalLink, RefreshCw } from 'lucide-react';
+import { Globe, Clock, ExternalLink, RefreshCw, TrendingUp, Building2, FileText, BarChart3, Briefcase } from 'lucide-react';
 
 interface NewsArticle {
   id: string;
@@ -15,70 +15,80 @@ interface NewsArticle {
   pubDate: string;
 }
 
-// RSS to JSON converter service (free)
-const RSS_TO_JSON_API = 'https://api.rss2json.com/v1/api.json';
-
-// RSS feed item interface
-interface RSSItem {
-  title: string;
-  description?: string;
-  link: string;
-  pubDate: string;
-}
-
-interface RSSResponse {
-  status: string;
-  items: RSSItem[];
-}
-
-const NEWS_SOURCES = [
-  {
-    name: 'Economic Times',
-    rss: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms',
-    category: 'Business'
-  },
-  {
-    name: 'MoneyControl',  
-    rss: 'https://www.moneycontrol.com/rss/latestnews.xml',
-    category: 'Markets'
-  },
-  {
-    name: 'Business Standard',
-    rss: 'https://www.business-standard.com/rss/home_page_top_stories.rss', 
-    category: 'Finance'
-  }
+// Category configuration for filtering
+const NEWS_CATEGORIES = [
+  { id: 'all', name: 'All News', icon: Globe, color: 'blue' },
+  { id: 'Markets', name: 'Markets', icon: TrendingUp, color: 'green' },
+  { id: 'Stocks', name: 'Stocks', icon: BarChart3, color: 'purple' },
+  { id: 'Results', name: 'Results', icon: FileText, color: 'orange' },
+  { id: 'Companies', name: 'Companies', icon: Building2, color: 'indigo' },
+  { id: 'Policy', name: 'Policy', icon: Briefcase, color: 'red' }
 ];
 
-// Sample fallback articles (in case RSS fails)
+// Color mappings for Tailwind classes
+const COLOR_CLASSES = {
+  blue: {
+    border: 'border-blue-500',
+    text: 'text-blue-600',
+    bg: 'bg-blue-100'
+  },
+  green: {
+    border: 'border-green-500',
+    text: 'text-green-600',
+    bg: 'bg-green-100'
+  },
+  purple: {
+    border: 'border-purple-500',
+    text: 'text-purple-600',
+    bg: 'bg-purple-100'
+  },
+  orange: {
+    border: 'border-orange-500',
+    text: 'text-orange-600',
+    bg: 'bg-orange-100'
+  },
+  indigo: {
+    border: 'border-indigo-500',
+    text: 'text-indigo-600',
+    bg: 'bg-indigo-100'
+  },
+  red: {
+    border: 'border-red-500',
+    text: 'text-red-600',
+    bg: 'bg-red-100'
+  }
+};
+
+// Sample fallback articles (in case API fails)
 const FALLBACK_ARTICLES: NewsArticle[] = [
   {
     id: '1',
-    title: 'Market Hits New All-Time High',
-    summary: 'Nifty crosses 22,200 mark driven by IT and banking sector gains.',
+    title: 'Nifty Hits Fresh All-Time High Above 25,000',
+    summary: 'Indian benchmark indices surge to record levels driven by strong FII inflows and positive earnings.',
     category: 'Markets',
     timestamp: '2 hours ago',
     impact: 'Positive',
-    source: 'Economic Times',
+    source: 'Economic Times Markets',
     pubDate: new Date().toISOString()
   },
   {
     id: '2', 
-    title: 'RBI Monetary Policy Decision Expected',
-    summary: 'Central bank likely to maintain repo rate at current levels amid inflation concerns.',
+    title: 'RBI Repo Rate Decision Awaited This Week',
+    summary: 'Market expects central bank to maintain current rates amid balanced inflation and growth outlook.',
     category: 'Policy',
     timestamp: '4 hours ago',
     impact: 'Neutral',
-    source: 'Business Standard',
+    source: 'MoneyControl Markets',
     pubDate: new Date().toISOString()
   },
   {
     id: '3',
-    title: 'FII Outflows Continue for Third Day', 
-    summary: 'Foreign institutional investors pull out ₹1,250 crores from Indian markets.',
-    category: 'FII/DII',
+    title: 'Banking Sector Leads Market Rally', 
+    summary: 'HDFC Bank, ICICI Bank, and SBI gain 3-5% on strong quarterly results and NIM improvement.',
+    category: 'Stocks',
     timestamp: '6 hours ago',
-    impact: 'Negative',
-    source: 'Mint',
+    impact: 'Positive',
+    source: 'Business Standard Markets',
     pubDate: new Date().toISOString()
   }
 ];
@@ -87,70 +97,27 @@ export function News() {
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [activeCategory, setActiveCategory] = useState('all');
   
-  // Sample fallback articles (in case RSS fails)
+  // Sample fallback articles (in case API fails)
   const fallbackArticles = FALLBACK_ARTICLES;
-
-  const fetchNewsFromRSS = async (source: typeof NEWS_SOURCES[0]) => {
-    try {
-      const response = await fetch(`${RSS_TO_JSON_API}?rss_url=${encodeURIComponent(source.rss)}&api_key=public`);
-      const data: RSSResponse = await response.json();
-      
-      if (data.status === 'ok' && data.items) {
-        return data.items.slice(0, 4).map((item: RSSItem) => ({
-          id: `${source.name}-${item.title.slice(0, 20).replace(/\s+/g, '-')}`,
-          title: item.title,
-          summary: item.description ? item.description.substring(0, 150) + '...' : 'Click to read more',
-          category: source.category,
-          timestamp: formatTimestamp(item.pubDate),
-          impact: 'Neutral' as const,
-          source: source.name,
-          url: item.link,
-          pubDate: item.pubDate
-        }));
-      }
-      return [];
-    } catch (error) {
-      console.error(`Failed to fetch news from ${source.name}:`, error);
-      return [];
-    }
-  };
-
-  const formatTimestamp = (pubDate: string) => {
-    try {
-      const date = new Date(pubDate);
-      const now = new Date();
-      const diffMs = now.getTime() - date.getTime();
-      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-      
-      if (diffHours < 1) return 'Just now';
-      if (diffHours < 24) return `${diffHours} hours ago`;
-      const diffDays = Math.floor(diffHours / 24);
-      return `${diffDays} days ago`;
-    } catch {
-      return 'Recently';
-    }
-  };
 
   const fetchAllNews = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch from all RSS sources
-      const newsPromises = NEWS_SOURCES.map(fetchNewsFromRSS);
-      const results = await Promise.all(newsPromises);
+      // Use our server-side API instead of direct RSS fetching
+      const response = await fetch('/api/news-feed');
+      const data = await response.json();
       
-      // Combine and sort by publication date
-      const allNews = results.flat().sort((a, b) => 
-        new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
-      );
-      
-      if (allNews.length > 0) {
-        setNewsArticles(allNews.slice(0, 8)); // Show top 8 articles
-        setLastUpdated(new Date().toLocaleTimeString());
+      if (data.success && data.articles) {
+        setNewsArticles(data.articles);
+        setLastUpdated(new Date(data.lastUpdated).toLocaleTimeString());
+        console.log(`✅ News: Loaded ${data.articles.length} articles`);
       } else {
-        // Use fallback articles if RSS fails
+        // Use fallback articles if API fails
         setNewsArticles(fallbackArticles);
         setLastUpdated('Using cached articles');
+        console.log('⚠️ News: Using fallback articles');
       }
     } catch (error) {
       console.error('Failed to fetch news:', error);
@@ -169,6 +136,11 @@ export function News() {
     return () => clearInterval(interval);
   }, [fetchAllNews]);
 
+  // Filter articles by category
+  const filteredArticles = activeCategory === 'all' 
+    ? newsArticles 
+    : newsArticles.filter(article => article.category === activeCategory);
+
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
       {/* Header Advertisement */}
@@ -181,7 +153,7 @@ export function News() {
               <Globe className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Market News</h2>
+              <h2 className="text-2xl font-bold text-gray-900">Stock Market News</h2>
               <p className="text-gray-600 text-sm">
                 {loading ? 'Updating...' : `Last updated: ${lastUpdated}`}
               </p>
@@ -196,6 +168,47 @@ export function News() {
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             <span className="text-sm font-medium">Refresh</span>
           </button>
+        </div>
+
+        {/* Category Tabs */}
+        <div className="mb-6">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8 overflow-x-auto">
+              {NEWS_CATEGORIES.map((category) => {
+                const Icon = category.icon;
+                const isActive = activeCategory === category.id;
+                const articleCount = category.id === 'all' 
+                  ? newsArticles.length 
+                  : newsArticles.filter(article => article.category === category.id).length;
+                
+                const colors = COLOR_CLASSES[category.color as keyof typeof COLOR_CLASSES];
+                
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveCategory(category.id)}
+                    className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+                      isActive
+                        ? `${colors.border} ${colors.text}`
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{category.name}</span>
+                    {articleCount > 0 && (
+                      <span className={`inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none rounded-full ${
+                        isActive 
+                          ? `${colors.text} ${colors.bg}` 
+                          : 'text-gray-600 bg-gray-100'
+                      }`}>
+                        {articleCount}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
         </div>
 
         {loading ? (
@@ -214,7 +227,7 @@ export function News() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {newsArticles.map((article) => (
+            {filteredArticles.map((article) => (
               <div key={article.id} className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center space-x-2">
@@ -222,6 +235,9 @@ export function News() {
                       article.category === 'Markets' ? 'bg-green-100 text-green-800' :
                       article.category === 'Policy' ? 'bg-blue-100 text-blue-800' :
                       article.category === 'Business' ? 'bg-purple-100 text-purple-800' :
+                      article.category === 'Stocks' ? 'bg-purple-100 text-purple-800' :
+                      article.category === 'Results' ? 'bg-orange-100 text-orange-800' :
+                      article.category === 'Companies' ? 'bg-indigo-100 text-indigo-800' :
                       'bg-gray-100 text-gray-800'
                     }`}>
                       {article.category}
@@ -264,6 +280,22 @@ export function News() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        
+        {/* No articles message */}
+        {!loading && filteredArticles.length === 0 && (
+          <div className="text-center py-12">
+            <Globe className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No {activeCategory === 'all' ? '' : activeCategory.toLowerCase()} news available
+            </h3>
+            <p className="text-gray-500">
+              {activeCategory === 'all' 
+                ? 'No news articles found. Try refreshing to get the latest updates.'
+                : `No ${activeCategory.toLowerCase()} news found. Try selecting a different category or refresh for updates.`
+              }
+            </p>
           </div>
         )}
         
