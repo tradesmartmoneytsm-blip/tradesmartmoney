@@ -104,7 +104,7 @@ export default function TermsOfService() {
               <br />
               Email: tradesmartmoneytsm@gmail.com
               <br />
-              Address: [Your Business Address]
+              Address: Pune, Maharashtra, India
             </p>
 
             <p className="text-sm text-gray-500 mt-8">

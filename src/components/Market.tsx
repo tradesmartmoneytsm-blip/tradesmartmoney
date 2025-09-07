@@ -6,7 +6,7 @@ import type { SectorData } from '@/services/marketDataService';
 import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
 import { FiiDiiActivity } from '@/components/FiiDiiActivity';
 import { trackBusinessEvent, trackPageView } from '@/lib/analytics';
-import { HeaderAd, InContentAd } from '@/components/AdSense';
+// Auto ads will handle all ad placement automatically
 
 interface MarketSubSection {
   id: string;
@@ -243,8 +243,7 @@ export function Market({ initialSubSection }: MarketProps) {
 
   return (
     <article className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
-      {/* Header Advertisement */}
-      <HeaderAd />
+      {/* Google Auto Ads will handle ad placement automatically */}
       
       {/* Compact Page Header */}
       <header className="mb-6 lg:mb-8">
@@ -298,8 +297,7 @@ export function Market({ initialSubSection }: MarketProps) {
         </section>
       </div>
       
-      {/* In-Content Advertisement */}
-      <InContentAd />
+      {/* Auto Ads will handle in-content placement automatically */}
 
       {/* Compact Summary Cards */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-6 lg:mt-8" aria-label="Market summary">

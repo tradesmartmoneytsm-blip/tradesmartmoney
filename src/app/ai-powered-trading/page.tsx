@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
 import { Bot, Cpu, Zap, TrendingUp, Shield, BarChart3, Brain, Rocket, CheckCircle, ArrowRight, Star, Home } from 'lucide-react';
-import { HeaderAd, InContentAd, FooterAd, MobileAd } from '@/components/AdSense';
+// Auto ads will handle all ad placement automatically - no manual ad imports needed
 
 export default function AIPoweredTradingPage() {
   useEffect(() => {
@@ -13,11 +13,7 @@ export default function AIPoweredTradingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Header Advertisement */}
-      <HeaderAd />
-      
-      {/* Mobile Advertisement */}
-      <MobileAd />
+      {/* Google Auto Ads will automatically place ads throughout the page */}
 
       {/* Navigation Header */}
       <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -377,11 +373,7 @@ export default function AIPoweredTradingPage() {
         </div>
       </section>
 
-      {/* Mid-content Advertisement */}
-      <InContentAd />
-
-      {/* Footer Advertisement */}
-      <FooterAd />
+      {/* Auto Ads will handle all ad placement automatically */}
     </div>
   );
 } 

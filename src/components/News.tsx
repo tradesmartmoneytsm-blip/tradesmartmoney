@@ -1,7 +1,7 @@
 'use client';
 
-import { TrendingUp, Globe, Clock, BarChart3, Building, FileText } from 'lucide-react';
-import { HeaderAd, InContentAd } from '@/components/AdSense';
+import { Globe } from 'lucide-react';
+// Auto ads will handle all ad placement automatically
 
 export function News() {
   const newsArticles = [
@@ -46,8 +46,8 @@ export function News() {
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
       {/* Header Advertisement */}
-      <HeaderAd />
-      
+      {/* In-Content Advertisement */}
+
       {/* Compact Page Header */}
       <div className="mb-6 lg:mb-8">
         <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">Market News & Updates</h2>
@@ -67,10 +67,10 @@ export function News() {
                 article.category === 'Economic' ? 'bg-purple-100 text-purple-600' :
                 'bg-orange-100 text-orange-600'
               }`}>
-                {article.category === 'Market' && <TrendingUp className="w-4 h-4" />}
-                {article.category === 'Earnings' && <BarChart3 className="w-4 h-4" />}
-                {article.category === 'Economic' && <Building className="w-4 h-4" />}
-                {article.category === 'Policy' && <FileText className="w-4 h-4" />}
+                {article.category === 'Market' && <Globe className="w-4 h-4" />}
+                {article.category === 'Earnings' && <Globe className="w-4 h-4" />}
+                {article.category === 'Economic' && <Globe className="w-4 h-4" />}
+                {article.category === 'Policy' && <Globe className="w-4 h-4" />}
                 {article.category === 'FII/DII' && <Globe className="w-4 h-4" />}
               </div>
               <div className="flex-1 min-w-0">
@@ -98,24 +98,23 @@ export function News() {
       </div>
       
       {/* In-Content Advertisement */}
-      <InContentAd />
 
       {/* Compact Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4 lg:p-6 text-center">
-          <Clock className="w-6 h-6 lg:w-8 lg:h-8 text-blue-600 mx-auto mb-2 lg:mb-3" />
+          <Globe className="w-6 h-6 lg:w-8 lg:h-8 text-blue-600 mx-auto mb-2 lg:mb-3" />
           <h3 className="text-sm lg:text-lg font-bold text-blue-800 mb-1">Market Hours</h3>
           <p className="text-xs lg:text-sm text-blue-700 font-semibold">9:15 AM - 3:30 PM</p>
           <p className="text-xs text-blue-600 mt-1">IST Trading Hours</p>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4 lg:p-6 text-center">
-          <TrendingUp className="w-6 h-6 lg:w-8 lg:h-8 text-green-600 mx-auto mb-2 lg:mb-3" />
+          <Globe className="w-6 h-6 lg:w-8 lg:h-8 text-green-600 mx-auto mb-2 lg:mb-3" />
           <h3 className="text-sm lg:text-lg font-bold text-green-800 mb-1">Active Signals</h3>
           <p className="text-xs lg:text-sm text-green-700 font-semibold">42</p>
           <p className="text-xs text-green-600 mt-1">Live opportunities</p>
         </div>
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4 lg:p-6 text-center">
-          <FileText className="w-6 h-6 lg:w-8 lg:h-8 text-purple-600 mx-auto mb-2 lg:mb-3" />
+          <Globe className="w-6 h-6 lg:w-8 lg:h-8 text-purple-600 mx-auto mb-2 lg:mb-3" />
           <h3 className="text-sm lg:text-lg font-bold text-purple-800 mb-1">News Updates</h3>
           <p className="text-xs lg:text-sm text-purple-700 font-semibold">16</p>
           <p className="text-xs text-purple-600 mt-1">Today&apos;s updates</p>

@@ -3,8 +3,8 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
-import { TrendingUp, Brain, Target, BarChart3, Zap, Shield, Users, ArrowRight, CheckCircle, Star, Home, BarChart2 } from 'lucide-react';
-import { HeaderAd, InContentAd, FooterAd, MobileAd } from '@/components/AdSense';
+import { TrendingUp, Brain, Target, BarChart3, Zap, Shield, Users, ArrowRight, CheckCircle, Star, BarChart2 } from 'lucide-react';
+// Auto ads will handle all ad placement automatically - no manual ad imports needed
 
 export default function SmartMoneyConceptsPage() {
   useEffect(() => {
@@ -13,11 +13,7 @@ export default function SmartMoneyConceptsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Header Advertisement */}
-      <HeaderAd />
-      
-      {/* Mobile Advertisement */}
-      <MobileAd />
+      {/* Google Auto Ads will automatically place ads throughout the page */}
 
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
@@ -267,10 +263,10 @@ export default function SmartMoneyConceptsPage() {
       </section>
 
       {/* Mid-content Advertisement */}
-      <InContentAd />
+      {/* Auto Ads will handle all ad placement automatically */}
 
       {/* Footer Advertisement */}
-      <FooterAd />
+      {/* Auto Ads will handle all ad placement automatically */}
     </div>
   );
 } 

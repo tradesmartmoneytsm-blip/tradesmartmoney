@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import NextImage from 'next/image';
 import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn, BarChart3, Zap, TrendingUp as TrendingUpIcon } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
-import { HeaderAd, InContentAd } from '@/components/AdSense';
+// Auto ads will handle all ad placement automatically
 
 interface GroupedTrades {
   'BIT': SwingTrade[];
@@ -615,8 +615,7 @@ export function SwingTrades() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
-      {/* Header Advertisement */}
-      <HeaderAd />
+      {/* Google Auto Ads will handle ad placement automatically */}
       
       {/* Header */}
         <div className="text-center mb-8">
@@ -649,8 +648,7 @@ export function SwingTrades() {
           />
         </div>
         
-        {/* In-Content Advertisement */}
-        <InContentAd />
+        {/* Auto Ads will handle in-content placement */}
 
         {/* Trading Guidelines */}
         <div className="mt-12 bg-white rounded-lg shadow-md p-6">

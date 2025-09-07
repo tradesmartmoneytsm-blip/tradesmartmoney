@@ -4,6 +4,8 @@ import "./globals.css";
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { Footer } from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
+import { AutoAds } from '@/components/AdSense';
+import { StructuredData } from '@/components/StructuredData';
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -132,7 +134,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <head>
         {/* Essential Meta Tags */}
         <meta charSet="utf-8" />
@@ -168,76 +170,18 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FinancialService",
-              "name": "TradeSmartMoney",
-              "description": "AI-powered smart money trading platform specializing in smart money concepts, algorithmic trading, and institutional order flow analysis for professional traders.",
-              "url": "https://tradesmartmoney.com",
-              "logo": "https://tradesmartmoney.com/logo.png",
-              "sameAs": [
-                "https://twitter.com/tradesmartmoney",
-                "https://linkedin.com/company/tradesmartmoney"
-              ],
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "contactType": "customer service",
-                "availableLanguage": "English"
-              },
-              "areaServed": "IN",
-              "serviceType": [
-                "Smart Money Trading Platform",
-                "AI Powered Algo Trading",
-                "Smart Money Concepts Education",
-                "Algorithmic Trading Systems",
-                "Smart Money Footprint Analysis",
-                "Institutional Order Flow Analysis",
-                "AI Trading Algorithms"
-              ],
-              "offers": {
-                "@type": "Offer",
-                "name": "Trading Platform Services",
-                "description": "Comprehensive trading tools and market analysis"
-              }
-            })
-          }}
-        />
-        
-        {/* Additional Business Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "TradeSmartMoney",
-              "url": "https://tradesmartmoney.com",
-              "description": "Professional trading platform with advanced market analysis and trading signals",
-              "potentialAction": {
-                "@type": "SearchAction",
-                "target": "https://tradesmartmoney.com/search?q={search_term_string}",
-                "query-input": "required name=search_term_string"
-              },
-              "mainEntity": {
-                "@type": "WebPage",
-                "@id": "https://tradesmartmoney.com/#webpage"
-              }
-            })
-          }}
-        />
-        
         {/* Google Analytics */}
         <GoogleAnalytics />
         
         {/* Google AdSense Account */}
         <meta name="google-adsense-account" content="ca-pub-6601377389077210" />
         
-        {/* Google Site Verification - Add your verification code here when you get it */}
-        {/* <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" /> */}
+        {/* Google Site Verification - PASTE YOUR CODE HERE */}
+        {/* Step 1: Go to adsense.google.com → Sites → Get Code */}
+        {/* Step 2: Copy the meta tag Google gives you */}
+        {/* Step 3: Replace the line below with your actual verification code */}
+        {/* EXAMPLE: <meta name="google-site-verification" content="ABC123XYZ..." /> */}
+        {/* <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_FROM_ADSENSE" /> */}
         
         {/* Google AdSense */}
         <script
@@ -245,52 +189,8 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6601377389077210"
           crossOrigin="anonymous"
         />
-        
-        {/* Structured Data for SEO */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FinancialService",
-              "name": "TradeSmartMoney",
-              "description": "Professional trading platform providing real-time market data, smart money concepts, algorithmic trading, and swing trading opportunities for Indian stock market",
-              "url": "https://tradesmartmoney.com",
-              "logo": "https://tradesmartmoney.com/favicon.ico",
-              "image": "https://tradesmartmoney.com/favicon.ico",
-              "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "IN"
-              },
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "email": "tradesmartmoneytsm@gmail.com",
-                "contactType": "customer service"
-              },
-              "sameAs": [
-                "https://tradesmartmoney.com"
-              ],
-              "serviceType": "Trading Platform",
-              "areaServed": "India",
-              "knowsAbout": [
-                "Stock Trading",
-                "Algorithmic Trading",
-                "Swing Trading",
-                "Smart Money Concepts",
-                "Technical Analysis",
-                "Market Data Analysis",
-                "Risk Management"
-              ],
-              "offers": {
-                "@type": "Service",
-                "name": "Trading Analysis & Education",
-                "description": "Real-time market data, trading signals, and educational content for Indian stock market traders"
-              }
-            })
-          }}
-        />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50`}>
         {/* Skip link for accessibility */}
         <a href="#main-content" className="skip-link">
           Skip to main content
@@ -302,6 +202,12 @@ export default function RootLayout({
         
         {/* Cookie Consent Banner */}
         <CookieConsent />
+
+        {/* Auto Ads Component */}
+        <AutoAds />
+        
+        {/* Structured Data - Added client-side to avoid hydration issues */}
+        <StructuredData />
       </body>
     </html>
   );

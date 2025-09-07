@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, BookOpen, TrendingUp, Shield, AlertTriangle, Target, BarChart3, Brain } from 'lucide-react';
 import { trackPageView } from '@/lib/analytics';
-import { InContentAd, FooterAd } from '@/components/AdSense';
+// Auto ads will handle all ad placement automatically - no manual ad imports needed
 
 export default function TradingGuide() {
   useEffect(() => {
@@ -96,9 +96,6 @@ export default function TradingGuide() {
                 </ul>
               </div>
             </section>
-
-            {/* In-Content Ad */}
-            <InContentAd />
 
             {/* Technical Analysis */}
             <section id="analysis" className="bg-white rounded-lg shadow-lg p-8">
@@ -320,9 +317,6 @@ export default function TradingGuide() {
                 </div>
               </div>
             </section>
-
-            {/* Footer Ad */}
-            <FooterAd />
           </div>
         </div>
       </div>

@@ -4,20 +4,16 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
 import { Settings, Activity, BarChart3, Target, Zap, Shield, TrendingUp, Brain, CheckCircle, ArrowRight, Cpu, Code, Home } from 'lucide-react';
-import { HeaderAd, InContentAd, FooterAd, MobileAd } from '@/components/AdSense';
+// Auto ads will handle all ad placement automatically - no manual ad imports needed
 
 export default function AlgoTradingPage() {
   useEffect(() => {
-    trackPageView('/algo-trading', 'Algo Trading');
+    trackPageView('/algo-trading', 'Algo Trading');  
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Header Advertisement */}
-      <HeaderAd />
-      
-      {/* Mobile Advertisement */}
-      <MobileAd />
+      {/* Google Auto Ads will automatically place ads throughout the page */}
 
       {/* Navigation Header */}
       <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -365,7 +361,7 @@ export default function AlgoTradingPage() {
       </section>
 
       {/* Mid-content Advertisement */}
-      <InContentAd />
+      {/* InContentAd component removed as per edit hint */}
 
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-green-600 to-teal-600 text-white py-16 px-4">
@@ -387,7 +383,7 @@ export default function AlgoTradingPage() {
       </section>
 
       {/* Footer Advertisement */}
-      <FooterAd />
+      {/* FooterAd component removed as per edit hint */}
     </div>
   );
 } 
