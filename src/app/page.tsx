@@ -14,12 +14,13 @@ const EodScans = lazy(() => import('@/components/EodScans').then(module => ({ de
 const AlgoTrading = lazy(() => import('@/components/AlgoTrading').then(module => ({ default: module.AlgoTrading })));
 import { Brain, Bot, Settings, ArrowRight, BookOpen, TrendingUp, BarChart3, Zap, Shield, Users, Star, Play, ChevronRight } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
+import { SubmenuCards } from '@/components/ui/SubmenuCards';
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState('home'); // Changed default to 'home'
-  const [activeMarketSubSection, setActiveMarketSubSection] = useState('sector-performance');
-  const [activeEodScansSubSection, setActiveEodScansSubSection] = useState('relative-outperformance');
-  const [activeAlgoTradingSubSection, setActiveAlgoTradingSubSection] = useState('strategy-basics');
+  const [activeMarketSubSection, setActiveMarketSubSection] = useState('market'); // Default to show submenu cards
+  const [activeEodScansSubSection, setActiveEodScansSubSection] = useState('eodscans'); // Default to show submenu cards
+  const [activeAlgoTradingSubSection, setActiveAlgoTradingSubSection] = useState('algo-trading'); // Default to show submenu cards
 
   const handleSectionChange = (section: string, subSection?: string) => {
     const previousSection = activeSection;
@@ -27,12 +28,27 @@ export default function Home() {
     setActiveSection(section as 'home' | 'swing' | 'intraday' | 'news' | 'market' | 'eodscans' | 'algo-trading');
 
     // Handle subsections for Market, EodScans, and AlgoTrading
-    if (section === 'market' && subSection) {
-      setActiveMarketSubSection(subSection);
-    } else if (section === 'eodscans' && subSection) {
-      setActiveEodScansSubSection(subSection);
-    } else if (section === 'algo-trading' && subSection) {
-      setActiveAlgoTradingSubSection(subSection);
+    if (section === 'market') {
+      if (subSection && subSection !== 'market') {
+        setActiveMarketSubSection(subSection);
+      } else {
+        // Reset to show submenu cards when clicking main "Market" menu
+        setActiveMarketSubSection('market');
+      }
+    } else if (section === 'eodscans') {
+      if (subSection && subSection !== 'eodscans') {
+        setActiveEodScansSubSection(subSection);
+      } else {
+        // Reset to show submenu cards when clicking main "EOD Scans" menu
+        setActiveEodScansSubSection('eodscans');
+      }
+    } else if (section === 'algo-trading') {
+      if (subSection && subSection !== 'algo-trading') {
+        setActiveAlgoTradingSubSection(subSection);
+      } else {
+        // Reset to show submenu cards when clicking main "Algo Trading" menu
+        setActiveAlgoTradingSubSection('algo-trading');
+      }
     }
 
     // Scroll to top smoothly when navigating to a different main section
@@ -207,18 +223,30 @@ export default function Home() {
           </Suspense>
         );
       case 'market':
+        // Show submenu cards if no specific subsection, otherwise show the Market component
+        if (!activeMarketSubSection || activeMarketSubSection === 'market') {
+          return <SubmenuCards section="market" onSubItemClick={handleSectionChange} />;
+        }
         return (
           <Suspense fallback={<LoadingFallback />}>
             <Market initialSubSection={activeMarketSubSection} />
           </Suspense>
         );
       case 'eodscans':
+        // Show submenu cards if no specific subsection, otherwise show the EodScans component
+        if (!activeEodScansSubSection || activeEodScansSubSection === 'eodscans') {
+          return <SubmenuCards section="eodscans" onSubItemClick={handleSectionChange} />;
+        }
         return (
           <Suspense fallback={<LoadingFallback />}>
             <EodScans initialSubSection={activeEodScansSubSection} />
           </Suspense>
         );
       case 'algo-trading':
+        // Show submenu cards if no specific subsection, otherwise show the AlgoTrading component
+        if (!activeAlgoTradingSubSection || activeAlgoTradingSubSection === 'algo-trading') {
+          return <SubmenuCards section="algo-trading" onSubItemClick={handleSectionChange} />;
+        }
         return (
           <Suspense fallback={<LoadingFallback />}>
             <AlgoTrading initialSubSection={activeAlgoTradingSubSection} />
