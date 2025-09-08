@@ -562,23 +562,28 @@ export function Navigation({
                       (item.id === 'algo-trading' && showAlgoTradingMenu)
                         ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                     }`}>
-                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-t border-blue-100">
-                        <div className="p-2 space-y-1">
-                          {item.subItems?.map((subItem) => (
-                            <button
-                              key={subItem.id}
-                              onClick={() => handleMenuItemClick(item.id, subItem.id)}
-                              className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left hover:bg-white hover:shadow-sm transition-all duration-200 active:scale-[0.98] group"
-                            >
-                              <div className="p-1.5 bg-white rounded-md shadow-sm group-hover:bg-blue-50 transition-colors">
-                                {subItem.icon}
-                              </div>
-                              <div>
-                                <div className="font-medium text-gray-900 group-hover:text-blue-900">{subItem.label}</div>
-                                <div className="text-xs text-gray-600 group-hover:text-blue-700">{subItem.description}</div>
-                              </div>
-                            </button>
-                          ))}
+                      {/* Option 1: Card Grid Layout (2 columns) */}
+                      <div className="bg-gradient-to-br from-slate-50 to-blue-50 border-t border-blue-100">
+                        <div className="p-3">
+                          <div className="grid grid-cols-1 gap-2">
+                            {item.subItems?.map((subItem) => (
+                              <button
+                                key={subItem.id}
+                                onClick={() => handleMenuItemClick(item.id, subItem.id)}
+                                className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all duration-200 active:scale-[0.98] group"
+                              >
+                                <div className="flex-shrink-0 p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-sm">
+                                  <div className="text-white">
+                                    {subItem.icon}
+                                  </div>
+                                </div>
+                                <div className="flex-1 text-left">
+                                  <div className="font-semibold text-gray-900 group-hover:text-blue-900">{subItem.label}</div>
+                                  <div className="text-xs text-gray-600 group-hover:text-blue-700 line-clamp-2">{subItem.description}</div>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
