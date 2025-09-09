@@ -277,45 +277,90 @@ export function VideoEducation() {
           </div>
         )}
 
-        {/* Additional Videos Grid - Will show when more videos are added */}
+        {/* Video Library - Organized by Category */}
         {EDUCATIONAL_VIDEOS.filter(v => v.category !== 'featured').length > 0 && (
           <div className="mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-              More Educational Content
+            <h3 className="text-3xl font-bold text-gray-900 mb-4 text-center">
+              Complete Video Library
             </h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {EDUCATIONAL_VIDEOS.filter(v => v.category !== 'featured').map((video) => (
-                <div key={video.id} className="bg-white rounded-xl shadow-lg overflow-hidden">
-                  <div className="relative">
-                    <iframe 
-                      width="100%" 
-                      height="200" 
-                      src={`https://www.youtube.com/embed/${video.id}?${video.startTime ? `start=${video.startTime}&` : ''}rel=0&modestbranding=1&fs=0&disablekb=1`}
-                      title={video.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      style={{ border: 'none' }}
-                    ></iframe>
-                  </div>
-                  <div className="p-6">
-                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3 ${
-                      video.category === 'advanced' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                    }`}>
-                      {video.category === 'advanced' ? 'Advanced' : 'Beginner'}
-                    </div>
-                    <h4 className="text-lg font-bold text-gray-900 mb-2">{video.title}</h4>
-                    <p className="text-gray-600 text-sm mb-4">{video.description}</p>
-                    <div className="space-y-2">
-                      {video.keyPoints.slice(0, 3).map((point, index) => (
-                        <div key={index} className="flex items-center text-xs text-gray-600">
-                          <CheckCircle className="h-3 w-3 text-green-500 mr-2 flex-shrink-0" />
-                          {point}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+            <p className="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
+              Master Smart Money Concepts with our comprehensive video series. Each video is designed to build your understanding progressively.
+            </p>
+
+            {/* Beginner Videos Section */}
+            <div className="mb-16">
+              <div className="flex items-center justify-center mb-8">
+                <div className="bg-green-100 px-4 py-2 rounded-full">
+                  <h4 className="text-xl font-bold text-green-800">Beginner Level</h4>
                 </div>
-              ))}
+              </div>
+              <div className="grid md:grid-cols-2 gap-8">
+                {EDUCATIONAL_VIDEOS.filter(v => v.category === 'beginner').map((video) => (
+                  <div key={video.id} className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                    <div className="relative bg-black">
+                      <iframe 
+                        width="100%" 
+                        height="300" 
+                        src={`https://www.youtube.com/embed/${video.id}?${video.startTime ? `start=${video.startTime}&` : ''}rel=0&modestbranding=1&fs=0&disablekb=1`}
+                        title={video.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        style={{ border: 'none' }}
+                      ></iframe>
+                    </div>
+                    <div className="p-6">
+                      <h4 className="text-xl font-bold text-gray-900 mb-3">{video.title}</h4>
+                      <p className="text-gray-600 mb-4 leading-relaxed">{video.description}</p>
+                      <div className="space-y-2">
+                        {video.keyPoints.map((point, index) => (
+                          <div key={index} className="flex items-center text-sm text-gray-700">
+                            <CheckCircle className="h-4 w-4 text-green-500 mr-3 flex-shrink-0" />
+                            {point}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Advanced Videos Section */}
+            <div className="mb-12">
+              <div className="flex items-center justify-center mb-8">
+                <div className="bg-red-100 px-4 py-2 rounded-full">
+                  <h4 className="text-xl font-bold text-red-800">Advanced Level</h4>
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 gap-8">
+                {EDUCATIONAL_VIDEOS.filter(v => v.category === 'advanced').map((video) => (
+                  <div key={video.id} className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                    <div className="relative bg-black">
+                      <iframe 
+                        width="100%" 
+                        height="300" 
+                        src={`https://www.youtube.com/embed/${video.id}?${video.startTime ? `start=${video.startTime}&` : ''}rel=0&modestbranding=1&fs=0&disablekb=1`}
+                        title={video.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        style={{ border: 'none' }}
+                      ></iframe>
+                    </div>
+                    <div className="p-6">
+                      <h4 className="text-xl font-bold text-gray-900 mb-3">{video.title}</h4>
+                      <p className="text-gray-600 mb-4 leading-relaxed">{video.description}</p>
+                      <div className="space-y-2">
+                        {video.keyPoints.map((point, index) => (
+                          <div key={index} className="flex items-center text-sm text-gray-700">
+                            <CheckCircle className="h-4 w-4 text-red-500 mr-3 flex-shrink-0" />
+                            {point}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
