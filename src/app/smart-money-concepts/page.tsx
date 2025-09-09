@@ -43,7 +43,7 @@ export default function SmartMoneyConceptsPage() {
           <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-4xl mx-auto leading-relaxed">
             Unlock the secrets of institutional trading with advanced smart money concepts. Learn how professional traders analyze market structure, order flow, and liquidity to make profitable decisions.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <button 
               onClick={() => {
                 const videoSection = document.getElementById('video-education');
@@ -51,20 +51,9 @@ export default function SmartMoneyConceptsPage() {
                   videoSection.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors inline-flex items-center"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors inline-flex items-center shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Start Learning SMC <ArrowRight className="ml-2 h-5 w-5" />
-            </button>
-            <button 
-              onClick={() => {
-                const featuredVideo = document.getElementById('featured-video');
-                if (featuredVideo) {
-                  featuredVideo.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="border-2 border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all"
-            >
-              Watch Free Training
             </button>
           </div>
         </div>
