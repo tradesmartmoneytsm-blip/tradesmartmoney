@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
 import { TrendingUp, Brain, Target, BarChart3, Zap, Shield, Users, ArrowRight, CheckCircle, Star, BarChart2 } from 'lucide-react';
+import { VideoEducation } from '@/components/VideoEducation';
 // Auto ads will handle all ad placement automatically - no manual ad imports needed
 
 export default function SmartMoneyConceptsPage() {
@@ -91,6 +92,9 @@ export default function SmartMoneyConceptsPage() {
           </div>
         </div>
       </section>
+
+      {/* Video Learning Section */}
+      <VideoEducation />
 
       {/* Key Features */}
       <section className="py-16 px-4">
