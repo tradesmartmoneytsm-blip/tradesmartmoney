@@ -99,28 +99,28 @@ const FALLBACK_ARTICLES: NewsArticle[] = [
     title: 'Nifty Hits Fresh All-Time High Above 25,000',
     summary: 'Indian benchmark indices surge to record levels driven by strong FII inflows and positive earnings.',
     category: 'Markets',
-    timestamp: '2 hours ago',
-    impact: 'Positive',
+      timestamp: '2 hours ago',
+      impact: 'Positive',
     source: 'Economic Times Markets',
     pubDate: new Date().toISOString()
-  },
-  {
+    },
+    {
     id: '2', 
     title: 'RBI Repo Rate Decision Awaited This Week',
     summary: 'Market expects central bank to maintain current rates amid balanced inflation and growth outlook.',
-    category: 'Policy',
-    timestamp: '4 hours ago',
-    impact: 'Neutral',
+      category: 'Policy',
+      timestamp: '4 hours ago',
+      impact: 'Neutral',
     source: 'MoneyControl Markets',
     pubDate: new Date().toISOString()
-  },
-  {
+    },
+    {
     id: '3',
     title: 'Banking Sector Leads Market Rally', 
     summary: 'HDFC Bank, ICICI Bank, and SBI gain 3-5% on strong quarterly results and NIM improvement.',
     category: 'Stocks',
-    timestamp: '6 hours ago',
-    impact: 'Positive',
+      timestamp: '6 hours ago',
+      impact: 'Positive',
     source: 'Business Standard Markets',
     pubDate: new Date().toISOString()
   }
@@ -290,8 +290,8 @@ export function News() {
                    ? `${selectedStock.newsCount} articles found`
                    : `Last updated: ${lastUpdated}`
                 }
-              </p>
-            </div>
+        </p>
+      </div>
           </div>
           
           <button 
@@ -647,11 +647,11 @@ export function News() {
                             <ExternalLink className="h-3 w-3 ml-1" />
                           </a>
                         )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
+            </div>
+          </div>
+        ))}
+      </div>
+      
                 {/* No articles for selected stock */}
                 {stockArticles.length === 0 && (
                   <div className="text-center py-12">
@@ -662,9 +662,9 @@ export function News() {
                     <p className="text-gray-500">
                       There are currently no recent news articles for this stock.
                     </p>
-                  </div>
+        </div>
                 )}
-              </div>
+        </div>
             )}
           </>
         )}

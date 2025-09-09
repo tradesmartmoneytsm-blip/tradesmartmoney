@@ -8,7 +8,7 @@ import { Settings, Activity, BarChart3, Target, Zap, Shield, TrendingUp, Brain, 
 
 export default function AlgoTradingPage() {
   useEffect(() => {
-    trackPageView('/algo-trading', 'Algo Trading');  
+    trackPageView('/algo-trading', 'Algo Trading');
   }, []);
 
   return (

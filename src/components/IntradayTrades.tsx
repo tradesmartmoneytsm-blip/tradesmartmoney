@@ -97,33 +97,33 @@ export function IntradayTrades() {
               <div className={`text-sm lg:text-base font-semibold ${
                 signal.change >= 0 ? 'text-green-600' : 'text-red-600'
               }`}>
-                {signal.change >= 0 ? '+' : ''}{signal.change}%
+                  {signal.change >= 0 ? '+' : ''}{signal.change}%
               </div>
             </div>
 
             {/* Trading Levels - Compact Grid */}
             <div className="space-y-3">
-              <div className="grid grid-cols-2 lg:grid-cols-2 gap-2 lg:gap-3 mb-3">
-                <div className="flex items-center space-x-2 min-w-0">
-                  <Target className="w-3 h-3 lg:w-4 lg:h-4 text-blue-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-600">Target</p>
+            <div className="grid grid-cols-2 lg:grid-cols-2 gap-2 lg:gap-3 mb-3">
+              <div className="flex items-center space-x-2 min-w-0">
+                <Target className="w-3 h-3 lg:w-4 lg:h-4 text-blue-600 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-gray-600">Target</p>
                     <p className="text-sm lg:text-base font-semibold text-blue-600 truncate">₹{signal.target.toLocaleString()}</p>
-                  </div>
                 </div>
-                <div className="flex items-center space-x-2 min-w-0">
-                  <Shield className="w-3 h-3 lg:w-4 lg:h-4 text-red-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-600">Stop Loss</p>
+              </div>
+              <div className="flex items-center space-x-2 min-w-0">
+                <Shield className="w-3 h-3 lg:w-4 lg:h-4 text-red-600 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-gray-600">Stop Loss</p>
                     <p className="text-sm lg:text-base font-semibold text-red-600 truncate">₹{signal.stopLoss.toLocaleString()}</p>
-                  </div>
                 </div>
-                <div className="flex items-center space-x-2 min-w-0">
-                  <BarChart3 className="w-3 h-3 lg:w-4 lg:h-4 text-green-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-600">Potential</p>
+              </div>
+              <div className="flex items-center space-x-2 min-w-0">
+                <BarChart3 className="w-3 h-3 lg:w-4 lg:h-4 text-green-600 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-gray-600">Potential</p>
                     <p className="text-sm lg:text-base font-semibold text-green-600">{signal.potentialReturn}%</p>
-                  </div>
+              </div>
                 </div>
               </div>
             </div>
@@ -135,7 +135,7 @@ export function IntradayTrades() {
           </div>
         ))}
       </div>
-        
+      
       {/* Auto Ads will handle in-content placement */}
 
       {/* Compact Trading Guidelines */}

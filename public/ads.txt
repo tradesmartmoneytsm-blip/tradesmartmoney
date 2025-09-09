@@ -39,7 +39,7 @@ googlesyndication.com, ca-pub-6601377389077210, DIRECT, f08c47fec0942fa0
 
 # This file was last updated on: 2025-01-09
 # Domain: tradesmartmoney.com
-# Contact: tradesmartmoneytsm@gmail.com
+# Contact: tradesmartmoneytsm@gmail.com 
 
 # Instructions for production:
 # 1. Create actual ad units in Google AdSense dashboard
