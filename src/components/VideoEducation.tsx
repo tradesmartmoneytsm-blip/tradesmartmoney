@@ -174,7 +174,7 @@ export function VideoEducation() {
               More Educational Videos Coming Soon
             </h3>
             <p className="text-gray-600 mb-6">
-              We're constantly adding new video content to help you master smart money concepts. 
+              We&apos;re constantly adding new video content to help you master smart money concepts. 
               Stay tuned for advanced tutorials, live market analysis, and case studies.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
