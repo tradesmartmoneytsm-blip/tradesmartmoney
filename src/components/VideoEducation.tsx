@@ -23,16 +23,172 @@ const EDUCATIONAL_VIDEOS: VideoContent[] = [
       'Liquidity Concepts',
       'Real Trading Examples'
     ]
+  },
+  {
+    id: 'nS_aQLQ-MBQ',
+    title: 'Smart Money Concepts - Part 1',
+    description: 'Introduction to Smart Money Concepts and understanding how institutional traders operate in the markets.',
+    category: 'beginner',
+    keyPoints: [
+      'SMC Fundamentals',
+      'Market Structure Basics',
+      'Institutional vs Retail'
+    ]
+  },
+  {
+    id: 'nJamCP7l7HY',
+    title: 'Smart Money Concepts - Part 2',
+    description: 'Deep dive into order flow analysis and how smart money leaves footprints in the market.',
+    category: 'beginner',
+    keyPoints: [
+      'Order Flow Analysis',
+      'Smart Money Footprints',
+      'Market Maker Behavior'
+    ]
+  },
+  {
+    id: '7l-FYbicT5U',
+    title: 'Smart Money Concepts - Part 3',
+    description: 'Understanding liquidity concepts and how institutions hunt for stops and create market moves.',
+    category: 'beginner',
+    keyPoints: [
+      'Liquidity Pools',
+      'Stop Hunting',
+      'Liquidity Sweeps'
+    ]
+  },
+  {
+    id: 'G-CvU6m_QoU',
+    title: 'Smart Money Concepts - Part 4',
+    description: 'Advanced market structure analysis and identifying high probability trade setups.',
+    category: 'advanced',
+    keyPoints: [
+      'Advanced Market Structure',
+      'Trade Setup Identification',
+      'Risk Management'
+    ]
+  },
+  {
+    id: '13Qqc0VoTak',
+    title: 'Smart Money Concepts - Part 5',
+    description: 'Order blocks and demand zones - understanding where smart money accumulates positions.',
+    category: 'advanced',
+    keyPoints: [
+      'Order Blocks',
+      'Demand Zones',
+      'Supply Areas'
+    ]
+  },
+  {
+    id: 'e5f-Ua5xbkU',
+    title: 'Smart Money Concepts - Part 6',
+    description: 'Fair Value Gaps and market imbalances - trading institutional inefficiencies.',
+    category: 'advanced',
+    keyPoints: [
+      'Fair Value Gaps',
+      'Market Imbalances',
+      'Gap Trading Strategies'
+    ]
+  },
+  {
+    id: 'WgegYApBOU0',
+    title: 'Smart Money Concepts - Part 7',
+    description: 'Change of Character (CHoCH) and Break of Structure (BOS) - trend analysis techniques.',
+    category: 'advanced',
+    keyPoints: [
+      'Change of Character',
+      'Break of Structure',
+      'Trend Identification'
+    ]
+  },
+  {
+    id: 'zeEBw2BBgQY',
+    title: 'Smart Money Concepts - Part 8',
+    description: 'Inducement and manipulation - how smart money traps retail traders.',
+    category: 'advanced',
+    keyPoints: [
+      'Market Manipulation',
+      'Inducement Tactics',
+      'Retail Trader Traps'
+    ]
+  },
+  {
+    id: 'VCQtbj01sEs',
+    title: 'Smart Money Concepts - Part 9',
+    description: 'Volume analysis and understanding institutional accumulation patterns.',
+    category: 'advanced',
+    keyPoints: [
+      'Volume Analysis',
+      'Accumulation Patterns',
+      'Distribution Phases'
+    ]
+  },
+  {
+    id: '0PJouRQRqzA',
+    title: 'Smart Money Concepts - Part 10',
+    description: 'Time-based analysis and understanding market timing from institutional perspective.',
+    category: 'advanced',
+    keyPoints: [
+      'Market Timing',
+      'Session Analysis',
+      'Institutional Schedule'
+    ]
+  },
+  {
+    id: 'lDyzZcVmzAE',
+    title: 'Smart Money Concepts - Part 11',
+    description: 'Psychology of smart money trading and developing an institutional mindset.',
+    category: 'beginner',
+    keyPoints: [
+      'Trading Psychology',
+      'Institutional Mindset',
+      'Emotional Control'
+    ]
+  },
+  {
+    id: 'bVqvgzsP-To',
+    title: 'Smart Money Concepts - Part 12',
+    description: 'Risk management strategies used by institutional traders and money managers.',
+    category: 'beginner',
+    keyPoints: [
+      'Risk Management',
+      'Position Sizing',
+      'Capital Preservation'
+    ]
+  },
+  {
+    id: '7BCnXN6drZU',
+    title: 'Smart Money Concepts - Part 13',
+    description: 'Advanced trading strategies combining multiple SMC concepts for high-probability setups.',
+    category: 'advanced',
+    keyPoints: [
+      'Strategy Combination',
+      'Multi-timeframe Analysis',
+      'High Probability Setups'
+    ]
+  },
+  {
+    id: 'wjchfhwFxhk',
+    title: 'Smart Money Concepts - Part 14',
+    description: 'Case studies and real-world examples of smart money concepts in live market conditions.',
+    category: 'advanced',
+    keyPoints: [
+      'Live Market Examples',
+      'Case Studies',
+      'Real-world Application'
+    ]
+  },
+  {
+    id: 'enwGyswTzUE',
+    title: 'Smart Money Concepts - Part 15',
+    description: 'Mastering smart money concepts - putting it all together for consistent trading success.',
+    category: 'advanced',
+    keyPoints: [
+      'Concept Integration',
+      'Consistent Application',
+      'Trading Success Framework'
+    ]
   }
-  // Add more videos here - just copy the format above!
-  // {
-  //   id: 'YOUR_VIDEO_ID',
-  //   title: 'Your Video Title',
-  //   description: 'Video description...',
-  //   startTime: 0, // optional start time in seconds
-  //   category: 'advanced', // featured, advanced, or beginner
-  //   keyPoints: ['Point 1', 'Point 2', 'Point 3']
-  // }
 ];
 
 const COMING_SOON_TOPICS = [

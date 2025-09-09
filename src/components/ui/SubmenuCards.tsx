@@ -1,13 +1,6 @@
 import { TrendingUp, BarChart3, Building2, Microscope, Bot } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
-interface SubMenuItem {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  description: string;
-}
-
 interface SubmenuCardsProps {
   section: string;
   onSubItemClick: (sectionId: string, subItemId: string) => void;
