@@ -142,14 +142,6 @@ export default function RootLayout({
         
         {/* Theme and Mobile Optimization */}
         <meta name="theme-color" content="#2563eb" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="TradeSmartMoney" />
-        
-        {/* Apple Touch Icons */}
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         
         {/* Performance Hints */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
@@ -167,8 +159,6 @@ export default function RootLayout({
         {/* Favicons */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.json" />
         
         {/* Google Analytics */}
         <GoogleAnalytics />
