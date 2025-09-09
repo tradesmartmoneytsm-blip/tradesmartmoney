@@ -16,6 +16,19 @@ export default function SmartMoneyConceptsPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Google Auto Ads will automatically place ads throughout the page */}
 
+      {/* Back to Platform Navigation */}
+      <div className="bg-white border-b border-gray-200 py-4 px-4">
+        <div className="max-w-6xl mx-auto">
+          <Link 
+            href="/" 
+            className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors group"
+          >
+            <ArrowRight className="h-5 w-5 mr-2 rotate-180 group-hover:-translate-x-1 transition-transform" />
+            Back to Trading Platform
+          </Link>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="max-w-6xl mx-auto text-center">
