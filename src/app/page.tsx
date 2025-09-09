@@ -136,13 +136,16 @@ export default function Home() {
             
             {/* Features Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20 animate-fade-in delay-600">
-              <div className="glass-card p-6 text-center">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BarChart3 className="w-6 h-6 text-blue-400" />
+              <button 
+                onClick={() => handleSectionChange('market', 'sector-performance')}
+                className="glass-card p-6 text-center hover:scale-105 hover:bg-white/5 transition-all duration-300 group cursor-pointer"
+              >
+                <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500/30 transition-colors">
+                  <BarChart3 className="w-6 h-6 text-blue-400 group-hover:text-blue-300" />
                 </div>
-                <h3 className="text-white font-semibold mb-2">Real-time Data</h3>
+                <h3 className="text-white font-semibold mb-2 group-hover:text-blue-200">Real-time Data</h3>
                 <p className="text-blue-200 text-sm">Live market indices, sector performance, and institutional activity</p>
-              </div>
+              </button>
               
               <div className="glass-card p-6 text-center">
                 <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -152,13 +155,16 @@ export default function Home() {
                 <p className="text-blue-200 text-sm">Machine learning powered trading signals and market predictions</p>
               </div>
               
-              <div className="glass-card p-6 text-center">
-                <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-6 h-6 text-green-400" />
+              <Link 
+                href="/smart-money-concepts"
+                className="glass-card p-6 text-center hover:scale-105 hover:bg-white/5 transition-all duration-300 group cursor-pointer block"
+              >
+                <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500/30 transition-colors">
+                  <Zap className="w-6 h-6 text-green-400 group-hover:text-green-300" />
                 </div>
-                <h3 className="text-white font-semibold mb-2">Smart Money</h3>
+                <h3 className="text-white font-semibold mb-2 group-hover:text-green-200">Smart Money</h3>
                 <p className="text-blue-200 text-sm">Institutional order flow analysis and smart money concepts</p>
-              </div>
+              </Link>
               
               <div className="glass-card p-6 text-center">
                 <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
