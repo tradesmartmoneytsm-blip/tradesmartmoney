@@ -294,30 +294,38 @@ export function VideoEducation() {
                   <h4 className="text-xl font-bold text-green-800">Beginner Level</h4>
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-8 max-w-4xl mx-auto">
                 {EDUCATIONAL_VIDEOS.filter(v => v.category === 'beginner').map((video) => (
                   <div key={video.id} className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                    <div className="relative bg-black">
-                      <iframe 
-                        width="100%" 
-                        height="300" 
-                        src={`https://www.youtube.com/embed/${video.id}?${video.startTime ? `start=${video.startTime}&` : ''}rel=0&modestbranding=1&fs=0&disablekb=1`}
-                        title={video.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        style={{ border: 'none' }}
-                      ></iframe>
-                    </div>
-                    <div className="p-6">
-                      <h4 className="text-xl font-bold text-gray-900 mb-3">{video.title}</h4>
-                      <p className="text-gray-600 mb-4 leading-relaxed">{video.description}</p>
-                      <div className="space-y-2">
-                        {video.keyPoints.map((point, index) => (
-                          <div key={index} className="flex items-center text-sm text-gray-700">
-                            <CheckCircle className="h-4 w-4 text-green-500 mr-3 flex-shrink-0" />
-                            {point}
-                          </div>
-                        ))}
+                    <div className="grid lg:grid-cols-3 gap-6 items-center p-6">
+                      <div className="lg:col-span-2">
+                        <div className="relative bg-black rounded-xl overflow-hidden">
+                          <iframe 
+                            width="100%" 
+                            height="400" 
+                            src={`https://www.youtube.com/embed/${video.id}?${video.startTime ? `start=${video.startTime}&` : ''}rel=0&modestbranding=1&fs=0&disablekb=1`}
+                            title={video.title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            className="w-full h-[250px] md:h-[350px] lg:h-[400px]"
+                            style={{ border: 'none' }}
+                          ></iframe>
+                        </div>
+                      </div>
+                      <div className="lg:col-span-1 space-y-4">
+                        <div className="bg-green-100 px-3 py-1 rounded-full inline-block">
+                          <span className="text-green-800 font-semibold text-sm">Beginner</span>
+                        </div>
+                        <h4 className="text-2xl font-bold text-gray-900">{video.title}</h4>
+                        <p className="text-gray-600 leading-relaxed">{video.description}</p>
+                        <div className="space-y-3">
+                          {video.keyPoints.map((point, index) => (
+                            <div key={index} className="flex items-center text-sm text-gray-700">
+                              <CheckCircle className="h-4 w-4 text-green-500 mr-3 flex-shrink-0" />
+                              {point}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -332,30 +340,38 @@ export function VideoEducation() {
                   <h4 className="text-xl font-bold text-red-800">Advanced Level</h4>
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-8 max-w-4xl mx-auto">
                 {EDUCATIONAL_VIDEOS.filter(v => v.category === 'advanced').map((video) => (
                   <div key={video.id} className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                    <div className="relative bg-black">
-                      <iframe 
-                        width="100%" 
-                        height="300" 
-                        src={`https://www.youtube.com/embed/${video.id}?${video.startTime ? `start=${video.startTime}&` : ''}rel=0&modestbranding=1&fs=0&disablekb=1`}
-                        title={video.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        style={{ border: 'none' }}
-                      ></iframe>
-                    </div>
-                    <div className="p-6">
-                      <h4 className="text-xl font-bold text-gray-900 mb-3">{video.title}</h4>
-                      <p className="text-gray-600 mb-4 leading-relaxed">{video.description}</p>
-                      <div className="space-y-2">
-                        {video.keyPoints.map((point, index) => (
-                          <div key={index} className="flex items-center text-sm text-gray-700">
-                            <CheckCircle className="h-4 w-4 text-red-500 mr-3 flex-shrink-0" />
-                            {point}
-                          </div>
-                        ))}
+                    <div className="grid lg:grid-cols-3 gap-6 items-center p-6">
+                      <div className="lg:col-span-2">
+                        <div className="relative bg-black rounded-xl overflow-hidden">
+                          <iframe 
+                            width="100%" 
+                            height="400" 
+                            src={`https://www.youtube.com/embed/${video.id}?${video.startTime ? `start=${video.startTime}&` : ''}rel=0&modestbranding=1&fs=0&disablekb=1`}
+                            title={video.title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            className="w-full h-[250px] md:h-[350px] lg:h-[400px]"
+                            style={{ border: 'none' }}
+                          ></iframe>
+                        </div>
+                      </div>
+                      <div className="lg:col-span-1 space-y-4">
+                        <div className="bg-red-100 px-3 py-1 rounded-full inline-block">
+                          <span className="text-red-800 font-semibold text-sm">Advanced</span>
+                        </div>
+                        <h4 className="text-2xl font-bold text-gray-900">{video.title}</h4>
+                        <p className="text-gray-600 leading-relaxed">{video.description}</p>
+                        <div className="space-y-3">
+                          {video.keyPoints.map((point, index) => (
+                            <div key={index} className="flex items-center text-sm text-gray-700">
+                              <CheckCircle className="h-4 w-4 text-red-500 mr-3 flex-shrink-0" />
+                              {point}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
