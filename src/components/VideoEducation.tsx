@@ -206,7 +206,7 @@ export function VideoEducation() {
   const featuredVideo = EDUCATIONAL_VIDEOS.find(v => v.category === 'featured');
 
   return (
-    <section className="py-16 px-4">
+    <section id="video-education" className="py-16 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -221,7 +221,7 @@ export function VideoEducation() {
 
         {/* Featured Video */}
         {featuredVideo && (
-          <div className="bg-white rounded-2xl shadow-xl p-6 mb-12">
+          <div id="featured-video" className="bg-white rounded-2xl shadow-xl p-6 mb-12">
             <div className="grid lg:grid-cols-3 gap-8 items-center">
               <div className="lg:col-span-2">
                 <div className="relative bg-black rounded-xl overflow-hidden shadow-lg">
