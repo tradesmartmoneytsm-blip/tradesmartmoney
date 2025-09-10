@@ -575,7 +575,7 @@ export function News() {
                           <Building2 className="h-4 w-4 text-gray-400" />
                           <span className="text-sm font-medium text-purple-600">
                             {stock.newsCount}
-                          </span>
+                    </span>
                         </div>
                       </div>
                       

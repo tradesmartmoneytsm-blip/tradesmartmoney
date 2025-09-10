@@ -228,7 +228,7 @@ function checkPcrMovement(
             }
           }
         }
-      } catch (entryError) {
+      } catch {
         // Skip invalid entries
         continue;
       }

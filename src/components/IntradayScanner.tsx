@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, TrendingUp, TrendingDown, Activity, BarChart3, Volume2, Target, Shield, AlertTriangle, Clock, Play, Loader2 } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, Activity, BarChart3, Target, Shield, AlertTriangle, Play, Loader2 } from 'lucide-react';
 
 interface ScannerResult {
   symbol: string;
@@ -40,7 +40,8 @@ interface ScannerResponse {
 export function IntradayScanner() {
   const [scanType, setScanType] = useState('BREAKOUT');
   const [minScore, setMinScore] = useState(70);
-  const [maxResults, setMaxResults] = useState(20);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [maxResults, _setMaxResults] = useState(20);
   const [isScanning, setIsScanning] = useState(false);
   const [results, setResults] = useState<ScannerResult[]>([]);
   const [summary, setSummary] = useState<ScannerResponse['summary'] | null>(null);

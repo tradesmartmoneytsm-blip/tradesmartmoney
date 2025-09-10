@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 
-// API endpoints and headers
-const NIFTY_TRADER_BASE = 'https://services.niftytrader.in/webapi';
-const HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-  'Accept': 'application/json, text/plain, */*',
-  'Accept-Language': 'en-US,en;q=0.9',
-  'Referer': 'https://niftytrader.in/',
-  'Origin': 'https://niftytrader.in'
-};
+// API endpoints and headers (currently unused - for future integration)
+// const NIFTY_TRADER_BASE = 'https://services.niftytrader.in/webapi';
+// const HEADERS = {
+//   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+//   'Accept': 'application/json, text/plain, */*',
+//   'Accept-Language': 'en-US,en;q=0.9',
+//   'Referer': 'https://niftytrader.in/',
+//   'Origin': 'https://niftytrader.in'
+// };
 
 interface TechnicalData {
   symbol: string;
@@ -201,6 +201,7 @@ async function fetchTechnicalData(symbol: string): Promise<TechnicalData> {
     return mockData;
 
   } catch (error) {
+    console.error(`Error fetching technical data for ${symbol}:`, error);
     throw new Error(`Failed to fetch technical data for ${symbol}`);
   }
 }
