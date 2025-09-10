@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Activity, Shield, BarChart3, Clock, Target, Zap, TrendingUp, Settings } from 'lucide-react';
+import { Activity, Shield, BarChart3, Clock, Target, Zap, TrendingUp, Settings, Search } from 'lucide-react';
 import { StormStrategy } from './StormStrategy';
+import { IntradayScanner } from './IntradayScanner';
 // Auto ads will handle all ad placement automatically
 
 export function IntradayTrades() {
@@ -53,6 +54,12 @@ export function IntradayTrades() {
       name: 'Trading Signals',
       description: 'Real-time intraday trading opportunities',
       icon: TrendingUp
+    },
+    {
+      id: 'scanner',
+      name: 'AI Scanner',
+      description: 'Multi-factor algorithm to find high-probability moves',
+      icon: Search
     },
     {
       id: 'storm',
@@ -242,6 +249,11 @@ export function IntradayTrades() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* AI Scanner Strategy */}
+      {activeStrategy === 'scanner' && (
+        <IntradayScanner />
       )}
 
       {/* Storm Strategy */}
