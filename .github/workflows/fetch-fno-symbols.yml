@@ -1,0 +1,49 @@
+name: Fetch FNO Symbols
+
+on:
+  # Run daily at 9:00 AM IST (3:30 AM UTC)
+  schedule:
+    - cron: '30 3 * * 1-5'  # Monday to Friday at 3:30 AM UTC = 9:00 AM IST
+  
+  # Allow manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'Enable debug logging'
+        required: false
+        default: 'false'
+
+jobs:
+  fetch-fno-symbols:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Fetch FNO Symbols
+        run: node scripts/fetch-fno-symbols.js
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DEBUG: ${{ github.event.inputs.debug == 'true' && '1' || '0' }}
+
+      - name: Log completion
+        run: |
+          echo "🎉 FNO symbols fetch completed at $(date)"
+          echo "📊 Check the logs above for details"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ FNO symbols fetch failed at $(date)"
+          echo "🚨 Please check the logs for error details" 
