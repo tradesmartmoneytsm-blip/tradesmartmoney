@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, ArrowUpDown, Building2, Globe, RefreshCw } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { FiiDiiSummary } from '@/lib/supabase';
 
 interface FiiDiiActivityProps {
@@ -136,7 +136,7 @@ export function FiiDiiActivity({ className }: FiiDiiActivityProps) {
         <h3 className="text-lg font-semibold text-gray-900 mb-4 font-serif">
           15-Day Net Flow Trend (₹ Crores)
         </h3>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={350}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
@@ -149,14 +149,69 @@ export function FiiDiiActivity({ className }: FiiDiiActivityProps) {
               labelFormatter={(value) => new Date(value).toLocaleDateString('en-IN')}
               formatter={(value: number, name: string) => [
                 `₹${value.toLocaleString('en-IN')} Cr`,
-                name === 'fii_net' ? 'FII Net' : name === 'dii_net' ? 'DII Net' : 'Combined'
+                name
               ]}
+              contentStyle={{
+                backgroundColor: 'white',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              }}
             />
-            <Line type="monotone" dataKey="fii_net" stroke="#ef4444" strokeWidth={2} name="FII Net" />
-            <Line type="monotone" dataKey="dii_net" stroke="#22c55e" strokeWidth={2} name="DII Net" />
-            <Line type="monotone" dataKey="net_combined" stroke="#3b82f6" strokeWidth={2} name="Combined" />
+            <Legend 
+              verticalAlign="bottom" 
+              height={36}
+              iconType="line"
+              wrapperStyle={{
+                paddingTop: '20px',
+                fontSize: '14px'
+              }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="fii_net" 
+              stroke="#ef4444" 
+              strokeWidth={3} 
+              name="FII Net Flow"
+              dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, stroke: '#ef4444', strokeWidth: 2 }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="dii_net" 
+              stroke="#22c55e" 
+              strokeWidth={3} 
+              name="DII Net Flow"
+              dot={{ fill: '#22c55e', strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, stroke: '#22c55e', strokeWidth: 2 }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="net_combined" 
+              stroke="#3b82f6" 
+              strokeWidth={3} 
+              name="Combined Net Flow"
+              dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2 }}
+            />
           </LineChart>
         </ResponsiveContainer>
+        
+        {/* Color Legend */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-6 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-1 bg-red-500 rounded"></div>
+            <span className="text-gray-700 font-medium">FII Net Flow (Foreign Institutional Investors)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-1 bg-green-500 rounded"></div>
+            <span className="text-gray-700 font-medium">DII Net Flow (Domestic Institutional Investors)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-1 bg-blue-500 rounded"></div>
+            <span className="text-gray-700 font-medium">Combined Net Flow (FII + DII)</span>
+          </div>
+        </div>
       </div>
 
       {/* Recent Activity Table */}
