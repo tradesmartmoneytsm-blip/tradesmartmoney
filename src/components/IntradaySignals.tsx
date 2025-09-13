@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { TrendingUp, RefreshCw, Clock, Activity, ChevronUp, ChevronDown, BarChart3 } from 'lucide-react';
 
 interface IntradaySignal {
@@ -80,9 +80,9 @@ export default function IntradaySignals() {
     }
   };
 
-  // Update sorted signals when signals, sort column, or direction changes
-  useEffect(() => {
-    setSignals(sortSignals(signals, sortColumn, sortDirection));
+  // Compute sorted signals using useMemo to avoid infinite loops
+  const sortedSignals = useMemo(() => {
+    return sortSignals(signals, sortColumn, sortDirection);
   }, [signals, sortColumn, sortDirection, sortSignals]);
 
   // Fetch signals from API
@@ -217,7 +217,7 @@ export default function IntradaySignals() {
             <span className="ml-2 text-gray-600">Loading signals...</span>
           </div>
         ) : // Removed error check
-        signals.length === 0 ? (
+        sortedSignals.length === 0 ? (
           <div className="text-center py-12">
             <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500 text-lg mb-2">No signals available</p>
@@ -239,7 +239,7 @@ export default function IntradaySignals() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {signals.map((signal) => (
+                {sortedSignals.map((signal) => (
                   <tr key={signal.id} className="hover:bg-gray-50">
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {signal.rank_position}
