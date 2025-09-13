@@ -32,14 +32,13 @@ jobs:
       - name: 📊 Scan ChartInk for Intraday Signals
         id: scan_signals
         run: |
-                     # Determine the API URL
-           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.force_run }}" = "true" ]; then
-             API_URL="${{ secrets.NEXTJS_APP_URL || 'https://www.tradesmartmoney.com' }}/api/intraday-signals?force=true"
-             echo "🔧 Manual trigger with force=true"
-           else
-             API_URL="${{ secrets.NEXTJS_APP_URL || 'https://www.tradesmartmoney.com' }}/api/intraday-signals"
-             echo "⏰ Scheduled run - checking time window"
-           fi
+          # Determine the API URL
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.force_run }}" = "true" ]; then
+            API_URL="${{ secrets.NEXTJS_APP_URL || 'https://www.tradesmartmoney.com' }}/api/intraday-signals?force=true"
+            echo "🔧 Manual trigger with force=true"
+          else
+            API_URL="${{ secrets.NEXTJS_APP_URL || 'https://www.tradesmartmoney.com' }}/api/intraday-signals"
+          fi
           
           echo "📡 Calling API: $API_URL"
           

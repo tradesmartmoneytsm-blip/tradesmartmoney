@@ -211,7 +211,7 @@ export function SwingTrades() {
       case 'Bottom Formation':
         return 'Bottom Formation - Reversal patterns at key support levels';
       case 'Value Buying':
-        return 'Value Buying - Identify oversold quality stocks for swing trading opportunities';
+        return 'Value Buying - Identify oversold quality stocks and stocks gaining momentum for swing trading opportunities';
       default:
         return '';
     }
