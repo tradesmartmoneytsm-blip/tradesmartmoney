@@ -9,19 +9,25 @@ import { SwingTrade } from '@/app/api/swing-trades/route';
 interface ValueStock {
   symbol: string;
   name: string;
+  fullName?: string;
   price: number;
   change: number;
   changePercent: number;
-  marketCap?: number;
-  category: 'LARGE_CAP' | 'MID_CAP' | 'SMALL_CAP';
-  opportunity: 'OVERSOLD' | 'BREAKOUT' | 'MOMENTUM';
+  marketCap: number;
+  category: string;
+  high?: number;
+  low?: number;
+  previousClose?: number;
+  imageUrl?: string;
+  volume?: number;
+  pe?: number;
+  pb?: number;
 }
 
 interface GroupedTrades {
   [key: string]: SwingTrade[] | ValueStock[];
 }
 
-// Value Buying Component
 const ValueBuying = () => {
   const [stocks, setStocks] = useState<ValueStock[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,77 +58,198 @@ const ValueBuying = () => {
     fetchValueBuyingStocks();
   }, []);
 
+  const formatMarketCap = (marketCap: number): string => {
+    if (marketCap >= 1000000) {
+      return `₹${(marketCap / 1000000).toFixed(1)}L Cr`;
+    } else if (marketCap >= 10000) {
+      return `₹${(marketCap / 10000).toFixed(1)}K Cr`;
+    } else if (marketCap >= 100) {
+      return `₹${(marketCap / 100).toFixed(1)} Cr`;
+    }
+    return `₹${marketCap.toFixed(0)} Cr`;
+  };
 
+  const getChangeColor = (changePercent: number) => {
+    if (changePercent > 2) return 'text-emerald-600 bg-emerald-50';
+    if (changePercent > 0) return 'text-green-600 bg-green-50';
+    if (changePercent > -2) return 'text-red-500 bg-red-50';
+    return 'text-red-600 bg-red-100';
+  };
+
+  const getChangeIcon = (changePercent: number) => {
+    if (changePercent > 0) return '📈';
+    if (changePercent < 0) return '📉';
+    return '➖';
+  };
 
   if (loading) {
     return (
-      <div className="text-center py-8">
-        <RefreshCw className="w-6 h-6 mx-auto mb-2 animate-spin text-blue-600" />
-        <p className="text-gray-600">Loading value buying opportunities...</p>
+      <div className="min-h-[400px] bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative">
+            <RefreshCw className="w-12 h-12 mx-auto mb-4 animate-spin text-blue-600" />
+            <div className="absolute inset-0 w-12 h-12 mx-auto border-4 border-blue-200 rounded-full animate-pulse"></div>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Finding Value Opportunities</h3>
+          <p className="text-gray-600">Analyzing market data for the best value picks...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <AlertCircle className="w-6 h-6 mx-auto mb-2 text-red-600" />
-        <p className="text-red-600 mb-4">{error}</p>
-        <button
-          onClick={() => fetchValueBuyingStocks()}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-        >
-          Retry
-        </button>
+      <div className="min-h-[300px] bg-gradient-to-br from-red-50 to-pink-50 rounded-xl flex items-center justify-center p-6">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-500" />
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Unable to Load Data</h3>
+          <p className="text-red-600 mb-6 max-w-md">{error}</p>
+          <button
+            onClick={() => fetchValueBuyingStocks()}
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            <RefreshCw className="w-4 h-4 inline-block mr-2" />
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* Stocks Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {stocks.map((stock, index) => (
-          <div key={`${stock.symbol}-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div className="flex justify-between items-start mb-3">
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-xl p-6 text-white shadow-lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">💎 Premium Value Opportunities</h2>
+            <p className="text-blue-100">Quality large-cap stocks with institutional backing</p>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl font-bold">{stocks.length}</div>
+            <div className="text-sm text-blue-200">Opportunities</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: 'Avg Change', value: `${(stocks.reduce((sum, stock) => sum + stock.changePercent, 0) / stocks.length || 0).toFixed(2)}%`, icon: '📊', color: 'from-blue-500 to-cyan-500' },
+          { label: 'Positive Moves', value: `${stocks.filter(s => s.changePercent > 0).length}/${stocks.length}`, icon: '📈', color: 'from-green-500 to-emerald-500' },
+          { label: 'Avg Market Cap', value: formatMarketCap(stocks.reduce((sum, stock) => sum + stock.marketCap, 0) / stocks.length || 0), icon: '💰', color: 'from-purple-500 to-pink-500' },
+          { label: 'Last Updated', value: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }), icon: '🕐', color: 'from-orange-500 to-red-500' }
+        ].map((stat, index) => (
+          <div key={index} className={`bg-gradient-to-br ${stat.color} rounded-lg p-4 text-white shadow-md hover:shadow-lg transition-shadow`}>
+            <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-semibold text-gray-900">{stock.symbol}</h4>
-                <p className="text-sm text-gray-600 truncate">{stock.name}</p>
+                <div className="text-lg font-bold">{stat.value}</div>
+                <div className="text-xs opacity-90">{stat.label}</div>
               </div>
+              <div className="text-2xl">{stat.icon}</div>
             </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Stocks Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {stocks.map((stock, index) => (
+          <div key={`${stock.symbol}-${index}`} className="group relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden">
+            {/* Gradient Border Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-[1px] bg-white rounded-xl"></div>
             
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Price:</span>
-                <span className="font-medium">₹{stock.price.toFixed(2)}</span>
-              </div>
-              
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Change:</span>
-                <span className={`font-medium ${stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
-                </span>
-              </div>
-              
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Category:</span>
-                <span className="text-sm font-medium text-gray-900">{stock.category.replace('_', ' ')}</span>
-              </div>
-              
-              {stock.marketCap && (
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Market Cap:</span>
-                  <span className="text-sm font-medium">₹{(stock.marketCap / 100).toFixed(1)}Cr</span>
+            {/* Card Content */}
+            <div className="relative p-6">
+              {/* Header with Logo and Symbol */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  {stock.imageUrl ? (
+                    <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden shadow-sm">
+                      <NextImage 
+                        src={stock.imageUrl} 
+                        alt={stock.symbol}
+                        width={32}
+                        height={32}
+                        className="object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                      <span className="text-sm font-bold text-blue-700">{stock.symbol.slice(0, 2)}</span>
+                    </div>
+                  )}
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-lg">{stock.symbol}</h3>
+                    <p className="text-sm text-gray-600 truncate max-w-[120px]" title={stock.fullName || stock.name}>
+                      {stock.name}
+                    </p>
+                  </div>
                 </div>
-              )}
+                <div className="text-right">
+                  <div className="text-xl font-bold text-gray-900">₹{stock.price.toFixed(2)}</div>
+                  <div className={`text-sm font-medium px-2 py-1 rounded-full ${getChangeColor(stock.changePercent)}`}>
+                    {getChangeIcon(stock.changePercent)} {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                {stock.high && stock.low && (
+                  <>
+                    <div className="text-center p-3 bg-green-50 rounded-lg">
+                      <div className="text-sm text-gray-600">Day High</div>
+                      <div className="font-semibold text-green-700">₹{stock.high.toFixed(2)}</div>
+                    </div>
+                    <div className="text-center p-3 bg-red-50 rounded-lg">
+                      <div className="text-sm text-gray-600">Day Low</div>
+                      <div className="font-semibold text-red-700">₹{stock.low.toFixed(2)}</div>
+                    </div>
+                  </>
+                )}
+                {stock.marketCap && (
+                  <div className="col-span-2 text-center p-3 bg-purple-50 rounded-lg">
+                    <div className="text-sm text-gray-600">Market Cap</div>
+                    <div className="font-semibold text-purple-700">{formatMarketCap(stock.marketCap)}</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Category Badge */}
+              <div className="flex justify-between items-center">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  💎 {stock.category.replace('_', ' ')}
+                </span>
+                {stock.changePercent > 0 ? (
+                  <span className="text-xs text-green-600 font-medium">📈 Gaining</span>
+                ) : (
+                  <span className="text-xs text-red-600 font-medium">📉 Cooling</span>
+                )}
+              </div>
+
+              {/* Hover Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
             </div>
           </div>
         ))}
       </div>
 
       {stocks.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-gray-600">No opportunities found for the selected filters.</p>
+        <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl">
+          <div className="text-6xl mb-4">🔍</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Opportunities Available</h3>
+          <p className="text-gray-600">We&apos;re constantly scanning for the best value opportunities.</p>
+          <button
+            onClick={fetchValueBuyingStocks}
+            className="mt-4 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Refresh Data
+          </button>
         </div>
       )}
     </div>

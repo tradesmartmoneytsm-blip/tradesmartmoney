@@ -4,11 +4,19 @@ import { NextResponse } from 'next/server';
 interface ValueStock {
   symbol: string;
   name: string;
+  fullName?: string;
   price: number;
   change: number;
   changePercent: number;
   marketCap: number;
   category: string;
+  high?: number;
+  low?: number;
+  previousClose?: number;
+  imageUrl?: string;
+  volume?: number;
+  pe?: number;
+  pb?: number;
 }
 
 export async function GET() {
@@ -79,17 +87,31 @@ export async function GET() {
             return;
           }
           
-          stocks.push({
-            symbol: item.company.nseScriptCode ?? '',
-            name: item.company.companyShortName || item.company.companyName || '',
-            price: item.stats.ltp ?? 0,
-            change: item.stats.dayChange ?? 0,
-            changePercent: item.stats.dayChangePerc ?? 0,
-            marketCap: item.company.marketCap ?? 0,
-            category: 'LARGE_CAP'
-          });
+          const company = item.company;
+          const stats = item.stats;
           
-          console.log(`📈 ${index + 1}. ${item.company.companyShortName} (${item.company.nseScriptCode}): ₹${item.stats.ltp} (${(item.stats.dayChangePerc ?? 0).toFixed(2)}%)`);
+          // Extract comprehensive data
+          const stock: ValueStock = {
+            symbol: company.nseScriptCode ?? '',
+            name: company.companyShortName || company.companyName || '',
+            fullName: company.companyName || company.companyShortName || '',
+            price: stats.ltp ?? 0,
+            change: stats.dayChange ?? 0,
+            changePercent: stats.dayChangePerc ?? 0,
+            marketCap: company.marketCap ?? 0,
+            category: 'LARGE_CAP',
+            high: stats.high ?? undefined,
+            low: stats.low ?? undefined,
+            previousClose: stats.close ?? undefined,
+            imageUrl: company.imageUrl ?? undefined,
+            volume: stats.volume ?? undefined,
+            pe: stats.pe ?? undefined,
+            pb: stats.pb ?? undefined
+          };
+          
+          stocks.push(stock);
+          
+          console.log(`📈 ${index + 1}. ${company.companyShortName} (${company.nseScriptCode}): ₹${stats.ltp} (${(stats.dayChangePerc ?? 0).toFixed(2)}%) | H: ₹${stats.high ?? 'N/A'} L: ₹${stats.low ?? 'N/A'}`);
         });
       }
     }
@@ -105,7 +127,12 @@ export async function GET() {
       success: true,
       data: sortedStocks,
       timestamp: new Date().toISOString(),
-      totalOpportunities: sortedStocks.length
+      totalOpportunities: sortedStocks.length,
+      summary: {
+        averageChange: sortedStocks.reduce((sum, stock) => sum + stock.changePercent, 0) / sortedStocks.length || 0,
+        positiveStocks: sortedStocks.filter(stock => stock.changePercent > 0).length,
+        averageMarketCap: sortedStocks.reduce((sum, stock) => sum + stock.marketCap, 0) / sortedStocks.length || 0
+      }
     }, {
       headers: {
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60', // 5 minute cache
