@@ -1,16 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Zap, Search, Brain } from 'lucide-react';
+import { Zap, Search, Brain, Activity } from 'lucide-react';
 import { StormStrategy } from './StormStrategy';
 import { IntradayScanner } from './IntradayScanner';
 import { AdvancedScanner } from './AdvancedScanner';
+import { IntradaySignals } from './IntradaySignals';
 // Auto ads will handle all ad placement automatically
 
 export function IntradayTrades() {
-  const [activeStrategy, setActiveStrategy] = useState('advanced');
+  const [activeStrategy, setActiveStrategy] = useState('signals');
 
   const strategies = [
+    {
+      id: 'signals',
+      name: 'Intraday Signals',
+      description: 'Live institutional activity signals updated every 5 minutes',
+      icon: Activity
+    },
     {
       id: 'advanced',
       name: 'Advanced Options Scanner',
@@ -80,6 +87,11 @@ export function IntradayTrades() {
           })}
         </div>
       </div>
+
+      {/* Intraday Signals */}
+      {activeStrategy === 'signals' && (
+        <IntradaySignals />
+      )}
 
       {/* Advanced Options Scanner */}
       {activeStrategy === 'advanced' && (
