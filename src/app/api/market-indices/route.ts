@@ -22,13 +22,13 @@ export async function GET() {
     });
 
     if (!response.ok) {
-      throw new Error(`Dhan API failed: ${response.status} ${response.statusText}`);
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
 
     const html = await response.text();
     const $ = cheerio.load(html);
 
-    // Target indices available on Dhan (NSE only)
+    // Target NSE indices
     const targetIndices = {
       'Nifty 50': 'Nifty',
       'Nifty Bank': 'Bank Nifty',
@@ -88,7 +88,6 @@ export async function GET() {
       success: true,
       message: 'Market indices data retrieved successfully',
       data: marketIndices,
-      source: 'dhan_scraping',
       count: marketIndices.length,
       timestamp: new Date().toISOString()
     });

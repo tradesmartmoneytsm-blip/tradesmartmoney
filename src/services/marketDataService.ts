@@ -1,5 +1,5 @@
 // Market Data Service for fetching real-time sector performance
-// Scraping real NSE sector indices data from Dhan.co
+// Scraping real NSE sector indices data
 
 interface SectorData {
   name: string;
@@ -40,11 +40,11 @@ class MarketDataService {
   // Main method to fetch sector performance data
   async fetchSectorPerformance(): Promise<SectorData[]> {
     try {
-      // Scrape all sector data from Dhan
+      // Scrape all sector data
       const scrapedData = await this.scrapeAllSectorData();
       
       if (scrapedData.length > 0) {
-        console.log('✅ Successfully scraped real NSE sector data from Dhan');
+        console.log('✅ Successfully scraped real NSE sector data');
         
         // Update cache
         this.cache.set('sectors', {
@@ -56,7 +56,7 @@ class MarketDataService {
         return scrapedData;
       }
 
-      throw new Error('No sector data scraped from Dhan');
+      throw new Error('No sector data found');
     } catch (error) {
       console.error('Failed to fetch sector performance:', error);
       
@@ -117,7 +117,7 @@ class MarketDataService {
       this.fetchSectorPerformance();
     }, this.CACHE_DURATION);
 
-    console.log('🔄 Sector performance auto-refresh started (5-minute interval) - Live NSE data from Dhan');
+    console.log('🔄 Sector performance auto-refresh started (5-minute interval)');
   }
 
   // Stop auto-refresh

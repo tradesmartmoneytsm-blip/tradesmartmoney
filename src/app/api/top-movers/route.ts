@@ -15,7 +15,7 @@ interface TopMoverStock {
   yearLow: number;
 }
 
-interface GrowwStockData {
+interface StockData {
   isin: string;
   companyName: string;
   companyShortName: string;
@@ -28,12 +28,12 @@ interface GrowwStockData {
   yearLow: number;
 }
 
-interface TopMoversResponse {
-  success: boolean;
-  data?: TopMoverStock[];
-  error?: string;
-  lastUpdated: string;
-}
+    interface TopMoversResponse {
+      success: boolean;
+      data?: TopMoverStock[];
+      error?: string;
+      lastUpdated: string;
+    }
 
 // Index mapping
 const INDEX_MAPPING = {
@@ -58,10 +58,10 @@ export async function GET(request: NextRequest) {
       throw new Error(`Invalid index: ${indexKey}`);
     }
     
-    // Fetch data from Groww API
-    const growwUrl = `https://groww.in/bff/web/stocks/web-pages/top_movers?indice=${indiceCode}&moverType=${moverType}&pageSize=50`;
-    
-    const response = await fetch(growwUrl, {
+        // Fetch data from API
+    const apiUrl = `https://groww.in/bff/web/stocks/web-pages/top_movers?indice=${indiceCode}&moverType=${moverType}&pageSize=50`;
+
+    const response = await fetch(apiUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; TradeSmartMoney/1.0)',
         'Accept': 'application/json',
@@ -69,17 +69,17 @@ export async function GET(request: NextRequest) {
     });
     
     if (!response.ok) {
-      throw new Error(`Groww API error: ${response.status}`);
+      throw new Error(`API error: ${response.status}`);
     }
     
-    const growwData = await response.json();
+    const apiData = await response.json();
     
-    if (!growwData?.data?.stocks) {
-      throw new Error('Invalid response format from Groww');
+    if (!apiData?.data?.stocks) {
+      throw new Error('Invalid response format');
     }
     
     // Process and enhance the data
-    const processedStocks: TopMoverStock[] = growwData.data.stocks.map((stock: GrowwStockData) => {
+    const processedStocks: TopMoverStock[] = apiData.data.stocks.map((stock: StockData) => {
       const change = stock.ltp - stock.close;
       const changePercent = ((change / stock.close) * 100);
       

@@ -84,8 +84,6 @@ export function Market({ initialSubSection }: MarketProps) {
     { id: 'top-losers', label: 'Top Losers', icon: <TrendingDown className="w-4 h-4" />, description: 'Worst performers' },
     { id: '52w-high', label: '52W High', icon: <TrendingUp className="w-4 h-4" />, description: 'Near yearly highs' },
     { id: '52w-low', label: '52W Low', icon: <TrendingDown className="w-4 h-4" />, description: 'Near yearly lows' },
-    { id: 'long-buildup', label: 'Long Built Up', icon: <Activity className="w-4 h-4" />, description: 'Bullish positions' },
-    { id: 'short-buildup', label: 'Short Build Up', icon: <Building2 className="w-4 h-4" />, description: 'Bearish positions' },
   ];
 
   // Manual refresh function
@@ -100,27 +98,6 @@ export function Market({ initialSubSection }: MarketProps) {
 
 
 
-  // Coming soon component for future features
-  const ComingSoonCard = ({ title, description, icon }: { title: string; description: string; icon: React.ReactNode }) => (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 lg:p-8">
-      <div className="text-center py-8 lg:py-12">
-        <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-4">
-          <div className="text-blue-600 w-8 h-8">
-            {icon}
-          </div>
-        </div>
-        <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">{title}</h3>
-        <p className="text-gray-600 mb-6 max-w-md mx-auto">{description}</p>
-        <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-full">
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse mr-2"></div>
-          <span className="text-blue-700 font-semibold text-sm">Coming Soon</span>
-        </div>
-        <div className="mt-4 text-xs text-gray-500">
-          Feature under development • Stay tuned for updates
-        </div>
-      </div>
-    </div>
-  );
 
   const renderSubSection = () => {
     switch (activeSubSection) {
@@ -236,24 +213,6 @@ export function Market({ initialSubSection }: MarketProps) {
             type="YEARLY_LOW"
             title="52W Low"
             icon={<TrendingDown className="w-5 h-5" />}
-          />
-        );
-
-      case 'long-buildup':
-        return (
-          <ComingSoonCard
-            title="Long Built Up"
-            description="Advanced analysis of stocks with increasing long positions and bullish momentum indicators."
-            icon={<Activity className="w-8 h-8" />}
-          />
-        );
-
-      case 'short-buildup':
-        return (
-          <ComingSoonCard
-            title="Short Build Up"
-            description="Detailed tracking of stocks with growing short positions and bearish sentiment analysis."
-            icon={<Building2 className="w-8 h-8" />}
           />
         );
 

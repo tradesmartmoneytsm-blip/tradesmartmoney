@@ -4,27 +4,27 @@ import { FiiDiiData } from '@/lib/supabase';
 
 export async function GET() {
   try {
-    console.log('🔄 API: Fetching FII/DII data...');
+    console.log('📊 Fetching FII/DII data...');
     
     // Try multiple sources for FII/DII data
-    const fiiDiiData = await scrapeFiiDiiData();
+    const marketData = await fetchFiiDiiData();
     
-    if (fiiDiiData.length === 0) {
-      throw new Error('No FII/DII data found from any source');
+    if (marketData.length === 0) {
+      throw new Error('No FII/DII data found');
     }
     
     // Store data in Supabase
-    await storeFiiDiiData(fiiDiiData);
+    await storeFiiDiiData(marketData);
     
     // Clean up old data (keep only 30 days)
     await cleanupOldData();
     
-    console.log(`✅ API: Successfully stored ${fiiDiiData.length} FII/DII records`);
+    console.log(`✅ API: Successfully stored ${marketData.length} FII/DII records`);
     
     return NextResponse.json({
       success: true,
       message: 'FII/DII data collected successfully',
-      data: fiiDiiData,
+      data: marketData,
       timestamp: new Date().toISOString()
     });
     
@@ -39,21 +39,9 @@ export async function GET() {
   }
 }
 
-async function scrapeFiiDiiData(): Promise<FiiDiiData[]> {
-  console.log('📊 Fetching FII/DII data from Groww API...');
-  const growwData = await fetchGrowwFiiDii();
-  
-  if (growwData.length === 0) {
-    throw new Error('No FII/DII data found from Groww API');
-  }
-  
-  console.log(`✅ Groww: Found ${growwData.length} records`);
-  return growwData;
-}
-
-async function fetchGrowwFiiDii(): Promise<FiiDiiData[]> {
+async function fetchFiiDiiData(): Promise<FiiDiiData[]> {
   try {
-    console.log('🔄 Starting Groww API call...');
+    console.log('🔄 Starting API call...');
     const url = 'https://groww.in/v1/api/search/v3/query/fii_dii/st_fii_dii?period=daily&segment=Cash%20Market';
     
     const response = await fetch(url, {
@@ -67,21 +55,21 @@ async function fetchGrowwFiiDii(): Promise<FiiDiiData[]> {
       method: 'GET'
     });
     
-    console.log(`📊 Groww API response: ${response.status} ${response.statusText}`);
+    console.log(`📊 API response: ${response.status} ${response.statusText}`);
     
     if (!response.ok) {
       const errorText = await response.text().catch(() => 'Unable to read error response');
-      console.log(`❌ Groww API error body: ${errorText}`);
-      throw new Error(`Groww API failed: ${response.status} ${response.statusText} - ${errorText}`);
+      console.log(`❌ API error body: ${errorText}`);
+      throw new Error(`API failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
     
     const apiResponse = await response.json();
-    console.log('📊 Groww API response received and parsed successfully');
+    console.log('📊 API response received and parsed successfully');
     
-    return parseGrowwData(apiResponse);
+    return parseFiiDiiData(apiResponse);
     
   } catch (error) {
-    console.error('❌ Groww API failed with detailed error:', {
+    console.error('❌ API failed with detailed error:', {
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
       type: typeof error
@@ -90,7 +78,7 @@ async function fetchGrowwFiiDii(): Promise<FiiDiiData[]> {
   }
 }
 
-interface GrowwApiResponse {
+interface ApiResponse {
   data?: {
     data?: Array<{
       date?: string;
@@ -108,18 +96,18 @@ interface GrowwApiResponse {
   };
 }
 
-function parseGrowwData(apiResponse: GrowwApiResponse): FiiDiiData[] {
+function parseFiiDiiData(apiResponse: ApiResponse): FiiDiiData[] {
   const results: FiiDiiData[] = [];
   
   try {
     if (!apiResponse?.data?.data || !Array.isArray(apiResponse.data.data)) {
-      throw new Error('Invalid Groww API response format');
+      throw new Error('Invalid API response format');
     }
     
     // Get the latest data (first entry in the array)
     const latestData = apiResponse.data.data[0];
     if (!latestData) {
-      throw new Error('No FII/DII data in Groww response');
+      throw new Error('No FII/DII data in API response');
     }
     
     const date = latestData.date || new Date().toISOString().split('T')[0];
@@ -151,8 +139,8 @@ function parseGrowwData(apiResponse: GrowwApiResponse): FiiDiiData[] {
     return results;
     
   } catch (error) {
-    console.error('❌ Failed to parse Groww data:', error);
-    throw new Error('Failed to parse FII/DII data from Groww API');
+    console.error('❌ Failed to parse API data:', error);
+    throw new Error('Failed to parse FII/DII data from API');
   }
 }
 

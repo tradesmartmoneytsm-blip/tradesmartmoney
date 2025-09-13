@@ -2,15 +2,197 @@
 
 import { useState, useEffect } from 'react';
 import NextImage from 'next/image';
-import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn, BarChart3, Zap, TrendingUp as TrendingUpIcon } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn, BarChart3, Zap, TrendingUp as TrendingUpIcon, DollarSign } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
 // Auto ads will handle all ad placement automatically
 
-interface GroupedTrades {
-  'BIT': SwingTrade[];
-  'Swing Angle': SwingTrade[];
-  'Bottom Formation': SwingTrade[];
+interface ValueStock {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  marketCap?: number;
+  category: 'LARGE_CAP' | 'MID_CAP' | 'SMALL_CAP';
+  opportunity: 'OVERSOLD' | 'BREAKOUT' | 'MOMENTUM';
 }
+
+interface GroupedTrades {
+  [key: string]: SwingTrade[] | ValueStock[];
+}
+
+// Value Buying Component
+const ValueBuying = () => {
+  const [stocks, setStocks] = useState<ValueStock[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<'OVERSOLD' | 'BREAKOUT' | 'MOMENTUM' | null>(null);
+
+  const fetchValueBuyingStocks = async (type?: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const url = type ? `/api/value-buying?type=${type}` : '/api/value-buying';
+      const response = await fetch(url);
+      const result = await response.json();
+      
+      if (result.success) {
+        setStocks(result.data || []);
+      } else {
+        throw new Error(result.error || 'Failed to fetch value buying opportunities');
+      }
+    } catch (err) {
+      console.error('Error fetching value buying opportunities:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load opportunities');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchValueBuyingStocks();
+  }, []);
+
+  const handleTypeFilter = (type: 'OVERSOLD' | 'BREAKOUT' | 'MOMENTUM' | null) => {
+    setSelectedType(type);
+    fetchValueBuyingStocks(type || undefined);
+  };
+
+  const getOpportunityColor = (opportunity: string) => {
+    switch (opportunity) {
+      case 'OVERSOLD':
+        return 'bg-red-100 text-red-800';
+      case 'BREAKOUT':
+        return 'bg-green-100 text-green-800';
+      case 'MOMENTUM':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-8">
+        <RefreshCw className="w-6 h-6 mx-auto mb-2 animate-spin text-blue-600" />
+        <p className="text-gray-600">Loading value buying opportunities...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <AlertCircle className="w-6 h-6 mx-auto mb-2 text-red-600" />
+        <p className="text-red-600 mb-4">{error}</p>
+        <button
+          onClick={() => fetchValueBuyingStocks()}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* Filter Buttons */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <button
+          onClick={() => handleTypeFilter(null)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            selectedType === null
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          All ({stocks.length})
+        </button>
+        <button
+          onClick={() => handleTypeFilter('OVERSOLD')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            selectedType === 'OVERSOLD'
+              ? 'bg-red-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          Oversold Value
+        </button>
+        <button
+          onClick={() => handleTypeFilter('BREAKOUT')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            selectedType === 'BREAKOUT'
+              ? 'bg-green-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          Breakouts
+        </button>
+        <button
+          onClick={() => handleTypeFilter('MOMENTUM')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            selectedType === 'MOMENTUM'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          Momentum
+        </button>
+      </div>
+
+      {/* Stocks Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {stocks.map((stock, index) => (
+          <div key={`${stock.symbol}-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h4 className="font-semibold text-gray-900">{stock.symbol}</h4>
+                <p className="text-sm text-gray-600 truncate">{stock.name}</p>
+              </div>
+              <span className={`px-2 py-1 rounded text-xs font-medium ${getOpportunityColor(stock.opportunity)}`}>
+                {stock.opportunity}
+              </span>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Price:</span>
+                <span className="font-medium">₹{stock.price.toFixed(2)}</span>
+              </div>
+              
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Change:</span>
+                <span className={`font-medium ${stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                </span>
+              </div>
+              
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Category:</span>
+                <span className="text-sm font-medium text-gray-900">{stock.category.replace('_', ' ')}</span>
+              </div>
+              
+              {stock.marketCap && (
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Market Cap:</span>
+                  <span className="text-sm font-medium">₹{(stock.marketCap / 100).toFixed(1)}Cr</span>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {stocks.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-600">No opportunities found for the selected filters.</p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export function SwingTrades() {
   const [trades, setTrades] = useState<SwingTrade[]>([]);
@@ -51,7 +233,7 @@ export function SwingTrades() {
     if (!acc[trade.strategy]) {
       acc[trade.strategy] = [];
     }
-    acc[trade.strategy].push(trade);
+    (acc[trade.strategy] as SwingTrade[]).push(trade);
     return acc;
   }, {} as GroupedTrades);
 
@@ -93,6 +275,8 @@ export function SwingTrades() {
         return 'Swing Angle - Angular momentum analysis with technical indicators';
       case 'Bottom Formation':
         return 'Bottom Formation - Reversal patterns at key support levels';
+      case 'Value Buying':
+        return 'Value Buying - Identify oversold quality stocks for swing trading opportunities';
       default:
         return '';
     }
@@ -106,6 +290,8 @@ export function SwingTrades() {
         return 'border-l-purple-500 bg-purple-50';
       case 'Bottom Formation':
         return 'border-l-green-500 bg-green-50';
+      case 'Value Buying':
+        return 'border-l-orange-500 bg-orange-50';
       default:
         return 'border-l-gray-500 bg-gray-50';
     }
@@ -121,17 +307,32 @@ export function SwingTrades() {
   };
 
   // Calculate statistics for a group of trades
-  const calculateStats = (trades: SwingTrade[]) => {
-    const totalTrades = trades.length;
-    const runningTrades = trades.filter(t => t.status === 'Running').length;
-    const successfulTrades = trades.filter(t => t.status === 'Trade Successful').length;
-    const slHitTrades = trades.filter(t => t.status === 'SL Hit').length;
+  const calculateStats = (trades: SwingTrade[] | ValueStock[]) => {
+    // Handle ValueStock arrays (empty stats for now)
+    if (trades.length > 0 && 'opportunity' in trades[0]) {
+      return {
+        totalTrades: trades.length,
+        runningTrades: 0,
+        successfulTrades: 0,
+        slHitTrades: 0,
+        completedTrades: 0,
+        winningRatio: 0,
+        totalProfitLoss: 0
+      };
+    }
+
+    // Handle SwingTrade arrays
+    const swingTrades = trades as SwingTrade[];
+    const totalTrades = swingTrades.length;
+    const runningTrades = swingTrades.filter(t => t.status === 'Running').length;
+    const successfulTrades = swingTrades.filter(t => t.status === 'Trade Successful').length;
+    const slHitTrades = swingTrades.filter(t => t.status === 'SL Hit').length;
     const completedTrades = successfulTrades + slHitTrades;
     
     const winningRatio = completedTrades > 0 ? (successfulTrades / completedTrades) * 100 : 0;
     
     // Calculate total profit/loss
-    const totalProfitLoss = trades.reduce((total, trade) => {
+    const totalProfitLoss = swingTrades.reduce((total, trade) => {
       if (trade.status === 'Trade Successful' && trade.exit_price && trade.entry_price) {
         return total + ((trade.exit_price - trade.entry_price) / trade.entry_price) * 100;
       } else if (trade.status === 'SL Hit' && trade.stop_loss && trade.entry_price) {
@@ -151,20 +352,18 @@ export function SwingTrades() {
     };
   };
 
-  // Sort trades: Running first, then by entry date
-  const sortTrades = (trades: SwingTrade[]) => {
-    return [...trades].sort((a, b) => {
-      // Priority: Running > Trade Successful > SL Hit > Cancelled
-      const statusPriority = { 'Running': 0, 'Trade Successful': 1, 'SL Hit': 2, 'Cancelled': 3 };
-      const aPriority = statusPriority[a.status as keyof typeof statusPriority] ?? 4;
-      const bPriority = statusPriority[b.status as keyof typeof statusPriority] ?? 4;
-      
-      if (aPriority !== bPriority) {
-        return aPriority - bPriority;
-      }
-      
-      // Secondary sort: by entry date (newest first for same status)
-      return new Date(b.entry_date).getTime() - new Date(a.entry_date).getTime();
+  // Sort trades by date and status
+  const sortTrades = (trades: SwingTrade[] | ValueStock[]): SwingTrade[] => {
+    // Handle ValueStock arrays (return empty array as they're handled separately)
+    if (trades.length > 0 && 'opportunity' in trades[0]) {
+      return [];
+    }
+
+    const swingTrades = trades as SwingTrade[];
+    return swingTrades.sort((a, b) => {
+      if (a.status === 'Running' && b.status !== 'Running') return -1;
+      if (a.status !== 'Running' && b.status === 'Running') return 1;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
   };
 
@@ -186,6 +385,12 @@ export function SwingTrades() {
       label: 'Bottom Formation', 
       icon: <TrendingUpIcon className="w-4 h-4" />, 
       description: 'Reversal Pattern Strategy' 
+    },
+    { 
+      id: 'Value Buying', 
+      label: 'Value Buying', 
+      icon: <DollarSign className="w-4 h-4" />, 
+      description: 'Oversold Quality Stocks' 
     }
   ];
 
@@ -403,7 +608,23 @@ export function SwingTrades() {
   );
   };
 
-  const StrategySection = ({ strategy, trades: strategyTrades }: { strategy: keyof GroupedTrades; trades: SwingTrade[] }) => {
+  const StrategySection = ({ strategy, trades: strategyTrades }: { strategy: string; trades: SwingTrade[] | ValueStock[] }) => {
+    // Handle Value Buying separately
+    if (strategy === 'Value Buying') {
+      return (
+        <div className={`rounded-lg border-l-4 ${getStrategyColor(strategy)} p-4 mb-6`}>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">{strategy}</h3>
+              <p className="text-xs text-gray-600">{getStrategyDescription(strategy)}</p>
+            </div>
+          </div>
+          <ValueBuying />
+        </div>
+      );
+    }
+
+    // Handle regular swing trades
     const stats = calculateStats(strategyTrades);
     const sortedTrades = sortTrades(strategyTrades);
 
@@ -643,8 +864,8 @@ export function SwingTrades() {
         {/* Active Strategy Section */}
         <div className="space-y-5">
           <StrategySection
-            strategy={activeStrategy as keyof GroupedTrades}
-            trades={groupedTrades[activeStrategy as keyof GroupedTrades] || []}
+            strategy={activeStrategy}
+            trades={groupedTrades[activeStrategy] || []}
           />
         </div>
         

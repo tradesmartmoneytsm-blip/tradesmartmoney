@@ -10,7 +10,7 @@ interface SectorData {
 
 export async function GET() {
   try {
-    console.log('🔄 API: Fetching sector data from Dhan...');
+    console.log('🔄 API: Fetching sector data...');
     
     const response = await fetch('https://dhan.co/all-nse-indices/', {
       headers: {
@@ -78,7 +78,7 @@ export async function GET() {
       }
     });
 
-    console.log(`✅ API: Found ${scrapedSectors.length} sectors from Dhan`);
+    console.log(`✅ API: Found ${scrapedSectors.length} sectors`);
     
     if (scrapedSectors.length === 0) {
       throw new Error('No sector data found');
