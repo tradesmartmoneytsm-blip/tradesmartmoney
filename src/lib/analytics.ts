@@ -41,6 +41,45 @@ export const trackEvent = (
   window.gtag('event', event_name, parameters);
 };
 
+// Track conversions and business events
+export const trackConversion = {
+  // Email signup conversion
+  emailSignup: (method: string = 'unknown') => {
+    trackEvent('sign_up', {
+      method: method,
+      event_category: 'conversion',
+      value: 1
+    });
+  },
+
+  // Scanner usage conversion
+  useAdvancedScanner: () => {
+    trackEvent('use_advanced_scanner', {
+      event_category: 'conversion',
+      event_label: 'Advanced Options Scanner',
+      value: 5
+    });
+  },
+
+  // Platform feature usage
+  useFiiDiiTracker: () => {
+    trackEvent('use_fii_dii_tracker', {
+      event_category: 'conversion',
+      event_label: 'FII DII Tracker',
+      value: 3
+    });
+  },
+
+  // Contact/inquiry
+  contactInquiry: (method: string = 'contact_form') => {
+    trackEvent('generate_lead', {
+      method: method,
+      event_category: 'conversion',
+      value: 10
+    });
+  }
+};
+
 // Track business events
 export const trackBusinessEvent = {
   // Track when user views FII/DII data
@@ -73,6 +112,15 @@ export const trackBusinessEvent = {
       event_category: 'user_interaction',
       from_section: from,
       to_section: to
+    });
+  },
+
+  // Track time spent on platform features
+  timeSpent: (section: string, seconds: number) => {
+    trackEvent('time_on_section', {
+      event_category: 'engagement',
+      event_label: section,
+      value: seconds
     });
   }
 };

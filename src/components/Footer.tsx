@@ -178,7 +178,7 @@ export function Footer() {
               <div>
                 <h4 className="font-semibold text-gray-400 mb-2">Data Sources & Disclaimers</h4>
                 <p className="leading-relaxed">
-                  Market data provided by NSE, BSE and other exchanges. Data may be delayed by 15-20 minutes. 
+                  Market data provided by NSE, BSE and other exchanges. 
                   TradeSmartMoney does not guarantee accuracy of data and is not liable for any trading decisions made using this information.
                 </p>
               </div>

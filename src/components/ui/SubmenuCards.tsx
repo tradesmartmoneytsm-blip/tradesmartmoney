@@ -108,22 +108,7 @@ export function SubmenuCards({ section, onSubItemClick }: SubmenuCardsProps) {
 
   return (
     <div className="min-h-[600px] bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} py-12`}>
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${menuData.gradient} rounded-2xl mb-4 shadow-lg`}>
-            <div className="text-white">
-              {menuData.icon}
-            </div>
-          </div>
-          <h1 className={`${brandTokens.typography.heading.lg} brand-text mb-3`}>
-            {menuData.title}
-          </h1>
-          <p className={`${brandTokens.typography.body.lg} text-gray-600 max-w-2xl mx-auto`}>
-            {menuData.description}
-          </p>
-        </div>
-
+      <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} py-8`}>
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {menuData.subItems.map((item) => (
@@ -164,7 +149,7 @@ export function SubmenuCards({ section, onSubItemClick }: SubmenuCardsProps) {
         </div>
 
         {/* Back Button */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-8">
           <button
             onClick={() => onSubItemClick('home', '')}
             className="inline-flex items-center px-6 py-3 bg-white border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors"

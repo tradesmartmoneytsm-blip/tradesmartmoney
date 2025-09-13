@@ -5,6 +5,7 @@ import { TrendingUp, TrendingDown, Activity, Building2, BarChart3, RefreshCw, Ar
 import type { SectorData } from '@/services/marketDataService';
 import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
 import { FiiDiiActivity } from '@/components/FiiDiiActivity';
+import { TopMovers } from '@/components/TopMovers';
 import { trackBusinessEvent, trackPageView } from '@/lib/analytics';
 // Auto ads will handle all ad placement automatically
 
@@ -202,19 +203,19 @@ export function Market({ initialSubSection }: MarketProps) {
 
       case 'top-gainers':
         return (
-          <ComingSoonCard
+          <TopMovers
+            type="TOP_GAINERS"
             title="Top Gainers"
-            description="Real-time tracking of best performing stocks with live price movements and volume analysis."
-            icon={<TrendingUp className="w-8 h-8" />}
+            icon={<TrendingUp className="w-5 h-5" />}
           />
         );
 
       case 'top-losers':
         return (
-          <ComingSoonCard
+          <TopMovers
+            type="TOP_LOSERS"
             title="Top Losers"
-            description="Comprehensive analysis of underperforming stocks with detailed decline patterns and volume insights."
-            icon={<TrendingDown className="w-8 h-8" />}
+            icon={<TrendingDown className="w-5 h-5" />}
           />
         );
 
