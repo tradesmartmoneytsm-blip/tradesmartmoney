@@ -14,15 +14,16 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 // ChartInk API configuration
 const CHARTINK_SCREENER_URL = 'https://chartink.com/screener/';
 const CHARTINK_API_URL = 'https://chartink.com/widget/process';
-// Using the exact working query from your Python code
-const CHARTINK_QUERY = `select [=1] 30 minute Buyer initiated trades + [=1] 30 minute Seller initiated trades as 'BIT+SIT1', [=2] 30 minute Buyer initiated trades + [=2] 30 minute Seller initiated trades as 'BIT+SIT2' WHERE( {cash} ( [0] 5 minute close > 100 and yearly debt equity ratio <= 1 ) ) GROUP BY symbol ORDER BY 1 desc`;
+const CHARTINK_QUERY = `select [=1] 30 minute Buyer initiated trades + [=1] 30 minute Seller initiated trades as 'M30-1', [=2] 30 minute Buyer initiated trades + [=2] 30 minute Seller initiated trades as 'M30-2', [=3] 30 minute Buyer initiated trades + [=3] 30 minute Seller initiated trades as 'M30-3', [=1] 1 hour Buyer initiated trades + [=1] 1 hour Seller initiated trades as 'M60-1' WHERE( {cash} ( [0] 5 minute close > 100 and yearly debt equity ratio <= 1 ) ) GROUP BY symbol ORDER BY 1 desc`;
 
 interface ChartInkResponse {
   success: boolean;
   data?: Array<{
     symbol: string;
-    'BIT+SIT1': number;
-    'BIT+SIT2': number;
+    'M30-1': number;
+    'M30-2': number;
+    'M30-3': number;
+    'M60-1': number;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   }>;
@@ -51,9 +52,11 @@ interface ChartInkRawResponse {
 
 interface IntradaySignal {
   symbol: string;
-  bit_sit_score: number;
-  bit_sit1: number;
-  bit_sit2: number;
+  total_score: number;
+  m30_1: number;
+  m30_2: number;
+  m30_3: number;
+  m60_1: number;
   current_price: number | null;
   volume: number | null;
   market_session: string;
@@ -76,13 +79,12 @@ function getMarketSession(): string {
   return 'INTRADAY';
 }
 
-// Fetch data from ChartInk API (exact Python approach with session and CSRF)
+// Fetch data from ChartInk API with session management
 async function fetchChartInkData(): Promise<ChartInkResponse> {
   try {
     console.log('🔍 Fetching data from ChartInk API...');
     
-    // Step 1: GET the ChartInk screener page to establish session and get CSRF token
-    console.log('🍪 Establishing session and getting CSRF token...');
+    // Get ChartInk session and CSRF token
     const sessionResponse = await fetch(CHARTINK_SCREENER_URL, {
       method: 'GET',
       headers: {
@@ -102,13 +104,9 @@ async function fetchChartInkData(): Promise<ChartInkResponse> {
       .split(',')
       .map(cookie => cookie.split(';')[0].trim())
       .join('; ');
-    
-    console.log(`🍪 Session cookies: ${cookieHeader ? 'Obtained' : 'None'}`);
 
-    // Step 2: Extract CSRF token from HTML (matching Python BeautifulSoup approach)
+    // Extract CSRF token from HTML
     const htmlContent = await sessionResponse.text();
-    
-    // Try multiple CSRF token patterns (matching Python BeautifulSoup selector)
     const csrfPatterns = [
       /name=['"]csrf-token['"][^>]*content=['"]([^'"]+)['"]/i,
       /content=['"]([^'"]+)['"][^>]*name=['"]csrf-token['"]/i,
@@ -118,35 +116,23 @@ async function fetchChartInkData(): Promise<ChartInkResponse> {
     ];
     
     let csrfToken = '';
-    let csrfMatch = null;
-    
     for (const pattern of csrfPatterns) {
-      csrfMatch = htmlContent.match(pattern);
-      if (csrfMatch) {
-        csrfToken = csrfMatch[1];
+      const match = htmlContent.match(pattern);
+      if (match) {
+        csrfToken = match[1];
         break;
       }
     }
-    
-    // Debug: Log part of HTML content to see the actual format
-    console.log('🔍 HTML snippet around CSRF:', htmlContent.substring(0, 2000).includes('csrf') ? 'Found csrf in HTML' : 'No csrf found');
-    
-    if (!csrfToken) {
-      console.log('⚠️ CSRF token not found, proceeding without it...');
-    } else {
-      console.log(`🔑 CSRF token extracted: ${csrfToken.substring(0, 10)}...`);
-    }
 
-    // Step 3: Prepare the POST request (matching Python payload)
+    // Prepare POST request
     const requestBody = new URLSearchParams({
       query: CHARTINK_QUERY,
       use_live: '1',
-      limit: '3000',
-      size: '1',
-      widget_id: '3556153'
+      limit: '50',
+      size: '357',
+      widget_id: '3799905'
     });
 
-    // Step 4: POST to widget URL with session cookies and CSRF token
     const headers: HeadersInit = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
@@ -156,12 +142,10 @@ async function fetchChartInkData(): Promise<ChartInkResponse> {
       'Origin': 'https://chartink.com',
     };
 
-    // Add CSRF token if found
     if (csrfToken) {
       headers['x-csrf-token'] = csrfToken;
     }
 
-    // Add session cookies
     if (cookieHeader) {
       headers['Cookie'] = cookieHeader;
     }
@@ -172,50 +156,44 @@ async function fetchChartInkData(): Promise<ChartInkResponse> {
       body: requestBody.toString(),
     });
 
-    console.log(`📡 ChartInk API response status: ${response.status}`);
-
     if (!response.ok) {
       throw new Error(`ChartInk API responded with status: ${response.status}`);
     }
 
     const rawData: ChartInkRawResponse = await response.json();
-    console.log('✅ ChartInk API response received');
-    console.log('🔍 Raw API response structure:', JSON.stringify(rawData, null, 2).substring(0, 1000) + '...');
-    console.log(`📊 Found ${rawData.groups?.length || 0} symbols`);
+    console.log(`✅ ChartInk API: Found ${rawData.groups?.length || 0} symbols`);
     
-    if (!rawData || !rawData.groups || !Array.isArray(rawData.groups) || !rawData.groupData) {
-      console.error('❌ Invalid response format from ChartInk API');
-      console.error('📋 Available keys:', Object.keys(rawData || {}));
+    if (!rawData?.groups || !rawData?.groupData) {
       throw new Error('Invalid response format from ChartInk API');
     }
 
-    // Convert ChartInk format to our expected format
+    // Convert ChartInk format to expected format
     const processedData = rawData.groupData.map((group) => {
-      const symbol = group.name;
-      
-      // Extract BIT+SIT values from results - matching the new query structure
-      // The results array contains objects with column names as keys
-      let bitSit1 = 0, bitSit2 = 0;
+      let m30_1 = 0, m30_2 = 0, m30_3 = 0, m60_1 = 0;
       
       group.results.forEach((result) => {
         const key = Object.keys(result)[0];
-        const value = result[key][0]; // ChartInk returns values as arrays
+        const value = result[key][0];
         
-        if (key === 'BIT+SIT1') {
-          bitSit1 = value;
-        } else if (key === 'BIT+SIT2') {
-          bitSit2 = value;
+        if (key === 'M30-1') {
+          m30_1 = value;
+        } else if (key === 'M30-2') {
+          m30_2 = value;
+        } else if (key === 'M30-3') {
+          m30_3 = value;
+        } else if (key === 'M60-1') {
+          m60_1 = value;
         }
       });
 
       return {
-        symbol,
-        'BIT+SIT1': bitSit1,
-        'BIT+SIT2': bitSit2,
+        symbol: group.name,
+        'M30-1': m30_1,
+        'M30-2': m30_2,
+        'M30-3': m30_3,
+        'M60-1': m60_1,
       };
     });
-
-    console.log(`📈 Processed ${processedData.length} symbols with BIT+SIT data`);
 
     return {
       success: true,
@@ -232,38 +210,22 @@ async function fetchChartInkData(): Promise<ChartInkResponse> {
 }
 
 // Store signals in Supabase
-async function storeSignalsInSupabase(signals: IntradaySignal[]): Promise<{success: boolean, error?: any}> {
+async function storeSignalsInSupabase(signals: IntradaySignal[]): Promise<{success: boolean, error?: unknown}> {
   try {
-    console.log(`📊 Storing ${signals.length} signals in Supabase...`);
-    
-    // First, test if table exists by doing a simple query
-    console.log('🔍 Testing database connection...');
-    const { data: testData, error: testError } = await supabase
-      .from('intraday_signals')
-      .select('id')
-      .limit(1);
-    
-    if (testError) {
-      console.error('❌ Database connection test failed:', testError);
-      return { success: false, error: testError };
-    }
-    
-    console.log('✅ Database connection successful, inserting signals...');
-    
     const { error } = await supabase
       .from('intraday_signals')
       .insert(signals);
 
     if (error) {
-      console.error('❌ Supabase insert error:', error);
+      console.error('❌ Database insert error:', error);
       return { success: false, error };
     }
 
-    console.log('✅ Signals stored successfully in Supabase');
+    console.log(`✅ Stored ${signals.length} signals successfully`);
     return { success: true };
     
   } catch (error) {
-    console.error('❌ Error storing signals in Supabase:', error);
+    console.error('❌ Error storing signals:', error);
     return { success: false, error };
   }
 }
@@ -274,18 +236,15 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
     const session = searchParams.get('session') || 'all';
-    
-    console.log(`📡 Fetching latest ${limit} intraday signals for session: ${session}`);
 
     let query = supabase
       .from('intraday_signals')
       .select('*')
       .eq('is_active', true)
       .eq('scan_date', new Date().toISOString().split('T')[0])
-      .order('bit_sit_score', { ascending: false })
+      .order('total_score', { ascending: false })
       .limit(limit);
 
-    // Filter by market session if specified
     if (session !== 'all') {
       query = query.eq('market_session', session.toUpperCase());
     }
@@ -293,14 +252,12 @@ export async function GET(request: NextRequest) {
     const { data: signals, error } = await query;
 
     if (error) {
-      console.error('❌ Error fetching signals from Supabase:', error);
+      console.error('❌ Error fetching signals:', error);
       return NextResponse.json({
         success: false,
         error: 'Failed to fetch signals'
       }, { status: 500 });
     }
-
-    console.log(`✅ Retrieved ${signals?.length || 0} signals`);
 
     return NextResponse.json({
       success: true,
@@ -318,20 +275,14 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST endpoint - Fetch and store new signals (for automated scanning)
+// POST endpoint - Fetch and store new signals
 export async function POST(request: NextRequest) {
   try {
-    console.log('🚀 Starting intraday signals scan...');
-    
-    // Check if we're in the scanning time window (9:25 AM to 10:25 AM IST)
+    // Check scanning time window (9:25-10:25 AM IST) or allow force override
     const now = new Date();
     const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
-    const hour = istTime.getHours();
-    const minute = istTime.getMinutes();
-    const currentTimeMinutes = hour * 60 + minute;
+    const currentTimeMinutes = istTime.getHours() * 60 + istTime.getMinutes();
     
-    // Only scan between 9:25 AM to 10:25 AM IST (565 to 625 minutes)
-    // Allow manual override with ?force=true
     const { searchParams } = new URL(request.url);
     const forceRun = searchParams.get('force') === 'true';
     
@@ -356,31 +307,26 @@ export async function POST(request: NextRequest) {
 
     // Process and prepare signals for storage
     const marketSession = getMarketSession();
-    const signals: IntradaySignal[] = [];
-    
-    // Take top 10 results
-    const topStocks = chartinkResult.data.slice(0, 10);
-    
-    topStocks.forEach((stock, index) => {
-      // Extract BIT+SIT values directly from the new ChartInk query
-      const bitSit1 = Number(stock['BIT+SIT1']) || 0;
-      const bitSit2 = Number(stock['BIT+SIT2']) || 0;
-      const totalScore = bitSit1 + bitSit2;
+    const signals: IntradaySignal[] = chartinkResult.data.slice(0, 10).map((stock, index) => {
+      const m30_1 = Number(stock['M30-1']) || 0;
+      const m30_2 = Number(stock['M30-2']) || 0;
+      const m30_3 = Number(stock['M30-3']) || 0;
+      const m60_1 = Number(stock['M60-1']) || 0;
       
-      signals.push({
+      return {
         symbol: stock.symbol.toUpperCase(),
-        bit_sit_score: totalScore,
-        bit_sit1: bitSit1,
-        bit_sit2: bitSit2,
-        current_price: null, // Price not available in this ChartInk query
-        volume: null, // Volume not available in this ChartInk query
+        total_score: m30_1 + m30_2 + m30_3 + m60_1,
+        m30_1,
+        m30_2,
+        m30_3,
+        m60_1,
+        current_price: null,
+        volume: null,
         market_session: marketSession,
         rank_position: index + 1
-      });
+      };
     });
 
-    console.log(`💾 Attempting to store ${signals.length} signals in database...`);
-    
     // Store signals in Supabase
     const storeResult = await storeSignalsInSupabase(signals);
     
@@ -391,8 +337,6 @@ export async function POST(request: NextRequest) {
         details: storeResult.error
       }, { status: 500 });
     }
-
-    console.log('🎯 Intraday signals scan completed successfully');
 
     return NextResponse.json({
       success: true,

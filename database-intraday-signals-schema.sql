@@ -9,9 +9,11 @@ DROP TABLE IF EXISTS public.intraday_signals;
 CREATE TABLE public.intraday_signals (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     symbol VARCHAR(20) NOT NULL,
-    bit_sit_score DECIMAL(15,2) NOT NULL, -- Buyer+Seller initiated trades score
-    bit_sit1 DECIMAL(15,2), -- [=1] 30 minute BIT+SIT
-    bit_sit2 DECIMAL(15,2), -- [=2] 30 minute BIT+SIT  
+    total_score DECIMAL(15,2) NOT NULL, -- Combined momentum score
+    m30_1 DECIMAL(15,2), -- [=1] 30 minute momentum
+    m30_2 DECIMAL(15,2), -- [=2] 30 minute momentum
+    m30_3 DECIMAL(15,2), -- [=3] 30 minute momentum
+    m60_1 DECIMAL(15,2), -- [=1] 60 minute momentum
     current_price DECIMAL(10,2),
     volume BIGINT,
     scan_time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -27,7 +29,7 @@ CREATE TABLE public.intraday_signals (
 CREATE INDEX idx_intraday_signals_symbol ON public.intraday_signals(symbol);
 CREATE INDEX idx_intraday_signals_scan_date ON public.intraday_signals(scan_date);
 CREATE INDEX idx_intraday_signals_scan_time ON public.intraday_signals(scan_time);
-CREATE INDEX idx_intraday_signals_score ON public.intraday_signals(bit_sit_score DESC);
+CREATE INDEX idx_intraday_signals_score ON public.intraday_signals(total_score DESC);
 CREATE INDEX idx_intraday_signals_session ON public.intraday_signals(market_session);
 CREATE INDEX idx_intraday_signals_active ON public.intraday_signals(is_active) WHERE is_active = true;
 
