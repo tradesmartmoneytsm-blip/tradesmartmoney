@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { TrendingUp, Mail, Shield, FileText, HelpCircle, Building2 } from 'lucide-react';
+import { TrendingUp, Mail, Shield, FileText, HelpCircle, Building2, Instagram, Twitter, Youtube } from 'lucide-react';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -21,11 +21,45 @@ export function Footer() {
               Professional trading platform providing real-time market data, analysis, and educational content 
               to empower smart investment decisions in the Indian financial markets.
             </p>
-            <div className="flex items-center text-gray-400 text-sm">
+            <div className="flex items-center text-gray-400 text-sm mb-4">
               <Mail className="h-4 w-4 mr-2" />
               <a href="mailto:tradesmartmoneytsm@gmail.com" className="hover:text-white transition-colors">
                 tradesmartmoneytsm@gmail.com
               </a>
+            </div>
+            
+            {/* Social Media Links */}
+            <div>
+              <h4 className="font-semibold text-gray-300 mb-3 text-sm">Follow Us</h4>
+              <div className="flex space-x-4">
+                <a 
+                  href="https://www.instagram.com/tradesmartmoneytsm/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-pink-400 transition-colors"
+                  aria-label="Follow us on Instagram"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+                <a 
+                  href="https://twitter.com/tradesmartmoney" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  aria-label="Follow us on Twitter"
+                >
+                  <Twitter className="h-5 w-5" />
+                </a>
+                <a 
+                  href="https://www.youtube.com/@tradesmartmoney" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-red-500 transition-colors"
+                  aria-label="Subscribe to our YouTube channel"
+                >
+                  <Youtube className="h-5 w-5" />
+                </a>
+              </div>
             </div>
           </div>
 

@@ -14,7 +14,7 @@ export function StructuredData() {
     "sameAs": [
       "https://twitter.com/tradesmartmoney",
       "https://www.youtube.com/@tradesmartmoney",
-      "https://www.instagram.com/tradesmartmoney"
+      "https://www.instagram.com/tradesmartmoneytsm/"
     ],
     "address": {
       "@type": "PostalAddress",
