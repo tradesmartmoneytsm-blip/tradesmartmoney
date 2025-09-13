@@ -209,7 +209,7 @@ export default function BlogPost() {
                   </div>
 
                   <p className="text-gray-700 text-lg leading-relaxed mb-6">
-                    Smart Money Trading involves analyzing and following the movement patterns of institutional investors to make informed trading decisions. Unlike retail traders who often react emotionally to market movements, institutional investors (the "smart money") make calculated decisions based on comprehensive research, insider knowledge, and sophisticated analytical tools.
+                    Smart Money Trading involves analyzing and following the movement patterns of institutional investors to make informed trading decisions. Unlike retail traders who often react emotionally to market movements, institutional investors (the &ldquo;smart money&rdquo;) make calculated decisions based on comprehensive research, insider knowledge, and sophisticated analytical tools.
                   </p>
 
                   <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8">
@@ -288,7 +288,7 @@ export default function BlogPost() {
                   <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
                     <h3 className="font-bold text-yellow-800 mb-3">💡 Pro Tip:</h3>
                     <p className="text-yellow-800">
-                      Track the FII/DII flow patterns on our platform's dedicated section. Consistent buying by DIIs often indicates strong domestic confidence, while FII flows reflect global sentiment towards Indian markets.
+                      Track the FII/DII flow patterns on our platform&apos;s dedicated section. Consistent buying by DIIs often indicates strong domestic confidence, while FII flows reflect global sentiment towards Indian markets.
                     </p>
                   </div>
 

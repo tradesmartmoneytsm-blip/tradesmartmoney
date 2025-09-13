@@ -21,6 +21,7 @@ interface ChartInkResponse {
     symbol: string;
     'BIT+SIT1': number;
     'BIT+SIT2': number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   }>;
   error?: string;

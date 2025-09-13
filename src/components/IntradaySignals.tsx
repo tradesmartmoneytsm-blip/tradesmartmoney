@@ -206,7 +206,7 @@ export function IntradaySignals() {
           ].map((session) => (
             <button
               key={session.value}
-              onClick={() => setSelectedSession(session.value as any)}
+              onClick={() => setSelectedSession(session.value as 'all' | 'opening_hour' | 'intraday')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedSession === session.value
                   ? 'bg-blue-600 text-white'

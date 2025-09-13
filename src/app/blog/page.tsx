@@ -65,7 +65,6 @@ const categories = ['All', 'Strategy', 'Analysis', 'Algo Trading', 'Market Insig
 
 export default function BlogPage() {
   const featuredPosts = blogPosts.filter(post => post.featured);
-  const regularPosts = blogPosts.filter(post => !post.featured);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
