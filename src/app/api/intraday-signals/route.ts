@@ -54,30 +54,14 @@ interface ChartInkRawResponse {
 
 interface IntradaySignal {
   symbol: string;
-  total_score: number;
   m30_1: number;
   m30_2: number;
   m30_3: number;
   m60_1: number;
-  market_session: string;
   rank_position: number;
 }
 
-// Determine market session based on current IST time
-function getMarketSession(): string {
-  const now = new Date();
-  const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000)); // Convert to IST
-  const hour = istTime.getHours();
-  const minute = istTime.getMinutes();
-  const currentTimeMinutes = hour * 60 + minute;
-  
-  // 9:25 AM to 10:25 AM IST = Opening Hour (565 to 625 minutes)
-  if (currentTimeMinutes >= 565 && currentTimeMinutes <= 625) {
-    return 'OPENING_HOUR';
-  }
-  
-  return 'INTRADAY';
-}
+
 
 // Fetch data from ChartInk API with session management
 async function fetchChartInkData(): Promise<ChartInkResponse> {
@@ -233,40 +217,33 @@ async function storeSignalsInSupabase(signals: IntradaySignal[]): Promise<{succe
   }
 }
 
-// GET endpoint - Retrieve latest intraday signals
+// GET endpoint - Retrieve existing signals
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
-    const session = searchParams.get('session') || 'all';
 
-    let query = supabase
+    const query = supabase
       .from('intraday_signals')
       .select('*')
-      .eq('is_active', true)
-      .eq('scan_date', new Date().toISOString().split('T')[0])
-      .order('total_score', { ascending: false })
+      .order('m30_1', { ascending: false })
       .limit(limit);
-
-    if (session !== 'all') {
-      query = query.eq('market_session', session.toUpperCase());
-    }
-
+    
     const { data: signals, error } = await query;
 
     if (error) {
-      console.error('❌ Error fetching signals:', error);
+      console.error('❌ Error fetching signals from database:', error);
       return NextResponse.json({
         success: false,
-        error: 'Failed to fetch signals'
+        error: 'Failed to fetch signals from database'
       }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
       data: signals || [],
-      timestamp: new Date().toISOString(),
-      session: session
+      count: signals?.length || 0,
+      timestamp: new Date().toISOString()
     });
 
   } catch (error) {
@@ -309,7 +286,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Process and prepare signals for storage
-    const marketSession = getMarketSession();
     const signals: IntradaySignal[] = chartinkResult.data.slice(0, 10).map((stock, index) => {
       const m30_1 = Number(stock['M30-1']) || 0;
       const m30_2 = Number(stock['M30-2']) || 0;
@@ -318,12 +294,10 @@ export async function POST(request: NextRequest) {
       
       return {
         symbol: stock.symbol.toUpperCase(),
-        total_score: m30_1 + m30_2 + m30_3 + m60_1,
         m30_1,
         m30_2,
         m30_3,
         m60_1,
-        market_session: marketSession,
         rank_position: index + 1
       };
     });
@@ -344,7 +318,6 @@ export async function POST(request: NextRequest) {
       message: 'Intraday signals updated successfully',
       data: {
         signalsCount: signals.length,
-        marketSession,
         timestamp: new Date().toISOString(),
         topSignals: signals.slice(0, 3)
       }

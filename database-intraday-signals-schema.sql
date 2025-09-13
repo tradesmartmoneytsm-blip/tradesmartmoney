@@ -9,17 +9,13 @@ DROP TABLE IF EXISTS public.intraday_signals;
 CREATE TABLE public.intraday_signals (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     symbol VARCHAR(20) NOT NULL,
-    total_score DECIMAL(15,2) NOT NULL, -- Combined momentum score
     m30_1 DECIMAL(15,2), -- [=1] 30 minute momentum
     m30_2 DECIMAL(15,2), -- [=2] 30 minute momentum
     m30_3 DECIMAL(15,2), -- [=3] 30 minute momentum
     m60_1 DECIMAL(15,2), -- [=1] 60 minute momentum
     scan_time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     scan_date DATE NOT NULL DEFAULT CURRENT_DATE,
-    market_session VARCHAR(20) NOT NULL, -- 'OPENING_HOUR', 'INTRADAY'
     rank_position INTEGER NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -27,14 +23,11 @@ CREATE TABLE public.intraday_signals (
 CREATE INDEX idx_intraday_signals_symbol ON public.intraday_signals(symbol);
 CREATE INDEX idx_intraday_signals_scan_date ON public.intraday_signals(scan_date);
 CREATE INDEX idx_intraday_signals_scan_time ON public.intraday_signals(scan_time);
-CREATE INDEX idx_intraday_signals_score ON public.intraday_signals(total_score DESC);
-CREATE INDEX idx_intraday_signals_session ON public.intraday_signals(market_session);
-CREATE INDEX idx_intraday_signals_active ON public.intraday_signals(is_active) WHERE is_active = true;
+CREATE INDEX idx_intraday_signals_m30_1 ON public.intraday_signals(m30_1 DESC);
 
 -- Composite index for efficient queries
-CREATE INDEX idx_intraday_signals_date_session_active 
-ON public.intraday_signals(scan_date, market_session, is_active) 
-WHERE is_active = true;
+CREATE INDEX idx_intraday_signals_date_rank 
+ON public.intraday_signals(scan_date, rank_position);
 
 -- Create updated_at trigger
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -78,17 +71,14 @@ USING (auth.role() = 'service_role');
 -- Get latest signals for today
 -- SELECT * FROM public.intraday_signals 
 -- WHERE scan_date = CURRENT_DATE 
--- AND is_active = true 
--- ORDER BY bit_sit_score DESC 
+-- ORDER BY m30_1 DESC 
 -- LIMIT 10;
 
--- Get signals by market session
--- SELECT symbol, bit_sit_score, current_price, scan_time 
+-- Get signals by date
+-- SELECT symbol, m30_1, m30_2, m30_3, m60_1, scan_time 
 -- FROM public.intraday_signals 
--- WHERE scan_date = CURRENT_DATE 
--- AND market_session = 'OPENING_HOUR'
--- AND is_active = true 
--- ORDER BY bit_sit_score DESC;
+-- WHERE scan_date = CURRENT_DATE
+-- ORDER BY m30_1 DESC;
 
 -- Cleanup old data (older than 7 days)
 -- DELETE FROM public.intraday_signals 
@@ -99,12 +89,11 @@ USING (auth.role() = 'service_role');
 -- =====================================================
 
 /*
-1. The ChartInk query returns BIT+SIT scores which indicate institutional buying/selling activity
-2. Higher scores suggest more institutional interest in the stock
-3. We store both current session data and maintain historical data for analysis
+1. The ChartInk query returns momentum scores for different timeframes
+2. Higher M30-1 values suggest more institutional interest in the stock
+3. We maintain historical data for analysis and trending
 4. The rank_position helps identify top performers for each scan
-5. Market session helps categorize signals (opening hour is most important)
-6. RLS policies ensure data security while allowing API access
-7. Indexes optimize for common query patterns (latest signals, top performers)
-8. Consider partitioning if data volume becomes large (>1M rows)
+5. RLS policies ensure data security while allowing API access
+6. Indexes optimize for common query patterns (latest signals, top performers)
+7. Consider partitioning if data volume becomes large (>1M rows)
 */ 

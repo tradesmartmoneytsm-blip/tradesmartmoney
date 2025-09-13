@@ -5,7 +5,7 @@ import { Zap, Search, Brain, Activity } from 'lucide-react';
 import { StormStrategy } from './StormStrategy';
 import { IntradayScanner } from './IntradayScanner';
 import { AdvancedScanner } from './AdvancedScanner';
-import { IntradaySignals } from './IntradaySignals';
+import IntradaySignals from './IntradaySignals';
 // Auto ads will handle all ad placement automatically
 
 export function IntradayTrades() {
