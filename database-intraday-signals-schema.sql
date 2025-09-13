@@ -70,20 +70,6 @@ CREATE POLICY "Allow full access for service role"
 ON public.intraday_signals FOR ALL 
 USING (auth.role() = 'service_role');
 
--- =====================================================
--- SAMPLE DATA FOR TESTING
--- =====================================================
-
--- Insert sample data (remove this in production)
-INSERT INTO public.intraday_signals (
-    symbol, bit_sit_score, bit_sit1, bit_sit2, current_price, volume,
-    scan_time, market_session, rank_position
-) VALUES 
-('RELIANCE', 1250000.50, 650000.25, 600000.25, 2847.30, 5420000, NOW(), 'OPENING_HOUR', 1),
-('TCS', 980000.75, 520000.40, 460000.35, 4125.60, 3250000, NOW(), 'OPENING_HOUR', 2),
-('HDFCBANK', 875000.20, 475000.10, 400000.10, 1684.45, 4100000, NOW(), 'OPENING_HOUR', 3),
-('INFY', 720000.80, 380000.45, 340000.35, 1867.90, 2850000, NOW(), 'OPENING_HOUR', 4),
-('ICICIBANK', 650000.60, 350000.30, 300000.30, 1298.75, 3750000, NOW(), 'OPENING_HOUR', 5);
 
 -- =====================================================
 -- USEFUL QUERIES FOR DEVELOPMENT

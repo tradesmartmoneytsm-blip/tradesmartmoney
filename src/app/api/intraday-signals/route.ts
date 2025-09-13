@@ -16,6 +16,8 @@ const CHARTINK_SCREENER_URL = 'https://chartink.com/screener/';
 const CHARTINK_API_URL = 'https://chartink.com/widget/process';
 const CHARTINK_QUERY = `select [=1] 30 minute Buyer initiated trades + [=1] 30 minute Seller initiated trades as 'M30-1', [=2] 30 minute Buyer initiated trades + [=2] 30 minute Seller initiated trades as 'M30-2', [=3] 30 minute Buyer initiated trades + [=3] 30 minute Seller initiated trades as 'M30-3', [=1] 1 hour Buyer initiated trades + [=1] 1 hour Seller initiated trades as 'M60-1' WHERE( {cash} ( [0] 5 minute close > 100 and yearly debt equity ratio <= 1 ) ) GROUP BY symbol ORDER BY 1 desc`;
 
+
+
 interface ChartInkResponse {
   success: boolean;
   data?: Array<{
@@ -169,17 +171,20 @@ async function fetchChartInkData(): Promise<ChartInkResponse> {
     const processedData = rawData.groupData.map((group) => {
       let m30_1 = 0, m30_2 = 0, m30_3 = 0, m60_1 = 0;
       
+
+      
       group.results.forEach((result) => {
         const key = Object.keys(result)[0];
         const value = result[key][0];
         
-        if (key === 'M30-1') {
+        // Parse momentum columns - ChartInk returns lowercase keys!
+        if (key === 'm30-1') {
           m30_1 = value;
-        } else if (key === 'M30-2') {
+        } else if (key === 'm30-2') {
           m30_2 = value;
-        } else if (key === 'M30-3') {
+        } else if (key === 'm30-3') {
           m30_3 = value;
-        } else if (key === 'M60-1') {
+        } else if (key === 'm60-1') {
           m60_1 = value;
         }
       });
@@ -334,7 +339,7 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    return NextResponse.json({
+    const response = {
       success: true,
       message: 'Intraday signals updated successfully',
       data: {
@@ -343,7 +348,9 @@ export async function POST(request: NextRequest) {
         timestamp: new Date().toISOString(),
         topSignals: signals.slice(0, 3)
       }
-    });
+    };
+
+    return NextResponse.json(response);
 
   } catch (error) {
     console.error('❌ Error in POST /api/intraday-signals:', error);
