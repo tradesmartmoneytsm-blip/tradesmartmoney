@@ -12,6 +12,14 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     // External image domains
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'assets-netstorage.groww.in',
+        port: '',
+        pathname: '/stock-assets/logos2/**',
+      },
+    ],
   },
   
   // Experimental features for performance

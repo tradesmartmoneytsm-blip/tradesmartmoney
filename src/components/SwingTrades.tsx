@@ -32,11 +32,13 @@ const ValueBuying = () => {
   const [stocks, setStocks] = useState<ValueStock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
   const fetchValueBuyingStocks = async () => {
     try {
       setLoading(true);
       setError(null);
+      setImageErrors(new Set()); // Reset image errors on refresh
       
       const response = await fetch('/api/value-buying');
       const result = await response.json();
@@ -165,7 +167,7 @@ const ValueBuying = () => {
               {/* Header with Logo and Symbol */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  {stock.imageUrl ? (
+                  {stock.imageUrl && !imageErrors.has(stock.symbol) ? (
                     <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden shadow-sm">
                       <NextImage 
                         src={stock.imageUrl} 
@@ -173,9 +175,11 @@ const ValueBuying = () => {
                         width={32}
                         height={32}
                         className="object-contain"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
+                        onError={() => {
+                          setImageErrors(prev => new Set(prev).add(stock.symbol));
                         }}
+                        unoptimized={false}
+                        priority={false}
                       />
                     </div>
                   ) : (
