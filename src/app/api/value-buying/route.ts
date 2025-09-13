@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
 
     const html = await response.text();
 
-    // Extract JSON data from page
-    const nextDataMatch = html.match(/<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/);
+    // Extract JSON data from page (handle additional script attributes)
+    const nextDataMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>(.*?)<\/script>/);
     if (!nextDataMatch) {
       throw new Error('No market data found on page');
     }
