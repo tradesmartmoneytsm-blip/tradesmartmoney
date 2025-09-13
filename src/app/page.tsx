@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
 // Auto ads will handle all ad placement automatically - no manual ad imports needed
 
@@ -16,11 +17,31 @@ import { Brain, Bot, Settings, ArrowRight, BookOpen, TrendingUp, BarChart3, Zap,
 import { brandTokens } from '@/lib/design-tokens';
 import { SubmenuCards } from '@/components/ui/SubmenuCards';
 
-export default function Home() {
+function HomeComponent() {
+  const searchParams = useSearchParams();
   const [activeSection, setActiveSection] = useState('home'); // Changed default to 'home'
   const [activeMarketSubSection, setActiveMarketSubSection] = useState('market'); // Default to show submenu cards
   const [activeEodScansSubSection, setActiveEodScansSubSection] = useState('eodscans'); // Default to show submenu cards
   const [activeAlgoTradingSubSection, setActiveAlgoTradingSubSection] = useState('algo-trading'); // Default to show submenu cards
+
+  // Handle URL parameters for deep linking from blog
+  useEffect(() => {
+    const section = searchParams.get('section');
+    const subsection = searchParams.get('subsection');
+    
+    if (section) {
+      setActiveSection(section as 'home' | 'swing' | 'intraday' | 'news' | 'market' | 'eodscans' | 'algo-trading');
+      
+      // Handle subsections
+      if (section === 'market' && subsection) {
+        setActiveMarketSubSection(subsection);
+      } else if (section === 'eodscans' && subsection) {
+        setActiveEodScansSubSection(subsection);
+      } else if (section === 'algo-trading' && subsection) {
+        setActiveAlgoTradingSubSection(subsection);
+      }
+    }
+  }, [searchParams]);
 
   const handleSectionChange = (section: string, subSection?: string) => {
     const previousSection = activeSection;
@@ -371,5 +392,19 @@ export default function Home() {
         </div>
       </section>
     </div>
+  );
+}
+
+// Wrap in Suspense for useSearchParams
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading TradeSmart Money...</p>
+      </div>
+    </div>}>
+      <HomeComponent />
+    </Suspense>
   );
 }

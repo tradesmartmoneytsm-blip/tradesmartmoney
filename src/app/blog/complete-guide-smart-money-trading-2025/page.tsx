@@ -378,20 +378,20 @@ export default function BlogPost() {
                   <p className="text-blue-100 mb-6">
                     Access real-time FII/DII data, institutional flow analysis, and smart money tracking tools on our platform.
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link 
-                      href="/fii-dii-activity"
-                      className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-                    >
-                      View Live FII/DII Data
-                    </Link>
-                    <Link 
-                      href="/intraday-trades"
-                      className="bg-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-800 transition-colors"
-                    >
-                      Try Advanced Scanner
-                    </Link>
-                  </div>
+                                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                     <Link 
+                       href="/?section=market&subsection=fii-dii-activity"
+                       className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                     >
+                       View Live FII/DII Data
+                     </Link>
+                     <Link 
+                       href="/?section=intraday"
+                       className="bg-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-800 transition-colors"
+                     >
+                       Try Advanced Scanner
+                     </Link>
+                   </div>
                 </div>
               </div>
             </article>
