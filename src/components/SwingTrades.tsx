@@ -26,15 +26,13 @@ const ValueBuying = () => {
   const [stocks, setStocks] = useState<ValueStock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedType, setSelectedType] = useState<'OVERSOLD' | 'BREAKOUT' | 'MOMENTUM' | null>(null);
 
-  const fetchValueBuyingStocks = async (type?: string) => {
+  const fetchValueBuyingStocks = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const url = type ? `/api/value-buying?type=${type}` : '/api/value-buying';
-      const response = await fetch(url);
+      const response = await fetch('/api/value-buying');
       const result = await response.json();
       
       if (result.success) {
@@ -54,23 +52,7 @@ const ValueBuying = () => {
     fetchValueBuyingStocks();
   }, []);
 
-  const handleTypeFilter = (type: 'OVERSOLD' | 'BREAKOUT' | 'MOMENTUM' | null) => {
-    setSelectedType(type);
-    fetchValueBuyingStocks(type || undefined);
-  };
 
-  const getOpportunityColor = (opportunity: string) => {
-    switch (opportunity) {
-      case 'OVERSOLD':
-        return 'bg-red-100 text-red-800';
-      case 'BREAKOUT':
-        return 'bg-green-100 text-green-800';
-      case 'MOMENTUM':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   if (loading) {
     return (
@@ -98,50 +80,6 @@ const ValueBuying = () => {
 
   return (
     <div>
-      {/* Filter Buttons */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <button
-          onClick={() => handleTypeFilter(null)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            selectedType === null
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          All ({stocks.length})
-        </button>
-        <button
-          onClick={() => handleTypeFilter('OVERSOLD')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            selectedType === 'OVERSOLD'
-              ? 'bg-red-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          Oversold Value
-        </button>
-        <button
-          onClick={() => handleTypeFilter('BREAKOUT')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            selectedType === 'BREAKOUT'
-              ? 'bg-green-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          Breakouts
-        </button>
-        <button
-          onClick={() => handleTypeFilter('MOMENTUM')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            selectedType === 'MOMENTUM'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          Momentum
-        </button>
-      </div>
-
       {/* Stocks Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {stocks.map((stock, index) => (
@@ -151,9 +89,6 @@ const ValueBuying = () => {
                 <h4 className="font-semibold text-gray-900">{stock.symbol}</h4>
                 <p className="text-sm text-gray-600 truncate">{stock.name}</p>
               </div>
-              <span className={`px-2 py-1 rounded text-xs font-medium ${getOpportunityColor(stock.opportunity)}`}>
-                {stock.opportunity}
-              </span>
             </div>
             
             <div className="space-y-2">
