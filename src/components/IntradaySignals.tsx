@@ -11,8 +11,6 @@ interface IntradaySignal {
   m30_2: number;
   m30_3: number;
   m60_1: number;
-  current_price: number | null;
-  volume: number | null;
   scan_time: string;
   scan_date: string;
   market_session: string;

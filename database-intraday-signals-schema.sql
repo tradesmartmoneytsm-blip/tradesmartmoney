@@ -14,8 +14,6 @@ CREATE TABLE public.intraday_signals (
     m30_2 DECIMAL(15,2), -- [=2] 30 minute momentum
     m30_3 DECIMAL(15,2), -- [=3] 30 minute momentum
     m60_1 DECIMAL(15,2), -- [=1] 60 minute momentum
-    current_price DECIMAL(10,2),
-    volume BIGINT,
     scan_time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     scan_date DATE NOT NULL DEFAULT CURRENT_DATE,
     market_session VARCHAR(20) NOT NULL, -- 'OPENING_HOUR', 'INTRADAY'

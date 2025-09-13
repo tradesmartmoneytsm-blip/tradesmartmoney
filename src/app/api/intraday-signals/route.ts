@@ -57,8 +57,6 @@ interface IntradaySignal {
   m30_2: number;
   m30_3: number;
   m60_1: number;
-  current_price: number | null;
-  volume: number | null;
   market_session: string;
   rank_position: number;
 }
@@ -320,8 +318,6 @@ export async function POST(request: NextRequest) {
         m30_2,
         m30_3,
         m60_1,
-        current_price: null,
-        volume: null,
         market_session: marketSession,
         rank_position: index + 1
       };
