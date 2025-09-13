@@ -23,6 +23,14 @@ export function GoogleAnalytics() {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
+            
+            // Set default consent for Analytics (GDPR compliant)
+            gtag('consent', 'default', {
+              analytics_storage: 'denied',
+              functionality_storage: 'granted',
+              security_storage: 'granted'
+            });
+            
             gtag('config', '${GA_MEASUREMENT_ID}', {
               page_path: window.location.pathname,
               page_title: document.title,
