@@ -1,4 +1,4 @@
-import { TrendingUp, BarChart3, Building2, Microscope, Bot } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, Building2, Microscope, Bot } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
 interface SubmenuCardsProps {
@@ -48,6 +48,18 @@ const submenuData = {
         label: 'Short Built Up', 
         icon: <TrendingUp className={brandTokens.icons.sm} />,
         description: 'Stocks with increasing short positions'
+      },
+      { 
+        id: '52w-high', 
+        label: '52W High', 
+        icon: <TrendingUp className={brandTokens.icons.sm} />,
+        description: 'Stocks near their 52-week high prices'
+      },
+      { 
+        id: '52w-low', 
+        label: '52W Low', 
+        icon: <TrendingDown className={brandTokens.icons.sm} />,
+        description: 'Stocks near their 52-week low prices'
       },
     ]
   },

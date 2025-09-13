@@ -46,7 +46,7 @@ const INDEX_MAPPING = {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const moverType = searchParams.get('type') || 'TOP_GAINERS'; // TOP_GAINERS or TOP_LOSERS
+  const moverType = searchParams.get('type') || 'TOP_GAINERS'; // TOP_GAINERS, TOP_LOSERS, YEARLY_HIGH, YEARLY_LOW
   const indexKey = searchParams.get('index') || 'NIFTY_TOTAL_MARKET';
   
   try {

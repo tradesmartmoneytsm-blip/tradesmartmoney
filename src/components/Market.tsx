@@ -82,6 +82,8 @@ export function Market({ initialSubSection }: MarketProps) {
     { id: 'fii-dii-activity', label: 'FII/DII Activity', icon: <ArrowUpDown className="w-4 h-4" />, description: 'Institutional investor flows' },
     { id: 'top-gainers', label: 'Top Gainers', icon: <TrendingUp className="w-4 h-4" />, description: 'Best performers' },
     { id: 'top-losers', label: 'Top Losers', icon: <TrendingDown className="w-4 h-4" />, description: 'Worst performers' },
+    { id: '52w-high', label: '52W High', icon: <TrendingUp className="w-4 h-4" />, description: 'Near yearly highs' },
+    { id: '52w-low', label: '52W Low', icon: <TrendingDown className="w-4 h-4" />, description: 'Near yearly lows' },
     { id: 'long-buildup', label: 'Long Built Up', icon: <Activity className="w-4 h-4" />, description: 'Bullish positions' },
     { id: 'short-buildup', label: 'Short Build Up', icon: <Building2 className="w-4 h-4" />, description: 'Bearish positions' },
   ];
@@ -215,6 +217,24 @@ export function Market({ initialSubSection }: MarketProps) {
           <TopMovers
             type="TOP_LOSERS"
             title="Top Losers"
+            icon={<TrendingDown className="w-5 h-5" />}
+          />
+        );
+
+      case '52w-high':
+        return (
+          <TopMovers
+            type="YEARLY_HIGH"
+            title="52W High"
+            icon={<TrendingUp className="w-5 h-5" />}
+          />
+        );
+
+      case '52w-low':
+        return (
+          <TopMovers
+            type="YEARLY_LOW"
+            title="52W Low"
             icon={<TrendingDown className="w-5 h-5" />}
           />
         );

@@ -21,7 +21,7 @@ interface TopMoverStock {
 }
 
 interface TopMoversProps {
-  type: 'TOP_GAINERS' | 'TOP_LOSERS';
+  type: 'TOP_GAINERS' | 'TOP_LOSERS' | 'YEARLY_HIGH' | 'YEARLY_LOW';
   title: string;
   icon: React.ReactNode;
 }
@@ -119,7 +119,7 @@ export function TopMovers({ type, title, icon }: TopMoversProps) {
     }
   };
 
-  const isGainer = type === 'TOP_GAINERS';
+  const isGainer = type === 'TOP_GAINERS' || type === 'YEARLY_HIGH';
 
   return (
     <div className="space-y-4">
@@ -134,7 +134,9 @@ export function TopMovers({ type, title, icon }: TopMoversProps) {
           <div>
             <h2 className="text-lg lg:text-xl font-bold text-gray-900 font-serif">{title}</h2>
             <p className="text-sm text-gray-600">
-              {isGainer ? 'Best performing' : 'Worst performing'} stocks in selected index
+              {type === 'YEARLY_HIGH' ? 'Stocks trading near their 52-week highs' :
+               type === 'YEARLY_LOW' ? 'Stocks trading near their 52-week lows' :
+               isGainer ? 'Best performing stocks in selected index' : 'Worst performing stocks in selected index'}
             </p>
           </div>
         </div>
