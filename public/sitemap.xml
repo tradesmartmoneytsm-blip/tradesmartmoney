@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Homepage -->
   <url>
-    <loc>https://tradesmartmoney.com/</loc>
+    <loc>https://www.tradesmartmoney.com/</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -10,28 +10,28 @@
 
   <!-- SEO Landing Pages -->
   <url>
-    <loc>https://tradesmartmoney.com/smart-money-concepts</loc>
+    <loc>https://www.tradesmartmoney.com/smart-money-concepts</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://tradesmartmoney.com/ai-powered-trading</loc>
+    <loc>https://www.tradesmartmoney.com/ai-powered-trading</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://tradesmartmoney.com/algo-trading</loc>
+    <loc>https://www.tradesmartmoney.com/algo-trading</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://tradesmartmoney.com/trading-guide</loc>
+    <loc>https://www.tradesmartmoney.com/trading-guide</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -39,42 +39,42 @@
 
   <!-- Legal & Business Pages -->
   <url>
-    <loc>https://tradesmartmoney.com/about</loc>
+    <loc>https://www.tradesmartmoney.com/about</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://tradesmartmoney.com/contact</loc>
+    <loc>https://www.tradesmartmoney.com/contact</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <url>
-    <loc>https://tradesmartmoney.com/faq</loc>
+    <loc>https://www.tradesmartmoney.com/faq</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
-    <loc>https://tradesmartmoney.com/privacy-policy</loc>
+    <loc>https://www.tradesmartmoney.com/privacy-policy</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://tradesmartmoney.com/terms-of-service</loc>
+    <loc>https://www.tradesmartmoney.com/terms-of-service</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://tradesmartmoney.com/disclaimer</loc>
+    <loc>https://www.tradesmartmoney.com/disclaimer</loc>
     <lastmod>2025-01-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
