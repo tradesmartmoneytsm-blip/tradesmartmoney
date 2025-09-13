@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 interface ValueStock {
   symbol: string;
@@ -9,15 +9,11 @@ interface ValueStock {
   changePercent: number;
   marketCap: number;
   category: string;
-  opportunity: 'OVERSOLD' | 'BREAKOUT' | 'MOMENTUM';
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const opportunityType = searchParams.get('type') as 'OVERSOLD' | 'BREAKOUT' | 'MOMENTUM' | null;
-
-    console.log(`🔄 API: Fetching ${opportunityType || 'all'} value buying opportunities...`);
+    console.log(`🔄 API: Fetching value buying opportunities...`);
 
     // Fetch market data
     const response = await fetch('https://groww.in/share-market-today', {
@@ -83,22 +79,15 @@ export async function GET(request: NextRequest) {
             return;
           }
           
-          const opportunity = (item.stats.dayChangePerc ?? 0) >= 0 
-            ? ((item.stats.dayChangePerc ?? 0) > 1 ? 'BREAKOUT' : 'MOMENTUM')
-            : 'OVERSOLD';
-          
-          if (!opportunityType || opportunity === opportunityType) {
-            stocks.push({
-              symbol: item.company.nseScriptCode ?? '',
-              name: item.company.companyShortName || item.company.companyName || '',
-              price: item.stats.ltp ?? 0,
-              change: item.stats.dayChange ?? 0,
-              changePercent: item.stats.dayChangePerc ?? 0,
-              marketCap: item.company.marketCap ?? 0,
-              category: 'LARGE_CAP',
-              opportunity
-            });
-          }
+          stocks.push({
+            symbol: item.company.nseScriptCode ?? '',
+            name: item.company.companyShortName || item.company.companyName || '',
+            price: item.stats.ltp ?? 0,
+            change: item.stats.dayChange ?? 0,
+            changePercent: item.stats.dayChangePerc ?? 0,
+            marketCap: item.company.marketCap ?? 0,
+            category: 'LARGE_CAP'
+          });
           
           console.log(`📈 ${index + 1}. ${item.company.companyShortName} (${item.company.nseScriptCode}): ₹${item.stats.ltp} (${(item.stats.dayChangePerc ?? 0).toFixed(2)}%)`);
         });
@@ -110,18 +99,13 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))
       .slice(0, 50);
 
-    console.log(`✅ API: Retrieved ${sortedStocks.length} ${opportunityType || 'value buying'} opportunities`);
+    console.log(`✅ API: Retrieved ${sortedStocks.length} value buying opportunities`);
 
     return NextResponse.json({
       success: true,
       data: sortedStocks,
       timestamp: new Date().toISOString(),
-      totalOpportunities: sortedStocks.length,
-      breakdown: {
-        oversold: sortedStocks.filter(s => s.opportunity === 'OVERSOLD').length,
-        breakout: sortedStocks.filter(s => s.opportunity === 'BREAKOUT').length,
-        momentum: sortedStocks.filter(s => s.opportunity === 'MOMENTUM').length
-      }
+      totalOpportunities: sortedStocks.length
     }, {
       headers: {
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60', // 5 minute cache
