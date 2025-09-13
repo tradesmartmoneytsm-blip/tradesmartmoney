@@ -205,10 +205,22 @@ export function Navigation({
           description: 'Real-time strategy performance tracking'
         },
       ]
+    },
+    {
+      id: 'blog',
+      label: 'Blog',
+      icon: <Newspaper className={brandTokens.icons.sm} />,
+      description: 'Trading insights and market analysis'
     }
   ];
 
   const handleMenuItemClick = (itemId: string, subItemId?: string) => {
+    // Handle blog navigation differently as it's a separate page
+    if (itemId === 'blog') {
+      window.location.href = '/blog';
+      return;
+    }
+    
     onSectionChange(itemId, subItemId);
     setShowMobileMenu(false);
   };

@@ -79,4 +79,19 @@
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
+  
+  <!-- Blog Section -->
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog/complete-guide-smart-money-trading-2025</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset> 
