@@ -1,88 +1,157 @@
 'use client';
 
-import { useEffect } from 'react';
+
 
 export function StructuredData() {
-  useEffect(() => {
-    // Add structured data only after hydration to avoid hydration mismatches
-    const websiteSchema = {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "TradeSmartMoney",
-      "url": "https://tradesmartmoney.com",
-      "description": "Professional trading platform with advanced market analysis and trading signals",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://tradesmartmoney.com/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "FinancialService",
+    "name": "TradeSmartMoney",
+    "alternateName": "TradeSmart Money",
+    "description": "Professional trading platform offering smart money concepts, AI-powered algo trading, and advanced market analysis tools for traders and investors.",
+    "url": "https://www.tradesmartmoney.com",
+    "logo": "https://www.tradesmartmoney.com/favicon.svg",
+    "sameAs": [
+      "https://twitter.com/tradesmartmoney",
+      "https://www.youtube.com/@tradesmartmoney",
+      "https://www.instagram.com/tradesmartmoney"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "IN"
+    },
+    "serviceType": [
+      "Trading Platform",
+      "Financial Analysis",
+      "Investment Tools", 
+      "Market Data",
+      "Trading Signals",
+      "Algorithmic Trading"
+    ],
+    "areaServed": {
+      "@type": "Country",
+      "name": "India"
+    }
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "TradeSmartMoney",
+    "alternateName": "TradeSmart Money Trading Platform", 
+    "url": "https://www.tradesmartmoney.com",
+    "description": "Professional trading platform with smart money concepts, AI algo trading, swing trading signals, and comprehensive market analysis.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.tradesmartmoney.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "about": [
+      {
+        "@type": "Thing",
+        "name": "Trading",
+        "sameAs": "https://en.wikipedia.org/wiki/Trading"
       },
-      "mainEntity": {
-        "@type": "WebPage",
-        "@id": "https://tradesmartmoney.com/#webpage"
-      }
-    };
-
-    const businessSchema = {
-      "@context": "https://schema.org",
-      "@type": "FinancialService",
-      "name": "TradeSmartMoney",
-      "description": "Professional trading platform providing real-time market data, smart money concepts, algorithmic trading, and swing trading opportunities for Indian stock market",
-      "url": "https://tradesmartmoney.com",
-      "logo": "https://tradesmartmoney.com/favicon.ico",
-      "image": "https://tradesmartmoney.com/favicon.ico",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "IN"
+      {
+        "@type": "Thing", 
+        "name": "Algorithmic Trading",
+        "sameAs": "https://en.wikipedia.org/wiki/Algorithmic_trading"
       },
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "tradesmartmoneytsm@gmail.com",
-        "contactType": "customer service"
+      {
+        "@type": "Thing",
+        "name": "Technical Analysis", 
+        "sameAs": "https://en.wikipedia.org/wiki/Technical_analysis"
+      }
+    ]
+  };
+
+  const softwareApplicationSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "TradeSmartMoney Trading Platform",
+    "description": "Advanced trading platform with AI-powered algorithms, smart money analysis, and real-time market data for professional traders.",
+    "url": "https://www.tradesmartmoney.com", 
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR",
+      "availability": "https://schema.org/InStock"
+    },
+    "featureList": [
+      "Smart Money Analysis",
+      "AI Algo Trading", 
+      "Swing Trading Signals",
+      "Market Data Analysis",
+      "FII/DII Data Tracking",
+      "Technical Analysis Tools",
+      "Real-time Market Indices",
+      "Trading Education"
+    ],
+    "creator": {
+      "@type": "Organization",
+      "name": "TradeSmartMoney"
+    }
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is smart money trading?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Smart money trading involves following institutional money flow and understanding how big players (banks, hedge funds, institutions) move the market. It includes analyzing order flow, liquidity, and market structure."
+        }
       },
-      "sameAs": ["https://tradesmartmoney.com"],
-      "serviceType": "Trading Platform",
-      "areaServed": "India",
-      "knowsAbout": [
-        "Stock Trading",
-        "Algorithmic Trading",
-        "Swing Trading",
-        "Smart Money Concepts",
-        "Technical Analysis",
-        "Market Data Analysis",
-        "Risk Management"
-      ],
-      "offers": {
-        "@type": "Service",
-        "name": "Trading Analysis & Education",
-        "description": "Real-time market data, trading signals, and educational content for Indian stock market traders"
+      {
+        "@type": "Question", 
+        "name": "How does algo trading work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Algorithmic trading uses computer programs to execute trades based on predefined rules and market conditions. Our AI-powered algorithms analyze market patterns, price action, and institutional flow to generate trading signals."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What markets does TradeSmartMoney cover?",
+        "acceptedAnswer": {
+          "@type": "Answer", 
+          "text": "We focus primarily on Indian equity markets including NSE and BSE, covering indices like Nifty 50, Bank Nifty, and individual stocks. We provide FII/DII data, sector analysis, and swing trading opportunities."
+        }
       }
-    };
+    ]
+  };
 
-    // Create and append structured data scripts to head
-    const head = document.head;
-    
-    // Website schema script
-    const websiteScript = document.createElement('script');
-    websiteScript.type = 'application/ld+json';
-    websiteScript.textContent = JSON.stringify(websiteSchema);
-    head.appendChild(websiteScript);
-    
-    // Business schema script
-    const businessScript = document.createElement('script');
-    businessScript.type = 'application/ld+json';
-    businessScript.textContent = JSON.stringify(businessSchema);
-    head.appendChild(businessScript);
-
-    // Cleanup function to remove scripts when component unmounts
-    return () => {
-      if (websiteScript.parentNode) {
-        websiteScript.parentNode.removeChild(websiteScript);
-      }
-      if (businessScript.parentNode) {
-        businessScript.parentNode.removeChild(businessScript);
-      }
-    };
-  }, []);
-
-  return null; // This component doesn't render anything visible
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(websiteSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(softwareApplicationSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema)
+        }}
+      />
+    </>
+  );
 } 
