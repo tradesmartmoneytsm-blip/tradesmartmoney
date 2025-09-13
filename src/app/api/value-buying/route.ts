@@ -98,7 +98,7 @@ export async function GET() {
             price: stats.ltp ?? 0,
             change: stats.dayChange ?? 0,
             changePercent: stats.dayChangePerc ?? 0,
-            marketCap: company.marketCap ?? 0,
+            marketCap: 0, // Not available in Groww's MOST_VALUABLE data
             category: 'LARGE_CAP',
             high: stats.high ?? undefined,
             low: stats.low ?? undefined,
@@ -131,7 +131,11 @@ export async function GET() {
       summary: {
         averageChange: sortedStocks.reduce((sum, stock) => sum + stock.changePercent, 0) / sortedStocks.length || 0,
         positiveStocks: sortedStocks.filter(stock => stock.changePercent > 0).length,
-        averageMarketCap: sortedStocks.reduce((sum, stock) => sum + stock.marketCap, 0) / sortedStocks.length || 0
+        averagePrice: sortedStocks.reduce((sum, stock) => sum + stock.price, 0) / sortedStocks.length || 0,
+        priceRange: {
+          min: Math.min(...sortedStocks.map(s => s.price)),
+          max: Math.max(...sortedStocks.map(s => s.price))
+        }
       }
     }, {
       headers: {

@@ -60,16 +60,7 @@ const ValueBuying = () => {
     fetchValueBuyingStocks();
   }, []);
 
-  const formatMarketCap = (marketCap: number): string => {
-    if (marketCap >= 1000000) {
-      return `₹${(marketCap / 1000000).toFixed(1)}L Cr`;
-    } else if (marketCap >= 10000) {
-      return `₹${(marketCap / 10000).toFixed(1)}K Cr`;
-    } else if (marketCap >= 100) {
-      return `₹${(marketCap / 100).toFixed(1)} Cr`;
-    }
-    return `₹${marketCap.toFixed(0)} Cr`;
-  };
+
 
   const getChangeColor = (changePercent: number) => {
     if (changePercent > 2) return 'text-emerald-600 bg-emerald-50';
@@ -139,7 +130,7 @@ const ValueBuying = () => {
         {[
           { label: 'Avg Change', value: `${(stocks.reduce((sum, stock) => sum + stock.changePercent, 0) / stocks.length || 0).toFixed(2)}%`, icon: '📊', color: 'from-blue-500 to-cyan-500' },
           { label: 'Positive Moves', value: `${stocks.filter(s => s.changePercent > 0).length}/${stocks.length}`, icon: '📈', color: 'from-green-500 to-emerald-500' },
-          { label: 'Avg Market Cap', value: formatMarketCap(stocks.reduce((sum, stock) => sum + stock.marketCap, 0) / stocks.length || 0), icon: '💰', color: 'from-purple-500 to-pink-500' },
+          { label: 'Avg Price', value: `₹${(stocks.reduce((sum, stock) => sum + stock.price, 0) / stocks.length || 0).toFixed(0)}`, icon: '💰', color: 'from-purple-500 to-pink-500' },
           { label: 'Last Updated', value: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }), icon: '🕐', color: 'from-orange-500 to-red-500' }
         ].map((stat, index) => (
           <div key={index} className={`bg-gradient-to-br ${stat.color} rounded-lg p-4 text-white shadow-md hover:shadow-lg transition-shadow`}>
@@ -216,10 +207,10 @@ const ValueBuying = () => {
                     </div>
                   </>
                 )}
-                {stock.marketCap && (
-                  <div className="col-span-2 text-center p-3 bg-purple-50 rounded-lg">
-                    <div className="text-sm text-gray-600">Market Cap</div>
-                    <div className="font-semibold text-purple-700">{formatMarketCap(stock.marketCap)}</div>
+                {stock.previousClose && (
+                  <div className="col-span-2 text-center p-3 bg-blue-50 rounded-lg">
+                    <div className="text-sm text-gray-600">Previous Close</div>
+                    <div className="font-semibold text-blue-700">₹{stock.previousClose.toFixed(2)}</div>
                   </div>
                 )}
               </div>
