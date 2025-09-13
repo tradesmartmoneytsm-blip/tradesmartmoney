@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { trackPageView, trackEvent } from '@/lib/analytics';
 import { ChevronDown, ChevronRight, HelpCircle, Search } from 'lucide-react';
 
@@ -16,7 +17,7 @@ const faqData: FAQItem[] = [
     id: '1',
     category: 'Platform',
     question: 'What is TradeSmartMoney?',
-    answer: 'TradeSmartMoney is a professional trading platform that provides real-time market data, analysis tools, and educational content to help traders make informed investment decisions in the Indian financial markets.'
+    answer: 'TradeSmartMoney is a professional trading platform that provides real-time market data, analysis tools, and educational content to help traders make informed investment decisions in the Indian financial markets. Visit our <a href="/" class="text-blue-600 hover:underline font-medium">main platform</a> to explore all available features and start your trading journey.'
   },
   {
     id: '2',
@@ -127,6 +128,7 @@ export default function FAQ() {
           <h1 className="text-4xl font-bold mb-6">Frequently Asked Questions</h1>
           <p className="text-xl text-blue-100">
             Find answers to common questions about our trading platform and services.
+            New to TradeSmart Money? <Link href="/" className="text-white underline hover:text-blue-200 font-semibold">Explore our platform</Link> to get started.
           </p>
         </div>
       </div>
@@ -188,9 +190,7 @@ export default function FAQ() {
               
               {expandedItems.has(item.id) && (
                 <div className="px-6 pb-4 border-t border-gray-100">
-                  <p className="text-gray-700 leading-relaxed pt-4">
-                    {item.answer}
-                  </p>
+                  <div className="text-gray-700 leading-relaxed pt-4" dangerouslySetInnerHTML={{ __html: item.answer }} />
                 </div>
               )}
             </div>
@@ -212,6 +212,7 @@ export default function FAQ() {
           <h2 className="text-2xl font-bold mb-4">Still have questions?</h2>
           <p className="text-blue-100 mb-6">
             Can&apos;t find what you&apos;re looking for? Our support team is here to help.
+            You can also <Link href="/" className="text-white underline hover:text-blue-200 font-semibold">return to the main platform</Link> to explore our features.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 

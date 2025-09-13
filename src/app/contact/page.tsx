@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { trackPageView, trackEvent } from '@/lib/analytics';
 import { Mail, Phone, Clock, MessageSquare, Send } from 'lucide-react';
 
@@ -53,6 +54,7 @@ export default function Contact() {
             <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
               Have questions about our platform or need support? We&apos;re here to help you succeed in your trading journey.
+              <Link href="/" className="text-white underline hover:text-blue-200 font-semibold ml-2">Explore our trading platform</Link> while you&apos;re here.
             </p>
           </div>
         </div>
@@ -132,7 +134,8 @@ export default function Contact() {
                 </div>
               </div>
               <p className="text-sm text-gray-500 mt-4">
-                * Market data and automated services are available 24/7
+                * Market data and automated services are available 24/7. 
+                <Link href="/" className="text-blue-600 hover:underline font-medium ml-1">Access our platform</Link> anytime to view live market data.
               </p>
             </div>
 
@@ -141,6 +144,7 @@ export default function Contact() {
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Frequently Asked Questions</h3>
               <p className="text-gray-700 mb-4">
                 Looking for quick answers? Check out our FAQ section for common questions about our platform and services.
+                Or <Link href="/" className="text-blue-600 hover:underline font-medium">visit our main platform</Link> to start exploring right away.
               </p>
               <a 
                 href="/faq" 
