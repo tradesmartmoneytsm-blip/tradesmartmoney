@@ -242,12 +242,12 @@ export function SwingTrades() {
   };
 
   // Calculate statistics for a group of trades
-  const calculateStats = (trades: SwingTrade[] | ValueStock[]) => {
-    // Handle ValueStock arrays (empty stats for now)
-    if (trades.length > 0 && 'opportunity' in trades[0]) {
+  const calculateStats = (trades: SwingTrade[] | ValueStock[], strategyName?: string) => {
+    // Handle ValueStock arrays for Value Buying strategy
+    if (strategyName === 'Value Buying' || (trades.length > 0 && 'marketCap' in trades[0] && !('strategy' in trades[0]))) {
       return {
         totalTrades: trades.length,
-        runningTrades: 0,
+        runningTrades: trades.length, // For Value Buying, show all stocks as active
         successfulTrades: 0,
         slHitTrades: 0,
         completedTrades: 0,
@@ -697,14 +697,42 @@ export function SwingTrades() {
   };
 
   // Tab Navigation Component
-  const TabNavigation = () => (
-    <div className="mb-8">
-      <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-2">
-        <div className="flex flex-wrap gap-1">
-          {strategies.map((strategy) => {
-            const strategyTrades = groupedTrades[strategy.id as keyof GroupedTrades] || [];
-            const stats = calculateStats(strategyTrades);
-            const isActive = activeStrategy === strategy.id;
+  const TabNavigation = () => {
+    const [valueBuyingStocks, setValueBuyingStocks] = useState<ValueStock[]>([]);
+
+    // Fetch Value Buying data for stats
+    useEffect(() => {
+      const fetchValueBuyingStats = async () => {
+        try {
+          const response = await fetch('/api/value-buying');
+          const result = await response.json();
+          if (result.success) {
+            setValueBuyingStocks(result.data || []);
+          }
+        } catch (error) {
+          console.error('Error fetching value buying stats:', error);
+        }
+      };
+
+      fetchValueBuyingStats();
+    }, []);
+
+    return (
+      <div className="mb-8">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-2">
+          <div className="flex flex-wrap gap-1">
+            {strategies.map((strategy) => {
+              // Special handling for Value Buying strategy
+              let strategyTrades, stats;
+              if (strategy.id === 'Value Buying') {
+                strategyTrades = valueBuyingStocks;
+                stats = calculateStats(valueBuyingStocks, 'Value Buying');
+              } else {
+                strategyTrades = groupedTrades[strategy.id as keyof GroupedTrades] || [];
+                stats = calculateStats(strategyTrades, strategy.id);
+              }
+              
+              const isActive = activeStrategy === strategy.id;
             
             return (
               <button
@@ -726,7 +754,10 @@ export function SwingTrades() {
                 <div className="text-left">
                   <div className="font-bold text-sm tracking-wide">{strategy.label}</div>
                   <div className={`text-xs font-medium ${isActive ? 'text-blue-100' : 'text-gray-600 group-hover:text-blue-700'}`}>
-                    {stats.totalTrades} trades • {stats.runningTrades} active
+                    {strategy.id === 'Value Buying' 
+                      ? `${stats.runningTrades} stocks available`
+                      : `${stats.totalTrades} trades • ${stats.runningTrades} active`
+                    }
                   </div>
                 </div>
               </button>
@@ -735,7 +766,8 @@ export function SwingTrades() {
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   if (loading) {
     return (
