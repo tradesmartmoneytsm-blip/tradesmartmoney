@@ -44,36 +44,27 @@ function HomeComponent() {
   }, [searchParams]);
 
   const handleSectionChange = (section: string, subSection?: string) => {
-    const previousSection = activeSection;
+    // Navigate to dedicated pages for better SEO
+    const routes: { [key: string]: string } = {
+      'market': '/market',
+      'swing': '/swing-trades', 
+      'intraday': '/intraday-trades',
+      'news': '/news',
+      'eodscans': '/eod-scans',
+      'algo-trading': '/algo-trading',
+    };
     
+    // If it's a main section with a dedicated page, navigate there
+    if (routes[section]) {
+      window.location.href = routes[section];
+      return;
+    }
+    
+    // Handle homepage sections (for backward compatibility)
+    const previousSection = activeSection;
     setActiveSection(section as 'home' | 'swing' | 'intraday' | 'news' | 'market' | 'eodscans' | 'algo-trading');
 
-    // Handle subsections for Market, EodScans, and AlgoTrading
-    if (section === 'market') {
-      if (subSection && subSection !== 'market') {
-        setActiveMarketSubSection(subSection);
-      } else {
-        // Reset to show submenu cards when clicking main "Market" menu
-        setActiveMarketSubSection('market');
-      }
-    } else if (section === 'eodscans') {
-      if (subSection && subSection !== 'eodscans') {
-        setActiveEodScansSubSection(subSection);
-      } else {
-        // Reset to show submenu cards when clicking main "EOD Scans" menu
-        setActiveEodScansSubSection('eodscans');
-      }
-    } else if (section === 'algo-trading') {
-      if (subSection && subSection !== 'algo-trading') {
-        setActiveAlgoTradingSubSection(subSection);
-      } else {
-        // Reset to show submenu cards when clicking main "Algo Trading" menu
-        setActiveAlgoTradingSubSection('algo-trading');
-      }
-    }
-
     // Scroll to top smoothly when navigating to a different main section
-    // Don't scroll when just changing subsections within the same main section
     if (previousSection !== section) {
       requestAnimationFrame(() => {
         window.scrollTo({
