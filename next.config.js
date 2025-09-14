@@ -88,7 +88,7 @@ const nextConfig = {
   
   // Environment variables
   env: {
-    SITE_URL: 'https://tradesmartmoney.com',
+    SITE_URL: 'https://www.tradesmartmoney.com',
     SITE_NAME: 'TradeSmartMoney',
   }
 };
