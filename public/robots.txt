@@ -3,7 +3,15 @@
 User-agent: *
 Allow: /
 
-# SEO Landing Pages - High Priority for Search Engines
+# Main Trading Features - High Priority for Search Engines
+Allow: /market
+Allow: /swing-trades
+Allow: /intraday-trades
+Allow: /news
+Allow: /eod-scans
+Allow: /algo-trading
+
+# SEO Landing Pages
 Allow: /smart-money-concepts
 Allow: /ai-powered-trading
 Allow: /algo-trading
@@ -29,7 +37,7 @@ Disallow: /debug/
 Disallow: /test/
 
 # Sitemap location
-Sitemap: https://tradesmartmoney.com/sitemap.xml
+Sitemap: https://www.tradesmartmoney.com/sitemap.xml
 
 # Crawl-delay (be respectful)
 Crawl-delay: 1
