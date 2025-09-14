@@ -16,6 +16,7 @@ const AlgoTrading = lazy(() => import('@/components/AlgoTrading').then(module =>
 import { Brain, Bot, Settings, ArrowRight, BookOpen, TrendingUp, BarChart3, Zap, Shield, Users, Star, Play, ChevronRight } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 import { SubmenuCards } from '@/components/ui/SubmenuCards';
+import { FAQSchema } from '@/components/FAQSchema';
 
 function HomeComponent() {
   const searchParams = useSearchParams();
@@ -277,6 +278,8 @@ function HomeComponent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* FAQ Schema only on homepage */}
+      {activeSection === 'home' && <FAQSchema />}
       
       {/* Show Navigation for non-home sections */}
       {activeSection !== 'home' && (
