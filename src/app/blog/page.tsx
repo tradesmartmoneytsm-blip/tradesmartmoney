@@ -79,15 +79,24 @@ export default function BlogPage() {
               Expert strategies, market insights, and proven techniques for Indian markets
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <div className="bg-blue-700/30 backdrop-blur-sm px-4 py-2 rounded-full">
-                <span className="text-blue-100">📈 Smart Money Concepts</span>
-              </div>
-              <div className="bg-purple-700/30 backdrop-blur-sm px-4 py-2 rounded-full">
-                <span className="text-purple-100">🤖 Algo Trading</span>
-              </div>
-              <div className="bg-blue-700/30 backdrop-blur-sm px-4 py-2 rounded-full">
-                <span className="text-blue-100">📊 FII/DII Analysis</span>
-              </div>
+              <Link 
+                href="/smart-money-concepts"
+                className="bg-blue-700/30 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-blue-600/40 transition-colors cursor-pointer"
+              >
+                <span className="text-blue-100 hover:text-white">📈 Smart Money Concepts</span>
+              </Link>
+              <Link 
+                href="/algo-trading"
+                className="bg-purple-700/30 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-purple-600/40 transition-colors cursor-pointer"
+              >
+                <span className="text-purple-100 hover:text-white">🤖 Algo Trading</span>
+              </Link>
+              <Link 
+                href="/market"
+                className="bg-blue-700/30 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-blue-600/40 transition-colors cursor-pointer"
+              >
+                <span className="text-blue-100 hover:text-white">📊 FII/DII Analysis</span>
+              </Link>
             </div>
           </div>
         </div>

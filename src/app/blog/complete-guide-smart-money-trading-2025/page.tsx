@@ -288,7 +288,7 @@ export default function BlogPost() {
                   <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
                     <h3 className="font-bold text-yellow-800 mb-3">💡 Pro Tip:</h3>
                     <p className="text-yellow-800">
-                      Track the FII/DII flow patterns on our platform&apos;s dedicated section. Consistent buying by DIIs often indicates strong domestic confidence, while FII flows reflect global sentiment towards Indian markets.
+                      Track the FII/DII flow patterns on <Link href="/market" className="underline font-medium hover:text-yellow-900">our platform&apos;s dedicated section</Link>. Consistent buying by DIIs often indicates strong domestic confidence, while FII flows reflect global sentiment towards Indian markets.
                     </p>
                   </div>
 
@@ -355,7 +355,7 @@ export default function BlogPost() {
                         <ul className="space-y-2 text-gray-700">
                           <li>✅ Monitor FII/DII flows daily</li>
                           <li>✅ Track institutional ownership changes</li>
-                          <li>✅ Analyze sector rotation patterns</li>
+                          <li>✅ <Link href="/market" className="text-blue-600 hover:text-blue-800 underline">Analyze sector rotation patterns</Link></li>
                           <li>✅ Follow smart money accumulation zones</li>
                         </ul>
                       </div>
@@ -364,7 +364,7 @@ export default function BlogPost() {
                         <ul className="space-y-2 text-gray-700">
                           <li>🛡️ Position sizing based on conviction</li>
                           <li>🛡️ Stop losses at key support levels</li>
-                          <li>🛡️ Diversification across sectors</li>
+                          <li>🛡️ <Link href="/market" className="text-purple-600 hover:text-purple-800 underline">Diversification across sectors</Link></li>
                           <li>🛡️ Regular portfolio rebalancing</li>
                         </ul>
                       </div>
@@ -378,20 +378,20 @@ export default function BlogPost() {
                   <p className="text-blue-100 mb-6">
                     Access real-time FII/DII data, institutional flow analysis, and smart money tracking tools on our platform.
                   </p>
-                                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                     <Link 
-                       href="/?section=market&subsection=fii-dii-activity"
-                       className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-                     >
-                       View Live FII/DII Data
-                     </Link>
-                     <Link 
-                       href="/?section=intraday"
-                       className="bg-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-800 transition-colors"
-                     >
-                       Try Advanced Scanner
-                     </Link>
-                   </div>
+                                                       <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Link 
+                      href="/market"
+                      className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                    >
+                      View Live FII/DII Data
+                    </Link>
+                    <Link 
+                      href="/intraday-trades"
+                      className="bg-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-800 transition-colors"
+                    >
+                      Try Advanced Scanner
+                    </Link>
+                  </div>
                 </div>
               </div>
             </article>
