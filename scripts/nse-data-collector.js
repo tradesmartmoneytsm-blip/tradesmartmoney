@@ -120,8 +120,9 @@ async function fetchMostActiveOptions(optionType = 'calls') {
   } catch (error) {
     console.error(`❌ Failed to fetch ${optionType}:`, error.message);
     
-    // Return mock data for development/testing
-    return generateMockData(optionType);
+    // Return empty array when real data is unavailable
+    console.log(`⚠️  No mock data - returning empty results for ${optionType}`);
+    return [];
   }
 }
 
@@ -159,30 +160,11 @@ function processMostActiveData(response, optionType) {
     return data;
   } catch (error) {
     console.error('❌ Error processing NSE data:', error.message);
-    return generateMockData(optionType);
+    return [];
   }
 }
 
-/**
- * Generate mock data for testing/fallback
- */
-function generateMockData(optionType) {
-  console.log(`⚠️  Generating mock ${optionType} data for testing...`);
-  
-  const symbols = ['NIFTY', 'BANKNIFTY', 'RELIANCE', 'TCS', 'HDFC', 'INFY', 'ITC', 'SBIN', 'BHARTIARTL', 'KOTAKBANK'];
-  const data = [];
-  
-  for (let i = 0; i < 5; i++) {
-    data.push({
-      symbol: symbols[i],
-      percentage_change: parseFloat((Math.random() * 10 - 5).toFixed(2)), // Random between -5 and 5
-      volume: Math.floor(Math.random() * 1000000), // Random volume
-      ltp: parseFloat((Math.random() * 1000 + 100).toFixed(2)) // Random LTP between 100-1100
-    });
-  }
-  
-  return data;
-}
+
 
 /**
  * Generate unique session ID
@@ -318,7 +300,8 @@ async function main() {
     // Establish NSE session
     const sessionEstablished = await establishNSESession();
     if (!sessionEstablished) {
-      console.log('⚠️  Using fallback data due to session issues');
+      console.log('⚠️  NSE session failed - will attempt API calls anyway');
+      console.log('⚠️  Data collection may fail without proper session');
     }
 
     // Collect data
@@ -345,7 +328,13 @@ async function main() {
     console.log(`   📈 Puts: ${putsData?.length || 0} records ${putsStored ? '✅' : '❌'}`);
     console.log(`   💾 Total: ${totalRecords} records`);
     console.log(`   🔑 Session: ${sessionId}`);
-    console.log('✅ NSE data collection completed successfully!');
+    
+    if (totalRecords === 0) {
+      console.log('⚠️  No real data collected - NSE APIs may be unavailable or blocked');
+      console.log('💡 Consider checking NSE connectivity or implementing alternative data sources');
+    } else {
+      console.log('✅ NSE data collection completed successfully!');
+    }
 
   } catch (error) {
     console.error('💥 Fatal error during data collection:', error.message);
