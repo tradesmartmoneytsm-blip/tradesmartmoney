@@ -68,16 +68,15 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        node-version: '20'
-        cache: 'npm'
+        python-version: '3.11'
 
-    - name: Install dependencies
+    - name: Install Python dependencies
       run: |
-        npm ci --omit=dev
-        npm install @supabase/supabase-js node-fetch
+        python -m pip install --upgrade pip
+        pip install requests
 
     - name: Check Market Hours
       id: market-check
@@ -96,19 +95,17 @@ jobs:
           echo "is_market_hours=false" >> $GITHUB_OUTPUT
         fi
 
-    - name: Collect NSE Data
+    - name: Collect NSE Data (Python)
       if: steps.market-check.outputs.is_market_hours == 'true' || github.event.inputs.force_run == 'true'
       env:
         NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         FORCE_RUN: ${{ github.event.inputs.force_run }}
       run: |
-        echo "🔄 Starting NSE data collection..."
+        echo "🔄 Starting NSE data collection (Python)..."
         echo "Market Hours: ${{ steps.market-check.outputs.is_market_hours }}"
         echo "Force Run: ${{ github.event.inputs.force_run }}"
-        
-        # Run the standalone NSE data collector script
-        node scripts/nse-data-collector.js
+        python scripts/nse_data_collector.py
 
     - name: Skip Non-Market Hours
       if: steps.market-check.outputs.is_market_hours == 'false' && github.event.inputs.force_run != 'true'
