@@ -145,7 +145,7 @@ export default function FIIDIIAnalysisPage() {
                 </ul>
               </div>
 
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Understanding January's Market Dynamics</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Understanding January&apos;s Market Dynamics</h2>
               
               <p className="text-gray-700 leading-relaxed mb-6">
                 January 2025 presented a fascinating case study in institutional behavior. While Foreign Institutional Investors (FIIs) 
@@ -159,7 +159,7 @@ export default function FIIDIIAnalysisPage() {
               </p>
               <ul className="list-disc pl-6 text-gray-700 mb-6 space-y-2">
                 <li>Rising US treasury yields making dollar assets attractive</li>
-                <li>Concerns over India's premium valuations</li>
+                <li>Concerns over India&apos;s premium valuations</li>
                 <li>Profit booking after stellar 2024 performance</li>
                 <li>Reallocation to other emerging markets</li>
               </ul>
@@ -203,8 +203,8 @@ export default function FIIDIIAnalysisPage() {
                   Expert Trading Tip
                 </h3>
                 <p className="text-blue-100 mb-4">
-                  "Watch for days when DII buying exceeds ₹2,000 crores while FII selling is below ₹1,500 crores. 
-                  These often mark strong support levels for the market." - Priya Sharma, Data Analyst
+                  &ldquo;Watch for days when DII buying exceeds ₹2,000 crores while FII selling is below ₹1,500 crores. 
+                  These often mark strong support levels for the market.&rdquo; - Priya Sharma, Data Analyst
                 </p>
                 <Link 
                   href="/market"
@@ -228,7 +228,7 @@ export default function FIIDIIAnalysisPage() {
               <div className="bg-gray-100 p-6 rounded-xl border-l-4 border-gray-400">
                 <h4 className="font-bold text-gray-800 mb-2">Disclaimer</h4>
                 <p className="text-gray-600 text-sm">
-                  This analysis is for educational purposes only. Past performance doesn't guarantee future results. 
+                  This analysis is for educational purposes only. Past performance doesn&apos;t guarantee future results. 
                   Always consult with financial advisors before making investment decisions.
                 </p>
               </div>
