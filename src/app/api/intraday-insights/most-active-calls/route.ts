@@ -6,13 +6,6 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-interface StockCallData {
-  symbol: string;
-  percentage_change: number;
-  timestamp: string;
-  session_id: string;
-}
-
 // GET endpoint - Fetch latest data from Supabase
 export async function GET(request: NextRequest) {
   try {

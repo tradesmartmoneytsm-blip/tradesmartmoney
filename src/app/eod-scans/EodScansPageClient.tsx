@@ -7,7 +7,7 @@ import { Navigation } from '@/components/Navigation';
 export function EodScansPageClient() {
   const router = useRouter();
 
-  const handleSectionChange = (section: string, subSection?: string) => {
+  const handleSectionChange = (section: string, _subSection?: string) => {
     if (section === 'eodscans') {
       // Stay on current page
       return;

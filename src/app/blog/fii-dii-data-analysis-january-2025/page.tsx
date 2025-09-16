@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Calendar, User, Clock, Eye, MessageCircle, ChevronLeft, TrendingUp, BarChart3, Award } from 'lucide-react';
+import { Calendar, User, Clock, Eye, ChevronLeft, TrendingUp, BarChart3, Award } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'FII/DII Data Analysis: January 2025 Market Impact | TradeSmart Money',

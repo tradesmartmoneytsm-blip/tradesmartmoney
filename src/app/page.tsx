@@ -44,7 +44,7 @@ function HomeComponent() {
     }
   }, [searchParams]);
 
-  const handleSectionChange = (section: string, subSection?: string) => {
+  const handleSectionChange = (section: string, _subSection?: string) => {
     // Navigate to dedicated pages for better SEO
     const routes: { [key: string]: string } = {
       'market': '/market',

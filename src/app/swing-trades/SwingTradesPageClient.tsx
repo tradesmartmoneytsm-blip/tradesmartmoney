@@ -7,7 +7,7 @@ import { Navigation } from '@/components/Navigation';
 export function SwingTradesPageClient() {
   const router = useRouter();
 
-  const handleSectionChange = (section: string, subSection?: string) => {
+  const handleSectionChange = (section: string, _subSection?: string) => {
     if (section === 'swing') {
       // Stay on current page
       return;

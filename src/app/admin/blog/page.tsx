@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { 
-  Plus, Edit, Trash2, Eye, Calendar, User, Clock, Save, 
-  Upload, Image as ImageIcon, Tag, BookOpen, Settings,
-  CheckCircle, AlertCircle, Monitor, Smartphone
+  Plus, Edit, Trash2, Eye, Save, 
+  Image as ImageIcon, BookOpen, Settings,
+  CheckCircle
 } from 'lucide-react';
 import Link from 'next/link';
 

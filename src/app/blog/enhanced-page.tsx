@@ -1,12 +1,10 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
 import { 
-  Calendar, User, ArrowRight, TrendingUp, BarChart3, Brain, Target, Search, 
-  Filter, Eye, MessageCircle, Share2, Bookmark, Clock, Star, Tag,
+  User, ArrowRight, TrendingUp, BarChart3, Brain, Search, 
+  Filter, Eye, MessageCircle, Clock, Star,
   ChevronRight, Zap, TrendingDown, DollarSign, Activity, PieChart
 } from 'lucide-react';
 

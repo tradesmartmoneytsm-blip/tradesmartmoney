@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { Market } from '@/components/Market';
+
 import { MarketPageClient } from './MarketPageClient';
 import { StructuredData } from '@/components/StructuredData';
 

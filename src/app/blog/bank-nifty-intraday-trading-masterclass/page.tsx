@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Calendar, User, Clock, Eye, ChevronLeft, Activity, Target } from 'lucide-react';
+import { User, Clock, Eye, ChevronLeft, Activity } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Bank Nifty Intraday Trading: Complete Masterclass | Coming Soon - TradeSmart Money',
