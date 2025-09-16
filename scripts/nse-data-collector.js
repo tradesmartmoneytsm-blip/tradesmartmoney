@@ -9,6 +9,7 @@
  */
 
 const https = require('https');
+const zlib = require('zlib');
 const { createClient } = require('@supabase/supabase-js');
 
 // Configuration
@@ -66,30 +67,55 @@ function makeRequest(url, options = {}) {
     };
 
     const req = https.get(url, requestOptions, (res) => {
-      let data = '';
+      let data = Buffer.alloc(0);
       
       // Store cookies for session management
       if (res.headers['set-cookie']) {
         sessionCookies = res.headers['set-cookie'].join('; ');
       }
       
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
+      // Handle compressed responses
+      let responseStream = res;
+      const encoding = res.headers['content-encoding'];
+      
+      if (encoding === 'gzip') {
+        responseStream = zlib.createGunzip();
+        res.pipe(responseStream);
+      } else if (encoding === 'deflate') {
+        responseStream = zlib.createInflate();
+        res.pipe(responseStream);
+      } else if (encoding === 'br') {
+        responseStream = zlib.createBrotliDecompress();
+        res.pipe(responseStream);
+      }
+      
+      responseStream.on('data', chunk => {
+        data = Buffer.concat([data, chunk]);
+      });
+      
+      responseStream.on('end', () => {
         try {
           if (res.statusCode === 200) {
+            const textData = data.toString('utf8');
+            
             // Try to parse as JSON, fallback to text
             try {
-              const jsonData = JSON.parse(data);
+              const jsonData = JSON.parse(textData);
               resolve({ data: jsonData, statusCode: res.statusCode, cookies: sessionCookies });
             } catch (parseError) {
-              resolve({ data: data, statusCode: res.statusCode, cookies: sessionCookies });
+              resolve({ data: textData, statusCode: res.statusCode, cookies: sessionCookies });
             }
           } else {
-            reject(new Error(`HTTP ${res.statusCode}: ${data.substring(0, 200)}...`));
+            const errorText = data.toString('utf8');
+            reject(new Error(`HTTP ${res.statusCode}: ${errorText.substring(0, 200)}...`));
           }
         } catch (error) {
           reject(new Error(`Response processing error: ${error.message}`));
         }
+      });
+      
+      responseStream.on('error', (error) => {
+        reject(new Error(`Decompression error: ${error.message}`));
       });
     });
 
