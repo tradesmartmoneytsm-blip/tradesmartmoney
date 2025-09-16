@@ -155,6 +155,12 @@ export function Navigation({
       description: 'Same-day trading signals'
     },
     {
+      id: 'smart-money-flow',
+      label: 'Smart Money Flow',
+      icon: <TrendingUp className={brandTokens.icons.sm} />,
+      description: 'Track institutional money movement and options flow'
+    },
+    {
       id: 'news',
       label: 'News',
       icon: <Newspaper className={brandTokens.icons.sm} />,
@@ -333,25 +339,31 @@ export function Navigation({
         </div>
       </div>
 
+      {/* TradeSmartMoney Branding - Center Section */}
+      <div className="bg-white border-b border-gray-100 shadow-sm">
+        <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} py-6`}>
+          <div className="flex justify-center">
+            <button
+              onClick={() => handleMenuItemClick('home')}
+              className="flex items-center space-x-4 hover:opacity-80 transition-opacity"
+              aria-label="Go to homepage"
+              title="TradeSmartMoney - Go to homepage"
+            >
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <TrendingUp className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h1 className={`${brandTokens.typography.heading.lg} brand-text text-gray-900`}>TradeSmartMoney</h1>
+                <p className={`${brandTokens.typography.body.lg} text-gray-600`}>Professional Trading Platform</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Main Navigation */}
       <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} py-4`}>
-        <div className="flex items-center justify-between">
-                     {/* Logo - Clickable to go home */}
-           <button
-             onClick={() => handleMenuItemClick('home')}
-             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
-             aria-label="Go to homepage"
-             title="TradeSmartMoney - Go to homepage"
-           >
-             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-               <TrendingUp className="w-6 h-6 text-white" />
-             </div>
-             <div className="hidden sm:block">
-               <h1 className={`${brandTokens.typography.heading.sm} brand-text`}>TradeSmartMoney</h1>
-               <p className={`${brandTokens.typography.body.sm} text-gray-600`}>Professional Trading Platform</p>
-             </div>
-           </button>
-
+        <div className="flex items-center justify-between lg:justify-center">
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
             {menuItems.map((item) => (
@@ -375,6 +387,12 @@ export function Navigation({
               </button>
             ))}
           </div>
+
+          {/* Spacer for mobile to push button to right */}
+          <div className="lg:hidden">          </div>
+
+          {/* Spacer for mobile to push button to right */}
+          <div className="lg:hidden"></div>
 
           {/* Mobile Menu Button */}
           <button

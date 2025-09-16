@@ -1,0 +1,143 @@
+name: Intraday Insights Data Collector
+
+on:
+  # Run every 5 minutes from 9:20 AM to 1:00 PM IST (Monday to Friday)
+  # Converted to UTC: 3:50 AM to 7:30 AM UTC
+  schedule:
+    # 9:20 AM IST = 3:50 AM UTC
+    - cron: '50 3 * * 1-5'    # 9:20 AM IST
+    - cron: '55 3 * * 1-5'    # 9:25 AM IST  
+    - cron: '0 4 * * 1-5'     # 9:30 AM IST
+    - cron: '5 4 * * 1-5'     # 9:35 AM IST
+    - cron: '10 4 * * 1-5'    # 9:40 AM IST
+    - cron: '15 4 * * 1-5'    # 9:45 AM IST
+    - cron: '20 4 * * 1-5'    # 9:50 AM IST
+    - cron: '25 4 * * 1-5'    # 9:55 AM IST
+    - cron: '30 4 * * 1-5'    # 10:00 AM IST
+    - cron: '35 4 * * 1-5'    # 10:05 AM IST
+    - cron: '40 4 * * 1-5'    # 10:10 AM IST
+    - cron: '45 4 * * 1-5'    # 10:15 AM IST
+    - cron: '50 4 * * 1-5'    # 10:20 AM IST
+    - cron: '55 4 * * 1-5'    # 10:25 AM IST
+    - cron: '0 5 * * 1-5'     # 10:30 AM IST
+    - cron: '5 5 * * 1-5'     # 10:35 AM IST
+    - cron: '10 5 * * 1-5'    # 10:40 AM IST
+    - cron: '15 5 * * 1-5'    # 10:45 AM IST
+    - cron: '20 5 * * 1-5'    # 10:50 AM IST
+    - cron: '25 5 * * 1-5'    # 10:55 AM IST
+    - cron: '30 5 * * 1-5'    # 11:00 AM IST
+    - cron: '35 5 * * 1-5'    # 11:05 AM IST
+    - cron: '40 5 * * 1-5'    # 11:10 AM IST
+    - cron: '45 5 * * 1-5'    # 11:15 AM IST
+    - cron: '50 5 * * 1-5'    # 11:20 AM IST
+    - cron: '55 5 * * 1-5'    # 11:25 AM IST
+    - cron: '0 6 * * 1-5'     # 11:30 AM IST
+    - cron: '5 6 * * 1-5'     # 11:35 AM IST
+    - cron: '10 6 * * 1-5'    # 11:40 AM IST
+    - cron: '15 6 * * 1-5'    # 11:45 AM IST
+    - cron: '20 6 * * 1-5'    # 11:50 AM IST
+    - cron: '25 6 * * 1-5'    # 11:55 AM IST
+    - cron: '30 6 * * 1-5'    # 12:00 PM IST
+    - cron: '35 6 * * 1-5'    # 12:05 PM IST
+    - cron: '40 6 * * 1-5'    # 12:10 PM IST
+    - cron: '45 6 * * 1-5'    # 12:15 PM IST
+    - cron: '50 6 * * 1-5'    # 12:20 PM IST
+    - cron: '55 6 * * 1-5'    # 12:25 PM IST
+    - cron: '0 7 * * 1-5'     # 12:30 PM IST
+    - cron: '5 7 * * 1-5'     # 12:35 PM IST
+    - cron: '10 7 * * 1-5'    # 12:40 PM IST
+    - cron: '15 7 * * 1-5'    # 12:45 PM IST
+    - cron: '20 7 * * 1-5'    # 12:50 PM IST
+    - cron: '25 7 * * 1-5'    # 12:55 PM IST
+    - cron: '30 7 * * 1-5'    # 1:00 PM IST
+
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: 'Force run even outside market hours'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  collect-intraday-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        npm ci --only=production
+        npm install @supabase/supabase-js node-fetch
+
+    - name: Check Market Hours
+      id: market-check
+      run: |
+        # Get current time in IST
+        CURRENT_TIME=$(TZ='Asia/Kolkata' date +'%H%M')
+        DAY_OF_WEEK=$(TZ='Asia/Kolkata' date +'%u')
+        
+        echo "Current IST time: $(TZ='Asia/Kolkata' date)"
+        echo "Time: $CURRENT_TIME, Day: $DAY_OF_WEEK"
+        
+        # Market hours: 9:20 AM (0920) to 1:00 PM (1300) IST, Monday to Friday (1-5)
+        if [[ $DAY_OF_WEEK -ge 1 && $DAY_OF_WEEK -le 5 && $CURRENT_TIME -ge 920 && $CURRENT_TIME -le 1300 ]]; then
+          echo "is_market_hours=true" >> $GITHUB_OUTPUT
+        else
+          echo "is_market_hours=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Collect NSE Data
+      if: steps.market-check.outputs.is_market_hours == 'true' || github.event.inputs.force_run == 'true'
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        FORCE_RUN: ${{ github.event.inputs.force_run }}
+      run: |
+        echo "🔄 Starting NSE data collection..."
+        echo "Market Hours: ${{ steps.market-check.outputs.is_market_hours }}"
+        echo "Force Run: ${{ github.event.inputs.force_run }}"
+        
+        # Run the standalone NSE data collector script
+        node scripts/nse-data-collector.js
+
+    - name: Skip Non-Market Hours
+      if: steps.market-check.outputs.is_market_hours == 'false' && github.event.inputs.force_run != 'true'
+      run: |
+        echo "⏰ Outside market hours or weekend - skipping data collection"
+        echo "Current time: $(TZ='Asia/Kolkata' date)"
+        echo "Market hours: 9:20 AM - 1:00 PM IST, Monday to Friday"
+
+    - name: Cleanup
+      if: always()
+      run: |
+        echo "🧹 Data collection workflow completed"
+
+  # Job to monitor and report status
+  monitor-status:
+    needs: collect-intraday-data
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Report Status
+      run: |
+        echo "📊 Intraday Data Collection Status: ${{ needs.collect-intraday-data.result }}"
+        echo "Timestamp: $(TZ='Asia/Kolkata' date)"
+        
+        if [[ "${{ needs.collect-intraday-data.result }}" == "success" ]]; then
+          echo "✅ Data collection completed successfully"
+        elif [[ "${{ needs.collect-intraday-data.result }}" == "skipped" ]]; then
+          echo "⏭️ Data collection skipped (outside market hours)"
+        else
+          echo "❌ Data collection failed"
+        fi 

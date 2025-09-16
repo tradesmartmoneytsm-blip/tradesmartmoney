@@ -50,6 +50,7 @@ function HomeComponent() {
       'market': '/market',
       'swing': '/swing-trades', 
       'intraday': '/intraday-trades',
+      'smart-money-flow': '/smart-money-flow',
       'news': '/news',
       'eodscans': '/eod-scans',
       'algo-trading': '/algo-trading',

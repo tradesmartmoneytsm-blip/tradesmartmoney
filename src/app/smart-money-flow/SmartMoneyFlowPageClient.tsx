@@ -1,19 +1,15 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { IntradayTrades } from '@/components/IntradayTrades';
+import React from 'react';
 import { Navigation } from '@/components/Navigation';
+import { IntradayInsightsTables } from '@/components/IntradayInsightsTables';
 
-export function IntradayTradesPageClient() {
+export function SmartMoneyFlowPageClient() {
   const router = useRouter();
 
   const handleSectionChange = (section: string, subSection?: string) => {
-    if (section === 'intraday') {
-      // Handle intraday subsections
-      if (subSection) {
-        router.push(`/intraday-trades?section=${subSection}`);
-        return;
-      }
+    if (section === 'smart-money-flow') {
       // Stay on current page
       return;
     }
@@ -23,7 +19,7 @@ export function IntradayTradesPageClient() {
       'home': '/',
       'market': '/market',
       'swing': '/swing-trades',
-      'smart-money-flow': '/smart-money-flow',
+      'intraday': '/intraday-trades',
       'news': '/news',
       'eodscans': '/eod-scans',
       'algo-trading': '/algo-trading',
@@ -38,11 +34,11 @@ export function IntradayTradesPageClient() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <Navigation 
-        activeSection="intraday" 
+        activeSection="smart-money-flow" 
         onSectionChange={handleSectionChange}
       />
-      <main className="relative" role="main" aria-label="Intraday Trading">
-        <IntradayTrades />
+      <main className="relative" role="main" aria-label="Smart Money Flow">
+        <IntradayInsightsTables />
       </main>
     </div>
   );

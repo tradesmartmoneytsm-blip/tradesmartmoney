@@ -1,0 +1,21 @@
+{
+  "name": "tradesmartmoney-scripts",
+  "version": "1.0.0",
+  "description": "Standalone scripts for TradeSmart Money data collection",
+  "type": "commonjs",
+  "scripts": {
+    "collect-nse": "node nse-data-collector.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "node-fetch": "^3.3.2"
+  },
+  "keywords": [
+    "nse",
+    "stock-market",
+    "data-collection",
+    "trading"
+  ],
+  "author": "TradeSmart Money",
+  "license": "MIT"
+} 
