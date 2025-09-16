@@ -4,6 +4,8 @@
  * NSE Data Collector for TradeSmart Money
  * Fetches Most Active Stock Calls and Puts data from NSE India APIs
  * Stores data in Supabase for the Smart Money Flow feature
+ * 
+ * Based on successful Python implementation with proper session management
  */
 
 const https = require('https');
@@ -14,20 +16,28 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const FORCE_RUN = process.env.FORCE_RUN === 'true';
 
-// NSE API Configuration
+// NSE API Configuration (Based on working Python code)
 const NSE_BASE_URL = 'https://www.nseindia.com';
-const NSE_API_BASE = `${NSE_BASE_URL}/api`;
+const COOKIE_SET_URL = `${NSE_BASE_URL}/market-data/oi-spurts`;
+const CALLS_API_URL = `${NSE_BASE_URL}/api/snapshot-derivatives-equity?index=calls-stocks-val`;
+const PUTS_API_URL = `${NSE_BASE_URL}/api/snapshot-derivatives-equity?index=puts-stocks-val`;
 
-// Request headers to mimic browser behavior
+// Enhanced request headers (matching successful Python implementation)
 const DEFAULT_HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-  'Accept': 'application/json, text/plain, */*',
+  'Upgrade-Insecure-Requests': '1',
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+  'sec-ch-ua': '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
   'Accept-Language': 'en-US,en;q=0.9',
   'Accept-Encoding': 'gzip, deflate, br',
   'Connection': 'keep-alive',
-  'Cache-Control': 'no-cache',
-  'Pragma': 'no-cache'
+  'Cache-Control': 'max-age=0'
 };
+
+// Session management
+let sessionCookies = '';
 
 // Initialize Supabase client
 let supabase;
@@ -42,35 +52,49 @@ try {
 }
 
 /**
- * Make HTTP request with proper error handling
+ * Make HTTP request with proper error handling and cookie management
  */
 function makeRequest(url, options = {}) {
   return new Promise((resolve, reject) => {
     const requestOptions = {
       ...options,
-      headers: { ...DEFAULT_HEADERS, ...options.headers }
+      headers: { 
+        ...DEFAULT_HEADERS, 
+        ...options.headers,
+        ...(sessionCookies && { 'Cookie': sessionCookies })
+      }
     };
 
     const req = https.get(url, requestOptions, (res) => {
       let data = '';
       
+      // Store cookies for session management
+      if (res.headers['set-cookie']) {
+        sessionCookies = res.headers['set-cookie'].join('; ');
+      }
+      
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try {
-          if (res.statusCode >= 200 && res.statusCode < 300) {
-            const jsonData = JSON.parse(data);
-            resolve(jsonData);
+          if (res.statusCode === 200) {
+            // Try to parse as JSON, fallback to text
+            try {
+              const jsonData = JSON.parse(data);
+              resolve({ data: jsonData, statusCode: res.statusCode, cookies: sessionCookies });
+            } catch (parseError) {
+              resolve({ data: data, statusCode: res.statusCode, cookies: sessionCookies });
+            }
           } else {
-            reject(new Error(`HTTP ${res.statusCode}: ${data}`));
+            reject(new Error(`HTTP ${res.statusCode}: ${data.substring(0, 200)}...`));
           }
-        } catch (parseError) {
-          reject(new Error(`JSON Parse Error: ${parseError.message}`));
+        } catch (error) {
+          reject(new Error(`Response processing error: ${error.message}`));
         }
       });
     });
 
     req.on('error', reject);
-    req.setTimeout(30000, () => {
+    req.setTimeout(15000, () => {
       req.abort();
       reject(new Error('Request timeout'));
     });
@@ -78,15 +102,15 @@ function makeRequest(url, options = {}) {
 }
 
 /**
- * Establish NSE session and get cookies
+ * Set session cookies by visiting NSE page (matching Python approach)
  */
-async function establishNSESession() {
-  console.log('🔗 Establishing NSE session...');
+async function setSessionCookies() {
+  console.log('🔗 Setting NSE session cookies...');
   
   try {
-    // First, get the main page to establish session
-    await makeRequest(NSE_BASE_URL);
-    console.log('✅ NSE session established');
+    const response = await makeRequest(COOKIE_SET_URL);
+    console.log('✅ NSE session cookies established');
+    console.log(`🍪 Cookie length: ${sessionCookies.length} chars`);
     return true;
   } catch (error) {
     console.error('❌ Failed to establish NSE session:', error.message);
@@ -95,76 +119,142 @@ async function establishNSESession() {
 }
 
 /**
- * Fetch Most Active Options data from NSE
+ * Fetch Most Active Stock Calls from NSE API
  */
-async function fetchMostActiveOptions(optionType = 'calls') {
-  const endpoint = optionType === 'calls' ? 
-    `${NSE_API_BASE}/option-chain-indices?symbol=NIFTY` :
-    `${NSE_API_BASE}/option-chain-indices?symbol=BANKNIFTY`;
-  
-  console.log(`📡 Fetching most active ${optionType} data...`);
+async function fetchMostActiveStockCalls() {
+  console.log('📡 Fetching most active stock calls...');
   
   try {
-    const response = await makeRequest(endpoint);
+    const response = await makeRequest(CALLS_API_URL);
     
-    // Process the response to extract most active options
-    if (!response || !response.records) {
-      throw new Error('Invalid response format from NSE API');
+    if (!response.data || !response.data.OPTSTK || !response.data.OPTSTK.data) {
+      throw new Error('Invalid calls data structure from NSE API');
     }
 
-    // Extract and process the data
-    const processedData = processMostActiveData(response, optionType);
-    console.log(`✅ Fetched ${processedData.length} most active ${optionType}`);
+    const callsData = [];
+    const data = response.data.OPTSTK.data;
     
-    return processedData;
+    console.log(`📊 Processing ${data.length} call option records...`);
+    
+    // Group by underlying symbol and sum percentage changes
+    const symbolMap = {};
+    for (const item of data) {
+      const symbol = item.underlying;
+      const pChange = parseFloat(item.pChange || 0);
+      
+      if (symbolMap[symbol]) {
+        symbolMap[symbol] += pChange;
+      } else {
+        symbolMap[symbol] = pChange;
+      }
+    }
+    
+    // Convert to array and sort by percentage change
+    for (const [symbol, totalPChange] of Object.entries(symbolMap)) {
+      callsData.push({
+        symbol: symbol,
+        percentage_change: parseFloat(totalPChange.toFixed(2))
+      });
+    }
+    
+    // Sort by percentage change descending and take top 10
+    callsData.sort((a, b) => b.percentage_change - a.percentage_change);
+    const topCalls = callsData.slice(0, 10);
+    
+    console.log(`✅ Fetched ${topCalls.length} most active calls`);
+    console.log('📊 Top 3 calls:', topCalls.slice(0, 3).map(item => 
+      `${item.symbol}: ${item.percentage_change}%`).join(', '));
+    
+    return topCalls;
   } catch (error) {
-    console.error(`❌ Failed to fetch ${optionType}:`, error.message);
+    console.error('❌ Failed to fetch calls:', error.message);
     
-    // Return empty array when real data is unavailable
-    console.log(`⚠️  No mock data - returning empty results for ${optionType}`);
+    // Retry once with fresh cookies (matching Python retry logic)
+    console.log('🔄 Retrying with fresh session cookies...');
+    await setSessionCookies();
+    
+    try {
+      const retryResponse = await makeRequest(CALLS_API_URL);
+      if (retryResponse.data && retryResponse.data.OPTSTK) {
+        console.log('✅ Retry successful for calls data');
+        return await fetchMostActiveStockCalls(); // Recursive call to process data
+      }
+    } catch (retryError) {
+      console.error('❌ Retry failed for calls:', retryError.message);
+    }
+    
     return [];
   }
 }
 
 /**
- * Process raw NSE data into our format
+ * Fetch Most Active Stock Puts from NSE API
  */
-function processMostActiveData(response, optionType) {
+async function fetchMostActiveStockPuts() {
+  console.log('📡 Fetching most active stock puts...');
+  
   try {
-    const data = [];
-    const records = response.records?.data || [];
+    const response = await makeRequest(PUTS_API_URL);
     
-    // Sort by volume and take top 10
-    const sortedRecords = records
-      .filter(record => record.CE || record.PE)
-      .sort((a, b) => {
-        const aVolume = optionType === 'calls' ? (a.CE?.totalTradedVolume || 0) : (a.PE?.totalTradedVolume || 0);
-        const bVolume = optionType === 'calls' ? (b.CE?.totalTradedVolume || 0) : (b.PE?.totalTradedVolume || 0);
-        return bVolume - aVolume;
-      })
-      .slice(0, 10);
+    if (!response.data || !response.data.OPTSTK || !response.data.OPTSTK.data) {
+      throw new Error('Invalid puts data structure from NSE API');
+    }
 
-    for (const record of sortedRecords) {
-      const optionData = optionType === 'calls' ? record.CE : record.PE;
+    const putsData = [];
+    const data = response.data.OPTSTK.data;
+    
+    console.log(`📊 Processing ${data.length} put option records...`);
+    
+    // Group by underlying symbol and sum percentage changes
+    const symbolMap = {};
+    for (const item of data) {
+      const symbol = item.underlying;
+      const pChange = parseFloat(item.pChange || 0);
       
-      if (optionData && optionData.underlying) {
-        data.push({
-          symbol: optionData.underlying,
-          percentage_change: parseFloat(optionData.change || 0),
-          volume: parseInt(optionData.totalTradedVolume || 0),
-          ltp: parseFloat(optionData.lastPrice || 0)
-        });
+      if (symbolMap[symbol]) {
+        symbolMap[symbol] += pChange;
+      } else {
+        symbolMap[symbol] = pChange;
       }
     }
     
-    return data;
+    // Convert to array and sort by percentage change
+    for (const [symbol, totalPChange] of Object.entries(symbolMap)) {
+      putsData.push({
+        symbol: symbol,
+        percentage_change: parseFloat(totalPChange.toFixed(2))
+      });
+    }
+    
+    // Sort by percentage change descending and take top 10
+    putsData.sort((a, b) => b.percentage_change - a.percentage_change);
+    const topPuts = putsData.slice(0, 10);
+    
+    console.log(`✅ Fetched ${topPuts.length} most active puts`);
+    console.log('📊 Top 3 puts:', topPuts.slice(0, 3).map(item => 
+      `${item.symbol}: ${item.percentage_change}%`).join(', '));
+    
+    return topPuts;
   } catch (error) {
-    console.error('❌ Error processing NSE data:', error.message);
+    console.error('❌ Failed to fetch puts:', error.message);
+    
+    // Retry once with fresh cookies (matching Python retry logic)
+    console.log('🔄 Retrying with fresh session cookies...');
+    await setSessionCookies();
+    
+    try {
+      const retryResponse = await makeRequest(PUTS_API_URL);
+      if (retryResponse.data && retryResponse.data.OPTSTK) {
+        console.log('✅ Retry successful for puts data');
+        return await fetchMostActiveStockPuts(); // Recursive call to process data
+      }
+    } catch (retryError) {
+      console.error('❌ Retry failed for puts:', retryError.message);
+    }
+    
     return [];
   }
 }
-
-
 
 /**
  * Generate unique session ID
@@ -283,7 +373,7 @@ function isMarketHours() {
  * Main execution function
  */
 async function main() {
-  console.log('🚀 Starting NSE Data Collection...');
+  console.log('🚀 Starting NSE Data Collection (Enhanced Version)...');
   console.log('📅 Timestamp:', new Date().toISOString());
   
   try {
@@ -297,19 +387,18 @@ async function main() {
     const sessionId = generateSessionId();
     console.log(`🔑 Session ID: ${sessionId}`);
 
-    // Establish NSE session
-    const sessionEstablished = await establishNSESession();
-    if (!sessionEstablished) {
-      console.log('⚠️  NSE session failed - will attempt API calls anyway');
-      console.log('⚠️  Data collection may fail without proper session');
+    // Set session cookies (critical for NSE API access)
+    const cookiesSet = await setSessionCookies();
+    if (!cookiesSet) {
+      console.log('⚠️  Failed to set cookies - attempting API calls anyway');
     }
 
-    // Collect data
+    // Collect data from NSE APIs
     console.log('📊 Starting data collection...');
     
     const [callsData, putsData] = await Promise.all([
-      fetchMostActiveOptions('calls'),
-      fetchMostActiveOptions('puts')
+      fetchMostActiveStockCalls(),
+      fetchMostActiveStockPuts()
     ]);
 
     // Store data in parallel
@@ -330,8 +419,8 @@ async function main() {
     console.log(`   🔑 Session: ${sessionId}`);
     
     if (totalRecords === 0) {
-      console.log('⚠️  No real data collected - NSE APIs may be unavailable or blocked');
-      console.log('💡 Consider checking NSE connectivity or implementing alternative data sources');
+      console.log('⚠️  No real data collected - NSE APIs may still be blocking requests');
+      console.log('💡 Consider implementing additional anti-detection measures');
     } else {
       console.log('✅ NSE data collection completed successfully!');
     }
