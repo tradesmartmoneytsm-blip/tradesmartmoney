@@ -1,12 +1,31 @@
-'use client';
+import { Metadata } from 'next';
 
-import { useEffect } from 'react';
-import { trackPageView } from '@/lib/analytics';
+export const metadata: Metadata = {
+  title: 'Privacy Policy - Data Protection & Cookie Policy | TradeSmart Money',
+  description: 'Our privacy policy explains how we collect, use, and protect your data. Learn about cookies, Google Analytics, AdSense, and your privacy rights.',
+  keywords: 'privacy policy, data protection, cookie policy, Google Analytics, AdSense privacy, user data, GDPR compliance',
+  openGraph: {
+    title: 'Privacy Policy - Data Protection & Cookie Policy',
+    description: 'Our privacy policy explains how we collect, use, and protect your data. Learn about your privacy rights.',
+    url: 'https://www.tradesmartmoney.com/privacy-policy',
+    siteName: 'TradeSmart Money',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Privacy Policy - TradeSmart Money',
+    description: 'Our privacy policy explains how we collect, use, and protect your data.',
+  },
+  alternates: {
+    canonical: 'https://www.tradesmartmoney.com/privacy-policy',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function PrivacyPolicy() {
-  useEffect(() => {
-    trackPageView('/privacy-policy', 'Privacy Policy');
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">

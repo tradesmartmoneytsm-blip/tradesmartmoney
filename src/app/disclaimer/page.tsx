@@ -1,12 +1,31 @@
-'use client';
+import { Metadata } from 'next';
 
-import { useEffect } from 'react';
-import { trackPageView } from '@/lib/analytics';
+export const metadata: Metadata = {
+  title: 'Financial Disclaimer - Risk Warnings & SEBI Compliance | TradeSmart Money',
+  description: 'Important financial disclaimer, risk warnings, and SEBI compliance information. Trading involves substantial risk. We do not provide investment advice. Educational content only.',
+  keywords: 'financial disclaimer, trading risks, SEBI compliance, investment risk warning, trading disclaimer, financial risk disclosure',
+  openGraph: {
+    title: 'Financial Disclaimer - Risk Warnings & SEBI Compliance',
+    description: 'Important financial disclaimer and risk warnings. Trading involves substantial risk. Educational content only.',
+    url: 'https://www.tradesmartmoney.com/disclaimer',
+    siteName: 'TradeSmart Money',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Financial Disclaimer - TradeSmart Money',
+    description: 'Important financial disclaimer and risk warnings. Educational content only.',
+  },
+  alternates: {
+    canonical: 'https://www.tradesmartmoney.com/disclaimer',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function Disclaimer() {
-  useEffect(() => {
-    trackPageView('/disclaimer', 'Financial Disclaimer');
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
