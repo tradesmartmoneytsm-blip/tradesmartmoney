@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Calendar, User, Clock, Eye, ChevronLeft, TrendingDown } from 'lucide-react';
+import { User, Clock, Eye, ChevronLeft, TrendingDown } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Swing Trading Nifty Stocks: 2025 Strategy Guide | Coming Soon - TradeSmart Money',

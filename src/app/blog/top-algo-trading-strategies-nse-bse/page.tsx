@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Calendar, User, Clock, Eye, ChevronLeft, BarChart3 } from 'lucide-react';
+import { User, Clock, Eye, ChevronLeft, BarChart3 } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: '10 Proven Algo Trading Strategies for NSE & BSE | Coming Soon - TradeSmart Money',

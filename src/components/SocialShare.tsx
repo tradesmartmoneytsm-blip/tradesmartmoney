@@ -11,8 +11,7 @@ interface SocialShareProps {
 
 export function SocialShare({ 
   url = typeof window !== 'undefined' ? window.location.href : '',
-  title = 'TradeSmart Money - Educational Trading Platform',
-  description = 'Learn smart money concepts and market analysis'
+  title = 'TradeSmart Money - Educational Trading Platform'
 }: SocialShareProps) {
   const [copied, setCopied] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);

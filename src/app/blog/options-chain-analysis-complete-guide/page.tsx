@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Calendar, User, Clock, Eye, ChevronLeft, PieChart } from 'lucide-react';
+import { User, Clock, Eye, ChevronLeft, PieChart } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Options Chain Analysis: The Ultimate Guide | Coming Soon - TradeSmart Money',
