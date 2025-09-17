@@ -3,7 +3,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.tradesmartmoney.com/</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -11,28 +11,28 @@
   <!-- Main Trading Features (High Priority for SEO) -->
   <url>
     <loc>https://www.tradesmartmoney.com/market</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
   
   <url>
     <loc>https://www.tradesmartmoney.com/swing-trades</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
   
   <url>
     <loc>https://www.tradesmartmoney.com/intraday-trades</loc>
-    <lastmod>2025-09-16</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
 
   <url>
     <loc>https://www.tradesmartmoney.com/smart-money-flow</loc>
-    <lastmod>2025-09-16</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.95</priority>
   </url>
@@ -61,21 +61,21 @@
   <!-- SEO Landing Pages -->
   <url>
     <loc>https://www.tradesmartmoney.com/smart-money-concepts</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
     <loc>https://www.tradesmartmoney.com/ai-powered-trading</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://www.tradesmartmoney.com/trading-guide</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -83,42 +83,42 @@
   <!-- Legal & Business Pages -->
   <url>
     <loc>https://www.tradesmartmoney.com/about</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.tradesmartmoney.com/contact</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <url>
     <loc>https://www.tradesmartmoney.com/faq</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://www.tradesmartmoney.com/privacy-policy</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://www.tradesmartmoney.com/terms-of-service</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://www.tradesmartmoney.com/disclaimer</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -126,14 +126,72 @@
   <!-- Blog Section -->
   <url>
     <loc>https://www.tradesmartmoney.com/blog</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
+  <!-- Educational Blog Posts (AdSense Compliance) -->
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog/understanding-market-basics-beginners</loc>
+    <lastmod>2025-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog/how-to-read-financial-charts</loc>
+    <lastmod>2025-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog/risk-management-trading-education</loc>
+    <lastmod>2025-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Existing Blog Posts -->
   <url>
     <loc>https://www.tradesmartmoney.com/blog/complete-guide-smart-money-trading-2025</loc>
-    <lastmod>2025-09-14</lastmod>
+    <lastmod>2025-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog/bank-nifty-intraday-trading-masterclass</loc>
+    <lastmod>2025-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog/fii-dii-data-analysis-january-2025</loc>
+    <lastmod>2025-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog/options-chain-analysis-complete-guide</loc>
+    <lastmod>2025-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog/swing-trading-nifty-stocks-2025</loc>
+    <lastmod>2025-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.tradesmartmoney.com/blog/top-algo-trading-strategies-nse-bse</loc>
+    <lastmod>2025-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
