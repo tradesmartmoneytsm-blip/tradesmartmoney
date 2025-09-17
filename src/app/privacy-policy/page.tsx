@@ -51,7 +51,7 @@ export default function PrivacyPolicy() {
               <li>Ad interaction data and preferences</li>
             </ul>
 
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">2. Advertising and Cookies</h2>
+            <h2 id="cookies" className="text-2xl font-semibold text-gray-900 mt-8 mb-4">2. Advertising and Cookies</h2>
             <p className="text-gray-700 mb-4">
               <strong>Google AdSense:</strong> We use Google AdSense to display advertisements on our website. 
               Google AdSense uses cookies and similar technologies to serve ads based on your prior visits to our website and other websites.
@@ -92,7 +92,7 @@ export default function PrivacyPolicy() {
               We may share information with trusted service providers who assist us in operating our website and conducting our business.
             </p>
 
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">5. Data Security</h2>
+            <h2 id="data-security" className="text-2xl font-semibold text-gray-900 mt-8 mb-4">5. Data Security</h2>
             <p className="text-gray-700 mb-6">
               We implement appropriate security measures to protect your personal information against unauthorized access, 
               alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.

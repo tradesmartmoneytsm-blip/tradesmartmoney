@@ -73,6 +73,17 @@ const nextConfig = {
         source: '/market/sectors',
         destination: '/market/sector-performance',
         permanent: true,
+      },
+      // Redirect old/non-existent pages to relevant content
+      {
+        source: '/cookie-policy',
+        destination: '/privacy-policy#cookies',
+        permanent: true,
+      },
+      {
+        source: '/security',
+        destination: '/privacy-policy#data-security',
+        permanent: true,
       }
     ];
   },
