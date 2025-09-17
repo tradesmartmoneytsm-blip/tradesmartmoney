@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { 
   Calendar, User, Clock, Eye, MessageCircle, Share2, Bookmark, 
-  Twitter, Facebook, Linkedin, Copy, ChevronLeft, ChevronRight,
-  Heart, ThumbsUp, TrendingUp, BarChart3, Target, Activity,
+  Twitter, Linkedin, Copy, ChevronLeft, ChevronRight,
+  Heart, TrendingUp, BarChart3, Activity,
   Star, Award, CheckCircle, AlertCircle, Lightbulb, Zap
 } from 'lucide-react';
 
@@ -65,7 +64,7 @@ export function BlogPostTemplate({ post, relatedPosts }: BlogPostTemplateProps) 
   const [isLiked, setIsLiked] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
   const [showShareMenu, setShowShareMenu] = useState(false);
-  const [activeTableOfContents, setActiveTableOfContents] = useState('');
+  const [activeTableOfContents] = useState('');
 
   // Reading progress calculation
   useEffect(() => {

@@ -75,10 +75,10 @@ export function TrafficTracker() {
   return null;
 }
 
-// Global gtag interface
+// Global gtag interface - using proper Google Analytics types
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void;
-    dataLayer: any[];
+    gtag: (command: string, targetId: string | Date, config?: Record<string, unknown>) => void;
+    dataLayer: Record<string, unknown>[];
   }
 }
