@@ -8,7 +8,7 @@ import { IntradayInsightsTables } from '@/components/IntradayInsightsTables';
 export function SmartMoneyFlowPageClient() {
   const router = useRouter();
 
-  const handleSectionChange = (section: string, _subSection?: string) => {
+  const handleSectionChange = (section: string) => {
     if (section === 'smart-money-flow') {
       // Stay on current page
       return;

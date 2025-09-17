@@ -142,7 +142,7 @@ function HomeComponent() {
     }
   }, [searchParams]);
 
-  const handleSectionChange = (section: string, _subSection?: string) => {
+  const handleSectionChange = (section: string) => {
     // Navigate to dedicated pages for better SEO
     const routes: { [key: string]: string } = {
       'market': '/market',
@@ -249,7 +249,7 @@ function HomeComponent() {
             {/* Features Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20 animate-fade-in delay-600">
               <button 
-                onClick={() => handleSectionChange('market', 'sector-performance')}
+                onClick={() => handleSectionChange('market')}
                 className="glass-card p-6 text-center hover:scale-105 hover:bg-white/5 transition-all duration-300 group cursor-pointer"
               >
                 <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500/30 transition-colors">
