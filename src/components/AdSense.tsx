@@ -84,4 +84,4 @@ export const HeaderAd = () => <ManualAd className="w-full max-w-6xl mx-auto mb-6
 export const InContentAd = () => <ManualAd className="w-full max-w-md mx-auto my-8" style={{ minHeight: '250px' }} />;
 export const FooterAd = () => <ManualAd className="w-full max-w-6xl mx-auto mt-6" style={{ minHeight: '90px' }} />;
 export const MobileAd = () => <div className="block md:hidden"><ManualAd className="w-full my-4" style={{ minHeight: '100px' }} /></div>;
-export const StickyAd = () => null; // Auto ads will handle sticky placement automatically 
+export const StickyAd = () => null; 

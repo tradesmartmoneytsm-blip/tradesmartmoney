@@ -48,12 +48,7 @@ interface AdvancedScannerResponse {
 }
 
 export function AdvancedScanner() {
-  const [startTime, setStartTime] = useState('09:15');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [endTime, _setEndTime] = useState('15:30');
   const [minScore, setMinScore] = useState(75);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [maxResults, _setMaxResults] = useState(15);
   const [analysisType, setAnalysisType] = useState('COMPREHENSIVE');
   const [isScanning, setIsScanning] = useState(false);
   const [results, setResults] = useState<AdvancedResult[]>([]);
@@ -84,10 +79,10 @@ export function AdvancedScanner() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          startTime,
-          endTime,
+          startTime: '09:15',
+          endTime: '15:30',
           minScore,
-          maxResults,
+          maxResults: 15,
           analysisType
         }),
       });
@@ -160,19 +155,6 @@ export function AdvancedScanner() {
     return `₹${amount.toLocaleString()}`;
   };
 
-  const generateTimeOptions = () => {
-    const options = [];
-    for (let hour = 9; hour <= 15; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        if (hour === 15 && minute > 30) break;
-        const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        options.push(timeStr);
-      }
-    }
-    return options;
-  };
-
-  const timeOptions = generateTimeOptions();
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
@@ -214,16 +196,9 @@ export function AdvancedScanner() {
           {/* Time Range */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Start Time</label>
-            <select
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-              disabled={isScanning}
-            >
-              {timeOptions.map(time => (
-                <option key={time} value={time}>{time}</option>
-              ))}
-            </select>
+            <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600">
+              9:15 AM - 3:30 PM (Market Hours)
+            </div>
           </div>
 
           <div>

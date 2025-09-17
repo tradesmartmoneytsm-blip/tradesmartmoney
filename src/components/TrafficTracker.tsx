@@ -14,12 +14,6 @@ export function TrafficTracker() {
         }
 
 
-        // Optional: Send to your own analytics endpoint
-        // fetch('/api/analytics/track', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(visitData)
-        // });
 
         // Force GA tracking if available
         if (typeof window !== 'undefined' && window.gtag) {

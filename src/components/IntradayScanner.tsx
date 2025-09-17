@@ -40,8 +40,6 @@ interface ScannerResponse {
 export function IntradayScanner() {
   const [scanType, setScanType] = useState('BREAKOUT');
   const [minScore, setMinScore] = useState(70);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [maxResults, _setMaxResults] = useState(20);
   const [isScanning, setIsScanning] = useState(false);
   const [results, setResults] = useState<ScannerResult[]>([]);
   const [summary, setSummary] = useState<ScannerResponse['summary'] | null>(null);
@@ -73,7 +71,7 @@ export function IntradayScanner() {
         body: JSON.stringify({
           scanType,
           minScore,
-          maxResults
+          maxResults: 20
         }),
       });
 

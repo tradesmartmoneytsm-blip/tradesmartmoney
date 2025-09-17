@@ -7,7 +7,6 @@ import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
 import { FiiDiiActivity } from '@/components/FiiDiiActivity';
 import { TopMovers } from '@/components/TopMovers';
 import { trackBusinessEvent, trackPageView } from '@/lib/analytics';
-// Auto ads will handle all ad placement automatically
 
 interface MarketSubSection {
   id: string;

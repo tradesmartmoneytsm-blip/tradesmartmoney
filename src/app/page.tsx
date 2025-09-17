@@ -4,7 +4,6 @@ import { useState, lazy, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
-// Auto ads will handle all ad placement automatically - no manual ad imports needed
 
 // Dynamic imports for better performance
 const SwingTrades = lazy(() => import('@/components/SwingTrades').then(module => ({ default: module.SwingTrades })));
