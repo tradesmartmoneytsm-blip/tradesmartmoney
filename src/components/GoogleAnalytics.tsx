@@ -26,15 +26,28 @@ export function GoogleAnalytics() {
             
             // Set default consent for Analytics (GDPR compliant)
             gtag('consent', 'default', {
-              analytics_storage: 'denied',
+              analytics_storage: 'granted',
               functionality_storage: 'granted',
-              security_storage: 'granted'
+              security_storage: 'granted',
+              ad_storage: 'denied'
             });
             
             gtag('config', '${GA_MEASUREMENT_ID}', {
               page_path: window.location.pathname,
               page_title: document.title,
-              send_page_view: true
+              send_page_view: true,
+              anonymize_ip: true,
+              cookie_expires: 63072000
+            });
+            
+            // Debug tracking
+            console.log('🔥 Google Analytics initialized with ID: ${GA_MEASUREMENT_ID}');
+            
+            // Track initial page view
+            gtag('event', 'page_view', {
+              page_title: document.title,
+              page_location: window.location.href,
+              page_path: window.location.pathname
             });
           `,
         }}

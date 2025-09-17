@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
+import { TrafficTracker } from '@/components/TrafficTracker';
 import { Footer } from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AutoAds } from '@/components/AdSense';
@@ -211,6 +212,34 @@ export default function RootLayout({
         {/* Google Analytics */}
         <GoogleAnalytics />
         
+        {/* Direct Google Analytics Script */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GQW2ZCNNTP" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-GQW2ZCNNTP', {
+                page_title: document.title,
+                page_location: window.location.href,
+                send_page_view: true,
+                anonymize_ip: true,
+                cookie_expires: 63072000
+              });
+              
+              // Force immediate tracking
+              gtag('event', 'page_view', {
+                page_title: document.title,
+                page_location: window.location.href,
+                page_path: window.location.pathname
+              });
+              
+              console.log('🚀 GA Direct tracking active: G-GQW2ZCNNTP');
+            `,
+          }}
+        />
+        
         {/* Google AdSense Account */}
         <meta name="google-adsense-account" content="ca-pub-6601377389077210" />
         
@@ -233,6 +262,9 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
+        {/* Traffic Tracking */}
+        <TrafficTracker />
+        
         <main role="main" id="main-content">
           {children}
         </main>
