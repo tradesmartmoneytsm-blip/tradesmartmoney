@@ -17,8 +17,8 @@ export default function About() {
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-6">About TradeSmartMoney</h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              Empowering traders with real-time market data, professional analysis, and cutting-edge tools 
-              to make informed investment decisions in the Indian financial markets.
+              Educational platform providing market data, analysis examples, and learning tools 
+              to help users study and understand the Indian financial markets for educational purposes only.
             </p>
           </div>
         </div>
@@ -91,16 +91,26 @@ export default function About() {
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 <Award className="h-5 w-5 text-green-600 mr-2" />
-                Trading Tools
+                Educational Tools
               </h3>
               <ul className="text-gray-700 space-y-2">
-                <li>• Swing trading setups and signals</li>
-                <li>• Intraday trading opportunities</li>
-                <li>• End-of-day technical scans</li>
-                <li>• Algorithmic trading education</li>
+                <li>• Educational swing trading examples</li>
+                <li>• Intraday analysis for learning</li>
+                <li>• End-of-day technical study materials</li>
+                <li>• Algorithmic trading educational content</li>
               </ul>
             </div>
           </div>
+        </div>
+
+        {/* SEBI Disclaimer */}
+        <div className="bg-red-50 border-l-4 border-red-400 p-6 mb-12 rounded">
+          <h3 className="text-lg font-semibold text-red-800 mb-3">Important Disclaimer</h3>
+          <p className="text-red-700">
+            <strong>SEBI COMPLIANCE:</strong> TradeSmartMoney is not registered with SEBI. We do not provide investment advice, 
+            financial planning, or recommendations. All content is for educational purposes only. Please consult SEBI registered 
+            advisors for investment decisions.
+          </p>
         </div>
 
         {/* Our Approach */}
