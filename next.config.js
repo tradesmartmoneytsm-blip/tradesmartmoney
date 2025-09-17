@@ -3,7 +3,6 @@ const nextConfig = {
   // Enable experimental features for better performance
   experimental: {
     optimizePackageImports: ['lucide-react'],
-    optimizeCss: true,
     scrollRestoration: true,
   },
   
