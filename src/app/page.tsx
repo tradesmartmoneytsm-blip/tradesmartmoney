@@ -18,6 +18,103 @@ import { brandTokens } from '@/lib/design-tokens';
 import { SubmenuCards } from '@/components/ui/SubmenuCards';
 import { FAQSchema } from '@/components/FAQSchema';
 
+// Advanced SEO Schema for Homepage
+function HomepageSchema() {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "FinancialService",
+    "name": "TradeSmart Money",
+    "description": "Educational trading platform for learning smart money concepts, market analysis, and trading education",
+    "url": "https://www.tradesmartmoney.com",
+    "logo": "https://www.tradesmartmoney.com/logo.png",
+    "sameAs": [
+      "https://twitter.com/tradesmartmoney",
+      "https://youtube.com/@tradesmartmoney"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "IN",
+      "addressRegion": "Maharashtra"
+    },
+    "areaServed": "IN",
+    "serviceType": "Educational Trading Platform",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Trading Education Services",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Course",
+            "name": "Smart Money Concepts Education",
+            "description": "Learn institutional trading patterns and market analysis"
+          }
+        },
+        {
+          "@type": "Offer", 
+          "itemOffered": {
+            "@type": "Course",
+            "name": "Market Analysis Training",
+            "description": "Educational market data analysis and trading concepts"
+          }
+        }
+      ]
+    }
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is TradeSmart Money?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "TradeSmart Money is an educational platform that provides market data, analysis examples, and educational content to help users learn about the Indian financial markets. All content is for educational purposes only."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you provide investment advice?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, we do not provide investment advice. We are not SEBI registered advisors. We provide educational content and market analysis examples for learning purposes only. Please consult SEBI registered investment advisors for personalized advice."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are Smart Money Concepts?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Smart Money Concepts (SMC) is an educational trading methodology that focuses on understanding how institutional investors and market makers operate in financial markets through market structure analysis, order flow, and liquidity concepts."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is the platform free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We offer both free and premium educational features. Basic market data and educational content are available for free, while advanced educational analytics and premium learning tools require a subscription."
+        }
+      }
+    ]
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+    </>
+  );
+}
+
 function HomeComponent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -280,6 +377,9 @@ function HomeComponent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* Advanced SEO Schema */}
+      <HomepageSchema />
+      
       {/* FAQ Schema only on homepage */}
       {activeSection === 'home' && <FAQSchema />}
       
