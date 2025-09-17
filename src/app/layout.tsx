@@ -105,7 +105,7 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL('https://www.tradesmartmoney.com'),
   alternates: {
-    canonical: '/',
+    canonical: 'https://www.tradesmartmoney.com/',
   },
   openGraph: {
     title: "Educational Trading Platform | Learn Smart Money Concepts & Market Analysis",

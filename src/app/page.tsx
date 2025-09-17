@@ -2,7 +2,7 @@
 
 import { useState, lazy, Suspense, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
 // Auto ads will handle all ad placement automatically - no manual ad imports needed
 
@@ -20,6 +20,7 @@ import { FAQSchema } from '@/components/FAQSchema';
 
 function HomeComponent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [activeSection, setActiveSection] = useState('home'); // Changed default to 'home'
   const [activeMarketSubSection, setActiveMarketSubSection] = useState('market'); // Default to show submenu cards
   const [activeEodScansSubSection, setActiveEodScansSubSection] = useState('eodscans'); // Default to show submenu cards
@@ -58,7 +59,7 @@ function HomeComponent() {
     
     // If it's a main section with a dedicated page, navigate there
     if (routes[section]) {
-      window.location.href = routes[section];
+      router.push(routes[section]);
       return;
     }
     
