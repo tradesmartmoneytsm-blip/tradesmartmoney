@@ -5,6 +5,56 @@ import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
 import { TrendingUp, Brain, Target, BarChart3, Zap, Shield, Users, ArrowRight, CheckCircle, Star, BarChart2 } from 'lucide-react';
 import { VideoEducation } from '@/components/VideoEducation';
+
+// Video Structured Data for Google
+function VideoStructuredData() {
+  const videoData = {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "Smart Money Concepts - Part 10: Time-based Analysis",
+    "description": "Time-based analysis and understanding market timing from institutional perspective. Learn how professional traders use session analysis and institutional schedules.",
+    "thumbnailUrl": `https://img.youtube.com/vi/0PJouRQRqzA/maxresdefault.jpg`,
+    "uploadDate": "2024-01-01T00:00:00Z",
+    "duration": "PT45M",
+    "contentUrl": "https://www.youtube.com/watch?v=0PJouRQRqzA",
+    "embedUrl": "https://www.youtube.com/embed/0PJouRQRqzA",
+    "publisher": {
+      "@type": "Organization",
+      "name": "TradeSmart Money",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.tradesmartmoney.com/logo.png"
+      }
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "TradeSmart Money"
+    },
+    "educationalUse": "Professional trading education",
+    "learningResourceType": "Tutorial",
+    "about": [
+      {
+        "@type": "Thing",
+        "name": "Smart Money Concepts"
+      },
+      {
+        "@type": "Thing", 
+        "name": "Trading Education"
+      },
+      {
+        "@type": "Thing",
+        "name": "Market Analysis"
+      }
+    ]
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(videoData) }}
+    />
+  );
+}
 // Auto ads will handle all ad placement automatically - no manual ad imports needed
 
 export default function SmartMoneyConceptsPage() {
@@ -14,6 +64,9 @@ export default function SmartMoneyConceptsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* Video Structured Data for Google */}
+      <VideoStructuredData />
+      
       {/* Google Auto Ads will automatically place ads throughout the page */}
 
       {/* Back to Platform Navigation */}

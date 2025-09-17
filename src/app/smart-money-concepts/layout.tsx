@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Educational Smart Money Study: Learn Institutional Patterns | TradeSmartMoney",
-  description: "Educational platform for studying smart money concepts (SMC) and institutional patterns. Learn about order flow analysis and market structure for educational purposes only.",
+  description: "Educational platform for studying smart money concepts (SMC) and institutional patterns. Learn about order flow analysis and market structure through comprehensive video tutorials for educational purposes only.",
   keywords: [
     "smart money concepts",
     "smart money trading", 
@@ -15,7 +15,9 @@ export const metadata: Metadata = {
     "smart money algo",
     "smart money indicators",
     "institutional order flow",
-    "smc trading"
+    "smc trading",
+    "trading video tutorials",
+    "smart money education videos"
   ],
   alternates: {
     canonical: '/smart-money-concepts',
