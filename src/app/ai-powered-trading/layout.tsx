@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Powered Trading Platform | Advanced AI Trading Algorithms | TradeSmartMoney",
-  description: "Harness the power of AI for trading with our advanced AI trading algorithms. Machine learning models, automated trading systems, and AI-powered market analysis for professional traders.",
+  title: "Educational AI Trading Study | Learn AI Market Analysis Concepts | TradeSmartMoney",
+  description: "Educational platform for studying AI trading concepts, machine learning in finance, and algorithmic analysis. Learn about AI market analysis for educational purposes only.",
   keywords: [
     "ai powered trading",
     "ai trading algorithm", 
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
     canonical: '/ai-powered-trading',
   },
   openGraph: {
-    title: "AI Powered Trading Platform | Advanced AI Trading Algorithms",
-    description: "Harness the power of AI for trading with our advanced AI trading algorithms. Machine learning models, automated trading systems, and AI-powered market analysis for professional traders.",
+    title: "Educational AI Trading Study | Learn AI Market Analysis Concepts",
+    description: "Educational platform for studying AI trading concepts, machine learning in finance, and algorithmic analysis for educational purposes only.",
     url: '/ai-powered-trading',
     images: ['/og-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Powered Trading Platform | Advanced AI Trading Algorithms',
-    description: 'Harness the power of AI for trading with our advanced AI trading algorithms. Machine learning models, automated trading systems, and AI-powered market analysis.',
+    title: 'Educational AI Trading Study | Learn AI Market Analysis Concepts',
+    description: 'Educational platform for studying AI trading concepts and machine learning in finance for educational purposes only.',
     images: ['/twitter-image.jpg'],
   },
 };

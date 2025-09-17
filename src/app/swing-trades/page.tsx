@@ -3,12 +3,12 @@ import { SwingTradesPageClient } from './SwingTradesPageClient';
 import { StructuredData } from '@/components/StructuredData';
 
 export const metadata: Metadata = {
-  title: 'Swing Trading Strategies | Value Buying & Multi-Day Trades - TradeSmart Money',
-  description: 'Professional swing trading strategies with value buying opportunities, multi-day momentum trades, risk management, and institutional-grade analysis. Perfect for position traders and long-term investors.',
+  title: 'Educational Swing Trading Study | Learn Multi-Day Analysis - TradeSmart Money',
+  description: 'Educational platform for studying swing trading concepts, value analysis examples, and multi-day market patterns. Learn about position trading concepts for educational purposes only.',
   keywords: 'swing trading, swing trading strategies, value buying, position trading, multi-day trading, swing trade setups, momentum trading, breakout trading, swing trading signals, swing trade analysis',
   openGraph: {
-    title: 'Swing Trading Strategies - Value Buying & Multi-Day Trades',
-    description: 'Master swing trading with professional strategies, value buying opportunities, and institutional-grade analysis. Perfect for multi-day momentum trades.',
+    title: 'Educational Swing Trading Study - Learn Multi-Day Analysis',
+    description: 'Educational platform for studying swing trading concepts, value analysis examples, and multi-day market patterns for educational purposes only.',
     url: 'https://www.tradesmartmoney.com/swing-trades',
     siteName: 'TradeSmart Money',
     type: 'website',
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Swing Trading Strategies - TradeSmart Money',
-    description: 'Master swing trading with professional strategies and value buying opportunities.',
+    title: 'Educational Swing Trading Study - TradeSmart Money',
+    description: 'Educational platform for studying swing trading concepts and value analysis examples for educational purposes only.',
   },
   alternates: {
     canonical: 'https://www.tradesmartmoney.com/swing-trades',

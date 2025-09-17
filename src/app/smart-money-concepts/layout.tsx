@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Smart Money Concepts: Master Institutional Trading Patterns | TradeSmartMoney",
-  description: "Learn smart money concepts (SMC) and institutional trading patterns. Master order flow analysis, liquidity hunting, and smart money footprint for professional trading success.",
+  title: "Educational Smart Money Study: Learn Institutional Patterns | TradeSmartMoney",
+  description: "Educational platform for studying smart money concepts (SMC) and institutional patterns. Learn about order flow analysis and market structure for educational purposes only.",
   keywords: [
     "smart money concepts",
     "smart money trading", 
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
     canonical: '/smart-money-concepts',
   },
   openGraph: {
-    title: "Smart Money Concepts: Master Institutional Trading Patterns",
-    description: "Learn smart money concepts (SMC) and institutional trading patterns. Master order flow analysis, liquidity hunting, and smart money footprint for professional trading success.",
+    title: "Educational Smart Money Study: Learn Institutional Patterns",
+    description: "Educational platform for studying smart money concepts (SMC) and institutional patterns. Learn about order flow analysis for educational purposes only.",
     url: '/smart-money-concepts',
     images: ['/og-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Smart Money Concepts: Master Institutional Trading Patterns',
-    description: 'Learn smart money concepts (SMC) and institutional trading patterns. Master order flow analysis, liquidity hunting, and smart money footprint for professional trading success.',
+    title: 'Educational Smart Money Study: Learn Institutional Patterns',
+    description: 'Educational platform for studying smart money concepts and institutional patterns for educational purposes only.',
     images: ['/twitter-image.jpg'],
   },
 };

@@ -22,8 +22,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Money Trading Platform | AI Powered Algo Trading & Smart Money Concepts | TradeSmartMoney",
-  description: "Master smart money concepts with our AI-powered trading platform. Advanced algo trading strategies, smart money footprint analysis, swing trading signals, and AI trading algorithms for professional traders.",
+  title: "Educational Trading Platform | Learn Smart Money Concepts & Market Analysis | TradeSmartMoney",
+  description: "Educational platform for learning smart money concepts, market analysis, and trading education. Study institutional patterns, market data, and trading concepts for educational purposes only.",
   keywords: [
     // Core Trading Terms
     "trading platform",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     "portfolio management",
     "wealth management",
     "financial planning",
-    "investment advice",
+    "investment education",
     
     // Smart Money & Algo Trading
     "smart money",
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     "market structure",
     "support resistance",
     "trading indicators",
-    "trading signals",
+    "trading education",
     "market patterns",
     "candlestick patterns",
     
@@ -108,8 +108,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: "Smart Money Trading Platform | AI Powered Algo Trading & Smart Money Concepts",
-    description: "Master smart money concepts with AI-powered algo trading. Advanced smart money footprint analysis, swing trading signals, and institutional trading patterns for professional traders.",
+    title: "Educational Trading Platform | Learn Smart Money Concepts & Market Analysis",
+    description: "Educational platform for learning smart money concepts, market analysis, and trading education. Study institutional patterns and market data for educational purposes only.",
     url: 'https://www.tradesmartmoney.com',
     siteName: 'TradeSmartMoney',
     locale: 'en_US',
@@ -126,8 +126,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Smart Money Trading Platform | AI Powered Algo Trading',
-    description: 'Master smart money concepts with AI-powered algo trading. Advanced smart money footprint analysis and institutional trading patterns.',
+    title: 'Educational Trading Platform | Learn Smart Money Concepts',
+    description: 'Educational platform for learning smart money concepts, market analysis, and trading education for educational purposes only.',
     creator: '@tradesmartmoney',
     images: ['/twitter-image.jpg'],
   },

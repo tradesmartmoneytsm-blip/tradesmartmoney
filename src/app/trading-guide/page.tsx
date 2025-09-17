@@ -25,7 +25,7 @@ export default function TradingGuide() {
             <h1 className="text-4xl font-bold">Complete Trading Guide</h1>
           </div>
           <p className="text-xl text-blue-100">
-            Master the fundamentals of stock market trading with our comprehensive guide
+            Learn about stock market concepts and trading education for educational purposes only
           </p>
         </div>
       </div>
@@ -161,33 +161,33 @@ export default function TradingGuide() {
             <section id="strategies" className="bg-white rounded-lg shadow-lg p-8">
               <div className="flex items-center mb-6">
                 <Target className="h-6 w-6 text-purple-600 mr-3" />
-                <h2 className="text-2xl font-bold">Trading Strategies</h2>
+                <h2 className="text-2xl font-bold">Trading Concepts (Educational)</h2>
               </div>
               
               <div className="prose max-w-none">
                 <h3 className="text-xl font-semibold mb-4">Momentum Trading</h3>
                 <p className="text-gray-700 mb-4">
-                  Buy stocks showing strong upward momentum and sell when momentum weakens. 
-                  This strategy capitalizes on the continuation of existing trends.
+                  <strong>Educational Concept:</strong> Momentum trading involves studying stocks showing strong directional movement. 
+                  This concept is based on the idea of trend continuation for educational understanding.
                 </p>
 
                 <h3 className="text-xl font-semibold mb-4">Mean Reversion</h3>
                 <p className="text-gray-700 mb-4">
-                  Based on the idea that prices will revert to their average over time. 
-                  Buy when prices are below average, sell when above.
+                  <strong>Educational Concept:</strong> Mean reversion theory suggests that prices tend to return to their average over time. 
+                  This is a statistical concept used for educational study of market behavior.
                 </p>
 
                 <h3 className="text-xl font-semibold mb-4">Breakout Trading</h3>
                 <p className="text-gray-700 mb-6">
-                  Enter positions when price breaks through key support or resistance levels, 
-                  anticipating continued movement in the breakout direction.
+                  <strong>Educational Concept:</strong> Breakout analysis studies price movements through key support or resistance levels. 
+                  This concept helps understand how markets react to technical levels for educational purposes.
                 </p>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-800 mb-2">Pro Tip</h4>
+                  <h4 className="font-semibold text-blue-800 mb-2">Educational Note</h4>
                   <p className="text-blue-700 text-sm">
-                    Always backtest your strategies on historical data before risking real money. 
-                    What works in theory may not work in practice due to market conditions and execution challenges.
+                    <strong>Disclaimer:</strong> These are educational concepts only. Always consult SEBI registered advisors before making investment decisions. 
+                    Historical analysis is for learning purposes and does not guarantee future results.
                   </p>
                 </div>
               </div>
