@@ -26,7 +26,7 @@ interface TableData {
 export function IntradayInsightsTables() {
   const [tables, setTables] = useState<TableData[]>([
     {
-      title: 'Most Active Stock Calls',
+      title: 'Most Active Stock Calls (Educational)',
       data: [],
       loading: true,
       lastUpdated: null,
@@ -34,7 +34,7 @@ export function IntradayInsightsTables() {
       colorScheme: 'green'
     },
     {
-      title: 'Most Active Stock Puts',
+      title: 'Most Active Stock Puts (Educational)',
       data: [],
       loading: true,
       lastUpdated: null,
@@ -304,13 +304,19 @@ export function IntradayInsightsTables() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
-              <Zap className="w-8 h-8 mr-3 text-blue-600" />
-              Smart Money Flow
-            </h1>
-            <p className="text-gray-600">
-              Track institutional money movement and professional options flow in real-time
-            </p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+          <Zap className="w-8 h-8 mr-3 text-blue-600" />
+          Educational Money Flow Study
+        </h1>
+        <p className="text-gray-600">
+          Study institutional money movement and options flow data for educational purposes
+        </p>
+        <div className="bg-red-50 border-l-4 border-red-400 p-3 mt-4 rounded">
+          <p className="text-red-800 text-sm font-medium">
+            <strong>Educational Disclaimer:</strong> This data is for educational study only. We are not SEBI registered advisors. 
+            Please consult qualified professionals for investment decisions.
+          </p>
+        </div>
           </div>
           
           <div className="flex items-center space-x-4">

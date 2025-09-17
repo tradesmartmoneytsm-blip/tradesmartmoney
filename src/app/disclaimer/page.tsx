@@ -23,7 +23,14 @@ export default function Disclaimer() {
           </div>
 
           <div className="prose max-w-none">
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">1. No Investment Advice</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">1. SEBI Compliance & No Investment Advice</h2>
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+              <p className="text-gray-700 font-semibold">
+                <strong>SEBI DISCLAIMER:</strong> This website is not registered with the Securities and Exchange Board of India (SEBI). 
+                We do not provide investment advisory services as defined under the SEBI (Investment Advisers) Regulations, 2013. 
+                We are not SEBI registered research analysts, portfolio managers, or investment advisors.
+              </p>
+            </div>
             <p className="text-gray-700 mb-6">
               TradeSmartMoney provides educational content, market analysis, and informational resources only. 
               <strong> We do not provide investment advice, financial planning, or recommendations to buy or sell any security.</strong> 

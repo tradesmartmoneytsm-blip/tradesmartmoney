@@ -14,26 +14,26 @@ export function IntradayTrades() {
   const strategies = [
     {
       id: 'signals',
-      name: 'Intraday Signals',
-      description: 'Live institutional activity signals updated every 5 minutes',
+      name: 'Educational Trading Examples',
+      description: 'Live institutional activity data for educational analysis',
       icon: Activity
     },
     {
       id: 'advanced',
-      name: 'Advanced Options Scanner',
-      description: 'Real institutional data analysis with risk-reward optimization',
+      name: 'Educational Options Analysis',
+      description: 'Institutional data analysis for educational learning purposes',
       icon: Brain
     },
     {
       id: 'scanner',
-      name: 'AI Scanner',
-      description: 'Multi-factor algorithm to find high-probability moves',
+      name: 'Educational AI Analysis',
+      description: 'Multi-factor analysis examples for learning purposes',
       icon: Search
     },
     {
       id: 'storm',
-      name: 'Storm',
-      description: 'High money flow activity detection',
+      name: 'Educational Flow Analysis',
+      description: 'Money flow activity examples for educational study',
       icon: Zap
     }
   ];

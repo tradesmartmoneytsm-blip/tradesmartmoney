@@ -381,7 +381,18 @@ function HomeComponent() {
           <div className="text-center mt-12">
             <div className="inline-flex items-center bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20">
               <TrendingUp className="h-5 w-5 text-green-400 mr-2" />
-              <span className="text-blue-100">Join 10,000+ traders mastering professional strategies</span>
+              <span className="text-blue-100">Join 10,000+ learners studying professional trading concepts</span>
+            </div>
+          </div>
+          
+          {/* SEBI Disclaimer */}
+          <div className="text-center mt-8">
+            <div className="max-w-4xl mx-auto bg-red-50/90 backdrop-blur-sm rounded-lg p-4 border border-red-200">
+              <p className="text-sm text-red-800 font-medium">
+                <strong>SEBI DISCLAIMER:</strong> This website is not registered with SEBI. We do not provide investment advisory services. 
+                All content is for educational purposes only and should not be considered as recommendations to buy or sell securities. 
+                Please consult with SEBI registered investment advisors before making any investment decisions.
+              </p>
             </div>
           </div>
         </div>

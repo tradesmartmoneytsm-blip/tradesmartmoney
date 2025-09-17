@@ -144,21 +144,21 @@ export function Navigation({
     },
     {
       id: 'swing',
-      label: 'Swing Trades',
+      label: 'Educational Swing Analysis',
       icon: <TrendingUp className={brandTokens.icons.sm} />,
-      description: 'Multi-day trading opportunities'
+      description: 'Multi-day trading examples for educational study'
     },
     {
       id: 'intraday',
-      label: 'Intraday',
+      label: 'Educational Intraday Analysis',
       icon: <BarChart3 className={brandTokens.icons.sm} />,
-      description: 'Same-day trading signals'
+      description: 'Same-day trading examples for learning'
     },
     {
       id: 'smart-money-flow',
-      label: 'Smart Money Flow',
+      label: 'Educational Money Flow Study',
       icon: <TrendingUp className={brandTokens.icons.sm} />,
-      description: 'Track institutional money movement and options flow'
+      description: 'Study institutional money movement for educational purposes'
     },
     {
       id: 'news',

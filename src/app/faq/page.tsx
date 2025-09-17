@@ -17,13 +17,13 @@ const faqData: FAQItem[] = [
     id: '1',
     category: 'Platform',
     question: 'What is TradeSmartMoney?',
-    answer: 'TradeSmartMoney is a professional trading platform that provides real-time market data, analysis tools, and educational content to help traders make informed investment decisions in the Indian financial markets. Visit our <a href="/" class="text-blue-600 hover:underline font-medium">main platform</a> to explore all available features and start your trading journey.'
+    answer: 'TradeSmartMoney is an educational platform that provides market data, analysis examples, and educational content to help users learn about the Indian financial markets. All content is for educational purposes only. Visit our <a href="/" class="text-blue-600 hover:underline font-medium">main platform</a> to explore educational features and start your learning journey.'
   },
   {
     id: '2',
     category: 'Platform',
     question: 'Is TradeSmartMoney free to use?',
-    answer: 'We offer both free and premium features. Basic market data and educational content are available for free, while advanced analytics, real-time alerts, and premium tools require a subscription.'
+    answer: 'We offer both free and premium educational features. Basic market data and educational content are available for free, while advanced educational analytics and premium learning tools require a subscription. All content is for educational purposes only.'
   },
   {
     id: '3',
@@ -41,7 +41,7 @@ const faqData: FAQItem[] = [
     id: '5',
     category: 'Trading',
     question: 'Do you provide investment advice?',
-    answer: 'No, TradeSmartMoney does not provide investment advice. We provide educational content, market analysis, and tools for research purposes only. All trading decisions are your responsibility.'
+    answer: 'No, TradeSmartMoney does not provide investment advice. We are not SEBI registered advisors. We provide educational content, market analysis examples, and learning tools for educational purposes only. All content is for learning and research purposes. Please consult SEBI registered investment advisors for personalized advice.'
   },
   {
     id: '6',
