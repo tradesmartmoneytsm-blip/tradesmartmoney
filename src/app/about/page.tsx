@@ -119,10 +119,10 @@ export default function About() {
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Data-Driven Decisions</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">Educational Data Analysis</h3>
                 <p className="text-gray-700">
-                  We believe in the power of data. Our platform aggregates information from multiple reliable sources, 
-                  processes it through advanced algorithms, and presents actionable insights.
+                  We believe in the power of data for educational purposes. Our platform aggregates information from multiple reliable sources, 
+                  processes it through educational algorithms, and presents learning insights for educational study only.
                 </p>
               </div>
               <div>
