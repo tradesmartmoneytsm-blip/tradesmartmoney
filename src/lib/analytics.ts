@@ -9,7 +9,6 @@ export const isGoogleAnalyticsConfigured = () => {
 // Initialize Google Analytics
 export const initGA = () => {
   if (!isGoogleAnalyticsConfigured()) {
-    console.log('⚠️ Google Analytics not configured');
     return;
   }
 

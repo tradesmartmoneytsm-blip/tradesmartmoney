@@ -38,13 +38,11 @@ export function Market({ initialSubSection }: MarketProps) {
   const fetchSectorData = async () => {
     try {
       setIsRefreshing(true);
-      console.log('📡 Fetching sector data from API...');
       
       const response = await fetch('/api/sector-data');
       const result = await response.json();
       
       if (result.success && result.data) {
-        console.log('✅ Received sector data:', result.data.length, 'sectors');
         setSectorData(result.data);
         setLastUpdated(new Date());
       } else {

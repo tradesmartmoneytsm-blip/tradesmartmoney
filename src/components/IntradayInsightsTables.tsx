@@ -96,11 +96,9 @@ export function IntradayInsightsTables() {
       // Fetch real data from API with fallback to mock data
       const [callsData, putsData] = await Promise.all([
         fetchMostActiveStockCalls().catch(() => {
-          console.log('[FALLBACK] Using mock data for calls');
           return generateMockData('calls');
         }),
         fetchMostActiveStockPuts().catch(() => {
-          console.log('[FALLBACK] Using mock data for puts');
           return generateMockData('puts');
         })
       ]);

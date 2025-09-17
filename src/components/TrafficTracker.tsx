@@ -7,26 +7,12 @@ export function TrafficTracker() {
     // Simple traffic tracking that works immediately
     const trackVisit = async () => {
       try {
-        // Track page view to your own analytics
-        const visitData = {
-          url: window.location.href,
-          referrer: document.referrer,
-          userAgent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-          sessionId: sessionStorage.getItem('session_id') || 
-                    (() => {
-                      const id = Math.random().toString(36).substring(2);
-                      sessionStorage.setItem('session_id', id);
-                      return id;
-                    })()
-        };
+        // Generate session ID for tracking
+        if (!sessionStorage.getItem('session_id')) {
+          const id = Math.random().toString(36).substring(2);
+          sessionStorage.setItem('session_id', id);
+        }
 
-        // Log for debugging (you can see this in browser console)
-        console.log('📊 Page visit tracked:', {
-          page: window.location.pathname,
-          title: document.title,
-          timestamp: visitData.timestamp
-        });
 
         // Optional: Send to your own analytics endpoint
         // fetch('/api/analytics/track', {
@@ -48,8 +34,6 @@ export function TrafficTracker() {
           window.gtag('event', 'user_engagement', {
             engagement_time_msec: 1000
           });
-          
-          console.log('🔥 GA tracking forced');
         }
 
       } catch (error) {

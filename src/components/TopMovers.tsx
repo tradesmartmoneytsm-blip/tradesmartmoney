@@ -55,13 +55,11 @@ export function TopMovers({ type, title, icon }: TopMoversProps) {
       if (showRefreshLoader) setIsRefreshing(true);
       setError(null);
       
-      console.log(`📡 Fetching ${type} for ${selectedIndex}...`);
       
       const response = await fetch(`/api/top-movers?type=${type}&index=${selectedIndex}`);
       const result = await response.json();
       
       if (result.success && result.data) {
-        console.log(`✅ Received ${result.data.length} ${type.toLowerCase()}`);
         setStocks(result.data);
         setLastUpdated(new Date());
       } else {

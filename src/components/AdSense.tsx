@@ -24,7 +24,6 @@ export function AutoAds() {
             google_ad_client: "ca-pub-6601377389077210",
             enable_page_level_ads: true
           });
-          console.log('Auto Ads enabled via cookie consent');
         }
       } catch (error) {
         console.error('Auto Ads error:', error);

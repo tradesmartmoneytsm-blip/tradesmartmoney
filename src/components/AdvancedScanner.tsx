@@ -77,7 +77,6 @@ export function AdvancedScanner() {
     setSummary(null);
 
     try {
-      console.log(`🧠 Starting advanced analysis: ${analysisType}`);
       
       const response = await fetch('/api/advanced-scanner', {
         method: 'POST',
@@ -103,7 +102,6 @@ export function AdvancedScanner() {
       setSummary(data.summary);
       setLastScan(new Date().toLocaleTimeString());
       
-      console.log(`🎯 Advanced scan completed: ${data.results.length} high-strength opportunities`);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to run advanced scanner';

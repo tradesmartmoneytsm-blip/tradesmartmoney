@@ -64,7 +64,6 @@ export function IntradayScanner() {
     setSummary(null);
 
     try {
-      console.log(`🔍 Starting intraday scan: ${scanType}`);
       
       const response = await fetch('/api/intraday-scanner', {
         method: 'POST',
@@ -88,7 +87,6 @@ export function IntradayScanner() {
       setSummary(data.summary);
       setLastScan(new Date().toLocaleTimeString());
       
-      console.log(`🎯 Scan completed: ${data.results.length} opportunities found`);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to run scanner';

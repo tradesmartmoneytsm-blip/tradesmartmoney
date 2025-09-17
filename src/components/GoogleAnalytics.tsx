@@ -40,8 +40,6 @@ export function GoogleAnalytics() {
               cookie_expires: 63072000
             });
             
-            // Debug tracking
-            console.log('🔥 Google Analytics initialized with ID: ${GA_MEASUREMENT_ID}');
             
             // Track initial page view
             gtag('event', 'page_view', {
