@@ -156,7 +156,7 @@ export function Navigation({
     },
     {
       id: 'smart-money-flow',
-      label: 'Educational Money Flow Study',
+      label: 'Smart Money Flow',
       icon: <TrendingUp className={brandTokens.icons.sm} />,
       description: 'Study institutional money movement for educational purposes'
     },

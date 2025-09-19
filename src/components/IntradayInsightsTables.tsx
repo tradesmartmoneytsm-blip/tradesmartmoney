@@ -304,7 +304,7 @@ export function IntradayInsightsTables() {
           <div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
           <Zap className="w-8 h-8 mr-3 text-blue-600" />
-          Educational Money Flow Study
+          Smart Money Flow
         </h1>
         <p className="text-gray-600">
           Study institutional money movement and options flow data for educational purposes
