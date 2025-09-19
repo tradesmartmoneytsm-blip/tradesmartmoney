@@ -334,33 +334,23 @@ export function Navigation({
         </div>
       </div>
 
-      {/* Mobile Market Indices Bar - Simplified */}
+      {/* Mobile Market Indices Bar - Show all indices */}
       <div className="lg:hidden bg-slate-800 text-white py-2 px-3">
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            {isMarketOpen ? (
-              <div className="flex items-center space-x-1">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-green-400 text-xs font-medium">Live</span>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-1">
-                <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                <span className="text-red-400 text-xs font-medium">Closed</span>
-              </div>
-            )}
-          </div>
+          {/* Remove redundant market status since it's already shown above */}
           
-          {/* Show only Nifty on mobile for simplicity */}
+          {/* Show Nifty, Bank Nifty, and Finnifty on mobile */}
           {marketIndices.length > 0 && (
-            <div className="flex items-center space-x-3">
-              <div className="text-center">
-                <div className="text-xs text-white/80">NIFTY</div>
-                <div className="flex items-center space-x-1 text-xs">
-                  <span className="text-white font-mono">{formatCurrency(marketIndices[0]?.current || 0)}</span>
-                  {formatChange(marketIndices[0]?.change || 0, marketIndices[0]?.changePercent || 0)}
+            <div className="flex items-center space-x-3 overflow-x-auto scrollbar-thin w-full justify-between px-2">
+              {marketIndices.slice(0, 3).map((index, idx) => (
+                <div key={idx} className="text-center flex-shrink-0 min-w-0">
+                  <div className="text-xs text-white/90 font-semibold whitespace-nowrap">{index.displayName}</div>
+                  <div className="flex items-center space-x-1 text-xs justify-center">
+                    <span className="text-white font-mono text-xs">{formatCurrency(index.current)}</span>
+                    {formatChange(index.change, index.changePercent)}
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           )}
         </div>
@@ -377,12 +367,12 @@ export function Navigation({
                       aria-label="Go to homepage"
                       title="TradeSmartMoney - Go to homepage"
                     >
-                      <div className="w-6 sm:w-7 md:w-8 h-6 sm:h-7 md:h-8 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-                        <TrendingUp className="w-3 sm:w-4 md:w-4 h-3 sm:h-4 md:h-4 text-white" />
+                      <div className="w-10 sm:w-11 md:w-12 lg:w-13 xl:w-14 h-10 sm:h-11 md:h-12 lg:h-13 xl:h-14 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                        <TrendingUp className="w-5 sm:w-6 md:w-6 lg:w-7 xl:w-8 h-5 sm:h-6 md:h-6 lg:h-7 xl:h-8 text-white" />
                       </div>
                       <div className="hidden sm:block">
-                        <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-gray-900">TradeSmartMoney</h1>
-                        <p className="text-xs text-gray-600 hidden lg:block">Professional Trading Platform</p>
+                        <h1 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900">TradeSmartMoney</h1>
+                        <p className="text-xs sm:text-sm text-gray-600 hidden lg:block">Professional Trading Platform</p>
                       </div>
                     </button>
                   </div>
