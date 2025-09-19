@@ -1,3 +1,7 @@
+/* Import custom styles first */
+@import '../styles/mobile.css';
+@import '../styles/resolution-adaptive.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

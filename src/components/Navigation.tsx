@@ -261,7 +261,7 @@ export function Navigation({
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-lg">
+    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-lg navigation-compact">
       {/* Top Status Bar */}
       <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white py-2 px-2 sm:px-4 lg:px-6 xl:px-8">
         <div className="w-full flex items-center justify-between text-xs sm:text-sm lg:text-base">
@@ -334,34 +334,40 @@ export function Navigation({
         </div>
       </div>
 
-      {/* Mobile Market Indices Bar */}
-      <div className="lg:hidden bg-slate-800 text-white py-2 px-2 sm:px-4 overflow-x-auto scrollbar-thin">
-        <div className="flex space-x-4 min-w-max">
-          {marketIndices.length > 0 ? (
-            marketIndices.map((index, idx) => (
-              <div key={idx} className="flex items-center space-x-2 min-w-0">
-                <span className="text-white font-medium text-xs whitespace-nowrap">{index.displayName}</span>
-                <div className="flex flex-col text-xs">
-                  <span className="text-white/90 font-mono">{formatCurrency(index.current)}</span>
-                  {formatChange(index.change, index.changePercent)}
+      {/* Mobile Market Indices Bar - Simplified */}
+      <div className="lg:hidden bg-slate-800 text-white py-2 px-3">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            {isMarketOpen ? (
+              <div className="flex items-center space-x-1">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-green-400 text-xs font-medium">Live</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-1">
+                <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                <span className="text-red-400 text-xs font-medium">Closed</span>
+              </div>
+            )}
+          </div>
+          
+          {/* Show only Nifty on mobile for simplicity */}
+          {marketIndices.length > 0 && (
+            <div className="flex items-center space-x-3">
+              <div className="text-center">
+                <div className="text-xs text-white/80">NIFTY</div>
+                <div className="flex items-center space-x-1 text-xs">
+                  <span className="text-white font-mono">{formatCurrency(marketIndices[0]?.current || 0)}</span>
+                  {formatChange(marketIndices[0]?.change || 0, marketIndices[0]?.changePercent || 0)}
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="flex space-x-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center space-x-2">
-                  <div className="loading-shimmer w-16 h-3 rounded"></div>
-                  <div className="loading-shimmer w-12 h-3 rounded"></div>
-                </div>
-              ))}
             </div>
           )}
         </div>
       </div>
 
               {/* Main Navigation with Integrated Branding */}
-              <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-3 sm:py-4 bg-white border-b border-gray-100 shadow-sm">
+              <div className="w-full px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 py-2 sm:py-3 md:py-3 lg:py-4 bg-white border-b border-gray-100 shadow-sm">
                 <div className="flex items-center">
                   {/* TradeSmartMoney Branding - Left Side */}
                   <div className="flex items-center">
@@ -371,12 +377,12 @@ export function Navigation({
                       aria-label="Go to homepage"
                       title="TradeSmartMoney - Go to homepage"
                     >
-                      <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-                        <TrendingUp className="w-4 sm:w-5 h-4 sm:h-5 text-white" />
+                      <div className="w-7 sm:w-8 md:w-9 h-7 sm:h-8 md:h-9 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                        <TrendingUp className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-white" />
                       </div>
                       <div className="hidden sm:block">
-                        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">TradeSmartMoney</h1>
-                        <p className="text-xs sm:text-sm text-gray-600 hidden lg:block">Professional Trading Platform</p>
+                        <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-900">TradeSmartMoney</h1>
+                        <p className="text-xs text-gray-600 hidden lg:block">Professional Trading Platform</p>
                       </div>
                     </button>
                   </div>
@@ -387,7 +393,7 @@ export function Navigation({
                       <button
                         key={item.id}
                         onClick={() => handleMenuItemClick(item.id)}
-                        className={`flex items-center space-x-1.5 xl:space-x-2 px-2 sm:px-3 lg:px-4 py-2 rounded-lg xl:rounded-xl text-xs sm:text-sm lg:text-base font-medium transition-all duration-300 group ${
+                        className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 md:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg font-medium transition-all duration-300 group text-xs sm:text-sm md:text-sm lg:text-base ${
                           activeSection === item.id
                             ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg'
                             : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
@@ -424,33 +430,55 @@ export function Navigation({
                 </div>
               </div>
 
-      {/* Improved Mobile Navigation Menu */}
+      {/* Clean Mobile Navigation Menu */}
       {showMobileMenu && (
-        <div className="lg:hidden bg-white border-t border-gray-200/50 shadow-lg">
-          <div className="px-4 py-4 space-y-1 max-h-[70vh] overflow-y-auto scrollbar-thin">
+        <div className="lg:hidden bg-white border-t border-gray-200 shadow-xl">
+          <div className="px-3 py-3 space-y-1 max-h-[60vh] overflow-y-auto">
             {menuItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleMenuItemClick(item.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 active:scale-[0.98] ${
+                className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-medium transition-colors ${
                   activeSection === item.id
-                    ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-sm'
-                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600 active:bg-blue-100'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
                 }`}
               >
-                <div className={`p-2 rounded-lg transition-colors ${
+                <div className={`p-2 rounded-lg ${
                   activeSection === item.id 
                     ? 'bg-white/20' 
-                    : 'bg-gray-100 group-hover:bg-blue-100'
+                    : 'bg-blue-50'
                 }`}>
                   {item.icon}
                 </div>
-                <div className="text-left">
-                  <div className="font-semibold">{item.label}</div>
-                  <div className="text-xs opacity-75">{item.description}</div>
+                <div className="text-left flex-1">
+                  <div className="font-semibold text-sm">{item.label}</div>
+                </div>
+                <div className="text-gray-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </button>
             ))}
+            
+            {/* Mobile-specific Blog Access */}
+            <button
+              onClick={() => handleMenuItemClick('blog')}
+              className="w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 border-t border-gray-100 mt-2 pt-4"
+            >
+              <div className="p-2 rounded-lg bg-blue-50">
+                <Newspaper className="w-4 h-4" />
+              </div>
+              <div className="text-left flex-1">
+                <div className="font-semibold text-sm">Blog</div>
+              </div>
+              <div className="text-gray-400">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </button>
           </div>
         </div>
       )}

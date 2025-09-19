@@ -219,12 +219,12 @@ export function Market({ initialSubSection }: MarketProps) {
   };
 
   return (
-    <article className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-4 sm:py-6 lg:py-8">
+    <article className="w-full px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 2xl:px-8 py-2 sm:py-3 md:py-4 lg:py-5">
       {/* Google Auto Ads will handle ad placement automatically */}
       
       {/* Compact Page Header */}
-      <header className="mb-6 lg:mb-8">
-        <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">Market Analysis</h1>
+      <header className="mb-3 sm:mb-4 lg:mb-6">
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">Market Analysis</h1>
         <p className="text-sm lg:text-base text-gray-600">
           Real-time market data, sector performance analysis, and institutional investment flows.
         </p>

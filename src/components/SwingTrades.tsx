@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import NextImage from 'next/image';
 import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn, BarChart3, Zap, TrendingUp as TrendingUpIcon, DollarSign } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
+import { brandTokens } from '@/lib/design-tokens';
 // Auto ads will handle all ad placement automatically
 
 interface ValueStock {
@@ -255,7 +256,7 @@ export function SwingTrades() {
   const [trades, setTrades] = useState<SwingTrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [, setLastUpdated] = useState<Date | null>(null);
   const [selectedImage, setSelectedImage] = useState<{ url: string; symbol: string } | null>(null);
   const [activeStrategy, setActiveStrategy] = useState<string>('BIT');
 
@@ -841,8 +842,8 @@ export function SwingTrades() {
 
     return (
       <div className="mb-4">
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-2">
-          <div className="flex flex-wrap gap-1">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-2 sm:p-3">
+          <div className="flex flex-wrap gap-1 sm:gap-2">
             {strategies.map((strategy) => {
               // Special handling for Value Buying strategy
               let strategyTrades, stats;
@@ -861,7 +862,7 @@ export function SwingTrades() {
                 key={strategy.id}
                 onClick={() => setActiveStrategy(strategy.id)}
                 className={`
-                  group flex items-center gap-3 px-6 py-4 rounded-lg transition-all duration-300 hover:-translate-y-0.5
+                  group flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 rounded-lg transition-all duration-300 hover:-translate-y-0.5
                   ${isActive 
                     ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg ring-2 ring-blue-400/20 transform scale-105' 
                     : 'bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 hover:from-blue-50 hover:to-purple-50 hover:text-blue-800 hover:shadow-md'
@@ -873,9 +874,9 @@ export function SwingTrades() {
                     {strategy.icon}
                   </div>
                 </div>
-                <div className="text-left">
-                  <div className="font-bold text-sm tracking-wide">{strategy.label}</div>
-                  <div className={`text-xs font-medium ${isActive ? 'text-blue-100' : 'text-gray-600 group-hover:text-blue-700'}`}>
+                <div className="text-left flex-1">
+                  <div className="font-bold text-xs sm:text-sm tracking-wide">{strategy.label}</div>
+                  <div className={`text-xs font-medium ${isActive ? 'text-blue-100' : 'text-gray-600 group-hover:text-blue-700'} hidden sm:block`}>
                     {strategy.id === 'Value Buying' 
                       ? `${stats.runningTrades} stocks available`
                       : `${stats.totalTrades} trades • ${stats.runningTrades} active`
@@ -924,7 +925,7 @@ export function SwingTrades() {
   }
 
   return (
-    <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-4 sm:py-6 lg:py-8">
+    <div className={`${brandTokens.spacing.page.fullWidthPadded} ${brandTokens.spacing.page.yCompact}`}>
       {/* Google Auto Ads will handle ad placement automatically */}
       
       {/* Header */}

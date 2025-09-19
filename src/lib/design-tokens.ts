@@ -112,22 +112,25 @@ export const brandTokens = {
     }
   },
 
-  // Spacing & Layout
+  // Spacing & Layout - Resolution Aware
   spacing: {
-    // Page Layout
+    // Page Layout - Adaptive to viewport height
     page: {
-      x: 'px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12',
-      y: 'py-4 sm:py-6 lg:py-8 xl:py-12',
+      x: 'px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 2xl:px-8',
+      y: 'py-2 sm:py-3 md:py-4 lg:py-5 xl:py-6',
+      yCompact: 'py-1 sm:py-2 md:py-3 lg:py-4',
       container: 'max-w-7xl mx-auto',
       narrow: 'max-w-4xl mx-auto',
       wide: 'max-w-8xl mx-auto',
       fullWidth: 'w-full',
-      fullWidthPadded: 'w-full px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12',
+      fullWidthPadded: 'w-full px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 2xl:px-8',
     },
-    // Sections
+    // Sections - Height aware
     section: {
-      y: 'py-8 sm:py-12 lg:py-16 xl:py-20',
-      gap: 'space-y-8 sm:space-y-12 lg:space-y-16',
+      y: 'py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12',
+      yCompact: 'py-2 sm:py-3 md:py-4 lg:py-5',
+      gap: 'space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-10',
+      gapCompact: 'space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-5',
     },
     // Components
     component: {
@@ -244,6 +247,21 @@ export const brandTokens = {
     lg: '1024px',
     xl: '1280px',
     '2xl': '1536px',
+  },
+
+  // Resolution-specific utilities
+  resolution: {
+    // Common desktop resolutions
+    compact: 'max-h-screen-3/4', // For 1360x768, 1366x768
+    standard: 'max-h-screen', // For 1920x1080+
+    ultrawide: 'max-h-screen', // For 2560x1440+
+    
+    // Viewport height classes
+    viewport: {
+      compact: '[&>*]:py-1 [&>*]:my-1', // Tight spacing for short screens
+      standard: '[&>*]:py-2 [&>*]:my-2', // Normal spacing
+      spacious: '[&>*]:py-3 [&>*]:my-3', // Generous spacing for tall screens
+    }
   }
 };
 

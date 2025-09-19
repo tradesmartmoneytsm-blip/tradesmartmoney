@@ -39,13 +39,13 @@ export function IntradayTrades() {
   ];
 
   return (
-    <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-4 sm:py-6 lg:py-8">
+    <div className="w-full px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 2xl:px-8 py-2 sm:py-3 md:py-4 lg:py-5">
       {/* Google Auto Ads will handle ad placement automatically */}
       
       {/* Page Header with Strategy Selection */}
-      <div className="mb-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2 font-serif">Intraday Trading Strategies</h2>
+      <div className="mb-4 sm:mb-6">
+        <div className="mb-3 sm:mb-4">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2 font-serif">Intraday Trading Strategies</h2>
           <p className="text-gray-600">
             Choose your preferred strategy for today&apos;s trading opportunities.
           </p>
