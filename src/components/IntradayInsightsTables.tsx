@@ -144,7 +144,10 @@ export function IntradayInsightsTables() {
 
   // Load data on component mount
   useEffect(() => {
-    loadData();
+    // Add a small delay to ensure component is fully mounted
+    const timer = setTimeout(() => {
+      loadData();
+    }, 100);
     
     // Auto-refresh every 30 seconds during market hours (for demo)
     const interval = setInterval(() => {
@@ -160,7 +163,10 @@ export function IntradayInsightsTables() {
       }
     }, 30000); // 30 seconds for demo, will be 5 minutes in production
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, [loadData]);
 
   const renderTable = (tableData: TableData, index: number) => {

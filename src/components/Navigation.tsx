@@ -144,7 +144,7 @@ export function Navigation({
     },
     {
       id: 'swing',
-      label: 'Educational Swing Analysis',
+      label: 'Swing Trade',
       icon: <TrendingUp className={brandTokens.icons.sm} />,
       description: 'Multi-day trading examples for educational study'
     },
@@ -224,6 +224,13 @@ export function Navigation({
     // Handle blog navigation differently as it's a separate page
     if (itemId === 'blog') {
       window.location.href = '/blog';
+      return;
+    }
+    
+    // Handle direct navigation for smart-money-flow to ensure it works consistently
+    if (itemId === 'smart-money-flow') {
+      // Force a page refresh to ensure clean loading
+      window.location.href = '/smart-money-flow';
       return;
     }
     

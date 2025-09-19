@@ -929,22 +929,7 @@ export function SwingTrades() {
       
       {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex justify-center items-center gap-4">
-            <button
-              onClick={fetchTrades}
-              className="group flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-purple-700 transform hover:-translate-y-0.5 transition-all duration-300"
-            >
-              <RefreshCw className="w-3 h-3" />
-              Refresh
-            </button>
-            {lastUpdated && (
-              <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-full px-4 py-2 shadow-sm">
-                <p className="text-sm font-medium text-gray-700">
-                  ⏰ Updated: {lastUpdated.toLocaleTimeString('en-IN')}
-                </p>
-              </div>
-            )}
-          </div>
+          {/* Removed refresh button and updated time */}
         </div>
 
         {/* Tab Navigation */}
