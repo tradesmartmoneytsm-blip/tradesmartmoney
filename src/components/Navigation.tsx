@@ -53,7 +53,17 @@ export function Navigation({
       // Check if it's a weekday (Monday = 1, Friday = 5)
       const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
       const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
-      setIsMarketOpen(isWeekday);
+      
+      // Check if it's within market hours (9:15 AM to 3:30 PM IST)
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const currentTimeMinutes = hours * 60 + minutes;
+      const marketStart = 9 * 60 + 15; // 9:15 AM
+      const marketEnd = 15 * 60 + 30; // 3:30 PM
+      const isWithinHours = currentTimeMinutes >= marketStart && currentTimeMinutes <= marketEnd;
+      
+      // Market is open only if it's a weekday AND within trading hours
+      setIsMarketOpen(isWeekday && isWithinHours);
     };
 
     updateTimeAndMarketStatus();
@@ -211,12 +221,6 @@ export function Navigation({
           description: 'Real-time strategy performance tracking'
         },
       ]
-    },
-    {
-      id: 'blog',
-      label: 'Blog',
-      icon: <Newspaper className={brandTokens.icons.sm} />,
-      description: 'Trading insights and market analysis'
     }
   ];
 
@@ -259,8 +263,8 @@ export function Navigation({
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-lg">
       {/* Top Status Bar */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white py-2 px-4">
-        <div className={`${brandTokens.spacing.page.container} flex items-center justify-between text-sm`}>
+      <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white py-2 px-2 sm:px-4 lg:px-6 xl:px-8">
+        <div className="w-full flex items-center justify-between text-xs sm:text-sm lg:text-base">
           {/* Market Status & Time */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
@@ -300,28 +304,38 @@ export function Navigation({
             )}
           </div>
 
-          {/* User Actions */}
-          <div className="flex items-center space-x-3">
-            <button 
-              className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-              aria-label="Notifications"
-              title="Notifications"
-            >
-              <Bell className={brandTokens.icons.sm} />
-            </button>
-            <button 
-              className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-              aria-label="User menu"
-              title="User menu"
-            >
-              <User className={brandTokens.icons.sm} />
-            </button>
-          </div>
+                  {/* User Actions */}
+                  <div className="flex items-center space-x-3">
+                    <button
+                      onClick={() => handleMenuItemClick('blog')}
+                      className="hidden sm:flex items-center space-x-2 px-3 py-2 bg-white/10 text-white hover:bg-white/20 hover:text-white rounded-lg transition-all duration-200 text-sm font-semibold border border-white/20 shadow-sm"
+                      aria-label="Blog"
+                      title="Trading Blog & Market Insights"
+                    >
+                      <Newspaper className="w-4 h-4" />
+                      <span className="hidden md:inline">Blog</span>
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse hidden lg:block ml-1"></div>
+                    </button>
+                    <button
+                      className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                      aria-label="Notifications"
+                      title="Notifications"
+                    >
+                      <Bell className={brandTokens.icons.sm} />
+                    </button>
+                    <button
+                      className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                      aria-label="User menu"
+                      title="User menu"
+                    >
+                      <User className={brandTokens.icons.sm} />
+                    </button>
+                  </div>
         </div>
       </div>
 
       {/* Mobile Market Indices Bar */}
-      <div className="lg:hidden bg-slate-800 text-white py-2 px-4 overflow-x-auto scrollbar-thin">
+      <div className="lg:hidden bg-slate-800 text-white py-2 px-2 sm:px-4 overflow-x-auto scrollbar-thin">
         <div className="flex space-x-4 min-w-max">
           {marketIndices.length > 0 ? (
             marketIndices.map((index, idx) => (
@@ -346,77 +360,69 @@ export function Navigation({
         </div>
       </div>
 
-      {/* TradeSmartMoney Branding - Center Section */}
-      <div className="bg-white border-b border-gray-100 shadow-sm">
-        <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} py-6`}>
-          <div className="flex justify-center">
-            <button
-              onClick={() => handleMenuItemClick('home')}
-              className="flex items-center space-x-4 hover:opacity-80 transition-opacity"
-              aria-label="Go to homepage"
-              title="TradeSmartMoney - Go to homepage"
-            >
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <TrendingUp className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h1 className={`${brandTokens.typography.heading.lg} brand-text text-gray-900`}>TradeSmartMoney</h1>
-                <p className={`${brandTokens.typography.body.lg} text-gray-600`}>Professional Trading Platform</p>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
+              {/* Main Navigation with Integrated Branding */}
+              <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-3 sm:py-4 bg-white border-b border-gray-100 shadow-sm">
+                <div className="flex items-center">
+                  {/* TradeSmartMoney Branding - Left Side */}
+                  <div className="flex items-center">
+                    <button
+                      onClick={() => handleMenuItemClick('home')}
+                      className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity"
+                      aria-label="Go to homepage"
+                      title="TradeSmartMoney - Go to homepage"
+                    >
+                      <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                        <TrendingUp className="w-4 sm:w-5 h-4 sm:h-5 text-white" />
+                      </div>
+                      <div className="hidden sm:block">
+                        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">TradeSmartMoney</h1>
+                        <p className="text-xs sm:text-sm text-gray-600 hidden lg:block">Professional Trading Platform</p>
+                      </div>
+                    </button>
+                  </div>
 
-      {/* Main Navigation */}
-      <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} py-4`}>
-        <div className="flex items-center justify-between lg:justify-center">
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {menuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleMenuItemClick(item.id)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 group ${
-                  activeSection === item.id
-                    ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
-                }`}
-              >
-                <div className={`p-1.5 rounded-lg ${
-                  activeSection === item.id 
-                    ? 'bg-white/20' 
-                    : 'bg-gray-100 group-hover:bg-blue-100'
-                }`}>
-                  {item.icon}
+                  {/* Desktop Navigation - Immediately After Branding */}
+                  <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 flex-wrap ml-4 lg:ml-6 xl:ml-8">
+                    {menuItems.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleMenuItemClick(item.id)}
+                        className={`flex items-center space-x-1.5 xl:space-x-2 px-2 sm:px-3 lg:px-4 py-2 rounded-lg xl:rounded-xl text-xs sm:text-sm lg:text-base font-medium transition-all duration-300 group ${
+                          activeSection === item.id
+                            ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg'
+                            : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                        }`}
+                      >
+                        <div className={`p-1 lg:p-1.5 rounded ${
+                          activeSection === item.id
+                            ? 'bg-white/20'
+                            : 'bg-gray-100 group-hover:bg-blue-100'
+                        }`}>
+                          {item.icon}
+                        </div>
+                        <span className="whitespace-nowrap">{item.label}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Mobile Menu Button - Push to Right */}
+                  <div className="ml-auto">
+                    <button
+                      onClick={() => setShowMobileMenu(!showMobileMenu)}
+                      className="lg:hidden p-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      aria-label={showMobileMenu ? "Close navigation menu" : "Open navigation menu"}
+                      aria-expanded={showMobileMenu}
+                      title={showMobileMenu ? "Close menu" : "Open menu"}
+                    >
+                      {showMobileMenu ? (
+                        <X className={brandTokens.icons.md} />
+                      ) : (
+                        <Menu className={brandTokens.icons.md} />
+                      )}
+                    </button>
+                  </div>
                 </div>
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Spacer for mobile to push button to right */}
-          <div className="lg:hidden">          </div>
-
-          {/* Spacer for mobile to push button to right */}
-          <div className="lg:hidden"></div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="lg:hidden p-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            aria-label={showMobileMenu ? "Close navigation menu" : "Open navigation menu"}
-            aria-expanded={showMobileMenu}
-            title={showMobileMenu ? "Close menu" : "Open menu"}
-          >
-            {showMobileMenu ? (
-              <X className={brandTokens.icons.md} />
-            ) : (
-              <Menu className={brandTokens.icons.md} />
-            )}
-          </button>
-        </div>
-      </div>
+              </div>
 
       {/* Improved Mobile Navigation Menu */}
       {showMobileMenu && (

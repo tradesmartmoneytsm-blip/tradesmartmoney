@@ -219,7 +219,7 @@ export function Market({ initialSubSection }: MarketProps) {
   };
 
   return (
-    <article className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+    <article className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-4 sm:py-6 lg:py-8">
       {/* Google Auto Ads will handle ad placement automatically */}
       
       {/* Compact Page Header */}

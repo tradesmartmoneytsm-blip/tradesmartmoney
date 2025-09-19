@@ -840,7 +840,7 @@ export function SwingTrades() {
     }, []);
 
     return (
-      <div className="mb-8">
+      <div className="mb-4">
         <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-2">
           <div className="flex flex-wrap gap-1">
             {strategies.map((strategy) => {
@@ -924,11 +924,11 @@ export function SwingTrades() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+    <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-4 sm:py-6 lg:py-8">
       {/* Google Auto Ads will handle ad placement automatically */}
       
       {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-2">
           {/* Removed refresh button and updated time */}
         </div>
 
@@ -936,7 +936,7 @@ export function SwingTrades() {
         <TabNavigation />
 
         {/* Active Strategy Section */}
-        <div className="space-y-5">
+        <div className="space-y-4">
           <StrategySection
             strategy={activeStrategy}
             trades={groupedTrades[activeStrategy] || []}

@@ -293,7 +293,7 @@ export function IntradayInsightsTables() {
   };
 
   return (
-    <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} py-8`}>
+    <div className={`${brandTokens.spacing.page.fullWidthPadded} py-4 sm:py-6 lg:py-8`}>
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">

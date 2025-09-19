@@ -116,11 +116,13 @@ export const brandTokens = {
   spacing: {
     // Page Layout
     page: {
-      x: 'px-4 sm:px-6 lg:px-8 xl:px-12',
-      y: 'py-6 sm:py-8 lg:py-12 xl:py-16',
+      x: 'px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12',
+      y: 'py-4 sm:py-6 lg:py-8 xl:py-12',
       container: 'max-w-7xl mx-auto',
       narrow: 'max-w-4xl mx-auto',
       wide: 'max-w-8xl mx-auto',
+      fullWidth: 'w-full',
+      fullWidthPadded: 'w-full px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12',
     },
     // Sections
     section: {

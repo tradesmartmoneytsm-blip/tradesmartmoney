@@ -10,11 +10,11 @@ interface PageLayoutProps {
 
 export function PageLayout({ children, title, description, className }: PageLayoutProps) {
   return (
-    <div className={cn(`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x} ${brandTokens.spacing.page.y}`, className)}>
+    <div className={cn(`${brandTokens.spacing.page.fullWidthPadded} ${brandTokens.spacing.page.y}`, className)}>
       <div className={brandTokens.spacing.section.gap}>
-        <h2 className={brandTokens.typography.heading.xl}>{title}</h2>
+        <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold">{title}</h2>
         {description && (
-          <p className={cn(brandTokens.typography.body.lg, 'mt-3 sm:mt-4')}>
+          <p className={cn("text-sm sm:text-base lg:text-lg leading-relaxed", 'mt-3 sm:mt-4')}>
             {description}
           </p>
         )}

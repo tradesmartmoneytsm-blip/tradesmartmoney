@@ -392,7 +392,7 @@ export function AlgoTrading({ initialSubSection }: AlgoTradingProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+    <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-4 sm:py-6 lg:py-8">
       {/* Compact Page Header */}
       <div className="mb-6 lg:mb-8">
         <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">Algorithmic Trading</h2>

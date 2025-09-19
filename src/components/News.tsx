@@ -257,7 +257,7 @@ export function News() {
     : newsArticles.filter(article => article.category === activeCategory);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+    <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-4 sm:py-6 lg:py-8">
       {/* Header Advertisement */}
       {/* Auto ads will handle all ad placement automatically */}
 
