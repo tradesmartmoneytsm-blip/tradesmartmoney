@@ -377,23 +377,23 @@ export function Navigation({
                       aria-label="Go to homepage"
                       title="TradeSmartMoney - Go to homepage"
                     >
-                      <div className="w-7 sm:w-8 md:w-9 h-7 sm:h-8 md:h-9 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-                        <TrendingUp className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-white" />
+                      <div className="w-6 sm:w-7 md:w-8 h-6 sm:h-7 md:h-8 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                        <TrendingUp className="w-3 sm:w-4 md:w-4 h-3 sm:h-4 md:h-4 text-white" />
                       </div>
                       <div className="hidden sm:block">
-                        <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-900">TradeSmartMoney</h1>
+                        <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-gray-900">TradeSmartMoney</h1>
                         <p className="text-xs text-gray-600 hidden lg:block">Professional Trading Platform</p>
                       </div>
                     </button>
                   </div>
 
                   {/* Desktop Navigation - Immediately After Branding */}
-                  <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 flex-wrap ml-4 lg:ml-6 xl:ml-8">
+                  <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 flex-wrap ml-2 lg:ml-4 xl:ml-6 menu-container">
                     {menuItems.map((item) => (
                       <button
                         key={item.id}
                         onClick={() => handleMenuItemClick(item.id)}
-                        className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 md:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg font-medium transition-all duration-300 group text-xs sm:text-sm md:text-sm lg:text-base ${
+                        className={`menu-item flex items-center space-x-1 sm:space-x-1.5 px-1 sm:px-2 md:px-3 lg:px-4 py-1 sm:py-1.5 rounded-lg font-medium transition-all duration-300 group text-xs sm:text-sm md:text-sm lg:text-base whitespace-nowrap ${
                           activeSection === item.id
                             ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg'
                             : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'

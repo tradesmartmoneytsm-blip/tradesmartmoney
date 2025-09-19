@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 declare global {
   interface Window {
     adsbygoogle: unknown[];
+    __adsense_auto_ads_initialized?: boolean;
   }
 }
 
@@ -18,15 +19,55 @@ export function AutoAds() {
       // Enable Google Auto Ads only after consent
       try {
         if (typeof window !== 'undefined') {
-          // Initialize Auto Ads - this will only run once after consent
+          // Check if Auto Ads is already initialized using window flag
+          if (window.__adsense_auto_ads_initialized) {
+            return; // Already initialized, skip
+          }
+          
+          // Check if AdSense script is loaded
+          const adsenseScript = document.querySelector('script[src*="pagead/js/adsbygoogle.js"]');
+          if (!adsenseScript) {
+            // AdSense script not loaded yet, skip initialization
+            return;
+          }
+          
+          // Also check if the AdSense script has already pushed auto ads config
           const adsbygoogle = window.adsbygoogle || [];
-          adsbygoogle.push({
-            google_ad_client: "ca-pub-6601377389077210",
-            enable_page_level_ads: true
-          });
+          
+          // Ensure adsbygoogle is an array and check for existing auto ads config
+          const adsArray = Array.isArray(adsbygoogle) ? adsbygoogle : [];
+          const hasAutoAdsConfig = adsArray.some((item: unknown) => 
+            item && typeof item === 'object' && item !== null && 'enable_page_level_ads' in item
+          );
+          
+          if (hasAutoAdsConfig) {
+            window.__adsense_auto_ads_initialized = true;
+            return; // Auto ads already configured
+          }
+          
+          // Mark as initialized before pushing to prevent race conditions
+          window.__adsense_auto_ads_initialized = true;
+          
+          // Ensure we're pushing to a proper array
+          if (Array.isArray(adsbygoogle)) {
+            adsbygoogle.push({
+              google_ad_client: "ca-pub-6601377389077210",
+              enable_page_level_ads: true
+            });
+          } else {
+            // Initialize the array if it's not already one
+            window.adsbygoogle = [{
+              google_ad_client: "ca-pub-6601377389077210",
+              enable_page_level_ads: true
+            }];
+          }
         }
       } catch (error) {
         console.error('Auto Ads error:', error);
+        // Reset flag on error so it can be retried
+        if (typeof window !== 'undefined') {
+          window.__adsense_auto_ads_initialized = false;
+        }
       }
     }
   }, []);

@@ -1,7 +1,99 @@
 /* Resolution and Viewport Height Adaptive Styles */
 
-/* Detect small height screens (like 1360x768) and apply compact spacing */
-@media (max-height: 800px) and (min-width: 1024px) {
+/* Detect very small desktop screens (1300x768 and similar) */
+@media (max-width: 1400px) and (max-height: 800px) and (min-width: 1024px) {
+  :root {
+    --ultra-compact-spacing: 0.25rem;
+    --ultra-compact-gap: 0.5rem;
+    --ultra-compact-font: 0.75rem;
+  }
+
+  /* Ultra compact everything for small desktops */
+  body {
+    zoom: 0.9;
+    transform-origin: top left;
+  }
+
+  /* Reduce all text sizes */
+  h1 { font-size: 1.25rem !important; }
+  h2 { font-size: 1.125rem !important; }
+  h3 { font-size: 1rem !important; }
+  p, div, span { font-size: 0.875rem !important; }
+  
+  /* Ultra compact tables */
+  table { font-size: 0.75rem !important; }
+  th, td { 
+    padding: 0.25rem 0.375rem !important; 
+    font-size: 0.75rem !important;
+  }
+
+  /* Ultra compact navigation */
+  .navigation-compact {
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  /* Ultra compact menu items */
+  nav button, .menu-item {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+    gap: 0.25rem !important;
+  }
+
+  /* Force single line menu */
+  .menu-container {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+  }
+
+  .menu-container::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Ultra compact content areas */
+  .content-area, main, article {
+    padding: 0.5rem !important;
+    margin: 0.25rem 0 !important;
+  }
+
+  /* Ultra compact cards */
+  .card, .bg-white {
+    padding: 0.5rem !important;
+    margin: 0.25rem 0 !important;
+  }
+
+  /* Ultra compact strategy tabs */
+  .strategy-tab {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.75rem !important;
+    margin: 0.125rem !important;
+  }
+
+  /* Ultra compact form elements */
+  input, button, select {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+    height: auto !important;
+    min-height: 2rem !important;
+  }
+
+  /* Reduce icon sizes */
+  svg, .icon {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  /* Ultra compact spacing utilities */
+  .mb-8 { margin-bottom: 1rem !important; }
+  .mb-6 { margin-bottom: 0.75rem !important; }
+  .mb-4 { margin-bottom: 0.5rem !important; }
+  .py-8 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+  .py-6 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+  .py-4 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+}
+
+/* Standard small height screens (like 1360x768) */
+@media (max-height: 800px) and (min-width: 1024px) and (min-width: 1400px) {
   :root {
     --compact-spacing: 0.5rem;
     --compact-gap: 0.75rem;
