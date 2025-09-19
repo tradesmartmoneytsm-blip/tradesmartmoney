@@ -495,6 +495,13 @@ function HomeComponent() {
               </p>
             </div>
           </div>
+
+          {/* Copyright Notice */}
+          <div className="text-center mt-8">
+            <p className="text-blue-100/80 text-sm">
+              Copyright © 2025 - TradeSmartMoney.com
+            </p>
+          </div>
         </div>
       </section>
     </div>

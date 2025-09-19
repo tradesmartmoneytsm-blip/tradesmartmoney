@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
 import { TrendingUp, Users, Shield, BarChart3, Globe, Award } from 'lucide-react';
 
@@ -16,10 +17,28 @@ export default function About() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-6">About TradeSmartMoney</h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+            <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-8">
               Educational platform providing market data, analysis examples, and learning tools 
               to help users study and understand the Indian financial markets for educational purposes only.
             </p>
+            
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link 
+                href="/" 
+                className="bg-white text-blue-600 font-semibold py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors inline-flex items-center justify-center shadow-lg"
+              >
+                <TrendingUp className="w-5 h-5 mr-2" />
+                Access Trading Platform
+              </Link>
+              <Link 
+                href="/contact" 
+                className="bg-blue-500 text-white font-semibold py-4 px-8 rounded-lg hover:bg-blue-400 transition-colors inline-flex items-center justify-center shadow-lg"
+              >
+                <Users className="w-5 h-5 mr-2" />
+                Contact Us
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -174,14 +193,22 @@ export default function About() {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">Ready to Start Smart Trading?</h2>
           <p className="text-blue-100 mb-6">
-                Constantly evolving our platform with the latest technology and market insights.
-              </p>
-          <a 
-            href="/contact" 
-            className="bg-white text-blue-600 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition-colors inline-block"
-          >
-            Get in Touch
-          </a>
+            Explore our comprehensive trading platform with real-time market data, educational tools, and advanced analytics.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/" 
+              className="bg-white text-blue-600 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition-colors inline-block"
+            >
+              Access Trading Platform
+            </Link>
+            <a 
+              href="/contact" 
+              className="bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-400 transition-colors inline-block"
+            >
+              Get in Touch
+            </a>
+          </div>
         </div>
       </div>
     </div>

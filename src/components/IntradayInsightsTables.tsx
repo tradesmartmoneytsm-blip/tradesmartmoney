@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { 
   RefreshCw, TrendingUp, TrendingDown, Activity, BarChart3, 
-  Eye, Clock, ArrowUp, ArrowDown, Zap, Target
+  Eye, Clock, Zap, Target
 } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
@@ -235,7 +235,6 @@ export function IntradayInsightsTables() {
                     <th className="text-left py-2 px-3 font-semibold text-gray-700">Rank</th>
                     <th className="text-left py-2 px-3 font-semibold text-gray-700">Symbol</th>
                     <th className="text-right py-2 px-3 font-semibold text-gray-700">Change %</th>
-                    <th className="text-center py-2 px-3 font-semibold text-gray-700">Trend</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -262,15 +261,6 @@ export function IntradayInsightsTables() {
                         }`}>
                           {item.percentage_change > 0 ? '+' : ''}{item.percentage_change}%
                         </span>
-                      </td>
-                      <td className="py-3 px-3 text-center">
-                        {item.percentage_change > 0 ? (
-                          <ArrowUp className="w-4 h-4 text-green-600 mx-auto" />
-                        ) : item.percentage_change < 0 ? (
-                          <ArrowDown className="w-4 h-4 text-red-600 mx-auto" />
-                        ) : (
-                          <div className="w-4 h-4 bg-gray-300 rounded-full mx-auto"></div>
-                        )}
                       </td>
                     </tr>
                   ))}

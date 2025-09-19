@@ -52,10 +52,27 @@ export default function Contact() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+            <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-8">
               Have questions about our platform or need support? We&apos;re here to help you succeed in your trading journey.
-              <Link href="/" className="text-white underline hover:text-blue-200 font-semibold ml-2">Explore our trading platform</Link> while you&apos;re here.
             </p>
+            
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link 
+                href="/" 
+                className="bg-white text-blue-600 font-semibold py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors inline-flex items-center justify-center shadow-lg"
+              >
+                <Mail className="w-5 h-5 mr-2" />
+                Access Trading Platform
+              </Link>
+              <Link 
+                href="/faq" 
+                className="bg-blue-500 text-white font-semibold py-4 px-8 rounded-lg hover:bg-blue-400 transition-colors inline-flex items-center justify-center shadow-lg"
+              >
+                <MessageSquare className="w-5 h-5 mr-2" />
+                View FAQ
+              </Link>
+            </div>
           </div>
         </div>
       </div>

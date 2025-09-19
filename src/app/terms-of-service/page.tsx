@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { trackPageView } from '@/lib/analytics';
+import { FileText, Home } from 'lucide-react';
 
 export default function TermsOfService() {
   useEffect(() => {
@@ -9,10 +11,38 @@ export default function TermsOfService() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <FileText className="h-16 w-16 mx-auto mb-6 text-blue-200" />
+          <h1 className="text-4xl font-bold mb-6">Terms of Service</h1>
+          <p className="text-xl text-blue-100 mb-8">
+            Understand our terms and conditions for using our trading platform and services.
+          </p>
+          
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/" 
+              className="bg-white text-blue-600 font-semibold py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors inline-flex items-center justify-center shadow-lg"
+            >
+              <Home className="w-5 h-5 mr-2" />
+              Access Trading Platform
+            </Link>
+            <Link 
+              href="/privacy-policy" 
+              className="bg-blue-500 text-white font-semibold py-4 px-8 rounded-lg hover:bg-blue-400 transition-colors inline-flex items-center justify-center shadow-lg"
+            >
+              <FileText className="w-5 h-5 mr-2" />
+              Privacy Policy
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white shadow-lg rounded-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Terms of Service</h1>
           <p className="text-gray-600 mb-6">
             <strong>Last updated:</strong> {new Date().toLocaleDateString()}
           </p>

@@ -126,10 +126,27 @@ export default function FAQ() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <HelpCircle className="h-16 w-16 mx-auto mb-6 text-blue-200" />
           <h1 className="text-4xl font-bold mb-6">Frequently Asked Questions</h1>
-          <p className="text-xl text-blue-100">
+          <p className="text-xl text-blue-100 mb-8">
             Find answers to common questions about our trading platform and services.
-            New to TradeSmart Money? <Link href="/" className="text-white underline hover:text-blue-200 font-semibold">Explore our platform</Link> to get started.
           </p>
+          
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/" 
+              className="bg-white text-blue-600 font-semibold py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors inline-flex items-center justify-center shadow-lg"
+            >
+              <HelpCircle className="w-5 h-5 mr-2" />
+              Access Trading Platform
+            </Link>
+            <Link 
+              href="/contact" 
+              className="bg-blue-500 text-white font-semibold py-4 px-8 rounded-lg hover:bg-blue-400 transition-colors inline-flex items-center justify-center shadow-lg"
+            >
+              <Search className="w-5 h-5 mr-2" />
+              Contact Support
+            </Link>
+          </div>
         </div>
       </div>
 
