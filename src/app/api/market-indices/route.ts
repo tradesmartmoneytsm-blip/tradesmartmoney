@@ -32,7 +32,8 @@ export async function GET() {
     const targetIndices = {
       'Nifty 50': 'Nifty',
       'Nifty Bank': 'Bank Nifty',
-      'Finnifty': 'Finnifty'
+      'Finnifty': 'Finnifty',
+      'India VIX': 'India VIX'
     };
 
     const marketIndices: MarketIndex[] = [];
@@ -71,7 +72,8 @@ export async function GET() {
       const fallbackData = [
         { name: 'Nifty_50', displayName: 'Nifty', current: 24741.00, change: 7.40, changePercent: 0.03 },
         { name: 'Bank_Nifty', displayName: 'Bank Nifty', current: 54114.55, change: 37.85, changePercent: 0.07 },
-        { name: 'Finnifty', displayName: 'Finnifty', current: 25889.30, change: 36.15, changePercent: 0.14 }
+        { name: 'Finnifty', displayName: 'Finnifty', current: 25889.30, change: 36.15, changePercent: 0.14 },
+        { name: 'India_VIX', displayName: 'India VIX', current: 13.42, change: -0.18, changePercent: -1.32 }
       ];
 
       return NextResponse.json({
@@ -99,7 +101,8 @@ export async function GET() {
     const fallbackData = [
       { name: 'Nifty_50', displayName: 'Nifty', current: 24741.00, change: 7.40, changePercent: 0.03 },
       { name: 'Bank_Nifty', displayName: 'Bank Nifty', current: 54114.55, change: 37.85, changePercent: 0.07 },
-      { name: 'Finnifty', displayName: 'Finnifty', current: 25889.30, change: 36.15, changePercent: 0.14 }
+      { name: 'Finnifty', displayName: 'Finnifty', current: 25889.30, change: 36.15, changePercent: 0.14 },
+      { name: 'India_VIX', displayName: 'India VIX', current: 13.42, change: -0.18, changePercent: -1.32 }
     ];
 
     return NextResponse.json({
