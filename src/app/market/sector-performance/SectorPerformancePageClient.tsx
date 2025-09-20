@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { trackPageView } from '@/lib/analytics';
-import { BarChart3, TrendingUp, Activity, Building2, Zap } from 'lucide-react';
+import { TrendingUp, Zap } from 'lucide-react';
 import { Market } from '@/components/Market';
 import { Navigation } from '@/components/Navigation';
 

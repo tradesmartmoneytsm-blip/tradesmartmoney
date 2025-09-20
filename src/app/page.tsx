@@ -347,7 +347,7 @@ function HomeComponent() {
             if (sectionId === 'market') {
               router.push(`/market/${subItemId}`);
             } else {
-              handleSectionChange(sectionId, subItemId);
+              handleSectionChange(sectionId);
             }
           }} />;
         }

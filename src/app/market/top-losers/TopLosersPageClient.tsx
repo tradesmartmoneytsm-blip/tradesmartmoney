@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { trackPageView } from '@/lib/analytics';
-import { TrendingDown, Activity, AlertTriangle, Target, ArrowDown } from 'lucide-react';
+import { AlertTriangle, Target } from 'lucide-react';
 import { Market } from '@/components/Market';
 import { Navigation } from '@/components/Navigation';
 
