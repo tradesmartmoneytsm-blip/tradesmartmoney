@@ -284,7 +284,7 @@ export function Market({ initialSubSection }: MarketProps) {
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4 lg:p-6 text-center">
           <Building2 className="w-6 h-6 lg:w-8 lg:h-8 text-blue-600 mx-auto mb-2 lg:mb-3" aria-hidden="true" />
           <h3 className="text-sm lg:text-lg font-bold text-blue-800 mb-1">Total Sectors</h3>
-          <p className="text-xs lg:text-sm text-blue-700 font-semibold">11</p>
+          <p className="text-xs lg:text-sm text-blue-700 font-semibold">{sectorData.length > 0 ? sectorData.length : '15'}</p>
           <p className="text-xs text-blue-600 mt-1">Being tracked</p>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4 lg:p-6 text-center">
