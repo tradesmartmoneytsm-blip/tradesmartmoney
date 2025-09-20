@@ -240,7 +240,10 @@ export function Market({ initialSubSection }: MarketProps) {
               {subSections.map((section) => (
                 <li key={section.id} role="none">
                   <button
-                    onClick={() => setActiveSubSection(section.id)}
+                    onClick={() => {
+                      // Navigate to separate page for each market section
+                      window.location.href = `/market/${section.id}`;
+                    }}
                     className={`w-full flex items-center space-x-2 px-3 py-2 lg:py-3 rounded-lg font-medium transition-all duration-300 text-left ${
                       activeSubSection === section.id
                         ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md'

@@ -342,7 +342,14 @@ function HomeComponent() {
       case 'market':
         // Show submenu cards if no specific subsection, otherwise show the Market component
         if (!activeMarketSubSection || activeMarketSubSection === 'market') {
-          return <SubmenuCards section="market" onSubItemClick={handleSectionChange} />;
+          return <SubmenuCards section="market" onSubItemClick={(sectionId, subItemId) => {
+            // For market section, navigate to separate pages
+            if (sectionId === 'market') {
+              router.push(`/market/${subItemId}`);
+            } else {
+              handleSectionChange(sectionId, subItemId);
+            }
+          }} />;
         }
         return (
           <Suspense fallback={<LoadingFallback />}>

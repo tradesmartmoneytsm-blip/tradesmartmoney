@@ -238,6 +238,12 @@ export function Navigation({
       return;
     }
     
+    // Handle market submenus - navigate to separate pages
+    if (itemId === 'market' && subItemId) {
+      window.location.href = `/market/${subItemId}`;
+      return;
+    }
+    
     onSectionChange(itemId, subItemId);
     setShowMobileMenu(false);
   };

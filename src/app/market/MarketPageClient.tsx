@@ -7,7 +7,13 @@ import { Navigation } from '@/components/Navigation';
 export function MarketPageClient() {
   const router = useRouter();
 
-  const handleSectionChange = (section: string) => {
+  const handleSectionChange = (section: string, subSection?: string) => {
+    // Handle market submenus - navigate to separate pages
+    if (section === 'market' && subSection) {
+      router.push(`/market/${subSection}`);
+      return;
+    }
+    
     if (section === 'market') {
       // Stay on current page, just pass the subsection
       return;
