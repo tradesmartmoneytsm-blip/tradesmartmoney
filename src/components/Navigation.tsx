@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity } from 'lucide-react';
+import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, Brain } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
 interface MarketIndex {
@@ -177,6 +177,26 @@ export function Navigation({
       description: 'Study institutional money movement for educational purposes'
     },
     {
+      id: 'trade',
+      label: 'Trade',
+      icon: <TrendingUp className={brandTokens.icons.sm} />,
+      description: 'Professional trading platform and tools',
+      subItems: [
+        {
+          id: 'trade-online',
+          label: 'Trade Online',
+          icon: <BarChart3 className={brandTokens.icons.sm} />,
+          description: 'Access our professional trading platform'
+        },
+        {
+          id: 'trade-smart-money',
+          label: 'Trade Smart Money',
+          icon: <Brain className={brandTokens.icons.sm} />,
+          description: 'Learn to trade like institutions'
+        },
+      ]
+    },
+    {
       id: 'news',
       label: 'News',
       icon: <Newspaper className={brandTokens.icons.sm} />,
@@ -241,6 +261,16 @@ export function Navigation({
     if (itemId === 'smart-money-flow') {
       // Force a page refresh to ensure clean loading
       window.location.href = '/smart-money-flow';
+      return;
+    }
+    
+    // Handle trade submenus - navigate to separate pages
+    if (itemId === 'trade' && subItemId) {
+      if (subItemId === 'trade-online') {
+        window.location.href = '/trade';
+      } else if (subItemId === 'trade-smart-money') {
+        window.location.href = '/trade-smart-money';
+      }
       return;
     }
     

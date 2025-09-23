@@ -206,14 +206,13 @@ function HomeComponent() {
             
             {/* Main Heading - Optimized for LCP */}
             <h1 className={`${brandTokens.typography.display.xl} text-white mb-6 premium-text`} style={{willChange: 'transform'}}>
-              Master the Markets with
-              <span className="block mt-2 text-gradient-brand">Smart Money Intelligence</span>
+              Trade Smart Money Like
+              <span className="block mt-2 text-gradient-brand">Professional Institutions</span>
             </h1>
             
             {/* Subheading */}
             <p className={`${brandTokens.typography.body.xl} text-blue-100 mb-10 max-w-4xl mx-auto animate-slide-up delay-200`}>
-              Professional trading platform powered by AI algorithms and institutional-grade market analysis. 
-              Trade like the smart money with real-time data, advanced algorithms, and proven strategies.
+              Master smart money trading with our professional platform. Learn smart money concepts, institutional trading patterns, and advanced market analysis. Trade like smart money with real-time data and proven smart money strategies.
             </p>
             
             {/* CTA Buttons */}
@@ -239,9 +238,9 @@ function HomeComponent() {
             
             {/* Platform Features Section */}
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-white mb-4">Why Choose TradeSmartMoney</h2>
+              <h2 className="text-3xl font-bold text-white mb-4">Why Smart Money Traders Choose Us</h2>
               <p className="text-blue-200 text-lg max-w-2xl mx-auto">
-                Professional-grade tools and real-time data to help you make informed trading decisions
+                Trade smart money strategies with professional-grade tools and institutional-level market analysis to master smart money concepts
               </p>
             </div>
             

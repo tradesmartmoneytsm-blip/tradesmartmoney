@@ -24,9 +24,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Educational Trading Platform | Learn Smart Money Concepts & Market Analysis | TradeSmartMoney",
-  description: "Educational platform for learning smart money concepts, market analysis, and trading education. Study institutional patterns, market data, and trading concepts for educational purposes only.",
+  title: "Trade Smart Money | Professional Trading Platform & Smart Money Concepts | TradeSmartMoney",
+  description: "Trade like smart money with professional trading platform. Learn smart money concepts, institutional trading patterns, and advanced market analysis. Master smart money trading strategies for consistent profits.",
   keywords: [
+    // Primary Keywords
+    "trade",
+    "trading",
+    "smart money",
+    "trade smart money",
+    "smart money trading",
+    "smart money concepts",
+    "smart money flow",
+    "institutional trading",
+    "professional trading",
+    
     // Core Trading Terms
     "trading platform",
     "stock trading",
@@ -110,8 +121,8 @@ export const metadata: Metadata = {
     canonical: 'https://www.tradesmartmoney.com/',
   },
   openGraph: {
-    title: "Educational Trading Platform | Learn Smart Money Concepts & Market Analysis",
-    description: "Educational platform for learning smart money concepts, market analysis, and trading education. Study institutional patterns and market data for educational purposes only.",
+    title: "Trade Smart Money | Professional Trading Platform & Smart Money Concepts",
+    description: "Trade like smart money with professional trading platform. Learn smart money concepts, institutional trading patterns, and advanced market analysis for consistent trading success.",
     url: 'https://www.tradesmartmoney.com',
     siteName: 'TradeSmartMoney',
     locale: 'en_US',
@@ -128,8 +139,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Educational Trading Platform | Learn Smart Money Concepts',
-    description: 'Educational platform for learning smart money concepts, market analysis, and trading education for educational purposes only.',
+    title: 'Trade Smart Money | Professional Trading Platform & Smart Money Concepts',
+    description: 'Trade like smart money with professional trading platform. Learn smart money concepts, institutional trading patterns, and advanced market analysis.',
     creator: '@tradesmartmoney',
     images: ['/twitter-image.jpg'],
   },

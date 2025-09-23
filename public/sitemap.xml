@@ -8,6 +8,21 @@
     <priority>1.0</priority>
   </url>
 
+  <!-- SEO Landing Pages (High Priority for Keywords) -->
+  <url>
+    <loc>https://www.tradesmartmoney.com/trade</loc>
+    <lastmod>2025-09-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/trade-smart-money</loc>
+    <lastmod>2025-09-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
   <!-- Main Trading Features (High Priority for SEO) -->
   <url>
     <loc>https://www.tradesmartmoney.com/market</loc>
