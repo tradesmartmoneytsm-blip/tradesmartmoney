@@ -22,6 +22,14 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Complete Guide to Smart Money Trading in 2025',
     description: 'Master institutional money flow analysis and advanced trading techniques',
+    images: ['https://www.tradesmartmoney.com/twitter-image.jpg'],
+  },
+  alternates: {
+    canonical: 'https://www.tradesmartmoney.com/blog/complete-guide-smart-money-trading-2025',
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
