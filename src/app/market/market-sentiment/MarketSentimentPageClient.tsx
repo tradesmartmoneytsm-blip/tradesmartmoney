@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { trackPageView } from '@/lib/analytics';
-import { Activity } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { Market } from '@/components/Market';
 

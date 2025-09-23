@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, TrendingDown, X, BarChart3 } from 'lucide-react';
 
 interface AdvanceDeclineData {
@@ -26,7 +26,7 @@ export function AdvanceDeclineWidget() {
   const [error, setError] = useState<string>('');
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -51,13 +51,13 @@ export function AdvanceDeclineWidget() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isOpen && data.length === 0) {
       fetchData();
     }
-  }, [isOpen]);
+  }, [isOpen, data.length, fetchData]);
 
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString('en-IN', {

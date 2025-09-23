@@ -27,17 +27,11 @@ interface IndianMarketSentiment {
       signal: string;
       keyLevels: { support: number; resistance: number };
     };
-    shortTerm: {
-      outlook: 'Positive' | 'Negative' | 'Neutral';
-      confidence: number;
-      recommendation: string;
-      riskLevel: 'Low' | 'Medium' | 'High';
-    };
   };
   marketData: {
     nifty: { current: number; change: number; changePercent: number };
     bankNifty: { current: number; change: number; changePercent: number };
-    vix: { current: number; change: number };
+    vix: { current: number; change: number; changePercent: number };
     fiiNet: number;
     diiNet: number;
   };
@@ -99,14 +93,22 @@ async function fetchNSEIndices(baseUrl: string) {
   }
 }
 
-function parseMarketIndicesData(indices: any[]) {
-  const result: Record<string, any> = {};
+interface MarketIndex {
+  name?: string;
+  displayName?: string;
+  current?: number | string;
+  change?: number | string;
+  changePercent?: number | string;
+}
+
+function parseMarketIndicesData(indices: MarketIndex[]) {
+  const result: Record<string, { current: number; change: number; changePercent: number }> = {};
   
-  indices.forEach((index: any) => {
+  indices.forEach((index: MarketIndex) => {
     const name = ((index.name || index.displayName || '') as string).toLowerCase();
-    const current = parseFloat(index.current || 0);
-    const change = parseFloat(index.change || 0);
-    const changePercent = parseFloat(index.changePercent || 0);
+    const current = parseFloat(String(index.current || 0));
+    const change = parseFloat(String(index.change || 0));
+    const changePercent = parseFloat(String(index.changePercent || 0));
     
     if (name.includes('nifty 50') || name === 'nifty') {
       result.nifty = { current, change, changePercent };
@@ -121,7 +123,7 @@ function parseMarketIndicesData(indices: any[]) {
   
   // Add default VIX if not available
   if (!result.vix) {
-    result.vix = { current: 13.42, change: -0.18 };
+    result.vix = { current: 13.42, change: -0.18, changePercent: -1.32 };
   }
   
   console.log('📊 Parsed indices:', result);
@@ -141,7 +143,7 @@ async function fetchNSEFallback() {
     const html = await response.text();
     const $ = cheerio.load(html);
     
-    const indices: Record<string, any> = {};
+    const indices: Record<string, { current: number; change: number; changePercent: number }> = {};
     
     $('table tr').each((_, row) => {
       const cells = $(row).find('td');
@@ -157,7 +159,7 @@ async function fetchNSEFallback() {
         } else if (name.includes('NIFTY BANK')) {
           indices.bankNifty = { current: ltp, change, changePercent: (change / ltp) * 100 };
         } else if (name.includes('INDIA VIX')) {
-          indices.vix = { current: ltp, change };
+          indices.vix = { current: ltp, change, changePercent: (change / ltp) * 100 };
         }
       }
     });
@@ -246,19 +248,28 @@ async function fetchWeeklyRSI() {
       throw new Error(`Chartink API failed: ${response.status}`);
     }
 
-    const data = await response.json();
+    interface ChartinkResponse {
+      data?: Array<{
+        name?: string;
+        nsecode?: string;
+        symbol?: string;
+        rsi?: number | string;
+      }>;
+    }
+
+    const data: ChartinkResponse = await response.json();
     console.log('📊 Chartink response received');
     
     // Look for NIFTY 50 data in the response
     if (data.data && Array.isArray(data.data)) {
-      const niftyData = data.data.find((item: any) => 
+      const niftyData = data.data.find((item) => 
         item.name === 'NIFTY' || 
         item.nsecode === 'NIFTY' || 
         item.symbol === 'NIFTY'
       );
       
       if (niftyData && niftyData.rsi) {
-        const rsiValue = parseFloat(niftyData.rsi);
+        const rsiValue = parseFloat(String(niftyData.rsi));
         console.log('📊 Nifty Weekly RSI:', rsiValue);
         return rsiValue;
       }
@@ -290,7 +301,25 @@ function calculateEstimatedRSI(): number {
   return Math.round(estimatedRSI * 10) / 10; // Round to 1 decimal
 }
 
-function calculateIndianMarketSentiment(nseData: any, fiiData: any, sectorData: any[], weeklyRSI: number): IndianMarketSentiment {
+interface NSEData {
+  nifty?: { current: number; change: number; changePercent: number };
+  bankNifty?: { current: number; change: number; changePercent: number };
+  vix?: { current: number; change: number; changePercent: number };
+}
+
+interface FIIData {
+  fiiNet: number;
+  diiNet: number;
+}
+
+interface SectorDataItem {
+  name: string;
+  change: number;
+  value?: string;
+  lastUpdated?: Date;
+}
+
+function calculateIndianMarketSentiment(nseData: NSEData, fiiData: FIIData, sectorData: SectorDataItem[], weeklyRSI: number): IndianMarketSentiment {
   console.log('🔍 NSE Data received:', nseData);
   console.log('🔍 FII Data received:', fiiData);
   console.log('🔍 Sector Data count:', sectorData.length);
@@ -298,7 +327,7 @@ function calculateIndianMarketSentiment(nseData: any, fiiData: any, sectorData: 
   // Extract key market data
   const nifty = nseData.nifty || { current: 24500, change: 0, changePercent: 0 };
   const bankNifty = nseData.bankNifty || { current: 52000, change: 0, changePercent: 0 };
-  const vix = nseData.vix || { current: 15, change: 0 };
+  const vix = nseData.vix || { current: 15, change: 0, changePercent: 0 };
   
   console.log('📈 Using Nifty data:', nifty);
   console.log('🏦 Using Bank Nifty data:', bankNifty);
@@ -365,7 +394,14 @@ function calculateIndianMarketSentiment(nseData: any, fiiData: any, sectorData: 
   };
 }
 
-function calculateTimeframeAnalysis(nifty: any, bankNifty: any, vix: any, fiiData: any, sectorData: any[], weeklyRSI: number) {
+function calculateTimeframeAnalysis(
+  nifty: { current: number; change: number; changePercent: number }, 
+  bankNifty: { current: number; change: number; changePercent: number }, 
+  vix: { current: number; change: number; changePercent: number }, 
+  fiiData: FIIData, 
+  sectorData: SectorDataItem[], 
+  weeklyRSI: number
+) {
   const niftyPrice = nifty.current || 24500;
   const niftyChange = nifty.changePercent || 0;
   const vixLevel = vix.current || 15;
@@ -378,13 +414,9 @@ function calculateTimeframeAnalysis(nifty: any, bankNifty: any, vix: any, fiiDat
   // Calculate weekly trend analysis using real RSI data
   const weeklyTrend = calculateWeeklyTrend(niftyPrice, niftyChange, fiiNet, diiNet, weeklyRSI);
   
-  // Calculate short-term outlook
-  const shortTerm = calculateShortTermOutlook(dailyTrend, weeklyTrend, vixLevel, fiiNet + diiNet);
-  
   return {
     daily: dailyTrend,
-    weekly: weeklyTrend,
-    shortTerm: shortTerm
+    weekly: weeklyTrend
   };
 }
 
@@ -490,53 +522,9 @@ function calculateWeeklyTrend(niftyPrice: number, niftyChange: number, fiiNet: n
   };
 }
 
-function calculateShortTermOutlook(dailyTrend: any, weeklyTrend: any, vixLevel: number, netFlow: number) {
-  let outlook: 'Positive' | 'Negative' | 'Neutral' = 'Neutral';
-  let confidence = 50;
-  let recommendation = '';
-  let riskLevel: 'Low' | 'Medium' | 'High' = 'Medium';
-  
-  // Combine daily and weekly trends for short-term outlook
-  const dailyScore = dailyTrend.trend === 'Bullish' ? 1 : dailyTrend.trend === 'Bearish' ? -1 : 0;
-  const weeklyScore = weeklyTrend.trend === 'Bullish' ? 1 : weeklyTrend.trend === 'Bearish' ? -1 : 0;
-  const combinedScore = dailyScore + weeklyScore;
-  
-  if (combinedScore >= 1 && vixLevel < 15 && netFlow > 500) {
-    outlook = 'Positive';
-    confidence = 80;
-    recommendation = 'Favorable conditions for long positions with proper risk management';
-    riskLevel = vixLevel < 12 ? 'Low' : 'Medium';
-  } else if (combinedScore >= 1) {
-    outlook = 'Positive';
-    confidence = 65;
-    recommendation = 'Cautiously optimistic - consider selective long positions';
-    riskLevel = 'Medium';
-  } else if (combinedScore <= -1 && vixLevel > 18) {
-    outlook = 'Negative';
-    confidence = 80;
-    recommendation = 'Defensive strategy recommended - consider reducing exposure';
-    riskLevel = 'High';
-  } else if (combinedScore <= -1) {
-    outlook = 'Negative';
-    confidence = 65;
-    recommendation = 'Bearish bias - exercise caution with new positions';
-    riskLevel = 'Medium';
-  } else {
-    outlook = 'Neutral';
-    confidence = 50;
-    recommendation = 'Mixed signals - maintain balanced approach and stock-specific focus';
-    riskLevel = vixLevel > 16 ? 'Medium' : 'Low';
-  }
-  
-  return {
-    outlook,
-    confidence,
-    recommendation,
-    riskLevel
-  };
-}
+// Removed calculateShortTermOutlook function as it's no longer used
 
-function calculateNiftyTrend(nifty: any) {
+function calculateNiftyTrend(nifty: { current: number; change: number; changePercent: number }) {
   const change = nifty.changePercent || 0;
   let value = 0;
   let signal = '';
@@ -570,7 +558,7 @@ function calculateNiftyTrend(nifty: any) {
   return { value, signal, weight: 25 };
 }
 
-function calculateVIXSentiment(vix: any) {
+function calculateVIXSentiment(vix: { current: number; change: number; changePercent: number }) {
   const level = vix.current || 15;
   let value = 0;
   let signal = '';
@@ -598,7 +586,7 @@ function calculateVIXSentiment(vix: any) {
   return { value, signal, weight: 20 };
 }
 
-function calculateFIISentiment(fiiData: any) {
+function calculateFIISentiment(fiiData: FIIData) {
   const netFlow = (fiiData.fiiNet || 0) + (fiiData.diiNet || 0);
   let value = 0;
   let signal = '';
@@ -632,7 +620,7 @@ function calculateFIISentiment(fiiData: any) {
   return { value, signal, weight: 20 };
 }
 
-function calculateSectorBreadth(sectors: any[]) {
+function calculateSectorBreadth(sectors: SectorDataItem[]) {
   if (!sectors.length) {
     return { value: 0, signal: 'No sector data available', weight: 15 };
   }
@@ -670,7 +658,7 @@ function calculateSectorBreadth(sectors: any[]) {
   return { value, signal, weight: 15 };
 }
 
-function calculateMarketCapSentiment(nifty: any) {
+function calculateMarketCapSentiment(nifty: { current: number; change: number; changePercent: number }) {
   const level = nifty.current || 24500;
   let value = 0;
   let signal = '';
@@ -699,7 +687,7 @@ function calculateMarketCapSentiment(nifty: any) {
   return { value, signal, weight: 10 };
 }
 
-function calculateAdvanceDecline(sectors: any[]) {
+function calculateAdvanceDecline(sectors: SectorDataItem[]) {
   if (!sectors.length) {
     return { value: 0, signal: 'No advance/decline data', weight: 10 };
   }
@@ -712,7 +700,12 @@ function calculateAdvanceDecline(sectors: any[]) {
   return { value, signal, weight: 10 };
 }
 
-function calculateConfidence(indicators: any, nseData: any, fiiData: any, sectorData: any[]): number {
+function calculateConfidence(
+  indicators: IndianMarketSentiment['indicators'], 
+  nseData: NSEData, 
+  fiiData: FIIData, 
+  sectorData: SectorDataItem[]
+): number {
   let confidence = 100;
   
   // Reduce confidence for missing data
@@ -722,7 +715,7 @@ function calculateConfidence(indicators: any, nseData: any, fiiData: any, sector
   if (!sectorData.length) confidence -= 10;
   
   // Check for conflicting signals
-  const scores = Object.values(indicators).map((ind: any) => ind.value);
+  const scores = Object.values(indicators).map((ind) => ind.value);
   const positive = scores.filter(s => s > 0).length;
   const negative = scores.filter(s => s < 0).length;
   
@@ -743,7 +736,7 @@ function getDefaultMarketData() {
   return {
     nifty: { current: 24741, change: 7.40, changePercent: 0.03 },
     bankNifty: { current: 54114, change: 37.85, changePercent: 0.07 },
-    vix: { current: 13.42, change: -0.18 }
+    vix: { current: 13.42, change: -0.18, changePercent: -1.32 }
   };
 }
 
@@ -773,18 +766,12 @@ function getDefaultIndianSentiment(): IndianMarketSentiment {
         strength: 50,
         signal: 'Data unavailable for weekly analysis',
         keyLevels: { support: 0, resistance: 0 }
-      },
-      shortTerm: {
-        outlook: 'Neutral',
-        confidence: 0,
-        recommendation: 'Unable to provide recommendation due to insufficient data',
-        riskLevel: 'Medium'
       }
     },
     marketData: {
       nifty: { current: 0, change: 0, changePercent: 0 },
       bankNifty: { current: 0, change: 0, changePercent: 0 },
-      vix: { current: 0, change: 0 },
+      vix: { current: 0, change: 0, changePercent: 0 },
       fiiNet: 0,
       diiNet: 0
     },

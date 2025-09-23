@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, TrendingDown, Activity, Building2, BarChart3, RefreshCw, ArrowUpDown } from 'lucide-react';
 import type { SectorData } from '@/services/marketDataService';
 import { formatTimeAgo, formatNextUpdate } from '@/lib/utils';
@@ -35,7 +35,7 @@ export function Market({ initialSubSection }: MarketProps) {
   }, [initialSubSection]);
 
   // Fetch sector data directly from API
-  const fetchSectorData = async () => {
+  const fetchSectorData = useCallback(async () => {
     try {
       setIsRefreshing(true);
       
@@ -74,7 +74,7 @@ export function Market({ initialSubSection }: MarketProps) {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  };
+  }, []);
 
   // Fallback sector data for when API fails
   const getFallbackSectorData = () => [
@@ -111,7 +111,7 @@ export function Market({ initialSubSection }: MarketProps) {
 
     const interval = setInterval(fetchSectorData, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [activeSubSection]);
+  }, [activeSubSection, fetchSectorData]);
 
   const subSections: MarketSubSection[] = [
     { id: 'sector-performance', label: 'Sector Performance', icon: <BarChart3 className="w-4 h-4" />, description: 'Real-time sector analysis' },

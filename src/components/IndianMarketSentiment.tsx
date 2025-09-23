@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Minus, Activity, AlertTriangle, Target, BarChart3, Building2 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Activity, AlertTriangle, Target, BarChart3 } from 'lucide-react';
 
 interface IndianMarketSentiment {
   overall: 'Strongly Bullish' | 'Bullish' | 'Neutral' | 'Bearish' | 'Strongly Bearish';
@@ -112,29 +112,7 @@ export function IndianMarketSentiment({ className = '' }: IndianMarketSentimentP
     return 'text-red-700';
   };
 
-  const getIndicatorIcon = (key: string) => {
-    switch (key) {
-      case 'niftyTrend': return <Target className="w-5 h-5" />;
-      case 'vixLevel': return <Activity className="w-5 h-5" />;
-      case 'fiiActivity': return <Building2 className="w-5 h-5" />;
-      case 'sectorBreadth': return <BarChart3 className="w-5 h-5" />;
-      case 'marketCap': return <TrendingUp className="w-5 h-5" />;
-      case 'advanceDecline': return <Activity className="w-5 h-5" />;
-      default: return <Activity className="w-5 h-5" />;
-    }
-  };
-
-  const getIndicatorName = (key: string) => {
-    switch (key) {
-      case 'niftyTrend': return 'Nifty Trend';
-      case 'vixLevel': return 'VIX Level';
-      case 'fiiActivity': return 'FII/DII Activity';
-      case 'sectorBreadth': return 'Sector Breadth';
-      case 'marketCap': return 'Market Level';
-      case 'advanceDecline': return 'Advance/Decline';
-      default: return key;
-    }
-  };
+  // Removed unused helper functions
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('en-IN').format(Math.round(num));
