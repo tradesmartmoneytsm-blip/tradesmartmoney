@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AutoAds } from '@/components/AdSense';
 import { StructuredData } from '@/components/StructuredData';
+import { AdvanceDeclineWidget } from '@/components/AdvanceDeclineWidget';
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -248,6 +249,9 @@ export default function RootLayout({
 
         {/* Auto Ads Component */}
         <AutoAds />
+        
+        {/* Advance-Decline Widget - Global floating button */}
+        <AdvanceDeclineWidget />
         
         {/* Structured Data - Added client-side to avoid hydration issues */}
         <StructuredData />

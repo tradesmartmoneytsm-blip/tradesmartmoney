@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot } from 'lucide-react';
+import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
 interface MarketIndex {
@@ -149,6 +149,12 @@ export function Navigation({
           label: '52W Low',
           icon: <TrendingDown className={brandTokens.icons.sm} />,
           description: 'Stocks near their 52-week low prices'
+        },
+        { 
+          id: 'market-sentiment', 
+          label: 'Market Sentiment',
+          icon: <Activity className={brandTokens.icons.sm} />,
+          description: 'AI-powered Indian market sentiment analysis'
         },
       ]
     },
