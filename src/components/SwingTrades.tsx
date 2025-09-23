@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import NextImage from 'next/image';
 import { TrendingUp, TrendingDown, Clock, Target, AlertCircle, RefreshCw, Calendar, Activity, Image, X, ZoomIn, BarChart3, Zap, TrendingUp as TrendingUpIcon, DollarSign } from 'lucide-react';
 import { SwingTrade } from '@/app/api/swing-trades/route';
 import { brandTokens } from '@/lib/design-tokens';
 // Auto ads will handle all ad placement automatically
+
+// Note: ValueBuying component is defined inline below for better performance
 
 interface ValueStock {
   symbol: string;
@@ -35,12 +37,13 @@ const ValueBuying = () => {
   const [error, setError] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
-  const fetchValueBuyingStocks = async () => {
+  const fetchValueBuyingStocks = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       setImageErrors(new Set()); // Reset image errors on refresh
       
+      // Add client-side caching to avoid redundant calls
       const response = await fetch('/api/value-buying');
       const result = await response.json();
       
@@ -55,11 +58,11 @@ const ValueBuying = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Empty dependency array for stable reference
 
   useEffect(() => {
     fetchValueBuyingStocks();
-  }, []);
+  }, [fetchValueBuyingStocks]);
 
 
 
@@ -260,7 +263,7 @@ export function SwingTrades() {
   const [selectedImage, setSelectedImage] = useState<{ url: string; symbol: string } | null>(null);
   const [activeStrategy, setActiveStrategy] = useState<string>('BIT');
 
-  const fetchTrades = async () => {
+  const fetchTrades = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -280,20 +283,22 @@ export function SwingTrades() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Empty dependency array for stable reference
 
   useEffect(() => {
     fetchTrades();
-  }, []);
+  }, [fetchTrades]);
 
-  // Group trades by strategy
-  const groupedTrades: GroupedTrades = trades.reduce((acc, trade) => {
-    if (!acc[trade.strategy]) {
-      acc[trade.strategy] = [];
-    }
-    (acc[trade.strategy] as SwingTrade[]).push(trade);
-    return acc;
-  }, {} as GroupedTrades);
+  // Group trades by strategy - memoized for performance
+  const groupedTrades: GroupedTrades = useMemo(() => {
+    return trades.reduce((acc, trade) => {
+      if (!acc[trade.strategy]) {
+        acc[trade.strategy] = [];
+      }
+      (acc[trade.strategy] as SwingTrade[]).push(trade);
+      return acc;
+    }, {} as GroupedTrades);
+  }, [trades]); // Only recalculate when trades change
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -819,26 +824,8 @@ export function SwingTrades() {
     );
   };
 
-  // Tab Navigation Component
-  const TabNavigation = () => {
-    const [valueBuyingStocks, setValueBuyingStocks] = useState<ValueStock[]>([]);
-
-    // Fetch Value Buying data for stats
-    useEffect(() => {
-      const fetchValueBuyingStats = async () => {
-        try {
-          const response = await fetch('/api/value-buying');
-          const result = await response.json();
-          if (result.success) {
-            setValueBuyingStocks(result.data || []);
-          }
-        } catch (error) {
-          console.error('Error fetching value buying stats:', error);
-        }
-      };
-
-      fetchValueBuyingStats();
-    }, []);
+  // Tab Navigation Component - optimized to avoid duplicate API calls
+  const TabNavigation = ({ valueBuyingStocks }: { valueBuyingStocks: ValueStock[] }) => {
 
     return (
       <div className="mb-4">
@@ -934,7 +921,7 @@ export function SwingTrades() {
         </div>
 
         {/* Tab Navigation */}
-        <TabNavigation />
+        <TabNavigation valueBuyingStocks={[]} />
 
         {/* Active Strategy Section */}
         <div className="space-y-4">

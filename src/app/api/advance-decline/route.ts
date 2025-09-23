@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getApiHeaders } from '@/lib/api-headers';
 
 interface AdvanceDeclineData {
   date: string;
@@ -11,11 +12,7 @@ export async function GET() {
     console.log('🔄 Fetching advance-decline data...');
     
     const response = await fetch('https://api.vrdnation.org/service/advance-decline/details/1', {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json',
-        'Cache-Control': 'no-cache'
-      },
+      headers: getApiHeaders(),
       next: { revalidate: 60 } // 1 minute cache
     });
 

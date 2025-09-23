@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getWebScrapingHeaders, getChartinkHeaders } from '@/lib/api-headers';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -71,11 +72,7 @@ async function fetchChartInkData(): Promise<ChartInkResponse> {
     // Get ChartInk session and CSRF token
     const sessionResponse = await fetch(CHARTINK_SCREENER_URL, {
       method: 'GET',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9',
-      }
+      headers: getWebScrapingHeaders()
     });
 
     if (!sessionResponse.ok) {
@@ -117,14 +114,7 @@ async function fetchChartInkData(): Promise<ChartInkResponse> {
       widget_id: '3799905'
     });
 
-    const headers: HeadersInit = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-      'Accept': 'application/json, text/plain, */*',
-      'Accept-Language': 'en-US,en;q=0.9',
-      'Referer': 'https://chartink.com/screener/',
-      'Origin': 'https://chartink.com',
-    };
+    const headers: Record<string, string> = getChartinkHeaders() as Record<string, string>;
 
     if (csrfToken) {
       headers['x-csrf-token'] = csrfToken;

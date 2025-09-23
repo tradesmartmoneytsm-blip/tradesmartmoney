@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { FiiDiiData } from '@/lib/supabase';
+import { getGrowwHeaders } from '@/lib/api-headers';
 
 export async function GET() {
   try {
@@ -45,13 +46,7 @@ async function fetchFiiDiiData(): Promise<FiiDiiData[]> {
     const url = 'https://groww.in/v1/api/search/v3/query/fii_dii/st_fii_dii?period=daily&segment=Cash%20Market';
     
     const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Referer': 'https://groww.in/',
-        'Origin': 'https://groww.in'
-      },
+      headers: getGrowwHeaders(),
       method: 'GET'
     });
     

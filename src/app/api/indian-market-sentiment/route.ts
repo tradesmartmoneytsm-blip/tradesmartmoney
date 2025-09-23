@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
+import { getWebScrapingHeaders, getChartinkHeaders } from '@/lib/api-headers';
 
 interface IndianMarketSentiment {
   overall: 'Strongly Bullish' | 'Bullish' | 'Neutral' | 'Bearish' | 'Strongly Bearish';
@@ -134,10 +135,7 @@ async function fetchNSEFallback() {
   // Fallback: Scrape from reliable source
   try {
     const response = await fetch('https://dhan.co/all-nse-indices/', {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      }
+      headers: getWebScrapingHeaders()
     });
 
     const html = await response.text();
@@ -231,13 +229,7 @@ async function fetchWeeklyRSI() {
     // Try the correct Chartink screener endpoint
     const response = await fetch('https://chartink.com/screener/process', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Referer': 'https://chartink.com/screener',
-      },
+      headers: getChartinkHeaders(),
       body: new URLSearchParams({
         'scan_clause': "( {45603} ( weekly rsi( 14 ) ) )"
       })
