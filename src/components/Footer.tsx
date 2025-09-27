@@ -166,11 +166,6 @@ export function Footer() {
                   Financial Disclaimer
                 </Link>
               </li>
-              <li>
-                <Link href="/privacy-policy#cookies" className="text-gray-300 hover:text-white transition-colors">
-                  Cookie Policy
-                </Link>
-              </li>
             </ul>
           </div>
         </div>

@@ -24,13 +24,6 @@ export function GoogleAnalytics() {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             
-            // Set default consent for Analytics (GDPR compliant)
-            gtag('consent', 'default', {
-              analytics_storage: 'granted',
-              functionality_storage: 'granted',
-              security_storage: 'granted',
-              ad_storage: 'denied'
-            });
             
             gtag('config', '${GA_MEASUREMENT_ID}', {
               page_path: window.location.pathname,
