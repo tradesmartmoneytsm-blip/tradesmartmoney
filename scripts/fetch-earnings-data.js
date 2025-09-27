@@ -185,7 +185,6 @@ function extractQuarterInfo(tableHeader) {
 async function fetchEarningsPage(url, page = 1) {
   try {
     const pageUrl = `${url}&page=${page}`;
-    console.log(`📥 Fetching: ${pageUrl}`);
     
     const response = await fetch(pageUrl);
     if (!response.ok) {
@@ -231,14 +230,12 @@ async function fetchAllPagesFromEndpoint(endpoint) {
     }
     
     if (result.data.length === 0) {
-      console.log(`📄 No more data on page ${page}, stopping pagination`);
       break;
     }
     
     allCompanies = allCompanies.concat(result.data);
     if (result.tableHeader) tableHeader = result.tableHeader;
     
-    console.log(`📊 Total collected so far: ${allCompanies.length} companies`);
     
     page++;
     
@@ -260,7 +257,6 @@ async function fetchAllPagesFromEndpoint(endpoint) {
  * Fetch comprehensive earnings data from all endpoints
  */
 async function fetchComprehensiveEarningsData() {
-  console.log('🚀 Starting comprehensive MoneyControl earnings data fetch...\n');
   
   let allEarningsData = [];
   let seenCompanies = new Set(); // Track unique companies by symbol
@@ -366,8 +362,6 @@ async function fetchComprehensiveEarningsData() {
     }
   }
   
-  console.log(`\n🎉 COMPREHENSIVE DATA COLLECTION COMPLETE!`);
-  console.log(`📊 Total unique companies: ${allEarningsData.length}`);
   console.log(`🏢 Sectors covered: ${[...new Set(allEarningsData.map(d => d.sector))].length}`);
   console.log(`📈 Beat expectations: ${allEarningsData.filter(d => d.overall_performance === 'Beat').length}`);
   console.log(`📉 Missed expectations: ${allEarningsData.filter(d => d.overall_performance === 'Missed').length}`);
@@ -385,7 +379,6 @@ async function storeEarningsData(earningsData) {
     return { success: false, error: 'No data provided' };
   }
   
-  console.log(`\n💾 Storing ${earningsData.length} records in Supabase...`);
   
   try {
     const forceUpdate = process.env.FORCE_UPDATE === 'true';
@@ -417,11 +410,9 @@ async function storeEarningsData(earningsData) {
       sectorCounts[record.sector] = (sectorCounts[record.sector] || 0) + 1;
     });
     
-    console.log('\n📊 SECTOR BREAKDOWN:');
     Object.entries(sectorCounts)
       .sort(([,a], [,b]) => b - a)
       .forEach(([sector, count]) => {
-        console.log(`   ${sector}: ${count} companies`);
       });
     
     return { success: true, recordsStored: insertedCount, sectorBreakdown: sectorCounts };
@@ -437,8 +428,6 @@ async function storeEarningsData(earningsData) {
  */
 async function main() {
   const startTime = Date.now();
-  console.log('🎯 MoneyControl Comprehensive Earnings Data Pipeline');
-  console.log('================================================\n');
   
   try {
     // Step 1: Fetch comprehensive data
@@ -461,11 +450,7 @@ async function main() {
     const endTime = Date.now();
     const duration = Math.round((endTime - startTime) / 1000);
     
-    console.log('\n🎉 SUCCESS! DATA PIPELINE COMPLETED');
-    console.log('=====================================');
-    console.log(`⏱️  Total time: ${duration} seconds`);
     console.log(`📊 Companies processed: ${earningsData.length}`);
-    console.log(`💾 Records stored: ${storeResult.recordsStored}`);
     console.log(`🏢 Sectors covered: ${Object.keys(storeResult.sectorBreakdown).length}`);
     console.log(`🔄 Next run: Scheduled every 3 days via GitHub Actions`);
     console.log(`📈 Your earnings data is now LIVE and comprehensive!\n`);

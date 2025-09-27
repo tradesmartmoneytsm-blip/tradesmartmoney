@@ -131,7 +131,6 @@ function makeRequest(url, options = {}) {
  * Set session cookies by visiting NSE page (matching Python approach)
  */
 async function setSessionCookies() {
-  console.log('🔗 Setting NSE session cookies...');
   
   try {
     const response = await makeRequest(COOKIE_SET_URL);
@@ -148,7 +147,6 @@ async function setSessionCookies() {
  * Fetch Most Active Stock Calls from NSE API
  */
 async function fetchMostActiveStockCalls() {
-  console.log('📡 Fetching most active stock calls...');
   
   try {
     const response = await makeRequest(CALLS_API_URL);
@@ -160,7 +158,6 @@ async function fetchMostActiveStockCalls() {
     const callsData = [];
     const data = response.data.OPTSTK.data;
     
-    console.log(`📊 Processing ${data.length} call option records...`);
     
     // Group by underlying symbol and sum percentage changes
     const symbolMap = {};
@@ -217,7 +214,6 @@ async function fetchMostActiveStockCalls() {
  * Fetch Most Active Stock Puts from NSE API
  */
 async function fetchMostActiveStockPuts() {
-  console.log('📡 Fetching most active stock puts...');
   
   try {
     const response = await makeRequest(PUTS_API_URL);
@@ -229,7 +225,6 @@ async function fetchMostActiveStockPuts() {
     const putsData = [];
     const data = response.data.OPTSTK.data;
     
-    console.log(`📊 Processing ${data.length} put option records...`);
     
     // Group by underlying symbol and sum percentage changes
     const symbolMap = {};
@@ -300,7 +295,6 @@ async function storeDataInSupabase(data, tableName, sessionId) {
     return false;
   }
 
-  console.log(`💾 Storing ${data.length} records in ${tableName}...`);
 
   try {
     // Prepare data for insertion
@@ -323,9 +317,7 @@ async function storeDataInSupabase(data, tableName, sessionId) {
     console.log(`✅ Successfully stored ${insertData.length} records in ${tableName}`);
     
     // Log sample data
-    console.log('📊 Sample data stored:');
     insertData.slice(0, 3).forEach((item, index) => {
-      console.log(`   ${index + 1}. ${item.symbol}: ${item.percentage_change}%`);
     });
     
     return true;
@@ -339,7 +331,6 @@ async function storeDataInSupabase(data, tableName, sessionId) {
  * Clean up old data (keep only last 24 hours)
  */
 async function cleanupOldData() {
-  console.log('🧹 Cleaning up old data...');
   
   try {
     const cutoffTime = new Date();
@@ -390,7 +381,6 @@ function isMarketHours() {
   const isDuringHours = timeInMinutes >= marketStart && timeInMinutes <= marketEnd;
   
   console.log(`⏰ Current IST time: ${istTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`);
-  console.log(`📅 Is weekday: ${isWeekday}, Is during market hours: ${isDuringHours}`);
   
   return isWeekday && isDuringHours;
 }
@@ -405,13 +395,11 @@ async function main() {
   try {
     // Check market hours
     if (!isMarketHours()) {
-      console.log('⏰ Outside market hours - data collection skipped');
       process.exit(0);
     }
 
     // Generate session ID for this run
     const sessionId = generateSessionId();
-    console.log(`🔑 Session ID: ${sessionId}`);
 
     // Set session cookies (critical for NSE API access)
     const cookiesSet = await setSessionCookies();
@@ -420,7 +408,6 @@ async function main() {
     }
 
     // Collect data from NSE APIs
-    console.log('📊 Starting data collection...');
     
     const [callsData, putsData] = await Promise.all([
       fetchMostActiveStockCalls(),
@@ -438,11 +425,8 @@ async function main() {
 
     // Final status
     const totalRecords = (callsData?.length || 0) + (putsData?.length || 0);
-    console.log(`\n🎯 Data Collection Summary:`);
     console.log(`   📞 Calls: ${callsData?.length || 0} records ${callsStored ? '✅' : '❌'}`);
     console.log(`   📈 Puts: ${putsData?.length || 0} records ${putsStored ? '✅' : '❌'}`);
-    console.log(`   💾 Total: ${totalRecords} records`);
-    console.log(`   🔑 Session: ${sessionId}`);
     
     if (totalRecords === 0) {
       console.log('⚠️  No real data collected - NSE APIs may still be blocking requests');
@@ -460,12 +444,10 @@ async function main() {
 
 // Handle process termination
 process.on('SIGTERM', () => {
-  console.log('🛑 Received SIGTERM - gracefully shutting down');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('🛑 Received SIGINT - gracefully shutting down');
   process.exit(0);
 });
 

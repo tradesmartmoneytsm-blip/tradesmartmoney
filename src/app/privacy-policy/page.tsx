@@ -65,12 +65,12 @@ export default function PrivacyPolicy() {
             <h2 id="cookies" className="text-2xl font-semibold text-gray-900 mt-8 mb-4">2. Advertising and Cookies</h2>
             <p className="text-gray-700 mb-4">
               <strong>Google AdSense:</strong> We use Google AdSense to display advertisements on our website. 
-              Google AdSense uses cookies and similar technologies to serve ads based on your prior visits to our website and other websites.
+              Google AdSense uses cookies and similar technologies to serve ads and analyze traffic to improve user experience.
             </p>
             <ul className="list-disc pl-6 text-gray-700 mb-6">
               <li>We use cookies to enable ad delivery and measure ad effectiveness</li>
-              <li>Third-party vendors, including Google, use cookies to serve ads based on your past visits</li>
-              <li>Google&apos;s use of the DoubleClick cookie enables it and its partners to serve ads based on your visits to our site and/or other sites</li>
+              <li>Third-party vendors, including Google, use cookies to serve relevant ads</li>
+              <li>Analytics cookies help us understand website usage and improve our services</li>
               <li>You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a></li>
               <li>You can also opt out through the <a href="http://www.aboutads.info/choices/" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Digital Advertising Alliance</a></li>
             </ul>

@@ -85,11 +85,9 @@ export async function POST(request: Request) {
       analysisType = 'COMPREHENSIVE' 
     } = await request.json();
     
-    console.log(`🔍 Advanced Scanner: ${analysisType}, ${startTime}-${endTime}, min score: ${minScore}`);
 
     // Get FNO symbols
     const symbols = await getFnoSymbols();
-    console.log(`📊 Analyzing ${symbols.length} symbols with real options data`);
 
     if (symbols.length === 0) {
       return NextResponse.json({
@@ -101,7 +99,6 @@ export async function POST(request: Request) {
 
     // Check cache first for all symbols
     const { cached, missing } = advancedScannerCache.getBatch(symbols, analysisType, startTime, endTime);
-    console.log(`⚡ Cache efficiency: ${cached.size} cached, ${missing.length} need analysis`);
 
     const analysisResults: AdvancedAnalysis[] = [];
     let processed = 0;
@@ -174,7 +171,6 @@ export async function POST(request: Request) {
       })
       .slice(0, maxResults);
 
-    console.log(`⚡ Advanced Analysis Complete: ${sortedResults.length} high-strength opportunities found`);
 
     // Get cache statistics
     const cacheStats = advancedScannerCache.getStats();
@@ -324,10 +320,9 @@ async function performAdvancedAnalysis(
     const currentPrice = oi[0]?.index_close || change[0]?.index_close || 100;
     
     // 1. CALL/PUT OI ANALYSIS (0-25 points) - SIMPLIFIED VERSION  
-    const { netCallBuildup, netPutBuildup, callPutRatio, callSentiment } = analyzeOIBuildup(oi, change, currentPrice);
+    const { netCallBuildup, netPutBuildup, callPutRatio } = analyzeOIBuildup(oi, change, currentPrice);
     
     console.log(`📊 ${symbol}: Call buildup: ${(netCallBuildup/100000).toFixed(1)}L, Put buildup: ${(netPutBuildup/100000).toFixed(1)}L, C/P Ratio: ${callPutRatio.toFixed(2)}`);
-    console.log(`📊 ${symbol}: Call sentiment: ${callSentiment}`);
     
     // SIMPLIFIED LOGIC: Traditional options flow analysis
     if (netCallBuildup > 100000 && callPutRatio > 1.2) { // Strong call activity with high call/put ratio
@@ -402,7 +397,6 @@ async function performAdvancedAnalysis(
     );
 
     // Minimum thresholds for quality - LOWERED FOR TESTING
-    console.log(`📊 ${symbol} Analysis: Score=${score}, Confidence=${confidence}, RR=${riskReward.risk_reward_ratio}`);
     
     if (score < 15 || confidence < 10 || riskReward.risk_reward_ratio < 0.5) { // Much lower thresholds
       console.log(`❌ ${symbol} filtered out: Score=${score}, Confidence=${confidence}, RR=${riskReward.risk_reward_ratio}`);

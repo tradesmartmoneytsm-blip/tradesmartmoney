@@ -4,10 +4,10 @@ import "./globals.css";
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { TrafficTracker } from '@/components/TrafficTracker';
 import { Footer } from '@/components/Footer';
-import { CookieConsent } from '@/components/CookieConsent';
 import { AutoAds } from '@/components/AdSense';
 import { StructuredData } from '@/components/StructuredData';
 import { AdvanceDeclineWidget } from '@/components/AdvanceDeclineWidget';
+import { ActivityManager } from '@/components/ActivityManager';
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -255,14 +255,15 @@ export default function RootLayout({
         </main>
         <Footer />
         
-        {/* Cookie Consent Banner */}
-        <CookieConsent />
 
         {/* Auto Ads Component */}
         <AutoAds />
         
         {/* Advance-Decline Widget - Global floating button */}
         <AdvanceDeclineWidget />
+        
+        {/* Activity Manager - Real-time stock activities */}
+        <ActivityManager />
         
         {/* Structured Data - Added client-side to avoid hydration issues */}
         <StructuredData />

@@ -44,7 +44,6 @@ async function fetchFnoSymbols() {
     }
 
     const data = await response.json();
-    console.log(`📊 API Response Status: ${response.status}`);
     
     if (!data.resultData || !Array.isArray(data.resultData)) {
       throw new Error('Invalid API response format');
@@ -115,7 +114,6 @@ async function storeFnoSymbols(symbols) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    console.log(`📊 Storage Summary:`);
     console.log(`   ✅ Successfully stored: ${totalUpserted} symbols`);
     console.log(`   ❌ Errors: ${totalErrors} symbols`);
 
@@ -131,7 +129,6 @@ async function storeFnoSymbols(symbols) {
  * Clean up inactive symbols (optional - keep for historical reference)
  */
 async function cleanupInactiveSymbols() {
-  console.log('🧹 Cleaning up inactive symbols older than 30 days...');
   
   try {
     const thirtyDaysAgo = new Date();
@@ -146,7 +143,6 @@ async function cleanupInactiveSymbols() {
     if (error) {
       console.warn('⚠️ Warning: Could not clean up inactive symbols:', error.message);
     } else {
-      console.log(`🧹 Cleaned up inactive symbols older than 30 days`);
     }
 
   } catch (error) {
@@ -182,10 +178,8 @@ async function main() {
     console.log('=' .repeat(60));
     console.log(`✅ FNO symbols collection completed successfully!`);
     console.log(`📊 Final Summary:`);
-    console.log(`   📈 Total symbols processed: ${symbols.length}`);
     console.log(`   ✅ Successfully stored: ${result.upserted}`);
     console.log(`   ❌ Errors: ${result.errors}`);
-    console.log(`   ⏱️  Total duration: ${duration} seconds`);
     console.log(`   🕐 Completed at: ${endTime.toISOString()}`);
 
     // Exit with success

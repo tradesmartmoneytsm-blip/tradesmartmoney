@@ -33,7 +33,6 @@ class MarketDataService {
 
   // Notify all subscribers of data updates
   private notifySubscribers(data: SectorData[]) {
-    console.log(`📢 Notifying ${this.subscribers.length} subscribers with ${data?.length || 0} sectors`);
     this.subscribers.forEach(callback => callback(data));
   }
 
@@ -63,7 +62,6 @@ class MarketDataService {
       // Return cached data if available
       const cached = this.cache.get('sectors');
       if (cached) {
-        console.log('📋 Using cached sector data');
         return cached.data;
       }
       
@@ -74,7 +72,6 @@ class MarketDataService {
 
   // Fetch sector data from our API route (server-side scraping)
   private async scrapeAllSectorData(): Promise<SectorData[]> {
-    console.log('🌐 Fetching sector data from API route...');
     
     const response = await fetch('/api/sector-data', {
       headers: {

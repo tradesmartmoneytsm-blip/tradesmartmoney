@@ -3,7 +3,6 @@ import { GET as fiiDiiDataHandler } from '../../fii-dii-data/route';
 
 async function handleCronExecution() {
   try {
-    console.log('🕐 CRON: Starting daily FII/DII data collection...');
     
     // Call the FII/DII data collection function directly instead of HTTP request
     const response = await fiiDiiDataHandler();

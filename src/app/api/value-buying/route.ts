@@ -64,7 +64,6 @@ export async function GET() {
           const fullPath = currentPath ? `${currentPath}.${key}` : key;
           
           if (key === 'MOST_VALUABLE' && Array.isArray(value)) {
-            console.log(`🎯 Found MOST_VALUABLE at: ${fullPath} with ${value.length} items`);
             return value;
           }
           

@@ -42,7 +42,6 @@ interface IndianMarketSentiment {
 
 export async function GET(request: Request) {
   try {
-    console.log('🇮🇳 Fetching Indian market sentiment...');
     
     // Get the base URL from the request to avoid hardcoding localhost
     const url = new URL(request.url);
@@ -127,7 +126,6 @@ function parseMarketIndicesData(indices: MarketIndex[]) {
     result.vix = { current: 13.42, change: -0.18, changePercent: -1.32 };
   }
   
-  console.log('📊 Parsed indices:', result);
   return result;
 }
 
@@ -175,7 +173,6 @@ async function fetchFIIData(baseUrl: string) {
     const response = await fetch(`${baseUrl}/api/fii-dii-history`);
     const data = await response.json();
     
-    console.log('📊 FII/DII API response:', data.success, data.data?.summary?.length || 0, 'records');
     
     if (data.success && data.data?.summary?.length > 0) {
       const latest = data.data.summary[0]; // Get the most recent day's data
@@ -224,7 +221,6 @@ async function fetchSectorData(baseUrl: string) {
 
 async function fetchWeeklyRSI() {
   try {
-    console.log('📊 Fetching weekly RSI from Chartink...');
     
     // Try the correct Chartink screener endpoint
     const response = await fetch('https://chartink.com/screener/process', {
@@ -250,7 +246,6 @@ async function fetchWeeklyRSI() {
     }
 
     const data: ChartinkResponse = await response.json();
-    console.log('📊 Chartink response received');
     
     // Look for NIFTY 50 data in the response
     if (data.data && Array.isArray(data.data)) {
@@ -262,7 +257,6 @@ async function fetchWeeklyRSI() {
       
       if (niftyData && niftyData.rsi) {
         const rsiValue = parseFloat(String(niftyData.rsi));
-        console.log('📊 Nifty Weekly RSI:', rsiValue);
         return rsiValue;
       }
     }
@@ -274,7 +268,6 @@ async function fetchWeeklyRSI() {
     // Calculate a more realistic RSI based on recent price action
     // This is a fallback when Chartink API is unavailable
     const estimatedRSI = calculateEstimatedRSI();
-    console.log('📊 Using estimated RSI:', estimatedRSI);
     return estimatedRSI;
   }
 }
@@ -312,18 +305,12 @@ interface SectorDataItem {
 }
 
 function calculateIndianMarketSentiment(nseData: NSEData, fiiData: FIIData, sectorData: SectorDataItem[], weeklyRSI: number): IndianMarketSentiment {
-  console.log('🔍 NSE Data received:', nseData);
-  console.log('🔍 FII Data received:', fiiData);
-  console.log('🔍 Sector Data count:', sectorData.length);
   
   // Extract key market data
   const nifty = nseData.nifty || { current: 24500, change: 0, changePercent: 0 };
   const bankNifty = nseData.bankNifty || { current: 52000, change: 0, changePercent: 0 };
   const vix = nseData.vix || { current: 15, change: 0, changePercent: 0 };
   
-  console.log('📈 Using Nifty data:', nifty);
-  console.log('🏦 Using Bank Nifty data:', bankNifty);
-  console.log('⚡ Using VIX data:', vix);
   
   // Calculate individual indicators
   const indicators = {
@@ -465,7 +452,6 @@ function calculateWeeklyTrend(niftyPrice: number, niftyChange: number, fiiNet: n
   let strength = 50;
   let signal = '';
   
-  console.log('📊 Weekly RSI Analysis:', weeklyRSI);
   
   // RSI-based trend determination as per user requirements
   if (weeklyRSI <= 30) {

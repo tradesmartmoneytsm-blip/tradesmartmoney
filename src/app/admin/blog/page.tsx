@@ -33,57 +33,8 @@ interface BlogPost {
   likes: number;
 }
 
-// Mock data - in production, this would come from your database
-const mockPosts: BlogPost[] = [
-  {
-    id: 1,
-    slug: 'complete-guide-smart-money-trading-2025',
-    title: 'Complete Guide to Smart Money Trading in 2025',
-    excerpt: 'Master institutional money flow tracking with advanced techniques, real-world examples, and proven strategies for Indian markets.',
-    content: 'Full article content here...',
-    author: {
-      name: 'Raj Patel',
-      role: 'Senior Market Analyst',
-      bio: '10+ years experience in institutional trading'
-    },
-    category: 'Smart Money',
-    tags: ['Institutional Flow', 'FII/DII', 'Order Flow', 'Strategy'],
-    publishDate: '2025-01-15',
-    lastUpdated: '2025-01-15',
-    readTime: '12 min read',
-    difficulty: 'Intermediate',
-    status: 'published',
-    featured: true,
-    premium: false,
-    views: 15420,
-    comments: 89,
-    likes: 342
-  },
-  {
-    id: 2,
-    slug: 'fii-dii-data-analysis-january-2025',
-    title: 'FII/DII Data Analysis: January 2025 Market Impact',
-    excerpt: 'Deep dive into recent foreign and domestic institutional flow patterns and their dramatic impact on Nifty direction.',
-    content: 'Full article content here...',
-    author: {
-      name: 'Priya Sharma',
-      role: 'Data Analyst',
-      bio: 'Specialist in institutional flow analysis'
-    },
-    category: 'Market Analysis',
-    tags: ['FII DII', 'Market Data', 'Institutional Flow', 'Nifty'],
-    publishDate: '2025-01-14',
-    lastUpdated: '2025-01-14',
-    readTime: '8 min read',
-    difficulty: 'Beginner',
-    status: 'published',
-    featured: true,
-    premium: false,
-    views: 12150,
-    comments: 64,
-    likes: 278
-  }
-];
+// Blog posts will be loaded from database in production
+const mockPosts: BlogPost[] = [];
 
 const categories = ['Smart Money', 'Market Analysis', 'Algo Trading', 'Intraday Trading', 'Options Trading', 'Swing Trading'];
 const difficulties = ['Beginner', 'Intermediate', 'Advanced'];

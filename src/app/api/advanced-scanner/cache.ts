@@ -164,7 +164,6 @@ class AdvancedScannerCache {
     
     this.stats.lastCleanup = now;
     if (removedCount > 0) {
-      console.log(`🧹 Cache cleanup: removed ${removedCount} expired entries`);
     }
   }
   
@@ -181,7 +180,6 @@ class AdvancedScannerCache {
     }
     
     keysToRemove.forEach(key => this.cache.delete(key));
-    console.log(`🗑️ Invalidated ${keysToRemove.length} cache entries for ${symbol}`);
   }
   
   // Get cache statistics

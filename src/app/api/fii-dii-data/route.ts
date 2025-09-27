@@ -5,7 +5,6 @@ import { getGrowwHeaders } from '@/lib/api-headers';
 
 export async function GET() {
   try {
-    console.log('📊 Fetching FII/DII data...');
     
     // Try multiple sources for FII/DII data
     const marketData = await fetchFiiDiiData();
@@ -50,7 +49,6 @@ async function fetchFiiDiiData(): Promise<FiiDiiData[]> {
       method: 'GET'
     });
     
-    console.log(`📊 API response: ${response.status} ${response.statusText}`);
     
     if (!response.ok) {
       const errorText = await response.text().catch(() => 'Unable to read error response');
@@ -59,7 +57,6 @@ async function fetchFiiDiiData(): Promise<FiiDiiData[]> {
     }
     
     const apiResponse = await response.json();
-    console.log('📊 API response received and parsed successfully');
     
     return parseFiiDiiData(apiResponse);
     
@@ -174,6 +171,5 @@ async function cleanupOldData() {
   if (error) {
     console.error('Failed to cleanup old data:', error);
   } else {
-    console.log('🧹 Cleaned up FII/DII data older than 30 days');
   }
 } 

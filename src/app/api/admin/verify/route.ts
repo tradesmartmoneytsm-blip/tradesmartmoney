@@ -32,7 +32,6 @@ function verifyToken(token: string, password: string): boolean {
 
 export async function POST(request: Request) {
   try {
-    console.log('🔍 Token verification request received');
     
     const { token } = await request.json();
 

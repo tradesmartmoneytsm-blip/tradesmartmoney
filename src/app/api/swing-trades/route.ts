@@ -86,7 +86,7 @@ export async function GET(request: Request) {
       return NextResponse.json({
         success: true,
         message: 'Sample swing trades data (Supabase not configured)',
-        data: getSampleSwingTrades(),
+        data: [],
         source: 'sample_data'
       });
     }
@@ -125,7 +125,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
-      data: getSampleSwingTrades() // Fallback to sample data
+      data: []
     }, { status: 500 });
   }
 }
@@ -384,70 +384,3 @@ export async function DELETE(request: Request) {
     }, { status: 500 });
   }
 }
-
-// Sample data for when Supabase is not configured
-function getSampleSwingTrades(): SwingTrade[] {
-  return [
-    {
-      id: '1',
-      strategy: 'BIT',
-      stock_name: 'Reliance Industries',
-      stock_symbol: 'RELIANCE',
-      entry_price: 2450.00,
-      stop_loss: 2320.00,
-      target_price: 2650.00,
-      current_price: 2485.50,
-      status: 'Running',
-      setup_description: 'Breakout from resistance with volume confirmation',
-      risk_reward_ratio: '1:2.5',
-      timeframe: '5-10 days',
-      entry_date: '2025-01-06',
-      potential_return: 8.16,
-      notes: 'Strong volume breakout above 2440 resistance level',
-      created_at: '2025-01-06T10:00:00Z',
-      updated_at: '2025-01-06T10:00:00Z'
-    },
-    {
-      id: '2',
-      strategy: 'Swing Angle',
-      stock_name: 'HDFC Bank',
-      stock_symbol: 'HDFCBANK',
-      entry_price: 1645.00,
-      exit_price: 1720.00,
-      stop_loss: 1580.00,
-      target_price: 1750.00,
-      current_price: 1720.00,
-      status: 'Trade Successful',
-      setup_description: 'Swing angle formation with RSI divergence',
-      risk_reward_ratio: '1:2.2',
-      timeframe: '7-12 days',
-      entry_date: '2024-12-28',
-      exit_date: '2025-01-05',
-      potential_return: 6.38,
-      notes: 'Perfect swing angle setup with bullish divergence',
-      created_at: '2024-12-28T10:00:00Z',
-      updated_at: '2025-01-05T16:30:00Z'
-    },
-    {
-      id: '3',
-      strategy: 'Bottom Formation',
-      stock_name: 'TCS',
-      stock_symbol: 'TCS',
-      entry_price: 3890.00,
-      stop_loss: 3750.00,
-      target_price: 4200.00,
-      current_price: 3825.00,
-      status: 'SL Hit',
-      setup_description: 'Double bottom formation at key support',
-      risk_reward_ratio: '1:2.8',
-      timeframe: '10-15 days',
-      entry_date: '2024-12-20',
-      exit_date: '2024-12-30',
-      exit_price: 3750.00,
-      potential_return: 7.97,
-      notes: 'False breakout from double bottom pattern',
-      created_at: '2024-12-20T10:00:00Z',
-      updated_at: '2024-12-30T14:20:00Z'
-    }
-  ];
-} 

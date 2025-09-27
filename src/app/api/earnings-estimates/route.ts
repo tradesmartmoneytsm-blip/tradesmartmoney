@@ -353,7 +353,6 @@ export async function GET(request: NextRequest) {
       totalRecords: earningsData.length
     };
 
-    console.log(`📊 API Response: ${dataSource}, ${earningsData.length} records`);
     
     return NextResponse.json(response);
 

@@ -75,32 +75,16 @@ export function IntradayInsightsTables() {
     }
   };
 
-  // Mock data for demonstration (fallback)
-  const generateMockData = (type: 'calls' | 'puts') => {
-    const symbols = ['RELIANCE', 'TCS', 'INFY', 'HDFC', 'ICICI', 'SBI', 'ITC', 'WIPRO', 'LT', 'ONGC'];
-    return symbols.slice(0, 8).map(symbol => ({
-      symbol,
-      percentage_change: type === 'calls' 
-        ? +(Math.random() * 15 + 2).toFixed(2)
-        : -(Math.random() * 12 + 1).toFixed(2),
-      timestamp: new Date().toISOString(),
-      session_id: 'demo'
-    })).sort((a, b) => Math.abs(b.percentage_change) - Math.abs(a.percentage_change));
-  };
 
   // Load data
   const loadData = useCallback(async () => {
     setRefreshing(true);
     
     try {
-      // Fetch real data from API with fallback to mock data
+      // Fetch real data from API
       const [callsData, putsData] = await Promise.all([
-        fetchMostActiveStockCalls().catch(() => {
-          return generateMockData('calls');
-        }),
-        fetchMostActiveStockPuts().catch(() => {
-          return generateMockData('puts');
-        })
+        fetchMostActiveStockCalls(),
+        fetchMostActiveStockPuts()
       ]);
 
       setTables(prev => [
@@ -119,20 +103,17 @@ export function IntradayInsightsTables() {
       ]);
     } catch (error) {
       console.error('Error loading data:', error);
-      // Use fallback mock data on error
-      const fallbackCalls = generateMockData('calls');
-      const fallbackPuts = generateMockData('puts');
-      
+      // Set empty data on error
       setTables(prev => [
         {
           ...prev[0],
-          data: fallbackCalls,
+          data: [],
           loading: false,
           lastUpdated: new Date().toLocaleTimeString('en-IN')
         },
         {
           ...prev[1],
-          data: fallbackPuts,
+          data: [],
           loading: false,
           lastUpdated: new Date().toLocaleTimeString('en-IN')
         }

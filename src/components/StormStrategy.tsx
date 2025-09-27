@@ -51,7 +51,6 @@ export function StormStrategy() {
     setSummary(null);
 
     try {
-      console.log(`🌪️ Starting Storm analysis: ${startTime} to ${endTime}`);
       
       const response = await fetch('/api/storm-analysis', {
         method: 'POST',
@@ -75,7 +74,6 @@ export function StormStrategy() {
       setSummary(data.summary);
       setLastAnalysis(new Date().toLocaleTimeString());
       
-      console.log(`⚡ Storm analysis completed: ${data.results.length} storms found`);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to run storm analysis';

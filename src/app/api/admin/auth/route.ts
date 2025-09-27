@@ -10,7 +10,6 @@ function generateToken(password: string): string {
 
 export async function POST(request: Request) {
   try {
-    console.log('🔐 Admin auth request received');
     
     const { password } = await request.json();
 

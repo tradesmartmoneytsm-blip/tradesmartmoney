@@ -44,11 +44,9 @@ export async function POST(request: Request) {
   try {
     const { scanType = 'BREAKOUT', minScore = 70, maxResults = 20 } = await request.json();
     
-    console.log(`🔍 Intraday Scanner: ${scanType}, min score: ${minScore}, max results: ${maxResults}`);
 
     // Get FNO symbols for scanning
     const symbols = await getFnoSymbols();
-    console.log(`📊 Scanning ${symbols.length} symbols`);
 
     if (symbols.length === 0) {
       return NextResponse.json({
@@ -100,7 +98,6 @@ export async function POST(request: Request) {
       .sort((a, b) => b.score - a.score)
       .slice(0, maxResults);
 
-    console.log(`⚡ Scanner Complete: ${sortedResults.length} opportunities found, ${errors} errors`);
 
     return NextResponse.json({
       success: true,

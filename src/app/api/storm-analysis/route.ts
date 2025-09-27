@@ -37,11 +37,9 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    console.log(`🌪️ Storm Analysis: ${startTime} to ${endTime}, threshold: ${thresholdPercent}%`);
 
     // Get active FNO symbols from database
     const symbols = await getFnoSymbols();
-    console.log(`📊 Analyzing ${symbols.length} FNO symbols`);
 
     if (symbols.length === 0) {
       return NextResponse.json({
@@ -74,7 +72,6 @@ export async function POST(request: Request) {
             direction: movement.changed_pcr > movement.start_pcr ? 'increase' : 'decrease',
             timestamp: new Date().toISOString()
           });
-          console.log(`⚡ Storm detected in ${symbol}: ${movement.change_percent}% change`);
         }
         
         processed++;
@@ -99,7 +96,6 @@ export async function POST(request: Request) {
       return b.change_percent - a.change_percent;
     });
 
-    console.log(`⚡ Storm Analysis Complete: ${stormResults.length} storms found, ${errors} errors`);
 
     return NextResponse.json({
       success: true,

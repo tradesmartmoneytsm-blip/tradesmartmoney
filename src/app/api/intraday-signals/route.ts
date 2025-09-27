@@ -67,7 +67,6 @@ interface IntradaySignal {
 // Fetch data from ChartInk API with session management
 async function fetchChartInkData(): Promise<ChartInkResponse> {
   try {
-    console.log('🔍 Fetching data from ChartInk API...');
     
     // Get ChartInk session and CSRF token
     const sessionResponse = await fetch(CHARTINK_SCREENER_URL, {
