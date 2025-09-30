@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Brain, TrendingUp, TrendingDown, Target, Zap, BarChart3, Users, Eye, Play, Loader2, AlertTriangle } from 'lucide-react';
 
 interface AdvancedResult {
@@ -32,18 +32,19 @@ interface AdvancedResult {
 
 interface AdvancedScannerResponse {
   success: boolean;
-  results: AdvancedResult[];
-  summary: {
-    total_analyzed: number;
-    opportunities_found: number;
-    processed: number;
-    errors: number;
+  data: {
+    results: AdvancedResult[];
     analysis_type: string;
+    total_analyzed: number;
+    qualifying_results: number;
     min_score: number;
-    avg_confidence: number;
-    avg_risk_reward: number;
+    timestamp: string;
+    processing_stats: {
+      processed: number;
+      errors: number;
+      success_rate: string;
+    };
   };
-  timestamp: string;
   error?: string;
 }
 
@@ -52,9 +53,34 @@ export function AdvancedScanner() {
   const [analysisType, setAnalysisType] = useState('COMPREHENSIVE');
   const [isScanning, setIsScanning] = useState(false);
   const [results, setResults] = useState<AdvancedResult[]>([]);
-  const [summary, setSummary] = useState<AdvancedScannerResponse['summary'] | null>(null);
+  const [summary, setSummary] = useState<AdvancedScannerResponse['data'] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastScan, setLastScan] = useState<string | null>(null);
+  const [availableSymbols, setAvailableSymbols] = useState<string[]>([]);
+
+  // Fetch available symbols from API
+  const fetchSymbols = async () => {
+    try {
+      const response = await fetch('/api/advanced-scanner');
+      const data = await response.json();
+      
+      if (data.success && data.data.available_symbols) {
+        setAvailableSymbols(data.data.available_symbols);
+      } else {
+        setAvailableSymbols([]); // No fallback symbols
+        setError('Unable to fetch symbol list from database');
+      }
+    } catch (error) {
+      console.error('Failed to fetch symbols:', error);
+      setAvailableSymbols([]); // No fallback symbols
+      setError('Failed to connect to symbol database');
+    }
+  };
+
+  // Fetch symbols on component mount
+  useEffect(() => {
+    fetchSymbols();
+  }, []);
 
   const analysisTypes = [
     { id: 'COMPREHENSIVE', name: 'Comprehensive Analysis', description: 'Full options flow + institutional analysis' },
@@ -66,24 +92,27 @@ export function AdvancedScanner() {
   const runAdvancedScanner = async () => {
     if (isScanning) return;
 
+    // Check if symbols are available
+    if (availableSymbols.length === 0) {
+      setError('No symbols available for analysis. Please check database connection.');
+      return;
+    }
+
     setIsScanning(true);
     setError(null);
     setResults([]);
     setSummary(null);
 
     try {
-      
       const response = await fetch('/api/advanced-scanner', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          startTime: '09:15',
-          endTime: '15:30',
-          minScore,
-          maxResults: 15,
-          analysisType
+          symbols: availableSymbols,
+          analysis_type: analysisType,
+          min_score: minScore
         }),
       });
 
@@ -93,8 +122,8 @@ export function AdvancedScanner() {
         throw new Error(data.error || 'Advanced scanner failed');
       }
 
-      setResults(data.results);
-      setSummary(data.summary);
+      setResults(data.data?.results || []);
+      setSummary(data.data || null);
       setLastScan(new Date().toLocaleTimeString());
       
 
@@ -171,9 +200,9 @@ export function AdvancedScanner() {
 
       {/* Scanner Configuration */}
       <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-4 mb-6 border border-purple-100">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-start">
           {/* Analysis Type */}
-          <div className="lg:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Brain className="w-4 h-4 inline mr-1" />
               Analysis Type
@@ -216,11 +245,13 @@ export function AdvancedScanner() {
             </select>
           </div>
 
+
           {/* Run Scanner */}
-          <div className="flex items-end">
+          <div className="w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-2 opacity-0">Action</label>
             <button
               onClick={runAdvancedScanner}
-              disabled={isScanning}
+              disabled={isScanning || availableSymbols.length === 0}
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center space-x-2"
             >
               {isScanning ? (
@@ -244,16 +275,16 @@ export function AdvancedScanner() {
         <div className="bg-blue-50 rounded-xl p-4 mb-6 border border-blue-200">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
             <div className="text-center">
-              <div className="text-lg font-bold text-blue-600">{summary.opportunities_found}</div>
+              <div className="text-lg font-bold text-blue-600">{summary.qualifying_results}</div>
               <div className="text-gray-600">Opportunities</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-blue-600">{summary.avg_confidence}%</div>
+              <div className="text-lg font-bold text-green-600">{summary.processing_stats.success_rate}</div>
               <div className="text-gray-600">Avg Confidence</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-blue-600">{summary.avg_risk_reward}</div>
-              <div className="text-gray-600">Avg R:R Ratio</div>
+              <div className="text-lg font-bold text-red-600">{summary.processing_stats.errors}</div>
+              <div className="text-gray-600">Errors</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-blue-600">{summary.total_analyzed}</div>
@@ -279,7 +310,7 @@ export function AdvancedScanner() {
       )}
 
       {/* Results Display */}
-      {results.length > 0 ? (
+      {results && results.length > 0 ? (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h4 className="font-semibold text-gray-800">

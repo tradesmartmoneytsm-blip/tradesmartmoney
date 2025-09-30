@@ -25,6 +25,23 @@ export function Navigation({
   const [, setLastUpdated] = useState<Date | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
+  // Handle market index click - redirect to TradingView
+  const handleIndexClick = (indexName: string) => {
+    let symbol = indexName;
+    
+    // Map API names to TradingView symbols
+    if (indexName === 'Nifty 50') symbol = 'NIFTY';
+    if (indexName === 'Nifty Bank') symbol = 'BANKNIFTY';
+    if (indexName === 'Finnifty') symbol = 'FINNIFTY';
+    if (indexName === 'India VIX') symbol = 'INDIAVIX';
+    
+    console.log(`🔗 Opening TradingView for ${indexName} → ${symbol}`);
+    
+    // Open TradingView directly with 5-minute chart
+    const tradingViewUrl = `https://www.tradingview.com/chart/?symbol=NSE:${symbol}&interval=5`;
+    window.open(tradingViewUrl, '_blank', 'noopener,noreferrer');
+  };
+
   // Fetch market indices data
   const fetchMarketIndices = async () => {
     try {
@@ -162,19 +179,19 @@ export function Navigation({
       id: 'swing',
       label: 'Swing Trade',
       icon: <TrendingUp className={brandTokens.icons.sm} />,
-      description: 'Multi-day trading examples for educational study'
+      description: 'Multi-day trading examples and analysis'
     },
     {
       id: 'intraday',
-      label: 'Educational Intraday Analysis',
+      label: 'FNO',
       icon: <BarChart3 className={brandTokens.icons.sm} />,
-      description: 'Same-day trading examples for learning'
+      description: 'Futures & Options trading analysis'
     },
     {
       id: 'smart-money-flow',
       label: 'Smart Money Flow',
       icon: <TrendingUp className={brandTokens.icons.sm} />,
-      description: 'Study institutional money movement for educational purposes'
+      description: 'Track institutional money movement and flow'
     },
     {
       id: 'news',
@@ -297,16 +314,31 @@ export function Navigation({
           </div>
 
           {/* Market Indices - Desktop Only */}
-          <div className="hidden lg:flex items-center space-x-6 scrollbar-thin overflow-x-auto">
+          <div className="hidden lg:flex items-center space-x-6 flex-shrink-0">
             {marketIndices.length > 0 ? (
               marketIndices.map((index, idx) => (
-                <div key={idx} className="flex flex-col items-center min-w-0">
-                  <span className="text-white font-medium text-sm whitespace-nowrap">{index.displayName}</span>
+                <button
+                  key={idx}
+                  onClick={() => handleIndexClick(index.name)}
+                  className="flex flex-col items-center min-w-0 hover:bg-white/20 rounded-lg px-3 py-2 transition-all duration-200 cursor-pointer group border border-white/20 hover:border-white/40 hover:shadow-lg bg-white/5 transform hover:scale-105 will-change-transform"
+                  title={`Click to view ${index.displayName} 5-minute chart on TradingView`}
+                >
+                  <div className="flex items-center space-x-1 mb-1">
+                    <span className="text-white font-bold text-sm whitespace-nowrap group-hover:text-blue-200 underline decoration-dotted decoration-white/50">
+                      {index.displayName}
+                    </span>
+                    <span className="text-blue-300 group-hover:text-blue-100 text-xs">📊</span>
+                  </div>
                   <div className="flex items-center space-x-1 text-xs">
-                    <span className="text-white/90 font-mono">{formatCurrency(index.current)}</span>
+                    <span className="text-white/90 font-mono group-hover:text-white font-semibold">
+                      {formatCurrency(index.current)}
+                    </span>
                     {formatChange(index.change, index.changePercent)}
                   </div>
-                </div>
+                  <div className="text-xs text-blue-200 mt-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                    🔗 Click for 5min chart
+                  </div>
+                </button>
               ))
             ) : (
               <div className="flex items-center space-x-2">
@@ -484,6 +516,7 @@ export function Navigation({
           </div>
         </div>
       )}
+
     </nav>
   );
 } 

@@ -1,54 +1,83 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 // Extend Window interface for AdSense
 declare global {
   interface Window {
     adsbygoogle: unknown[];
-    __adsense_auto_ads_initialized?: boolean;
+    __tradesmartmoney_adsense_initialized?: boolean;
   }
+}
+
+// Global initialization flag - survives all React lifecycle events
+if (typeof window !== 'undefined') {
+  (window as Window & { __TRADESMARTMONEY_ADSENSE_GLOBAL_INIT?: boolean }).__TRADESMARTMONEY_ADSENSE_GLOBAL_INIT = false;
 }
 
 // Google Auto Ads - Let Google handle everything automatically
 export function AutoAds() {
+  const initRef = useRef(false);
+
   useEffect(() => {
-    // Initialize Google Auto Ads
-    try {
-      if (typeof window !== 'undefined') {
-        // Check if Auto Ads is already initialized using window flag
-        if (window.__adsense_auto_ads_initialized) {
-          return; // Already initialized, skip
+    // Prevent multiple initializations within this component instance
+    if (initRef.current) return;
+    
+    const initializeAutoAds = () => {
+      try {
+        if (typeof window === 'undefined') return;
+
+        // Ultimate check: Global flag that survives everything
+        if ((window as Window & { __TRADESMARTMONEY_ADSENSE_GLOBAL_INIT?: boolean }).__TRADESMARTMONEY_ADSENSE_GLOBAL_INIT) {
+          return;
         }
-        
+
         // Check if AdSense script is loaded
         const adsenseScript = document.querySelector('script[src*="pagead/js/adsbygoogle.js"]');
         if (!adsenseScript) {
-          // AdSense script not loaded yet, skip initialization
           return;
         }
-        
-        // Mark as initialized before pushing to prevent race conditions
-        window.__adsense_auto_ads_initialized = true;
-        
-        // Initialize adsbygoogle array if needed
+
+        // Initialize adsbygoogle array safely
         window.adsbygoogle = window.adsbygoogle || [];
+        if (!Array.isArray(window.adsbygoogle)) {
+          window.adsbygoogle = [];
+        }
+
+        // Check if page-level ads already configured
+        const hasPageLevelConfig = window.adsbygoogle.some((ad: unknown) => {
+          return ad && 
+                 typeof ad === 'object' && 
+                 ad !== null && 
+                 'enable_page_level_ads' in ad;
+        });
+
+        if (hasPageLevelConfig) {
+          (window as Window & { __TRADESMARTMONEY_ADSENSE_GLOBAL_INIT?: boolean }).__TRADESMARTMONEY_ADSENSE_GLOBAL_INIT = true;
+          initRef.current = true;
+          return;
+        }
+
+        // Set global flag IMMEDIATELY before any operations
+        (window as Window & { __TRADESMARTMONEY_ADSENSE_GLOBAL_INIT?: boolean }).__TRADESMARTMONEY_ADSENSE_GLOBAL_INIT = true;
+        initRef.current = true;
         
-        // Enable page-level ads (Auto Ads)
+        // Push the configuration
         window.adsbygoogle.push({
           google_ad_client: "ca-pub-6601377389077210",
           enable_page_level_ads: true,
-          overlays: {bottom: true}
+          overlays: { bottom: true }
         });
+        
+      } catch (error) {
+        console.error('AdSense initialization error:', error);
       }
-    } catch (error) {
-      console.error('Auto Ads error:', error);
-      // Reset flag on error so it can be retried
-      if (typeof window !== 'undefined') {
-        window.__adsense_auto_ads_initialized = false;
-      }
-    }
-  }, []);
+    };
+
+    // Single initialization attempt
+    initializeAutoAds();
+
+  }, []); // Empty dependency array - run only once per component instance
 
   return null; // Auto ads don't need visual components
 }

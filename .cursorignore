@@ -1,0 +1,76 @@
+# Node modules and dependencies
+node_modules/
+.pnp/
+.yarn/
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Cache directories
+.cache/
+.turbo/
+.swc/
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+
+# Large data files
+*.csv
+*.json.gz
+*.sql.gz
+
+# Media files (if any)
+*.mp4
+*.avi
+*.mov
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+
+# Documentation (reduce indexing load)
+README*.md
+CHANGELOG*.md
+docs/
+
+# Test files (reduce context)
+__tests__/
+*.test.*
+*.spec.*
+coverage/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Build artifacts
+*.tsbuildinfo
+.turbo/
+.vercel/
+
+# Temporary files
+intradayscreenerurls
+enhanced-page.tsx
