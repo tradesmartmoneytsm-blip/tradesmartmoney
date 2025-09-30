@@ -61,7 +61,7 @@ on:
         type: boolean
 
 jobs:
-  collect-intraday-data:
+  most_active_stock_calls_puts:
     runs-on: ubuntu-latest
     
     steps:
@@ -121,19 +121,19 @@ jobs:
 
   # Job to monitor and report status
   monitor-status:
-    needs: collect-intraday-data
+    needs: most_active_stock_calls_puts
     runs-on: ubuntu-latest
     if: always()
     
     steps:
     - name: Report Status
       run: |
-        echo "📊 Intraday Data Collection Status: ${{ needs.collect-intraday-data.result }}"
+        echo "📊 Most Active Stock Calls/Puts Collection Status: ${{ needs.most_active_stock_calls_puts.result }}"
         echo "Timestamp: $(TZ='Asia/Kolkata' date)"
         
-        if [[ "${{ needs.collect-intraday-data.result }}" == "success" ]]; then
+        if [[ "${{ needs.most_active_stock_calls_puts.result }}" == "success" ]]; then
           echo "✅ Data collection completed successfully"
-        elif [[ "${{ needs.collect-intraday-data.result }}" == "skipped" ]]; then
+        elif [[ "${{ needs.most_active_stock_calls_puts.result }}" == "skipped" ]]; then
           echo "⏭️ Data collection skipped (outside market hours)"
         else
           echo "❌ Data collection failed"
