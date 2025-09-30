@@ -192,7 +192,7 @@ function HomeComponent() {
       />
       
       {/* Hero Content */}
-      <div className="relative pt-8 pb-32 lg:pt-16 lg:pb-40">
+      <div className="relative pt-4 pb-32 lg:pt-8 lg:pb-40">
         <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x}`}>
           
           {/* Main Hero Content */}
@@ -216,7 +216,7 @@ function HomeComponent() {
             </p>
             
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 animate-slide-up delay-400">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8 animate-slide-up delay-400">
               <button 
                 onClick={() => handleSectionChange('market')}
                 className="group btn-brand px-8 py-4 text-lg font-semibold flex items-center gap-3"
@@ -237,7 +237,7 @@ function HomeComponent() {
             </div>
             
             {/* Platform Features Section */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-white mb-4">Why Smart Money Traders Choose Us</h2>
               <p className="text-blue-200 text-lg max-w-2xl mx-auto">
                 Trade smart money strategies with professional-grade tools and institutional-level market analysis to master smart money concepts
@@ -245,7 +245,7 @@ function HomeComponent() {
             </div>
             
             {/* Features Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20 animate-fade-in delay-600">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 animate-fade-in delay-600">
               <button 
                 onClick={() => handleSectionChange('market')}
                 className="glass-card p-6 text-center hover:scale-105 hover:bg-white/5 transition-all duration-300 group cursor-pointer"

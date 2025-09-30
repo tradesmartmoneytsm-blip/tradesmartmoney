@@ -1,6 +1,34 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 
+// Option Chain Data Interfaces
+interface OptionData {
+  strike_price: number;
+  index_close: number;
+  calls_oi: number;
+  puts_oi: number;
+  calls_volume: number;
+  puts_volume: number;
+  calls_change_oi_value: number;
+  puts_change_oi_value: number;
+  calls_builtup: string;
+  puts_builtup: string;
+  calls_ltp: number;
+  puts_ltp: number;
+}
+
+interface OptionTotals {
+  total_calls_puts: {
+    total_calls_oi_value: number;
+    total_puts_oi_value: number;
+  };
+}
+
+interface OptionChainData {
+  optionChain: OptionData[];
+  totals: OptionTotals;
+}
+
 // NiftyTrader API endpoints
 const NIFTY_TRADER_BASE = 'https://webapi.niftytrader.in/webapi';
 const HEADERS = {
@@ -159,7 +187,7 @@ async function fetchOptionChainData(symbol: string) {
  */
 async function performOptionChainAnalysis(
   symbol: string,
-  optionChainData: { optionChain: any[], totals: any },
+  optionChainData: OptionChainData,
   analysisType: string
 ): Promise<AdvancedAnalysis | null> {
   try {
@@ -170,7 +198,7 @@ async function performOptionChainAnalysis(
     }
     
     // Get current price from the option chain data
-    const currentPrice = (optionChain[0] as any)?.index_close || 100;
+    const currentPrice = optionChain[0]?.index_close || 100;
     
     // Analyze using the buildup classifications
     const buildupAnalysis = analyzeOptionBuildup(optionChain, currentPrice);
@@ -296,7 +324,7 @@ async function performOptionChainAnalysis(
 /**
  * Analyze option buildup patterns using NiftyTrader classifications
  */
-function analyzeOptionBuildup(optionChain: unknown[], currentPrice: number) {
+function analyzeOptionBuildup(optionChain: OptionData[], currentPrice: number) {
   // Advanced Smart Money Analysis - Professional Grade
   let institutionalBullishFlow = 0;
   let institutionalBearishFlow = 0;
@@ -312,7 +340,7 @@ function analyzeOptionBuildup(optionChain: unknown[], currentPrice: number) {
   const unusualActivity: string[] = [];
   const detailedAnalysis: string[] = [];
   
-  optionChain.forEach((option: any) => {
+  optionChain.forEach((option: OptionData) => {
     const strike = option.strike_price;
     const callBuildup = option.calls_builtup || '';
     const putBuildup = option.puts_builtup || '';

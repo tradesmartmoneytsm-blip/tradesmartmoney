@@ -58,21 +58,17 @@ export default function PrivacyPolicy() {
               <li>Trading preferences and investment goals</li>
               <li>Usage data and analytics through Google Analytics</li>
               <li>Device information (IP address, browser type, operating system)</li>
-              <li>Cookie and tracking data for advertising purposes</li>
-              <li>Ad interaction data and preferences</li>
+              <li>Cookie and tracking data for analytics purposes</li>
             </ul>
 
-            <h2 id="cookies" className="text-2xl font-semibold text-gray-900 mt-8 mb-4">2. Advertising and Cookies</h2>
+            <h2 id="cookies" className="text-2xl font-semibold text-gray-900 mt-8 mb-4">2. Cookies and Analytics</h2>
             <p className="text-gray-700 mb-4">
-              <strong>Google AdSense:</strong> We use Google AdSense to display advertisements on our website. 
-              Google AdSense uses cookies and similar technologies to serve ads and analyze traffic to improve user experience.
+              We use cookies and similar technologies to analyze traffic and improve user experience.
             </p>
             <ul className="list-disc pl-6 text-gray-700 mb-6">
-              <li>We use cookies to enable ad delivery and measure ad effectiveness</li>
-              <li>Third-party vendors, including Google, use cookies to serve relevant ads</li>
               <li>Analytics cookies help us understand website usage and improve our services</li>
-              <li>You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a></li>
-              <li>You can also opt out through the <a href="http://www.aboutads.info/choices/" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Digital Advertising Alliance</a></li>
+              <li>We use Google Analytics to track website performance and user behavior</li>
+              <li>You can opt out of Google Analytics by visiting <a href="https://tools.google.com/dlpage/gaoptout" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Analytics Opt-out</a></li>
             </ul>
 
             <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">3. How We Use Your Information</h2>

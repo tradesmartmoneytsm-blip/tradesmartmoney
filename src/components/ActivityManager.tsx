@@ -8,7 +8,7 @@ import {
   TrendingUp,
   Minimize2
 } from 'lucide-react';
-import { IntradayActivity, IntradayActivityFilters } from '@/app/api/activities/route';
+import { IntradayActivity, IntradayActivityFilters } from '@/types/activities';
 import { supabase } from '@/lib/supabase';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

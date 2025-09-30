@@ -4,7 +4,6 @@ import "./globals.css";
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { TrafficTracker } from '@/components/TrafficTracker';
 import { Footer } from '@/components/Footer';
-import { AutoAds } from '@/components/AdSense';
 import { StructuredData } from '@/components/StructuredData';
 import { AdvanceDeclineWidget } from '@/components/AdvanceDeclineWidget';
 import { ActivityManager } from '@/components/ActivityManager';
@@ -225,22 +224,6 @@ export default function RootLayout({
         <GoogleAnalytics />
         
         
-        {/* Google AdSense Account */}
-        <meta name="google-adsense-account" content="ca-pub-6601377389077210" />
-        
-        {/* Google Site Verification - PASTE YOUR CODE HERE */}
-        {/* Step 1: Go to adsense.google.com → Sites → Get Code */}
-        {/* Step 2: Copy the meta tag Google gives you */}
-        {/* Step 3: Replace the line below with your actual verification code */}
-        {/* EXAMPLE: <meta name="google-site-verification" content="ABC123XYZ..." /> */}
-        {/* <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_FROM_ADSENSE" /> */}
-        
-        {/* Google AdSense */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6601377389077210"
-          crossOrigin="anonymous"
-        />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50`}>
         {/* Skip link for accessibility */}
@@ -256,8 +239,6 @@ export default function RootLayout({
         <Footer />
         
 
-        {/* Auto Ads Component */}
-        <AutoAds />
         
         {/* Advance-Decline Widget - Global floating button */}
         <AdvanceDeclineWidget />

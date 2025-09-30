@@ -21,12 +21,10 @@ class MarketDataService {
 
   // Subscribe to sector data updates
   subscribe(callback: (data: SectorData[]) => void) {
-    console.log(`➕ Adding subscriber (total: ${this.subscribers.length + 1})`);
     this.subscribers.push(callback);
     
     // Return unsubscribe function
     return () => {
-      console.log(`➖ Removing subscriber (remaining: ${this.subscribers.length - 1})`);
       this.subscribers = this.subscribers.filter(cb => cb !== callback);
     };
   }
@@ -89,7 +87,6 @@ class MarketDataService {
       throw new Error(`API error: ${result.error}`);
     }
 
-    console.log(`✅ Received ${result.data?.length || 0} sectors from API`);
     
     // Convert lastUpdated strings back to Date objects
     const sectors = result.data.map((sector: SectorData) => ({
@@ -114,7 +111,6 @@ class MarketDataService {
       this.fetchSectorPerformance();
     }, this.CACHE_DURATION);
 
-    console.log('🔄 Sector performance auto-refresh started (5-minute interval)');
   }
 
   // Stop auto-refresh

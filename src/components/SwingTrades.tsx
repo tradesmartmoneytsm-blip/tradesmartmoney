@@ -53,7 +53,7 @@ const ValueBuying = () => {
         throw new Error(result.error || 'Failed to fetch value buying opportunities');
       }
     } catch (err) {
-      console.error('Error fetching value buying opportunities:', err);
+      console.error('❌ Error fetching value buying opportunities:', err);
       setError(err instanceof Error ? err.message : 'Failed to load opportunities');
     } finally {
       setLoading(false);
@@ -262,6 +262,7 @@ export function SwingTrades() {
   const [, setLastUpdated] = useState<Date | null>(null);
   const [selectedImage, setSelectedImage] = useState<{ url: string; symbol: string } | null>(null);
   const [activeStrategy, setActiveStrategy] = useState<string>('BIT');
+  const [valueBuyingStocks, setValueBuyingStocks] = useState<ValueStock[]>([]);
 
   const fetchTrades = useCallback(async () => {
     try {
@@ -285,9 +286,23 @@ export function SwingTrades() {
     }
   }, []); // Empty dependency array for stable reference
 
+  const fetchValueBuyingStocks = useCallback(async () => {
+    try {
+      const response = await fetch('/api/value-buying');
+      const result = await response.json();
+      
+      if (result.success) {
+        setValueBuyingStocks(result.data || []);
+      }
+    } catch (err) {
+      console.error('❌ Main component: Error fetching value buying stocks:', err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchTrades();
-  }, [fetchTrades]);
+    fetchValueBuyingStocks();
+  }, [fetchTrades, fetchValueBuyingStocks]);
 
   // Group trades by strategy - memoized for performance
   const groupedTrades: GroupedTrades = useMemo(() => {
@@ -921,7 +936,7 @@ export function SwingTrades() {
         </div>
 
         {/* Tab Navigation */}
-        <TabNavigation valueBuyingStocks={[]} />
+        <TabNavigation valueBuyingStocks={valueBuyingStocks} />
 
         {/* Active Strategy Section */}
         <div className="space-y-4">
