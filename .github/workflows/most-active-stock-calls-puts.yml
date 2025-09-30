@@ -1,4 +1,4 @@
-name: Intraday Insights Data Collector
+name: Most Active Stock Calls/Puts Collector
 
 on:
   # Run every 5 minutes from 9:20 AM to 1:00 PM IST (Monday to Friday)
