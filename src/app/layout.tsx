@@ -230,6 +230,16 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
+        
+        {/* Global Construction Banner */}
+        <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white py-2 px-4 text-center relative z-50">
+          <div className="flex items-center justify-center gap-2 text-sm font-medium">
+            <span className="animate-pulse">🚧</span>
+            <span>Site Under Construction - Exciting New Features Coming Soon!</span>
+            <span className="animate-bounce">🚀</span>
+          </div>
+        </div>
+        
         {/* Traffic Tracking */}
         <TrafficTracker />
         

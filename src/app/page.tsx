@@ -237,11 +237,32 @@ function HomeComponent() {
             </div>
             
             {/* Platform Features Section */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <h2 className="text-3xl font-bold text-white mb-4">Why Smart Money Traders Choose Us</h2>
               <p className="text-blue-200 text-lg max-w-2xl mx-auto">
                 Trade smart money strategies with professional-grade tools and institutional-level market analysis to master smart money concepts
               </p>
+            </div>
+
+            {/* Development Progress Notice */}
+            <div className="max-w-4xl mx-auto mb-8 p-6 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-2xl border border-blue-400/30">
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Bot className="w-6 h-6 text-blue-400" />
+                  <h3 className="text-xl font-semibold text-white">🚀 Exciting Features in Development</h3>
+                  <Brain className="w-6 h-6 text-purple-400" />
+                </div>
+                <p className="text-blue-100 mb-4">
+                  We're actively building advanced trading tools, real-time alerts, portfolio analytics, and AI-powered market insights. 
+                  Stay tuned for regular updates and new features!
+                </p>
+                <div className="flex flex-wrap justify-center gap-2 text-sm">
+                  <span className="px-3 py-1 bg-blue-500/30 rounded-full text-blue-200">📊 Advanced Analytics</span>
+                  <span className="px-3 py-1 bg-purple-500/30 rounded-full text-purple-200">🤖 AI Insights</span>
+                  <span className="px-3 py-1 bg-green-500/30 rounded-full text-green-200">⚡ Real-time Alerts</span>
+                  <span className="px-3 py-1 bg-orange-500/30 rounded-full text-orange-200">📱 Mobile App</span>
+                </div>
+              </div>
             </div>
             
             {/* Features Grid */}
