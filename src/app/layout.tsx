@@ -232,11 +232,13 @@ export default function RootLayout({
         </a>
         
         {/* Global Construction Banner */}
-        <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white py-2 px-4 text-center relative z-50">
-          <div className="flex items-center justify-center gap-2 text-sm font-medium">
-            <span className="animate-pulse">🚧</span>
-            <span>Site Under Construction - Exciting New Features Coming Soon!</span>
-            <span className="animate-bounce">🚀</span>
+        <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white py-3 px-4 text-center relative z-50 shadow-lg">
+          <div className="flex items-center justify-center gap-3 text-sm font-semibold">
+            <span className="animate-pulse text-yellow-300">⚡</span>
+            <span className="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+              🚧 Site Under Construction - Exciting New Features Coming Soon! 🚀
+            </span>
+            <span className="animate-bounce text-yellow-300">✨</span>
           </div>
         </div>
         
