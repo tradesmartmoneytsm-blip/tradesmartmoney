@@ -85,11 +85,15 @@ export function FuturesAnalysisPageClient() {
         setData(Array.isArray(analysisData) ? analysisData : []);
         setLastUpdated(new Date().toLocaleString());
       } else {
-        throw new Error(result.error || 'Failed to fetch futures analysis data');
+        // Handle no data gracefully without throwing errors
+        console.log('ℹ️ No futures analysis data available yet');
+        setData([]);
+        setError('No futures data available. Run the Python script to collect data.');
       }
     } catch (err) {
-      console.error('Error fetching futures analysis:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load futures analysis data');
+      console.log('ℹ️ Futures analysis data not available:', err);
+      setData([]);
+      setError('Futures analysis data not available. Please run the Python script to collect data.');
     } finally {
       setLoading(false);
     }
@@ -365,14 +369,20 @@ export function FuturesAnalysisPageClient() {
           </div>
         )}
 
-        {/* Error State */}
+        {/* No Data State */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="w-6 h-6 text-red-600" />
+              <Activity className="w-6 h-6 text-blue-600" />
               <div>
-                <h3 className="font-semibold text-red-800">Error Loading Data</h3>
-                <p className="text-red-600">{error}</p>
+                <h3 className="font-semibold text-blue-800">Futures Data Collection</h3>
+                <p className="text-blue-600">{error}</p>
+                <div className="mt-3 text-sm text-blue-700">
+                  <p className="font-medium mb-2">To start collecting futures data:</p>
+                  <code className="bg-blue-100 px-2 py-1 rounded text-xs">
+                    python3 scripts/futures_analyzer.py
+                  </code>
+                </div>
               </div>
             </div>
           </div>

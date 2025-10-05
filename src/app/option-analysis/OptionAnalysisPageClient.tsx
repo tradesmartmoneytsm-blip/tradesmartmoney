@@ -72,11 +72,15 @@ export function OptionAnalysisPageClient() {
         setData(Array.isArray(analysisData) ? analysisData : []);
         setLastUpdated(new Date().toLocaleString());
       } else {
-        throw new Error(result.error || 'Failed to fetch option analysis data');
+        // Handle no data gracefully without throwing errors
+        console.log('ℹ️ No option analysis data available yet');
+        setData([]);
+        setError('No option data available. Run the Python script to collect data.');
       }
     } catch (err) {
-      console.error('Error fetching option analysis:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load option analysis data');
+      console.log('ℹ️ Option analysis data not available:', err);
+      setData([]);
+      setError('Option analysis data not available. Please run the Python script to collect data.');
     } finally {
       setLoading(false);
     }
