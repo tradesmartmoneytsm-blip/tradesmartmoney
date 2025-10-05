@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Zap, Search, Brain, Activity } from 'lucide-react';
+import { Zap, Search, Brain, Activity, BarChart3 } from 'lucide-react';
 import { StormStrategy } from './StormStrategy';
 import { IntradayScanner } from './IntradayScanner';
 import IntradaySignals from './IntradaySignals';
 import { OptionAnalysisPageClient } from '../app/option-analysis/OptionAnalysisPageClient';
+import { FuturesAnalysisPageClient } from '../app/futures-analysis/FuturesAnalysisPageClient';
 // Auto ads will handle all ad placement automatically
 
 export function IntradayTrades() {
@@ -23,6 +24,12 @@ export function IntradayTrades() {
       name: 'Option Analysis',
       description: 'Institutional data analysis for educational learning purposes',
       icon: Brain
+    },
+    {
+      id: 'futures',
+      name: 'Futures Analysis',
+      description: 'Open Interest buildup patterns and basis analysis',
+      icon: BarChart3
     },
     {
       id: 'scanner',
@@ -97,6 +104,13 @@ export function IntradayTrades() {
       {activeStrategy === 'advanced' && (
         <div className="mt-4">
           <OptionAnalysisPageClient />
+        </div>
+      )}
+
+      {/* Futures Analysis - Integrated from dedicated page */}
+      {activeStrategy === 'futures' && (
+        <div className="mt-4">
+          <FuturesAnalysisPageClient />
         </div>
       )}
 
