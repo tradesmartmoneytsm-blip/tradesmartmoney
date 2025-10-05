@@ -34,16 +34,22 @@ logging.basicConfig(
     datefmt="%Y-%m-%dT%H:%M:%SZ",
 )
 
-# NSE API Configuration
+# NSE API Configuration (Using your proven cookie approach)
 NSE_BASE = 'https://www.nseindia.com/api'
+SET_COOKIE_URL = "https://www.nseindia.com/market-data/oi-spurts"
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+    'sec-ch-ua': '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"macOS"',
     'Accept': 'application/json, text/plain, */*',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Connection': 'keep-alive',
-    'Upgrade-Insecure-Requests': '1',
 }
+
+# Create session for cookie management (like your approach)
+session = requests.Session()
+cookies = dict()
 
 # Environment variables
 SUPABASE_URL = os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
@@ -126,41 +132,79 @@ def fetch_fno_symbols() -> List[str]:
         # Fallback to essential symbols
         return ['NIFTY', 'BANKNIFTY', 'RELIANCE', 'TCS', 'HDFCBANK']
 
-def fetch_futures_data(symbol: str) -> Optional[Dict]:
-    """Fetch futures data from NSE API"""
+def set_cookie(url: str = SET_COOKIE_URL):
+    """Set cookies for NSE API access (using your proven method)"""
     try:
-        # Try different API endpoints for futures data
+        request = session.get(url, headers=HEADERS, timeout=10)
+        global cookies
+        cookies = dict(request.cookies)
+        logging.debug(f"🍪 Cookies set from {url}")
+    except Exception as e:
+        logging.warning(f"⚠️ Failed to set cookies: {e}")
+
+def get_nse_data(url: str) -> Optional[str]:
+    """Get data from NSE using cookie-based session (your proven method)"""
+    try:
+        logging.debug(f"📡 API Call URL: {url}")
+        response = session.get(url, headers=HEADERS, timeout=15, cookies=cookies)
+        
+        # Handle 401 errors by refreshing cookies (your method)
+        if response.status_code == 401:
+            logging.info("🔄 401 error, refreshing cookies...")
+            set_cookie(SET_COOKIE_URL)
+            response = session.get(url, headers=HEADERS, timeout=15, cookies=cookies)
+        
+        if response.status_code == 200:
+            logging.debug("✅ Response OK")
+            return response.text
+        else:
+            logging.debug(f"⚠️ Response status: {response.status_code}")
+            return None
+            
+    except requests.exceptions.Timeout:
+        logging.warning("⏰ Request timed out")
+    except requests.exceptions.ConnectionError:
+        logging.warning("🌐 Connection error")
+    except requests.exceptions.HTTPError as e:
+        logging.warning(f"🚫 HTTP error: {e.response.status_code}")
+    except Exception as e:
+        logging.warning(f"❌ Request error: {e}")
+    
+    return None
+
+def fetch_futures_data(symbol: str) -> Optional[Dict]:
+    """Fetch futures data using cookie-based approach (your proven method)"""
+    try:
+        # Set cookies first (your approach)
+        set_cookie(SET_COOKIE_URL)
+        
+        # Try different endpoints for futures data
         endpoints = [
-            f"{NSE_BASE}/equity-derivatives?symbol={symbol}",
-            f"{NSE_BASE}/equity-derivatives-data?symbol={symbol}",
-            f"https://www.nseindia.com/api/equity-derivatives?symbol={symbol}"
+            f"https://www.nseindia.com/api/equity-derivatives?symbol={symbol}",
+            f"https://www.nseindia.com/api/live-analysis-oi-spurts-underlyings?symbol={symbol}"
         ]
         
         for url in endpoints:
-            try:
-                response = requests.get(url, headers=HEADERS, timeout=15)
-                if response.status_code == 200:
-                    data = response.json()
-                    if data and ('data' in data or 'stocks' in data):
-                        return data.get('data') or data.get('stocks')
-            except:
-                continue
-        
-        # If all endpoints fail, try index futures for major indices
-        if symbol in ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY']:
-            try:
-                url = f"https://www.nseindia.com/api/equity-derivatives-data?symbol={symbol}"
-                response = requests.get(url, headers=HEADERS, timeout=15)
-                if response.status_code == 200:
-                    data = response.json()
-                    if data:
+            response_text = get_nse_data(url)
+            if response_text:
+                try:
+                    data = json.loads(response_text)
+                    if data and ('data' in data or 'stocks' in data or 'FUTSTK' in data):
                         return data
-            except:
-                pass
+                except json.JSONDecodeError:
+                    continue
         
-        # Only log warnings for major symbols that should have futures
-        if symbol in ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'RELIANCE', 'TCS', 'HDFCBANK', 'ICICIBANK']:
-            logging.warning(f"⚠️ Failed to fetch futures data for {symbol}")
+        # For index futures, try specific endpoint
+        if symbol in ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY']:
+            url = f"https://www.nseindia.com/api/equity-derivatives?symbol={symbol}"
+            response_text = get_nse_data(url)
+            if response_text:
+                try:
+                    data = json.loads(response_text)
+                    return data
+                except json.JSONDecodeError:
+                    pass
+        
         return None
         
     except Exception as e:
@@ -168,17 +212,19 @@ def fetch_futures_data(symbol: str) -> Optional[Dict]:
         return None
 
 def get_spot_price(symbol: str) -> float:
-    """Get current spot price"""
+    """Get current spot price using cookie-based approach"""
     try:
-        url = f"{NSE_BASE}/quote-equity?symbol={symbol}"
-        response = requests.get(url, headers=HEADERS, timeout=10)
+        url = f"https://www.nseindia.com/api/quote-equity?symbol={symbol}"
+        response_text = get_nse_data(url)
         
-        if response.status_code == 200:
-            data = response.json()
-            return float(data.get('priceInfo', {}).get('lastPrice', 0))
+        if response_text:
+            data = json.loads(response_text)
+            price = data.get('priceInfo', {}).get('lastPrice', 0)
+            if price:
+                return float(price)
             
     except Exception as e:
-        logging.warning(f"⚠️ Failed to get spot price for {symbol}: {e}")
+        logging.debug(f"⚠️ Failed to get spot price for {symbol}: {e}")
     
     return 0.0
 
@@ -544,30 +590,28 @@ def main():
     logging.info(f"📊 Analyzing {len(fno_symbols)} symbols for futures data...")
     
     # Process symbols in batches to respect API limits
-    batch_size = 5  # Reasonable batch size
+    batch_size = 3  # Smaller batch for futures API
     for i in range(0, len(fno_symbols), batch_size):
         batch = fno_symbols[i:i + batch_size]
         
         for symbol in batch:
             try:
-                if processed % 20 == 0:  # Log progress every 20 symbols
-                    logging.info(f"🔍 Progress: {processed}/{len(fno_symbols)} symbols processed, {len(results)} results found")
+                logging.info(f"🔍 Analyzing {symbol} futures... ({processed + 1}/{len(fno_symbols)})")
                 
                 # Fetch futures and spot data
                 futures_data = fetch_futures_data(symbol)
+                spot_price = get_spot_price(symbol)
                 
-                if futures_data:
-                    spot_price = get_spot_price(symbol)
-                    if spot_price > 0:
-                        analysis = perform_futures_analysis(symbol, futures_data, spot_price)
-                        if analysis:
-                            results.append(analysis)
-                            logging.info(f"✅ {symbol}: {analysis['oi_buildup_type']}, Signal: {analysis['signal_type']}, Strength: {analysis['signal_strength']:.1f}")
+                if futures_data and spot_price > 0:
+                    analysis = perform_futures_analysis(symbol, futures_data, spot_price)
+                    if analysis:
+                        results.append(analysis)
+                        logging.info(f"✅ {symbol}: {analysis['oi_buildup_type']}, Signal: {analysis['signal_type']}, Strength: {analysis['signal_strength']:.1f}")
                 
                 processed += 1
                 
                 # Respectful delay
-                time.sleep(1)
+                time.sleep(2)
                 
             except Exception as e:
                 logging.error(f"❌ Error processing {symbol}: {e}")
@@ -576,8 +620,7 @@ def main():
         
         # Batch delay
         if i + batch_size < len(fno_symbols):
-            logging.info(f"📊 Batch {i//batch_size + 1} complete, pausing...")
-            time.sleep(3)
+            time.sleep(5)
     
     # Store results
     if results:
