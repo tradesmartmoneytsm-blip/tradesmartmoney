@@ -26,8 +26,8 @@ export function IntradayTrades() {
     },
     {
       id: 'scanner',
-      name: 'Educational AI Analysis',
-      description: 'Multi-factor analysis examples for learning purposes',
+      name: 'AI Analysis',
+      description: 'Multi-factor analysis examples for learning purposes • Coming Soon',
       icon: Search
     },
     {
