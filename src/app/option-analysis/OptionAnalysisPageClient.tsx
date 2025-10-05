@@ -56,6 +56,7 @@ export function OptionAnalysisPageClient() {
   const [minScore, setMinScore] = useState<number>(50);
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState<boolean>(true);
 
   const fetchData = useCallback(async () => {
     try {
@@ -83,6 +84,23 @@ export function OptionAnalysisPageClient() {
 
   useEffect(() => {
     fetchData();
+    
+    // Auto-refresh every 5 minutes (300,000 ms) during market hours
+    const interval = setInterval(() => {
+      const now = new Date();
+      const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000)); // Convert to IST
+      const hours = istTime.getHours();
+      const minutes = istTime.getMinutes();
+      const isWeekday = istTime.getDay() >= 1 && istTime.getDay() <= 5; // Monday to Friday
+      const isMarketHours = hours >= 9 && hours < 15 && (hours > 9 || minutes >= 15) && (hours < 15 || minutes <= 30);
+      
+      if (isWeekday && isMarketHours && autoRefreshEnabled) {
+        console.log('🔄 Auto-refreshing Option Analysis data...');
+        fetchData();
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+
+    return () => clearInterval(interval);
   }, [fetchData]);
 
   useEffect(() => {
@@ -269,9 +287,24 @@ export function OptionAnalysisPageClient() {
           </div>
 
           {lastUpdated && (
-            <div className="mt-3 text-xs text-gray-500 flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              Last updated: {lastUpdated}
+            <div className="mt-3 flex items-center justify-between">
+              <div className="text-xs text-gray-500 flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                Last updated: {lastUpdated}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500">Auto-refresh (5min):</span>
+                <button
+                  onClick={() => setAutoRefreshEnabled(!autoRefreshEnabled)}
+                  className={`px-2 py-1 rounded text-xs font-medium ${
+                    autoRefreshEnabled 
+                      ? 'bg-green-100 text-green-700 border border-green-200' 
+                      : 'bg-gray-100 text-gray-600 border border-gray-200'
+                  }`}
+                >
+                  {autoRefreshEnabled ? '✅ ON' : '⏸️ OFF'}
+                </button>
+              </div>
             </div>
           )}
         </div>
