@@ -80,56 +80,88 @@ def is_market_hours() -> bool:
     return is_weekday and within
 
 def fetch_fno_symbols() -> List[str]:
-    """Fetch active FNO symbols from Supabase database"""
+    """Fetch active FNO symbols from Supabase database - focus on symbols with active futures"""
     try:
-        url = f"{SUPABASE_URL}/rest/v1/fno_symbols"
-        headers = {
-            'apikey': SUPABASE_SERVICE_ROLE_KEY,
-            'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE_KEY}',
-            'Content-Type': 'application/json'
-        }
+        # Start with major symbols that definitely have futures
+        major_futures_symbols = [
+            'NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY',  # Indices
+            'RELIANCE', 'TCS', 'HDFCBANK', 'ICICIBANK', 'INFY', 'HINDUNILVR',  # Large caps
+            'AXISBANK', 'KOTAKBANK', 'SBIN', 'BAJFINANCE', 'MARUTI', 'ASIANPAINT',
+            'LT', 'ULTRACEMCO', 'TITAN', 'SUNPHARMA', 'TATASTEEL', 'JSWSTEEL',
+            'ONGC', 'NTPC', 'POWERGRID', 'COALINDIA', 'HINDALCO', 'GRASIM'
+        ]
         
-        params = {
-            'select': 'symbol_name',
-            'is_active': 'eq.true',
-            'limit': '500'
-        }
+        # Try to fetch from database but fallback to major symbols
+        try:
+            url = f"{SUPABASE_URL}/rest/v1/fno_symbols"
+            headers = {
+                'apikey': SUPABASE_SERVICE_ROLE_KEY,
+                'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE_KEY}',
+                'Content-Type': 'application/json'
+            }
+            
+            params = {
+                'select': 'symbol_name',
+                'is_active': 'eq.true',
+                'limit': '100'  # Reduced limit to focus on active futures
+            }
+            
+            response = requests.get(url, headers=headers, params=params, timeout=30)
+            if response.status_code == 200:
+                data = response.json()
+                db_symbols = [item['symbol_name'] for item in data if item.get('symbol_name')]
+                
+                # Combine major symbols with database symbols, remove duplicates
+                all_symbols = list(set(major_futures_symbols + db_symbols))
+                logging.info(f"✅ Fetched {len(all_symbols)} symbols (major + database)")
+                return all_symbols
+        except:
+            pass
         
-        response = requests.get(url, headers=headers, params=params, timeout=30)
-        response.raise_for_status()
-        
-        data = response.json()
-        symbols = [item['symbol_name'] for item in data if item.get('symbol_name')]
-        
-        # Add index futures
-        symbols.extend(['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY'])
-        
-        logging.info(f"✅ Fetched {len(symbols)} FNO symbols from database")
-        return symbols
+        logging.info(f"✅ Using {len(major_futures_symbols)} major futures symbols")
+        return major_futures_symbols
         
     except Exception as e:
-        logging.error(f"❌ Failed to fetch FNO symbols: {e}")
-        # Fallback to major symbols
-        return ['NIFTY', 'BANKNIFTY', 'RELIANCE', 'TCS', 'HDFCBANK', 'ICICIBANK', 'INFY']
+        logging.error(f"❌ Failed to fetch symbols: {e}")
+        # Fallback to essential symbols
+        return ['NIFTY', 'BANKNIFTY', 'RELIANCE', 'TCS', 'HDFCBANK']
 
 def fetch_futures_data(symbol: str) -> Optional[Dict]:
     """Fetch futures data from NSE API"""
     try:
-        # Get current and next month futures data
-        url = f"{NSE_BASE}/equity-derivatives?symbol={symbol}"
+        # Try different API endpoints for futures data
+        endpoints = [
+            f"{NSE_BASE}/equity-derivatives?symbol={symbol}",
+            f"{NSE_BASE}/equity-derivatives-data?symbol={symbol}",
+            f"https://www.nseindia.com/api/equity-derivatives?symbol={symbol}"
+        ]
         
-        response = requests.get(url, headers=HEADERS, timeout=15)
-        if response.status_code != 200:
-            logging.warning(f"⚠️ NSE API returned {response.status_code} for {symbol}")
-            return None
-            
-        data = response.json()
+        for url in endpoints:
+            try:
+                response = requests.get(url, headers=HEADERS, timeout=15)
+                if response.status_code == 200:
+                    data = response.json()
+                    if data and ('data' in data or 'stocks' in data):
+                        return data.get('data') or data.get('stocks')
+            except:
+                continue
         
-        if not data or 'data' not in data:
-            logging.warning(f"⚠️ No futures data for {symbol}")
-            return None
-            
-        return data['data']
+        # If all endpoints fail, try index futures for major indices
+        if symbol in ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY']:
+            try:
+                url = f"https://www.nseindia.com/api/equity-derivatives-data?symbol={symbol}"
+                response = requests.get(url, headers=HEADERS, timeout=15)
+                if response.status_code == 200:
+                    data = response.json()
+                    if data:
+                        return data
+            except:
+                pass
+        
+        # Only log warnings for major symbols that should have futures
+        if symbol in ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'RELIANCE', 'TCS', 'HDFCBANK', 'ICICIBANK']:
+            logging.warning(f"⚠️ Failed to fetch futures data for {symbol}")
+        return None
         
     except Exception as e:
         logging.error(f"❌ Failed to fetch futures data for {symbol}: {e}")
@@ -512,28 +544,30 @@ def main():
     logging.info(f"📊 Analyzing {len(fno_symbols)} symbols for futures data...")
     
     # Process symbols in batches to respect API limits
-    batch_size = 3  # Smaller batch for futures API
+    batch_size = 5  # Reasonable batch size
     for i in range(0, len(fno_symbols), batch_size):
         batch = fno_symbols[i:i + batch_size]
         
         for symbol in batch:
             try:
-                logging.info(f"🔍 Analyzing {symbol} futures... ({processed + 1}/{len(fno_symbols)})")
+                if processed % 20 == 0:  # Log progress every 20 symbols
+                    logging.info(f"🔍 Progress: {processed}/{len(fno_symbols)} symbols processed, {len(results)} results found")
                 
                 # Fetch futures and spot data
                 futures_data = fetch_futures_data(symbol)
-                spot_price = get_spot_price(symbol)
                 
-                if futures_data and spot_price > 0:
-                    analysis = perform_futures_analysis(symbol, futures_data, spot_price)
-                    if analysis:
-                        results.append(analysis)
-                        logging.info(f"✅ {symbol}: {analysis['oi_buildup_type']}, Signal: {analysis['signal_type']}, Strength: {analysis['signal_strength']:.1f}")
+                if futures_data:
+                    spot_price = get_spot_price(symbol)
+                    if spot_price > 0:
+                        analysis = perform_futures_analysis(symbol, futures_data, spot_price)
+                        if analysis:
+                            results.append(analysis)
+                            logging.info(f"✅ {symbol}: {analysis['oi_buildup_type']}, Signal: {analysis['signal_type']}, Strength: {analysis['signal_strength']:.1f}")
                 
                 processed += 1
                 
                 # Respectful delay
-                time.sleep(2)
+                time.sleep(1)
                 
             except Exception as e:
                 logging.error(f"❌ Error processing {symbol}: {e}")
@@ -542,7 +576,8 @@ def main():
         
         # Batch delay
         if i + batch_size < len(fno_symbols):
-            time.sleep(5)
+            logging.info(f"📊 Batch {i//batch_size + 1} complete, pausing...")
+            time.sleep(3)
     
     # Store results
     if results:
