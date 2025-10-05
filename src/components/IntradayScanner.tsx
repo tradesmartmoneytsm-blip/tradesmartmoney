@@ -45,6 +45,7 @@ export function IntradayScanner() {
   const [summary, setSummary] = useState<ScannerResponse['summary'] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastScan, setLastScan] = useState<string | null>(null);
+  const isComingSoon = true; // Coming soon flag
 
   const scanTypes = [
     { id: 'BREAKOUT', name: 'Breakout Stocks', description: 'Stocks breaking key resistance/support levels' },
@@ -127,6 +128,23 @@ export function IntradayScanner() {
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+      {/* Coming Soon Banner */}
+      {isComingSoon && (
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl p-6 mb-6">
+          <div className="flex items-center justify-center gap-3">
+            <div className="text-3xl">🤖</div>
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-2">AI Analysis - Coming Soon!</h3>
+              <p className="text-blue-100">
+                Advanced AI-powered multi-factor analysis with machine learning insights is under development. 
+                Revolutionary trading intelligence coming soon!
+              </p>
+            </div>
+            <div className="text-3xl">🚀</div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center space-x-3 mb-6">
         <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">
@@ -185,10 +203,19 @@ export function IntradayScanner() {
           <div className="flex items-end">
             <button
               onClick={runScanner}
-              disabled={isScanning}
-              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+              disabled={isScanning || isComingSoon}
+              className={`w-full ${
+                isComingSoon 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-green-600 hover:bg-green-700'
+              } disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2`}
             >
-              {isScanning ? (
+              {isComingSoon ? (
+                <>
+                  <div className="text-lg">🔒</div>
+                  <span>Coming Soon</span>
+                </>
+              ) : isScanning ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Scanning...</span>
