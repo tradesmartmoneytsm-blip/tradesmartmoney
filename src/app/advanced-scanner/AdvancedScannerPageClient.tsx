@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { AdvancedScanner } from '@/components/AdvancedScanner';
 import { 
-  Search, 
   Brain, 
   Activity, 
   AlertTriangle,

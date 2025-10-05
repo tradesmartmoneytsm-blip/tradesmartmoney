@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Zap, Search, Brain, Activity } from 'lucide-react';
 import { StormStrategy } from './StormStrategy';
 import { IntradayScanner } from './IntradayScanner';
-import { AdvancedScanner } from './AdvancedScanner';
 import IntradaySignals from './IntradaySignals';
 import { OptionAnalysisPageClient } from '../app/option-analysis/OptionAnalysisPageClient';
 // Auto ads will handle all ad placement automatically
