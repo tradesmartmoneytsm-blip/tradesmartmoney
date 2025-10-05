@@ -32,7 +32,7 @@ export function IntradayTrades() {
     },
     {
       id: 'storm',
-      name: 'Educational Flow Analysis',
+      name: 'PcrStorm',
       description: 'Money flow activity examples for educational study',
       icon: Zap
     }
