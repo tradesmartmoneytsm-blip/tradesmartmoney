@@ -6,6 +6,7 @@ import { StormStrategy } from './StormStrategy';
 import { IntradayScanner } from './IntradayScanner';
 import { AdvancedScanner } from './AdvancedScanner';
 import IntradaySignals from './IntradaySignals';
+import { OptionAnalysisPageClient } from '../app/option-analysis/OptionAnalysisPageClient';
 // Auto ads will handle all ad placement automatically
 
 export function IntradayTrades() {
@@ -93,9 +94,11 @@ export function IntradayTrades() {
         <IntradaySignals />
       )}
 
-      {/* Advanced Options Scanner */}
+      {/* Option Analysis - Integrated from dedicated page */}
       {activeStrategy === 'advanced' && (
-        <AdvancedScanner />
+        <div className="mt-4">
+          <OptionAnalysisPageClient />
+        </div>
       )}
 
       {/* AI Scanner Strategy */}

@@ -244,12 +244,6 @@ export function Navigation({
           description: 'Real-time strategy performance tracking'
         },
       ]
-    },
-    {
-      id: 'option-analysis',
-      label: 'Option Analysis',
-      icon: <BarChart3 className={brandTokens.icons.sm} />,
-      description: 'Live institutional flow & option chain analysis'
     }
   ];
 
@@ -267,11 +261,6 @@ export function Navigation({
       return;
     }
     
-    // Handle option analysis navigation
-    if (itemId === 'option-analysis') {
-      window.location.href = '/option-analysis';
-      return;
-    }
     
     // Handle market submenus - navigate to separate pages
     if (itemId === 'market' && subItemId) {
