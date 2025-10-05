@@ -244,6 +244,12 @@ export function Navigation({
           description: 'Real-time strategy performance tracking'
         },
       ]
+    },
+    {
+      id: 'option-analysis',
+      label: 'Option Analysis',
+      icon: <BarChart3 className={brandTokens.icons.sm} />,
+      description: 'Live institutional flow & option chain analysis'
     }
   ];
 
@@ -258,6 +264,12 @@ export function Navigation({
     if (itemId === 'smart-money-flow') {
       // Force a page refresh to ensure clean loading
       window.location.href = '/smart-money-flow';
+      return;
+    }
+    
+    // Handle option analysis navigation
+    if (itemId === 'option-analysis') {
+      window.location.href = '/option-analysis';
       return;
     }
     

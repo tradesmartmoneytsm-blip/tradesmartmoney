@@ -200,13 +200,19 @@ async function performOptionChainAnalysis(
     // Get current price from the option chain data
     const currentPrice = optionChain[0]?.index_close || 100;
     
+    // Indian Market Specific Enhancements
+    const marketContext = await getIndianMarketContext(symbol);
+    
     // Analyze using the buildup classifications
     const buildupAnalysis = analyzeOptionBuildup(optionChain, currentPrice);
     
-    // Calculate overall PCR from totals
+    // Calculate overall PCR from totals with Indian market adjustments
     const totalCallsOI = totals?.total_calls_puts?.total_calls_oi_value || 1;
     const totalPutsOI = totals?.total_calls_puts?.total_puts_oi_value || 1;
     const overallPCR = totalCallsOI > 0 ? totalPutsOI / totalCallsOI : 1;
+    
+    // Apply Indian market PCR normalization (Indian retail traders are more put-heavy)
+    const normalizedPCR = normalizeIndianPCR(overallPCR, symbol, marketContext);
     
     console.log(`📊 ${symbol}: Overall PCR: ${overallPCR.toFixed(3)}, Max Pain: ${buildupAnalysis.maxPain}, Current: ${currentPrice}`);
     console.log(`📊 ${symbol}: ${buildupAnalysis.summary}`);
@@ -218,34 +224,16 @@ async function performOptionChainAnalysis(
     let reasoning = buildupAnalysis.reasoning;
     const strengthSignals = [...buildupAnalysis.signals];
     
-    // PCR-based scoring
+    // Enhanced Indian Market PCR-based scoring
     console.log(`📊 ${symbol}: Before PCR scoring - Final Score: ${finalScore}`);
     
-    if (overallPCR < 0.6) {
-      finalScore += 25;
-      strengthSignals.push('VERY_LOW_PCR_BULLISH');
-      reasoning += `Very low PCR (${overallPCR.toFixed(3)}) indicates strong bullish sentiment. `;
-      confidence += 20;
-      console.log(`📊 ${symbol}: Added +25 for very low PCR, new score: ${finalScore}`);
-    } else if (overallPCR < 0.8) {
-      finalScore += 15;
-      strengthSignals.push('LOW_PCR_BULLISH');
-      reasoning += `Low PCR (${overallPCR.toFixed(3)}) indicates bullish sentiment. `;
-      confidence += 15;
-      console.log(`📊 ${symbol}: Added +15 for low PCR, new score: ${finalScore}`);
-    } else if (overallPCR > 1.5) {
-      finalScore -= 25;
-      strengthSignals.push('HIGH_PCR_BEARISH');
-      reasoning += `High PCR (${overallPCR.toFixed(3)}) indicates strong bearish sentiment. `;
-      confidence += 20;
-      console.log(`📊 ${symbol}: Subtracted -25 for high PCR, new score: ${finalScore}`);
-    } else if (overallPCR > 1.2) {
-      finalScore -= 15;
-      strengthSignals.push('MODERATE_PCR_BEARISH');
-      reasoning += `Elevated PCR (${overallPCR.toFixed(3)}) indicates bearish sentiment. `;
-      confidence += 15;
-      console.log(`📊 ${symbol}: Subtracted -15 for elevated PCR, new score: ${finalScore}`);
-    }
+    const pcrScore = calculateIndianPCRScore(normalizedPCR, overallPCR, symbol, marketContext);
+    finalScore += pcrScore.score;
+    strengthSignals.push(...pcrScore.signals);
+    reasoning += pcrScore.reasoning;
+    confidence += pcrScore.confidence;
+    
+    console.log(`📊 ${symbol}: PCR Score: ${pcrScore.score}, New Final Score: ${finalScore}`);
     
     console.log(`📊 ${symbol}: After PCR scoring - Final Score: ${finalScore}`);
     
@@ -280,13 +268,14 @@ async function performOptionChainAnalysis(
       }
     }
     
-    // Determine final sentiment
-    let institutionalSentiment: 'STRONGLY_BULLISH' | 'BULLISH' | 'NEUTRAL' | 'BEARISH' | 'STRONGLY_BEARISH';
-    if (finalScore >= 25) institutionalSentiment = 'STRONGLY_BULLISH';
-    else if (finalScore >= 10) institutionalSentiment = 'BULLISH';
-    else if (finalScore <= -25) institutionalSentiment = 'STRONGLY_BEARISH';
-    else if (finalScore <= -10) institutionalSentiment = 'BEARISH';
-    else institutionalSentiment = 'NEUTRAL';
+    // Determine final sentiment - Fix: Consider PCR impact on sentiment
+    // Enhanced Indian Market Sentiment Determination
+    const institutionalSentiment = determineIndianMarketSentiment(
+      finalScore, 
+      normalizedPCR, 
+      overallPCR, 
+      marketContext
+    );
     
     return {
       symbol,
@@ -295,7 +284,7 @@ async function performOptionChainAnalysis(
       options_flow: {
         net_call_buildup: buildupAnalysis.callActivity,
         net_put_buildup: buildupAnalysis.putActivity,
-        pcr_trend: finalScore > 0 ? 'BULLISH' : 'BEARISH',
+        pcr_trend: overallPCR < 1.0 ? 'BULLISH' : 'BEARISH',
         unusual_activity: buildupAnalysis.unusualActivity,
         max_pain: buildupAnalysis.maxPain,
         support_levels: buildupAnalysis.supportLevels,
@@ -307,7 +296,7 @@ async function performOptionChainAnalysis(
         target_2: finalScore > 0 ? buildupAnalysis.resistanceLevels[1] || currentPrice * 1.05 : buildupAnalysis.supportLevels[1] || currentPrice * 0.95,
         stop_loss: finalScore > 0 ? buildupAnalysis.supportLevels[0] || currentPrice * 0.97 : buildupAnalysis.resistanceLevels[0] || currentPrice * 1.03,
         risk_reward_ratio: 1.5,
-        probability: confidence
+        probability: Math.min(confidence, 100)
       },
       institutional_sentiment: institutionalSentiment,
       reasoning: reasoning.trim(),
@@ -525,4 +514,377 @@ export async function GET() {
       error: error instanceof Error ? error.message : 'Cache management failed'
     }, { status: 500 });
   }
+}
+
+// ==================== INDIAN MARKET SPECIFIC ENHANCEMENTS ====================
+
+interface IndianMarketContext {
+  sector: string;
+  marketCap: 'LARGE_CAP' | 'MID_CAP' | 'SMALL_CAP';
+  isNifty50: boolean;
+  isBankNifty: boolean;
+  volatilityTier: 'LOW' | 'MEDIUM' | 'HIGH';
+  liquidityTier: 'HIGH' | 'MEDIUM' | 'LOW';
+  fiiHolding: 'HIGH' | 'MEDIUM' | 'LOW';
+  retailInterest: 'HIGH' | 'MEDIUM' | 'LOW';
+  expiryWeek: boolean;
+  monthlyExpiry: boolean;
+  resultsWeek: boolean;
+}
+
+async function getIndianMarketContext(symbol: string): Promise<IndianMarketContext> {
+  // Indian Market Stock Classification
+  const stockClassification = getIndianStockClassification(symbol);
+  
+  // Check if it's expiry week
+  const now = new Date();
+  const lastThursday = getLastThursdayOfMonth(now);
+  const expiryWeek = Math.abs(now.getTime() - lastThursday.getTime()) <= 7 * 24 * 60 * 60 * 1000;
+  const monthlyExpiry = now.getDate() >= lastThursday.getDate() - 2 && now.getDate() <= lastThursday.getDate() + 2;
+  
+  // Check if it's results season (typically Jan, Apr, Jul, Oct)
+  const resultsWeek = [1, 4, 7, 10].includes(now.getMonth() + 1) && now.getDate() >= 10 && now.getDate() <= 25;
+  
+  return {
+    ...stockClassification,
+    expiryWeek,
+    monthlyExpiry,
+    resultsWeek
+  };
+}
+
+function getIndianStockClassification(symbol: string): Omit<IndianMarketContext, 'expiryWeek' | 'monthlyExpiry' | 'resultsWeek'> {
+  // Nifty 50 stocks (updated list)
+  const nifty50Stocks = [
+    'RELIANCE', 'TCS', 'HDFCBANK', 'INFY', 'HINDUNILVR', 'ICICIBANK', 'KOTAKBANK',
+    'SBIN', 'BHARTIARTL', 'ITC', 'ASIANPAINT', 'LT', 'AXISBANK', 'MARUTI', 'SUNPHARMA',
+    'ULTRACEMCO', 'TITAN', 'WIPRO', 'NESTLEIND', 'POWERGRID', 'NTPC', 'TECHM', 'HCLTECH',
+    'BAJFINANCE', 'ONGC', 'TATASTEEL', 'COALINDIA', 'INDUSINDBK', 'ADANIENT', 'JSWSTEEL',
+    'GRASIM', 'HINDALCO', 'BRITANNIA', 'DRREDDY', 'EICHERMOT', 'APOLLOHOSP', 'CIPLA',
+    'DIVISLAB', 'BAJAJFINSV', 'HEROMOTOCO', 'TATACONSUM', 'BPCL', 'SBILIFE', 'SHRIRAMFIN',
+    'HDFCLIFE', 'TATAMOTORS', 'ADANIPORTS', 'BAJAJ-AUTO', 'LTIM'
+  ];
+  
+  // Bank Nifty stocks
+  const bankNiftyStocks = [
+    'HDFCBANK', 'ICICIBANK', 'KOTAKBANK', 'SBIN', 'AXISBANK', 'INDUSINDBK',
+    'BAJFINANCE', 'BANDHANBNK', 'FEDERALBNK', 'IDFCFIRSTB', 'PNB', 'AUBANK'
+  ];
+  
+  // Comprehensive sector classification for ALL FNO stocks
+  const sectorMap: Record<string, string> = {
+    // Banking & Financial Services
+    'HDFCBANK': 'Banking', 'ICICIBANK': 'Banking', 'SBIN': 'Banking', 'KOTAKBANK': 'Banking',
+    'AXISBANK': 'Banking', 'INDUSINDBK': 'Banking', 'BANDHANBNK': 'Banking', 'FEDERALBNK': 'Banking',
+    'IDFCFIRSTB': 'Banking', 'PNB': 'Banking', 'AUBANK': 'Banking', 'BANKBARODA': 'Banking',
+    'BANKINDIA': 'Banking', 'INDIANB': 'Banking', 'UNIONBANK': 'Banking', 'YESBANK': 'Banking',
+    'RBLBANK': 'Banking', 'CANBK': 'Banking',
+    
+    // NBFC & Financial Services
+    'BAJFINANCE': 'NBFC', 'BAJAJFINSV': 'NBFC', 'SHRIRAMFIN': 'NBFC', 'CHOLAFIN': 'NBFC',
+    'LICHSGFIN': 'NBFC', 'MANAPPURAM': 'NBFC', 'MUTHOOTFIN': 'NBFC', 'PNBHOUSING': 'NBFC',
+    'PFC': 'NBFC', 'RECLTD': 'NBFC', 'HUDCO': 'NBFC', 'IRFC': 'NBFC',
+    
+    // Insurance & Asset Management
+    'SBILIFE': 'Insurance', 'HDFCLIFE': 'Insurance', 'ICICIGI': 'Insurance', 'ICICIPRULI': 'Insurance',
+    'LICI': 'Insurance', 'HDFCAMC': 'Asset Management', 'MFSL': 'Asset Management', 'NUVAMA': 'Asset Management',
+    '360ONE': 'Asset Management',
+    
+    // Fintech & Financial Technology
+    'PAYTM': 'Fintech', 'ANGELONE': 'Fintech', 'BSE': 'Fintech', 'MCX': 'Fintech', 'CDSL': 'Fintech',
+    'KFINTECH': 'Fintech', 'CAMS': 'Fintech', 'IIFL': 'Fintech', 'POLICYBZR': 'Fintech',
+    'JIOFIN': 'Fintech', 'SBICARD': 'Fintech',
+    
+    // Information Technology
+    'TCS': 'IT', 'INFY': 'IT', 'WIPRO': 'IT', 'HCLTECH': 'IT', 'TECHM': 'IT', 'LTIM': 'IT',
+    'COFORGE': 'IT', 'PERSISTENT': 'IT', 'MPHASIS': 'IT', 'OFSS': 'IT', 'CYIENT': 'IT',
+    'KPITTECH': 'IT', 'NAUKRI': 'IT',
+    
+    // Oil & Gas
+    'RELIANCE': 'Oil & Gas', 'ONGC': 'Oil & Gas', 'BPCL': 'Oil & Gas', 'IOC': 'Oil & Gas',
+    'HINDPETRO': 'Oil & Gas', 'OIL': 'Oil & Gas', 'GAIL': 'Oil & Gas', 'PETRONET': 'Oil & Gas',
+    
+    // Automobiles & Auto Components
+    'MARUTI': 'Auto', 'TATAMOTORS': 'Auto', 'BAJAJ-AUTO': 'Auto', 'HEROMOTOCO': 'Auto', 'EICHERMOT': 'Auto',
+    'M&M': 'Auto', 'ASHOKLEY': 'Auto', 'TVSMOTOR': 'Auto', 'MOTHERSON': 'Auto Components',
+    'BOSCHLTD': 'Auto Components', 'BHARATFORG': 'Auto Components', 'SONACOMS': 'Auto Components',
+    'EXIDEIND': 'Auto Components', 'UNOMINDA': 'Auto Components',
+    
+    // Pharmaceuticals & Healthcare
+    'SUNPHARMA': 'Pharma', 'DRREDDY': 'Pharma', 'CIPLA': 'Pharma', 'DIVISLAB': 'Pharma',
+    'LUPIN': 'Pharma', 'BIOCON': 'Pharma', 'ALKEM': 'Pharma', 'AUROPHARMA': 'Pharma',
+    'TORNTPHARM': 'Pharma', 'GLENMARK': 'Pharma', 'LAURUSLABS': 'Pharma', 'MANKIND': 'Pharma',
+    'ZYDUSLIFE': 'Pharma', 'PPLPHARMA': 'Pharma', 'APOLLOHOSP': 'Healthcare', 'FORTIS': 'Healthcare',
+    'MAXHEALTH': 'Healthcare',
+    
+    // FMCG & Consumer Goods
+    'HINDUNILVR': 'FMCG', 'ITC': 'FMCG', 'NESTLEIND': 'FMCG', 'BRITANNIA': 'FMCG', 'TATACONSUM': 'FMCG',
+    'DABUR': 'FMCG', 'MARICO': 'FMCG', 'GODREJCP': 'FMCG', 'COLPAL': 'FMCG', 'PATANJALI': 'FMCG',
+    'JUBLFOOD': 'FMCG', 'VBL': 'FMCG', 'UNITDSPR': 'FMCG',
+    
+    // Metals & Mining
+    'TATASTEEL': 'Metals', 'JSWSTEEL': 'Metals', 'HINDALCO': 'Metals', 'COALINDIA': 'Metals',
+    'JINDALSTEL': 'Metals', 'SAIL': 'Metals', 'VEDL': 'Metals', 'NATIONALUM': 'Metals',
+    'HINDZINC': 'Metals', 'NMDC': 'Metals',
+    
+    // Cement
+    'ULTRACEMCO': 'Cement', 'GRASIM': 'Cement', 'SHREECEM': 'Cement', 'AMBUJACEM': 'Cement',
+    'DALBHARAT': 'Cement',
+    
+    // Telecommunications
+    'BHARTIARTL': 'Telecom', 'IDEA': 'Telecom', 'INDIGO': 'Telecom', 'INDUSTOWER': 'Telecom',
+    
+    // Power & Utilities
+    'NTPC': 'Power', 'POWERGRID': 'Power', 'TATAPOWER': 'Power', 'TORNTPOWER': 'Power',
+    'NHPC': 'Power', 'SJVN': 'Power', 'IREDA': 'Power', 'ADANIGREEN': 'Power', 'INOXWIND': 'Power',
+    'JSWENERGY': 'Power', 'ADANIENSOL': 'Power', 'SOLARINDS': 'Power',
+    
+    // Infrastructure & Construction
+    'LT': 'Infrastructure', 'ADANIPORTS': 'Infrastructure', 'NCC': 'Infrastructure', 'NBCC': 'Infrastructure',
+    'CONCOR': 'Infrastructure', 'GMRAIRPORT': 'Infrastructure', 'RVNL': 'Infrastructure', 'IRCTC': 'Infrastructure',
+    'HAL': 'Infrastructure', 'BEL': 'Infrastructure', 'BDL': 'Infrastructure', 'MAZDOCK': 'Infrastructure',
+    
+    // Real Estate
+    'DLF': 'Real Estate', 'GODREJPROP': 'Real Estate', 'OBEROIRLTY': 'Real Estate', 'PRESTIGE': 'Real Estate',
+    'LODHA': 'Real Estate', 'PHOENIXLTD': 'Real Estate', 'INDHOTEL': 'Real Estate',
+    
+    // Retail & E-commerce
+    'DMART': 'Retail', 'TRENT': 'Retail', 'NYKAA': 'Retail', 'KALYANKJIL': 'Retail',
+    
+    // Chemicals & Petrochemicals
+    'UPL': 'Chemicals', 'SRF': 'Chemicals', 'PIDILITIND': 'Chemicals', 'AARTI': 'Chemicals',
+    'DEEPAKNTR': 'Chemicals', 'GNFC': 'Chemicals', 'CHAMBLFERT': 'Chemicals', 'COROMANDEL': 'Chemicals',
+    
+    // Textiles
+    'WELSPUNIND': 'Textiles', 'TRIDENT': 'Textiles', 'RTNPOWER': 'Textiles',
+    
+    // Capital Goods & Engineering
+    'ABB': 'Capital Goods', 'SIEMENS': 'Capital Goods', 'BHEL': 'Capital Goods', 'CUMMINSIND': 'Capital Goods',
+    'VOLTAS': 'Capital Goods', 'HAVELLS': 'Capital Goods', 'CROMPTON': 'Capital Goods', 'KEI': 'Capital Goods',
+    'POLYCAB': 'Capital Goods', 'APLAPOLLO': 'Capital Goods', 'ASTRAL': 'Capital Goods', 'DIXON': 'Capital Goods',
+    'KAYNES': 'Capital Goods', 'AMBER': 'Capital Goods', 'BLUESTARCO': 'Capital Goods',
+    
+    // Diversified & Conglomerates
+    'ADANIENT': 'Diversified',
+    
+    // Specialty & Others
+    'ASIANPAINT': 'Paints', 'TITAN': 'Jewellery', 'PAGEIND': 'Paper', 'SUPREMEIND': 'Plastics',
+    'PIIND': 'Chemicals', 'CGPOWER': 'Power Equipment', 'HFCL': 'Telecom Equipment',
+    'IEX': 'Power Trading', 'IGL': 'Gas Distribution', 'DELHIVERY': 'Logistics',
+    'SUZLON': 'Renewable Energy', 'SYNGENE': 'Contract Research', 'ETERNAL': 'Materials',
+    'TIINDIA': 'Cycles', 'TITAGARH': 'Engineering', 'TATATECH': 'IT Services', 'TATAELXSI': 'IT Services',
+    'ABCAPITAL': 'NBFC', 'LTF': 'NBFC', 'PGEL': 'Power'
+  };
+  
+  // Volatility classification based on historical Indian market data
+  const highVolatilityStocks = [
+    'TATASTEEL', 'JSWSTEEL', 'HINDALCO', 'COALINDIA', 'ONGC', 'BPCL', 'ADANIENT',
+    'TATAMOTORS', 'BAJFINANCE', 'INDUSINDBK', 'AXISBANK', 'ADANIPORTS'
+  ];
+  
+  const lowVolatilityStocks = [
+    'HINDUNILVR', 'NESTLEIND', 'BRITANNIA', 'ITC', 'POWERGRID', 'NTPC',
+    'SBILIFE', 'HDFCLIFE', 'TCS', 'INFY', 'WIPRO'
+  ];
+  
+  // FII holding classification (based on typical FII preferences)
+  const highFIIStocks = [
+    'RELIANCE', 'TCS', 'HDFCBANK', 'INFY', 'HINDUNILVR', 'ICICIBANK', 'KOTAKBANK',
+    'ASIANPAINT', 'MARUTI', 'SUNPHARMA', 'ULTRACEMCO', 'TITAN', 'NESTLEIND'
+  ];
+  
+  // Retail interest classification (based on trading volumes and retail participation)
+  const highRetailStocks = [
+    'BAJFINANCE', 'TATAMOTORS', 'AXISBANK', 'INDUSINDBK', 'TATASTEEL', 'JSWSTEEL',
+    'ADANIENT', 'ONGC', 'COALINDIA', 'ADANIPORTS'
+  ];
+  
+  return {
+    sector: sectorMap[symbol] || 'Others',
+    marketCap: nifty50Stocks.includes(symbol) ? 'LARGE_CAP' : 'MID_CAP',
+    isNifty50: nifty50Stocks.includes(symbol),
+    isBankNifty: bankNiftyStocks.includes(symbol),
+    volatilityTier: highVolatilityStocks.includes(symbol) ? 'HIGH' : 
+                   lowVolatilityStocks.includes(symbol) ? 'LOW' : 'MEDIUM',
+    liquidityTier: nifty50Stocks.includes(symbol) ? 'HIGH' : 'MEDIUM',
+    fiiHolding: highFIIStocks.includes(symbol) ? 'HIGH' : 'MEDIUM',
+    retailInterest: highRetailStocks.includes(symbol) ? 'HIGH' : 'MEDIUM'
+  };
+}
+
+function normalizeIndianPCR(rawPCR: number, symbol: string, context: IndianMarketContext): number {
+  let adjustedPCR = rawPCR;
+  
+  // Indian retail traders are more put-heavy, especially in volatile stocks
+  if (context.retailInterest === 'HIGH' && context.volatilityTier === 'HIGH') {
+    adjustedPCR = rawPCR * 0.85; // Reduce PCR by 15% for high retail, high volatility stocks
+  }
+  
+  // Banking stocks typically have different PCR patterns due to institutional preference
+  if (context.isBankNifty) {
+    adjustedPCR = rawPCR * 0.9; // Banks typically have lower PCR baseline
+  }
+  
+  // During expiry week, PCR patterns change significantly
+  if (context.expiryWeek) {
+    adjustedPCR = rawPCR * 1.1; // PCR tends to be higher during expiry due to hedging
+  }
+  
+  // Results week adjustments - more hedging activity
+  if (context.resultsWeek) {
+    adjustedPCR = rawPCR * 1.05; // Slight increase in hedging during results
+  }
+  
+  // FMCG stocks typically have lower PCR due to defensive nature
+  if (context.sector === 'FMCG') {
+    adjustedPCR = rawPCR * 0.95;
+  }
+  
+  return adjustedPCR;
+}
+
+function calculateIndianPCRScore(
+  normalizedPCR: number, 
+  rawPCR: number, 
+  symbol: string, 
+  context: IndianMarketContext
+): { score: number; signals: string[]; reasoning: string; confidence: number } {
+  let score = 0;
+  const signals: string[] = [];
+  let reasoning = '';
+  let confidence = 0;
+  
+  // Enhanced PCR thresholds for Indian market
+  const veryLowThreshold = context.isBankNifty ? 0.5 : 0.6;
+  const lowThreshold = context.isBankNifty ? 0.7 : 0.8;
+  const highThreshold = context.volatilityTier === 'HIGH' ? 1.3 : 1.2;
+  const veryHighThreshold = context.volatilityTier === 'HIGH' ? 1.6 : 1.5;
+  
+  if (normalizedPCR < veryLowThreshold) {
+    score += context.isNifty50 ? 30 : 25; // Higher score for Nifty 50 stocks
+    signals.push('VERY_LOW_PCR_BULLISH');
+    reasoning += `Very low PCR (${rawPCR.toFixed(3)}, adj: ${normalizedPCR.toFixed(3)}) indicates strong bullish sentiment. `;
+    confidence += 25;
+    
+    if (context.expiryWeek) {
+      score += 5; // Extra bullish during expiry week with low PCR
+      reasoning += 'Expiry week amplifies bullish signal. ';
+    }
+  } else if (normalizedPCR < lowThreshold) {
+    score += context.isNifty50 ? 20 : 15;
+    signals.push('LOW_PCR_BULLISH');
+    reasoning += `Low PCR (${rawPCR.toFixed(3)}, adj: ${normalizedPCR.toFixed(3)}) indicates bullish sentiment. `;
+    confidence += 20;
+  } else if (normalizedPCR > veryHighThreshold) {
+    score -= context.volatilityTier === 'HIGH' ? 30 : 25;
+    signals.push('VERY_HIGH_PCR_BEARISH');
+    reasoning += `Very high PCR (${rawPCR.toFixed(3)}, adj: ${normalizedPCR.toFixed(3)}) indicates strong bearish sentiment. `;
+    confidence += 25;
+    
+    if (context.retailInterest === 'HIGH') {
+      score -= 5; // Extra bearish for high retail interest stocks
+      reasoning += 'High retail interest amplifies bearish signal. ';
+    }
+  } else if (normalizedPCR > highThreshold) {
+    score -= context.volatilityTier === 'HIGH' ? 20 : 15;
+    signals.push('HIGH_PCR_BEARISH');
+    reasoning += `High PCR (${rawPCR.toFixed(3)}, adj: ${normalizedPCR.toFixed(3)}) indicates bearish sentiment. `;
+    confidence += 20;
+  }
+  
+  // Enhanced sector-specific adjustments based on Indian market behavior
+  if (context.sector === 'Banking' && normalizedPCR < 0.8) {
+    score += 5;
+    reasoning += 'Banking sector showing institutional confidence. ';
+  }
+  
+  if (context.sector === 'IT' && normalizedPCR > 1.2) {
+    score -= 5;
+    reasoning += 'IT sector showing defensive positioning. ';
+  }
+  
+  if (context.sector === 'Metals' && normalizedPCR < 0.9) {
+    score += 3;
+    reasoning += 'Metals sector showing cyclical optimism. ';
+  }
+  
+  // Additional sector-specific logic
+  if (context.sector === 'FMCG' && normalizedPCR < 0.7) {
+    score += 4;
+    reasoning += 'FMCG sector showing defensive strength. ';
+  }
+  
+  if (context.sector === 'Pharma' && normalizedPCR > 1.3) {
+    score -= 3;
+    reasoning += 'Pharma sector showing regulatory concerns. ';
+  }
+  
+  if (context.sector === 'Auto' && normalizedPCR < 0.8) {
+    score += 2;
+    reasoning += 'Auto sector showing demand recovery. ';
+  }
+  
+  if (context.sector === 'Real Estate' && normalizedPCR < 0.9) {
+    score += 3;
+    reasoning += 'Real estate sector showing revival signs. ';
+  }
+  
+  if (context.sector === 'Fintech' && normalizedPCR > 1.4) {
+    score -= 4;
+    reasoning += 'Fintech sector showing regulatory headwinds. ';
+  }
+  
+  return { score, signals, reasoning, confidence };
+}
+
+function determineIndianMarketSentiment(
+  finalScore: number,
+  normalizedPCR: number,
+  rawPCR: number,
+  context: IndianMarketContext
+): 'STRONGLY_BULLISH' | 'BULLISH' | 'NEUTRAL' | 'BEARISH' | 'STRONGLY_BEARISH' {
+  
+  // Enhanced sentiment logic for Indian market
+  
+  // During results week, be more conservative
+  if (context.resultsWeek && Math.abs(finalScore) < 30) {
+    return 'NEUTRAL';
+  }
+  
+  // High volatility stocks need higher conviction
+  const scoreThreshold = context.volatilityTier === 'HIGH' ? 1.2 : 1.0;
+  const adjustedScore = finalScore * scoreThreshold;
+  
+  // PCR override logic with Indian market context
+  if (rawPCR > 1.8 && adjustedScore > 0) {
+    // Very high PCR overrides bullish signals, but consider market cap
+    return context.isNifty50 && adjustedScore > 60 ? 'NEUTRAL' : 'BEARISH';
+  }
+  
+  if (rawPCR > 1.4 && adjustedScore > 25) {
+    // High PCR reduces bullish sentiment
+    return context.marketCap === 'LARGE_CAP' ? 'NEUTRAL' : 'BEARISH';
+  }
+  
+  // Enhanced thresholds for Indian market
+  if (adjustedScore >= 40) return 'STRONGLY_BULLISH';
+  else if (adjustedScore >= 15) return 'BULLISH';
+  else if (adjustedScore <= -40) return 'STRONGLY_BEARISH';
+  else if (adjustedScore <= -15) return 'BEARISH';
+  else return 'NEUTRAL';
+}
+
+function getLastThursdayOfMonth(date: Date): Date {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  
+  for (let day = lastDay; day >= 1; day--) {
+    const testDate = new Date(year, month, day);
+    if (testDate.getDay() === 4) { // Thursday
+      return testDate;
+    }
+  }
+  
+  return new Date(year, month, lastDay);
 }
