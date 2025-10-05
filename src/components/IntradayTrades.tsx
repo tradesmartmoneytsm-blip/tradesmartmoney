@@ -20,7 +20,7 @@ export function IntradayTrades() {
     },
     {
       id: 'advanced',
-      name: 'Educational Options Analysis',
+      name: 'Option Analysis',
       description: 'Institutional data analysis for educational learning purposes',
       icon: Brain
     },
