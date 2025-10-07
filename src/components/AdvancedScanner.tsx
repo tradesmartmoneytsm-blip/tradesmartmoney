@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Brain, TrendingUp, TrendingDown, Target, Zap, BarChart3, Users, Eye, Play, Loader2, AlertTriangle } from 'lucide-react';
+import { Brain, TrendingUp, TrendingDown, Target, Zap, BarChart3, Users, Eye, Play, Loader2, AlertTriangle, Grid3X3, List } from 'lucide-react';
 
 interface AdvancedResult {
   symbol: string;
@@ -57,6 +57,7 @@ export function AdvancedScanner() {
   const [error, setError] = useState<string | null>(null);
   const [lastScan, setLastScan] = useState<string | null>(null);
   const [availableSymbols, setAvailableSymbols] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
 
   // Fetch available symbols from API
   const fetchSymbols = async () => {
@@ -316,13 +317,43 @@ export function AdvancedScanner() {
             <h4 className="font-semibold text-gray-800">
               Advanced Analysis Results ({results.length})
             </h4>
-            <div className="text-xs text-gray-500">
-              Sorted by score × confidence
+            <div className="flex items-center gap-4">
+              <div className="text-xs text-gray-500">
+                Sorted by score × confidence
+              </div>
+              
+              {/* View Mode Toggle */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setViewMode('cards')}
+                  className={`p-2 rounded-lg transition-colors ${
+                    viewMode === 'cards' 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  title="Cards View"
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`p-2 rounded-lg transition-colors ${
+                    viewMode === 'table' 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  title="Table View"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
           
-          <div className="space-y-6">
-            {results.map((result, index) => (
+          {/* Cards View */}
+          {viewMode === 'cards' && (
+            <div className="space-y-6">
+              {results.map((result, index) => (
               <div key={result.symbol} className="bg-gradient-to-r from-white via-purple-50 to-blue-50 rounded-2xl p-6 border-2 border-purple-200 shadow-lg">
                 {/* Header Section */}
                 <div className="flex items-start justify-between mb-4">
@@ -487,8 +518,102 @@ export function AdvancedScanner() {
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
+          {/* Table View */}
+          {viewMode === 'table' && (
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        #
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Symbol
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Score
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Sentiment
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Confidence
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Entry
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Target
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Stop Loss
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        R:R
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        PCR
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Max Pain
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {results.map((result, index) => (
+                      <tr key={result.symbol} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {index + 1}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-gray-900">{result.symbol}</span>
+                            {getSentimentIcon(result.institutional_sentiment)}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="font-bold text-purple-600">{result.score.toFixed(1)}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getSentimentColor(result.institutional_sentiment)}`}>
+                            {result.institutional_sentiment.replace('_', ' ')}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="font-medium text-blue-600">{result.confidence}%</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="font-medium">₹{result.risk_reward.entry_price.toFixed(2)}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-green-600 font-medium">₹{result.risk_reward.target_1.toFixed(2)}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-red-600 font-medium">₹{result.risk_reward.stop_loss.toFixed(2)}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="font-bold text-blue-600">{result.risk_reward.risk_reward_ratio.toFixed(1)}:1</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm text-gray-600">
+                            {((result.options_flow.net_put_buildup || 1) / (result.options_flow.net_call_buildup || 1)).toFixed(3)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm text-gray-600">₹{result.options_flow.max_pain}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         !isScanning && !error && summary && (
