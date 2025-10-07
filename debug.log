@@ -1,0 +1,185 @@
+2025-10-05T18:15:26Z INFO 🚀 Starting Futures Analysis Collector
+2025-10-05T18:15:26Z INFO Force run enabled - skipping market hours check
+2025-10-05T18:15:26Z INFO ✅ Using 28 major futures symbols
+2025-10-05T18:15:26Z INFO 📊 Analyzing 28 symbols for futures data...
+2025-10-05T18:15:26Z INFO 🔍 Analyzing NIFTY futures... (1/28)
+2025-10-05T18:15:28Z INFO ⚠️ No valid data structure found for NIFTY
+2025-10-05T18:15:28Z INFO ✅ Found valid data structure for NIFTY
+2025-10-05T18:15:31Z INFO 🔍 Analyzing BANKNIFTY futures... (2/28)
+2025-10-05T18:15:31Z INFO ⚠️ No valid data structure found for BANKNIFTY
+2025-10-05T18:15:33Z INFO ✅ Found valid data structure for BANKNIFTY
+2025-10-05T18:15:35Z INFO 🔍 Analyzing FINNIFTY futures... (3/28)
+2025-10-05T18:15:36Z INFO ⚠️ No valid data structure found for FINNIFTY
+2025-10-05T18:15:37Z INFO ✅ Found valid data structure for FINNIFTY
+2025-10-05T18:15:45Z INFO 🔍 Analyzing MIDCPNIFTY futures... (4/28)
+2025-10-05T18:15:45Z INFO ⚠️ No valid data structure found for MIDCPNIFTY
+2025-10-05T18:15:46Z INFO ✅ Found valid data structure for MIDCPNIFTY
+2025-10-05T18:15:49Z INFO 🔍 Analyzing RELIANCE futures... (5/28)
+2025-10-05T18:15:49Z INFO ✅ Found valid data structure for RELIANCE
+2025-10-05T18:15:49Z INFO 🔍 Parsing data for RELIANCE from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=RELIANCE
+2025-10-05T18:15:49Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:15:49Z INFO 📊 Using option-chain data structure for RELIANCE
+2025-10-05T18:15:49Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:15:49Z INFO ❌ No current month contract found for RELIANCE
+2025-10-05T18:15:51Z INFO 🔍 Analyzing TCS futures... (6/28)
+2025-10-05T18:15:52Z INFO ✅ Found valid data structure for TCS
+2025-10-05T18:15:52Z INFO 🔍 Parsing data for TCS from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=TCS
+2025-10-05T18:15:52Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:15:52Z INFO 📊 Using option-chain data structure for TCS
+2025-10-05T18:15:52Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:15:52Z INFO ❌ No current month contract found for TCS
+2025-10-05T18:15:59Z INFO 🔍 Analyzing HDFCBANK futures... (7/28)
+2025-10-05T18:15:59Z INFO ✅ Found valid data structure for HDFCBANK
+2025-10-05T18:16:00Z INFO 🔍 Parsing data for HDFCBANK from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=HDFCBANK
+2025-10-05T18:16:00Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:00Z INFO 📊 Using option-chain data structure for HDFCBANK
+2025-10-05T18:16:00Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:00Z INFO ❌ No current month contract found for HDFCBANK
+2025-10-05T18:16:02Z INFO 🔍 Analyzing ICICIBANK futures... (8/28)
+2025-10-05T18:16:02Z INFO ✅ Found valid data structure for ICICIBANK
+2025-10-05T18:16:03Z INFO 🔍 Parsing data for ICICIBANK from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=ICICIBANK
+2025-10-05T18:16:03Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:03Z INFO 📊 Using option-chain data structure for ICICIBANK
+2025-10-05T18:16:03Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:03Z INFO ❌ No current month contract found for ICICIBANK
+2025-10-05T18:16:05Z INFO 🔍 Analyzing INFY futures... (9/28)
+2025-10-05T18:16:05Z INFO ✅ Found valid data structure for INFY
+2025-10-05T18:16:05Z INFO 🔍 Parsing data for INFY from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=INFY
+2025-10-05T18:16:05Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:05Z INFO 📊 Using option-chain data structure for INFY
+2025-10-05T18:16:05Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:05Z INFO ❌ No current month contract found for INFY
+2025-10-05T18:16:12Z INFO 🔍 Analyzing HINDUNILVR futures... (10/28)
+2025-10-05T18:16:13Z INFO ✅ Found valid data structure for HINDUNILVR
+2025-10-05T18:16:13Z INFO 🔍 Parsing data for HINDUNILVR from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=HINDUNILVR
+2025-10-05T18:16:13Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:13Z INFO 📊 Using option-chain data structure for HINDUNILVR
+2025-10-05T18:16:13Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:13Z INFO ❌ No current month contract found for HINDUNILVR
+2025-10-05T18:16:15Z INFO 🔍 Analyzing AXISBANK futures... (11/28)
+2025-10-05T18:16:15Z INFO ✅ Found valid data structure for AXISBANK
+2025-10-05T18:16:16Z INFO 🔍 Parsing data for AXISBANK from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=AXISBANK
+2025-10-05T18:16:16Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:16Z INFO 📊 Using option-chain data structure for AXISBANK
+2025-10-05T18:16:16Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:16Z INFO ❌ No current month contract found for AXISBANK
+2025-10-05T18:16:18Z INFO 🔍 Analyzing KOTAKBANK futures... (12/28)
+2025-10-05T18:16:18Z INFO ✅ Found valid data structure for KOTAKBANK
+2025-10-05T18:16:18Z INFO 🔍 Parsing data for KOTAKBANK from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=KOTAKBANK
+2025-10-05T18:16:18Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:18Z INFO 📊 Using option-chain data structure for KOTAKBANK
+2025-10-05T18:16:18Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:18Z INFO ❌ No current month contract found for KOTAKBANK
+2025-10-05T18:16:25Z INFO 🔍 Analyzing SBIN futures... (13/28)
+2025-10-05T18:16:26Z INFO ✅ Found valid data structure for SBIN
+2025-10-05T18:16:26Z INFO 🔍 Parsing data for SBIN from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=SBIN
+2025-10-05T18:16:26Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:26Z INFO 📊 Using option-chain data structure for SBIN
+2025-10-05T18:16:26Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:26Z INFO ❌ No current month contract found for SBIN
+2025-10-05T18:16:28Z INFO 🔍 Analyzing BAJFINANCE futures... (14/28)
+2025-10-05T18:16:28Z INFO ✅ Found valid data structure for BAJFINANCE
+2025-10-05T18:16:29Z INFO 🔍 Parsing data for BAJFINANCE from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=BAJFINANCE
+2025-10-05T18:16:29Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:29Z INFO 📊 Using option-chain data structure for BAJFINANCE
+2025-10-05T18:16:29Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:29Z INFO ❌ No current month contract found for BAJFINANCE
+2025-10-05T18:16:31Z INFO 🔍 Analyzing MARUTI futures... (15/28)
+2025-10-05T18:16:31Z INFO ✅ Found valid data structure for MARUTI
+2025-10-05T18:16:31Z INFO 🔍 Parsing data for MARUTI from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=MARUTI
+2025-10-05T18:16:31Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:31Z INFO 📊 Using option-chain data structure for MARUTI
+2025-10-05T18:16:31Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:31Z INFO ❌ No current month contract found for MARUTI
+2025-10-05T18:16:38Z INFO 🔍 Analyzing ASIANPAINT futures... (16/28)
+2025-10-05T18:16:39Z INFO ✅ Found valid data structure for ASIANPAINT
+2025-10-05T18:16:39Z INFO 🔍 Parsing data for ASIANPAINT from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=ASIANPAINT
+2025-10-05T18:16:39Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:39Z INFO 📊 Using option-chain data structure for ASIANPAINT
+2025-10-05T18:16:39Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:39Z INFO ❌ No current month contract found for ASIANPAINT
+2025-10-05T18:16:41Z INFO 🔍 Analyzing LT futures... (17/28)
+2025-10-05T18:16:41Z INFO ✅ Found valid data structure for LT
+2025-10-05T18:16:41Z INFO 🔍 Parsing data for LT from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=LT
+2025-10-05T18:16:41Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:41Z INFO 📊 Using option-chain data structure for LT
+2025-10-05T18:16:41Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:41Z INFO ❌ No current month contract found for LT
+2025-10-05T18:16:43Z INFO 🔍 Analyzing ULTRACEMCO futures... (18/28)
+2025-10-05T18:16:44Z INFO ✅ Found valid data structure for ULTRACEMCO
+2025-10-05T18:16:44Z INFO 🔍 Parsing data for ULTRACEMCO from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=ULTRACEMCO
+2025-10-05T18:16:44Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:44Z INFO 📊 Using option-chain data structure for ULTRACEMCO
+2025-10-05T18:16:44Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:44Z INFO ❌ No current month contract found for ULTRACEMCO
+2025-10-05T18:16:51Z INFO 🔍 Analyzing TITAN futures... (19/28)
+2025-10-05T18:16:51Z INFO ✅ Found valid data structure for TITAN
+2025-10-05T18:16:52Z INFO 🔍 Parsing data for TITAN from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=TITAN
+2025-10-05T18:16:52Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:52Z INFO 📊 Using option-chain data structure for TITAN
+2025-10-05T18:16:52Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:52Z INFO ❌ No current month contract found for TITAN
+2025-10-05T18:16:54Z INFO 🔍 Analyzing SUNPHARMA futures... (20/28)
+2025-10-05T18:16:54Z INFO ✅ Found valid data structure for SUNPHARMA
+2025-10-05T18:16:54Z INFO 🔍 Parsing data for SUNPHARMA from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=SUNPHARMA
+2025-10-05T18:16:54Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:54Z INFO 📊 Using option-chain data structure for SUNPHARMA
+2025-10-05T18:16:54Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:54Z INFO ❌ No current month contract found for SUNPHARMA
+2025-10-05T18:16:56Z INFO 🔍 Analyzing TATASTEEL futures... (21/28)
+2025-10-05T18:16:57Z INFO ✅ Found valid data structure for TATASTEEL
+2025-10-05T18:16:57Z INFO 🔍 Parsing data for TATASTEEL from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=TATASTEEL
+2025-10-05T18:16:57Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:16:57Z INFO 📊 Using option-chain data structure for TATASTEEL
+2025-10-05T18:16:57Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:16:57Z INFO ❌ No current month contract found for TATASTEEL
+2025-10-05T18:17:04Z INFO 🔍 Analyzing JSWSTEEL futures... (22/28)
+2025-10-05T18:17:04Z INFO ✅ Found valid data structure for JSWSTEEL
+2025-10-05T18:17:04Z INFO 🔍 Parsing data for JSWSTEEL from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=JSWSTEEL
+2025-10-05T18:17:04Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:17:04Z INFO 📊 Using option-chain data structure for JSWSTEEL
+2025-10-05T18:17:04Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:17:04Z INFO ❌ No current month contract found for JSWSTEEL
+2025-10-05T18:17:06Z INFO 🔍 Analyzing ONGC futures... (23/28)
+2025-10-05T18:17:07Z INFO ✅ Found valid data structure for ONGC
+2025-10-05T18:17:07Z INFO 🔍 Parsing data for ONGC from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=ONGC
+2025-10-05T18:17:07Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:17:07Z INFO 📊 Using option-chain data structure for ONGC
+2025-10-05T18:17:07Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:17:07Z INFO ❌ No current month contract found for ONGC
+2025-10-05T18:17:09Z INFO 🔍 Analyzing NTPC futures... (24/28)
+2025-10-05T18:17:09Z INFO ✅ Found valid data structure for NTPC
+2025-10-05T18:17:10Z INFO 🔍 Parsing data for NTPC from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=NTPC
+2025-10-05T18:17:10Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:17:10Z INFO 📊 Using option-chain data structure for NTPC
+2025-10-05T18:17:10Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:17:10Z INFO ❌ No current month contract found for NTPC
+2025-10-05T18:17:17Z INFO 🔍 Analyzing POWERGRID futures... (25/28)
+2025-10-05T18:17:17Z INFO ✅ Found valid data structure for POWERGRID
+2025-10-05T18:17:17Z INFO 🔍 Parsing data for POWERGRID from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=POWERGRID
+2025-10-05T18:17:17Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:17:17Z INFO 📊 Using option-chain data structure for POWERGRID
+2025-10-05T18:17:17Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:17:17Z INFO ❌ No current month contract found for POWERGRID
+2025-10-05T18:17:19Z INFO 🔍 Analyzing COALINDIA futures... (26/28)
+2025-10-05T18:17:20Z INFO ✅ Found valid data structure for COALINDIA
+2025-10-05T18:17:20Z INFO 🔍 Parsing data for COALINDIA from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=COALINDIA
+2025-10-05T18:17:20Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:17:20Z INFO 📊 Using option-chain data structure for COALINDIA
+2025-10-05T18:17:20Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:17:20Z INFO ❌ No current month contract found for COALINDIA
+2025-10-05T18:17:22Z INFO 🔍 Analyzing HINDALCO futures... (27/28)
+2025-10-05T18:17:22Z INFO ✅ Found valid data structure for HINDALCO
+2025-10-05T18:17:22Z INFO 🔍 Parsing data for HINDALCO from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=HINDALCO
+2025-10-05T18:17:22Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:17:22Z INFO 📊 Using option-chain data structure for HINDALCO
+2025-10-05T18:17:22Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:17:22Z INFO ❌ No current month contract found for HINDALCO
+2025-10-05T18:17:29Z INFO 🔍 Analyzing GRASIM futures... (28/28)
+2025-10-05T18:17:30Z INFO ✅ Found valid data structure for GRASIM
+2025-10-05T18:17:30Z INFO 🔍 Parsing data for GRASIM from endpoint: https://www.nseindia.com/api/option-chain-equities?symbol=GRASIM
+2025-10-05T18:17:30Z INFO 🔍 Available keys in futures_data: ['records', 'filtered', '_source_endpoint']
+2025-10-05T18:17:30Z INFO 📊 Using option-chain data structure for GRASIM
+2025-10-05T18:17:30Z INFO 📊 Found 0 futures contracts
+2025-10-05T18:17:30Z INFO ❌ No current month contract found for GRASIM
+2025-10-05T18:17:32Z INFO 🎯 Futures Analysis Complete: 0 qualifying results from 28 symbols (0 errors, 100.0% success rate)

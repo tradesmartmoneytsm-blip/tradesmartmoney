@@ -1,0 +1,65 @@
+2025-10-05T18:12:38Z INFO 🚀 Starting Futures Analysis Collector
+2025-10-05T18:12:38Z INFO Force run enabled - skipping market hours check
+2025-10-05T18:12:38Z INFO ✅ Using 28 major futures symbols
+2025-10-05T18:12:38Z INFO 📊 Analyzing 28 symbols for futures data...
+2025-10-05T18:12:38Z INFO 🔍 Analyzing NIFTY futures... (1/28)
+2025-10-05T18:12:39Z INFO ⚠️ No valid data structure found for NIFTY
+2025-10-05T18:12:39Z INFO ✅ Found valid data structure for NIFTY
+2025-10-05T18:12:41Z INFO 🔍 Analyzing BANKNIFTY futures... (2/28)
+2025-10-05T18:12:42Z INFO ⚠️ No valid data structure found for BANKNIFTY
+2025-10-05T18:12:42Z INFO ✅ Found valid data structure for BANKNIFTY
+2025-10-05T18:12:45Z INFO 🔍 Analyzing FINNIFTY futures... (3/28)
+2025-10-05T18:12:45Z INFO ⚠️ No valid data structure found for FINNIFTY
+2025-10-05T18:12:45Z INFO ✅ Found valid data structure for FINNIFTY
+2025-10-05T18:12:52Z INFO 🔍 Analyzing MIDCPNIFTY futures... (4/28)
+2025-10-05T18:12:53Z INFO ⚠️ No valid data structure found for MIDCPNIFTY
+2025-10-05T18:12:54Z INFO ✅ Found valid data structure for MIDCPNIFTY
+2025-10-05T18:12:57Z INFO 🔍 Analyzing RELIANCE futures... (5/28)
+2025-10-05T18:12:58Z INFO ✅ Found valid data structure for RELIANCE
+2025-10-05T18:13:00Z INFO 🔍 Analyzing TCS futures... (6/28)
+2025-10-05T18:13:00Z INFO ✅ Found valid data structure for TCS
+2025-10-05T18:13:08Z INFO 🔍 Analyzing HDFCBANK futures... (7/28)
+2025-10-05T18:13:08Z INFO ✅ Found valid data structure for HDFCBANK
+2025-10-05T18:13:10Z INFO 🔍 Analyzing ICICIBANK futures... (8/28)
+2025-10-05T18:13:11Z INFO ✅ Found valid data structure for ICICIBANK
+2025-10-05T18:13:13Z INFO 🔍 Analyzing INFY futures... (9/28)
+2025-10-05T18:13:13Z INFO ✅ Found valid data structure for INFY
+2025-10-05T18:13:20Z INFO 🔍 Analyzing HINDUNILVR futures... (10/28)
+2025-10-05T18:13:21Z INFO ✅ Found valid data structure for HINDUNILVR
+2025-10-05T18:13:23Z INFO 🔍 Analyzing AXISBANK futures... (11/28)
+2025-10-05T18:13:23Z INFO ✅ Found valid data structure for AXISBANK
+2025-10-05T18:13:26Z INFO 🔍 Analyzing KOTAKBANK futures... (12/28)
+2025-10-05T18:13:26Z INFO ✅ Found valid data structure for KOTAKBANK
+2025-10-05T18:13:33Z INFO 🔍 Analyzing SBIN futures... (13/28)
+2025-10-05T18:13:34Z INFO ✅ Found valid data structure for SBIN
+2025-10-05T18:13:36Z INFO 🔍 Analyzing BAJFINANCE futures... (14/28)
+2025-10-05T18:13:37Z INFO ✅ Found valid data structure for BAJFINANCE
+2025-10-05T18:13:39Z INFO 🔍 Analyzing MARUTI futures... (15/28)
+2025-10-05T18:13:40Z INFO ✅ Found valid data structure for MARUTI
+2025-10-05T18:13:47Z INFO 🔍 Analyzing ASIANPAINT futures... (16/28)
+2025-10-05T18:13:47Z INFO ✅ Found valid data structure for ASIANPAINT
+2025-10-05T18:13:49Z INFO 🔍 Analyzing LT futures... (17/28)
+2025-10-05T18:13:50Z INFO ✅ Found valid data structure for LT
+2025-10-05T18:13:52Z INFO 🔍 Analyzing ULTRACEMCO futures... (18/28)
+2025-10-05T18:13:52Z INFO ✅ Found valid data structure for ULTRACEMCO
+2025-10-05T18:14:00Z INFO 🔍 Analyzing TITAN futures... (19/28)
+2025-10-05T18:14:00Z INFO ✅ Found valid data structure for TITAN
+2025-10-05T18:14:02Z INFO 🔍 Analyzing SUNPHARMA futures... (20/28)
+2025-10-05T18:14:03Z INFO ✅ Found valid data structure for SUNPHARMA
+2025-10-05T18:14:05Z INFO 🔍 Analyzing TATASTEEL futures... (21/28)
+2025-10-05T18:14:05Z INFO ✅ Found valid data structure for TATASTEEL
+2025-10-05T18:14:13Z INFO 🔍 Analyzing JSWSTEEL futures... (22/28)
+2025-10-05T18:14:13Z INFO ✅ Found valid data structure for JSWSTEEL
+2025-10-05T18:14:15Z INFO 🔍 Analyzing ONGC futures... (23/28)
+2025-10-05T18:14:16Z INFO ✅ Found valid data structure for ONGC
+2025-10-05T18:14:18Z INFO 🔍 Analyzing NTPC futures... (24/28)
+2025-10-05T18:14:18Z INFO ✅ Found valid data structure for NTPC
+2025-10-05T18:14:26Z INFO 🔍 Analyzing POWERGRID futures... (25/28)
+2025-10-05T18:14:26Z INFO ✅ Found valid data structure for POWERGRID
+2025-10-05T18:14:28Z INFO 🔍 Analyzing COALINDIA futures... (26/28)
+2025-10-05T18:14:29Z INFO ✅ Found valid data structure for COALINDIA
+2025-10-05T18:14:31Z INFO 🔍 Analyzing HINDALCO futures... (27/28)
+2025-10-05T18:14:32Z INFO ✅ Found valid data structure for HINDALCO
+2025-10-05T18:14:39Z INFO 🔍 Analyzing GRASIM futures... (28/28)
+2025-10-05T18:14:39Z INFO ✅ Found valid data structure for GRASIM
+2025-10-05T18:14:41Z INFO 🎯 Futures Analysis Complete: 0 qualifying results from 28 symbols (0 errors, 100.0% success rate)

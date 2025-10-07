@@ -55,7 +55,7 @@ export function OptionAnalysisPageClient() {
   const [sortBy, setSortBy] = useState<SortType>('SCORE_DESC');
   const [minScore, setMinScore] = useState<number>(0);
   const [lastUpdated, setLastUpdated] = useState<string>('');
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState<boolean>(true);
 
   const fetchData = useCallback(async () => {
