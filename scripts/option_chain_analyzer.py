@@ -311,6 +311,9 @@ def perform_option_chain_analysis(symbol: str, option_chain_data: Dict) -> Optio
         total_puts_oi = totals.get('total_calls_puts', {}).get('total_puts_oi_value', 1) or 1
         overall_pcr = total_puts_oi / total_calls_oi if total_calls_oi > 0 else 1
         
+        # Get previous PCR for change calculation
+        previous_pcr, pcr_change, pcr_change_percent = get_pcr_change(symbol, overall_pcr)
+        
         # Apply Indian market PCR normalization
         normalized_pcr = normalize_indian_pcr(overall_pcr, symbol, market_context)
         
@@ -326,6 +329,13 @@ def perform_option_chain_analysis(symbol: str, option_chain_data: Dict) -> Optio
         strength_signals.extend(pcr_score_result['signals'])
         reasoning += pcr_score_result['reasoning']
         confidence += pcr_score_result['confidence']
+        
+        # PCR MOMENTUM SCORING (NEW ENHANCEMENT)
+        pcr_momentum_result = calculate_pcr_momentum_score(pcr_change_percent, overall_pcr, symbol)
+        final_score += pcr_momentum_result['score']
+        strength_signals.extend(pcr_momentum_result['signals'])
+        reasoning += pcr_momentum_result['reasoning']
+        confidence += pcr_momentum_result['confidence']
         
         # Max pain analysis
         max_pain_distance = abs(buildup_analysis['max_pain'] - current_price) / current_price * 100
@@ -366,6 +376,10 @@ def perform_option_chain_analysis(symbol: str, option_chain_data: Dict) -> Optio
             'confidence': min(confidence, 100),
             'current_price': current_price,
             'overall_pcr': overall_pcr,
+            'previous_pcr': previous_pcr,
+            'pcr_change': pcr_change,
+            'pcr_change_percent': pcr_change_percent,
+            'pcr_momentum_score': pcr_momentum_result['score'],
             'max_pain': buildup_analysis['max_pain'],
             'support_levels': buildup_analysis['support_levels'],
             'resistance_levels': buildup_analysis['resistance_levels'],
@@ -409,6 +423,10 @@ def store_analysis_results(results: List[Dict]) -> None:
                 'confidence': result['confidence'],
                 'current_price': result['current_price'],
                 'overall_pcr': result['overall_pcr'],
+                'previous_pcr': result.get('previous_pcr'),
+                'pcr_change': result.get('pcr_change'),
+                'pcr_change_percent': result.get('pcr_change_percent'),
+                'pcr_momentum_score': result.get('pcr_momentum_score'),
                 'max_pain': result['max_pain'],
                 'support_levels': json.dumps(result['support_levels']),
                 'resistance_levels': json.dumps(result['resistance_levels']),
@@ -710,6 +728,111 @@ def normalize_indian_pcr(raw_pcr: float, symbol: str, context: Dict) -> float:
         adjusted_pcr = raw_pcr * 0.95
     
     return adjusted_pcr
+
+def get_pcr_change(symbol: str, current_pcr: float) -> tuple:
+    """Get PCR change from previous analysis"""
+    try:
+        # Query previous PCR from database (last 2 hours)
+        headers = {
+            'apikey': SUPABASE_SERVICE_ROLE_KEY,
+            'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE_KEY}',
+            'Content-Type': 'application/json'
+        }
+        
+        # Get the most recent PCR value for this symbol
+        url = f'{SUPABASE_URL}/rest/v1/option_chain_analysis'
+        params = {
+            'symbol': f'eq.{symbol}',
+            'trading_date': f'eq.{datetime.now().strftime("%Y-%m-%d")}',
+            'select': 'overall_pcr,analysis_timestamp',
+            'order': 'analysis_timestamp.desc',
+            'limit': '1'
+        }
+        
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data and len(data) > 0:
+                previous_pcr = float(data[0]['overall_pcr'])
+                pcr_change = current_pcr - previous_pcr
+                pcr_change_percent = (pcr_change / previous_pcr * 100) if previous_pcr > 0 else 0
+                
+                logging.info(f"📊 {symbol}: PCR Change: {previous_pcr:.3f} → {current_pcr:.3f} ({pcr_change_percent:+.1f}%)")
+                return previous_pcr, pcr_change, pcr_change_percent
+        
+        # No previous data found
+        return current_pcr, 0.0, 0.0
+        
+    except Exception as e:
+        logging.warning(f"⚠️ Could not fetch previous PCR for {symbol}: {e}")
+        return current_pcr, 0.0, 0.0
+
+def calculate_pcr_momentum_score(pcr_change_percent: float, current_pcr: float, symbol: str) -> Dict:
+    """Calculate PCR momentum score based on rate of change"""
+    score = 0
+    signals = []
+    reasoning = ''
+    confidence = 0
+    
+    # PCR STORM DETECTION (>15% change)
+    if abs(pcr_change_percent) > 15:
+        if pcr_change_percent < -15:  # PCR dropping fast (bullish storm)
+            score += 50
+            signals.append('PCR_STORM_BULLISH')
+            reasoning += f"PCR Storm: {pcr_change_percent:+.1f}% drop indicates massive bullish shift. "
+            confidence += 30
+        elif pcr_change_percent > 15:  # PCR rising fast (bearish storm)
+            score -= 50
+            signals.append('PCR_STORM_BEARISH')
+            reasoning += f"PCR Storm: {pcr_change_percent:+.1f}% rise indicates massive bearish shift. "
+            confidence += 30
+    
+    # STRONG PCR MOMENTUM (10-15% change)
+    elif abs(pcr_change_percent) > 10:
+        if pcr_change_percent < -10:  # PCR dropping (bullish momentum)
+            score += 30
+            signals.append('STRONG_PCR_MOMENTUM_BULLISH')
+            reasoning += f"Strong PCR momentum: {pcr_change_percent:+.1f}% drop shows bullish acceleration. "
+            confidence += 20
+        elif pcr_change_percent > 10:  # PCR rising (bearish momentum)
+            score -= 30
+            signals.append('STRONG_PCR_MOMENTUM_BEARISH')
+            reasoning += f"Strong PCR momentum: {pcr_change_percent:+.1f}% rise shows bearish acceleration. "
+            confidence += 20
+    
+    # MODERATE PCR MOMENTUM (5-10% change)
+    elif abs(pcr_change_percent) > 5:
+        if pcr_change_percent < -5:  # PCR dropping (moderate bullish)
+            score += 15
+            signals.append('PCR_MOMENTUM_BULLISH')
+            reasoning += f"PCR momentum: {pcr_change_percent:+.1f}% drop supports bullish trend. "
+            confidence += 10
+        elif pcr_change_percent > 5:  # PCR rising (moderate bearish)
+            score -= 15
+            signals.append('PCR_MOMENTUM_BEARISH')
+            reasoning += f"PCR momentum: {pcr_change_percent:+.1f}% rise supports bearish trend. "
+            confidence += 10
+    
+    # EXTREME PCR LEVELS WITH MOMENTUM
+    if current_pcr < 0.3 and pcr_change_percent < -5:
+        score += 20  # Very low PCR getting lower = super bullish
+        signals.append('EXTREME_LOW_PCR_MOMENTUM')
+        reasoning += "Extreme low PCR with continued momentum - very bullish. "
+        confidence += 15
+    
+    if current_pcr > 2.0 and pcr_change_percent > 5:
+        score -= 20  # Very high PCR getting higher = super bearish
+        signals.append('EXTREME_HIGH_PCR_MOMENTUM')
+        reasoning += "Extreme high PCR with continued momentum - very bearish. "
+        confidence += 15
+    
+    return {
+        'score': score,
+        'signals': signals,
+        'reasoning': reasoning,
+        'confidence': confidence
+    }
 
 def calculate_indian_pcr_score(normalized_pcr: float, raw_pcr: float, symbol: str, context: Dict) -> Dict:
     """Calculate PCR score with Indian market enhancements"""
