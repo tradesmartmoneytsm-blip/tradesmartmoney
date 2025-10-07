@@ -17,6 +17,13 @@ interface StockOption {
   label: string
 }
 
+interface OptionAnalysisResult {
+  symbol: string
+  score: number
+  institutional_sentiment: string
+  // Add other properties as needed
+}
+
 export default function StockProgressionClient() {
   const [selectedStock, setSelectedStock] = useState<string>('ABCAPITAL')
   const [progressionData, setProgressionData] = useState<ProgressionData[]>([])
@@ -42,7 +49,8 @@ export default function StockProgressionClient() {
       const result = await response.json()
       
       if (result.success && result.data?.results) {
-        const uniqueStocks = [...new Set(result.data.results.map((item: any) => item.symbol as string))]
+        const results = result.data.results as OptionAnalysisResult[]
+        const uniqueStocks: StockOption[] = [...new Set(results.map(item => item.symbol))]
           .sort()
           .map(symbol => ({ symbol, label: symbol }))
         
