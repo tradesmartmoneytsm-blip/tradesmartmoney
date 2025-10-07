@@ -121,6 +121,194 @@ export default function StockProgressionClient() {
     }
   }
 
+  const renderScoreChart = () => {
+    if (progressionData.length === 0) return null
+
+    const chartWidth = 800
+    const chartHeight = 300
+    const padding = 60
+
+    // Get score range
+    const scores = progressionData.map(d => d.score)
+    const minScore = Math.min(...scores)
+    const maxScore = Math.max(...scores)
+    const scoreRange = maxScore - minScore || 100
+    
+    // Create points for the line chart
+    const points = progressionData.map((data, index) => {
+      const x = padding + (index / (progressionData.length - 1)) * (chartWidth - 2 * padding)
+      const y = padding + ((maxScore - data.score) / scoreRange) * (chartHeight - 2 * padding)
+      return { x, y, data }
+    })
+
+    // Create the path string for the line
+    const pathData = points.map((point, index) => 
+      `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+    ).join(' ')
+
+    // Create gradient for positive/negative areas
+    const zeroY = padding + ((maxScore - 0) / scoreRange) * (chartHeight - 2 * padding)
+
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-blue-600" />
+          {selectedStock} - Score Progression Chart
+        </h3>
+        
+        <div className="overflow-x-auto">
+          <svg width={chartWidth} height={chartHeight} className="border rounded">
+            {/* Background grid */}
+            <defs>
+              <pattern id="grid" width="40" height="30" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 30" fill="none" stroke="#f0f0f0" strokeWidth="1"/>
+              </pattern>
+              <linearGradient id="positiveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.3"/>
+                <stop offset="100%" stopColor="#10b981" stopOpacity="0.1"/>
+              </linearGradient>
+              <linearGradient id="negativeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#ef4444" stopOpacity="0.1"/>
+                <stop offset="100%" stopColor="#ef4444" stopOpacity="0.3"/>
+              </linearGradient>
+            </defs>
+            
+            <rect width={chartWidth} height={chartHeight} fill="url(#grid)" />
+            
+            {/* Zero line */}
+            {minScore < 0 && maxScore > 0 && (
+              <line 
+                x1={padding} 
+                y1={zeroY} 
+                x2={chartWidth - padding} 
+                y2={zeroY} 
+                stroke="#6b7280" 
+                strokeWidth="2" 
+                strokeDasharray="5,5"
+              />
+            )}
+            
+            {/* Area fill */}
+            {points.length > 1 && (
+              <path
+                d={`${pathData} L ${points[points.length - 1].x} ${zeroY} L ${points[0].x} ${zeroY} Z`}
+                fill={minScore >= 0 ? "url(#positiveGradient)" : maxScore <= 0 ? "url(#negativeGradient)" : "url(#positiveGradient)"}
+              />
+            )}
+            
+            {/* Main line */}
+            <path
+              d={pathData}
+              fill="none"
+              stroke="#3b82f6"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            
+            {/* Data points */}
+            {points.map((point, index) => (
+              <g key={index}>
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r="4"
+                  fill={point.data.score >= 0 ? "#10b981" : "#ef4444"}
+                  stroke="white"
+                  strokeWidth="2"
+                />
+                {/* Tooltip on hover */}
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r="8"
+                  fill="transparent"
+                  className="cursor-pointer"
+                >
+                  <title>
+                    {formatTime(point.data.analysis_timestamp)}: {point.data.score.toFixed(1)} ({point.data.institutional_sentiment})
+                  </title>
+                </circle>
+              </g>
+            ))}
+            
+            {/* Y-axis labels */}
+            {[maxScore, (maxScore + minScore) / 2, minScore].map((value, index) => {
+              const y = padding + (index / 2) * (chartHeight - 2 * padding)
+              return (
+                <g key={index}>
+                  <text
+                    x={padding - 10}
+                    y={y + 4}
+                    textAnchor="end"
+                    className="text-xs fill-gray-600"
+                  >
+                    {value.toFixed(0)}
+                  </text>
+                  <line
+                    x1={padding - 5}
+                    y1={y}
+                    x2={padding}
+                    y2={y}
+                    stroke="#6b7280"
+                    strokeWidth="1"
+                  />
+                </g>
+              )
+            })}
+            
+            {/* X-axis labels (time) */}
+            {points.filter((_, index) => index % Math.ceil(points.length / 6) === 0).map((point, index) => (
+              <g key={index}>
+                <text
+                  x={point.x}
+                  y={chartHeight - padding + 20}
+                  textAnchor="middle"
+                  className="text-xs fill-gray-600"
+                >
+                  {formatTime(point.data.analysis_timestamp)}
+                </text>
+                <line
+                  x1={point.x}
+                  y1={chartHeight - padding}
+                  x2={point.x}
+                  y2={chartHeight - padding + 5}
+                  stroke="#6b7280"
+                  strokeWidth="1"
+                />
+              </g>
+            ))}
+            
+            {/* Chart title and legend */}
+            <text x={chartWidth / 2} y={30} textAnchor="middle" className="text-sm font-medium fill-gray-700">
+              Score: {minScore.toFixed(1)} to {maxScore.toFixed(1)} | Range: {scoreRange.toFixed(1)} points
+            </text>
+          </svg>
+        </div>
+        
+        {/* Chart legend */}
+        <div className="flex items-center justify-center gap-6 mt-4 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>Bullish Score</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <span>Bearish Score</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-0.5 bg-blue-500"></div>
+            <span>Score Trend</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-0.5 bg-gray-400 border-dashed border-t"></div>
+            <span>Zero Line</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const getScoreBar = (score: number) => {
     const maxScore = Math.max(...progressionData.map(d => Math.abs(d.score)), 100)
     const width = Math.min((Math.abs(score) / maxScore) * 100, 100)
@@ -233,11 +421,15 @@ export default function StockProgressionClient() {
           )}
 
           {!loading && !error && progressionData.length > 0 && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-blue-600" />
-                {selectedStock} - Sentiment Timeline ({new Date().toLocaleDateString()})
-              </h2>
+            <>
+              {/* Score Chart */}
+              {renderScoreChart()}
+              
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-blue-600" />
+                  {selectedStock} - Detailed Timeline ({new Date().toLocaleDateString()})
+                </h2>
 
               <div className="space-y-3">
                 {progressionData.map((data, index) => {
@@ -296,6 +488,7 @@ export default function StockProgressionClient() {
                 })}
               </div>
             </div>
+            </>
           )}
         </div>
 
