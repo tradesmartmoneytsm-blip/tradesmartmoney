@@ -2,7 +2,7 @@
 
 /**
  * FNO Symbols Fetcher
- * Fetches F&O symbol list from NiftyTrader API and stores in Supabase
+ * Fetches F&O symbol list from market data API and stores in Supabase
  * Runs daily at 9:00 AM via GitHub Action
  */
 
@@ -25,10 +25,10 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 /**
- * Fetch all FNO symbols from NiftyTrader API
+ * Fetch all FNO symbols from market data API
  */
 async function fetchFnoSymbols() {
-  console.log('🔄 Fetching FNO symbols from NiftyTrader API...');
+  console.log('🔄 Fetching FNO symbols from market data API...');
   
   try {
     const response = await fetch(NIFTY_TRADER_API_URL, {

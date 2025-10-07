@@ -29,7 +29,7 @@ interface OptionChainData {
   totals: OptionTotals;
 }
 
-// NiftyTrader API endpoints
+// Market Data API endpoints
 const NIFTY_TRADER_BASE = 'https://webapi.niftytrader.in/webapi';
 const HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
@@ -155,7 +155,7 @@ export async function POST(request: Request) {
 }
 
 /**
- * Fetch option chain data from NiftyTrader API
+ * Fetch option chain data from market data API
  */
 async function fetchOptionChainData(symbol: string) {
   try {
@@ -311,7 +311,7 @@ async function performOptionChainAnalysis(
 }
 
 /**
- * Analyze option buildup patterns using NiftyTrader classifications
+ * Analyze option buildup patterns using market data classifications
  */
 function analyzeOptionBuildup(optionChain: OptionData[], currentPrice: number) {
   // Advanced Smart Money Analysis - Professional Grade

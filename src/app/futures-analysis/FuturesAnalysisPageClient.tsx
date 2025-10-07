@@ -1,18 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   TrendingUp, 
   TrendingDown, 
   Minus, 
   Filter, 
   RefreshCw, 
-  BarChart3, 
   Target, 
-  Shield,
   Clock,
   Activity,
-  AlertTriangle,
   ArrowUpDown,
   Calendar,
   DollarSign
@@ -51,8 +48,8 @@ interface FuturesAnalysisResult {
   risk_reward_ratio: number;
   reasoning: string;
   key_levels: number[];
-  volume_profile: any;
-  institutional_activity: any;
+  volume_profile: Record<string, unknown>;
+  institutional_activity: Record<string, unknown>;
 }
 
 type FilterType = 'ALL' | 'BULLISH' | 'BEARISH' | 'NEUTRAL' | 'ARBITRAGE';
@@ -67,13 +64,18 @@ export function FuturesAnalysisPageClient() {
   const [filter, setFilter] = useState<FilterType>('ALL');
   const [oiFilter, setOiFilter] = useState<OIFilterType>('ALL');
   const [sortBy, setSortBy] = useState<SortType>('STRENGTH_DESC');
-  const [minStrength, setMinStrength] = useState<number>(20);
+  const [minStrength, setMinStrength] = useState<number>(0);
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState<boolean>(true);
+  const isLoadingRef = useRef(false);
 
   const fetchData = useCallback(async () => {
     try {
+      // Prevent rapid successive calls using ref
+      if (isLoadingRef.current) return;
+      
+      isLoadingRef.current = true;
       setLoading(true);
       setError(null);
       
@@ -96,11 +98,17 @@ export function FuturesAnalysisPageClient() {
       setError('Futures analysis data not available. Please run the Python script to collect data.');
     } finally {
       setLoading(false);
+      isLoadingRef.current = false;
     }
   }, [minStrength]);
 
   useEffect(() => {
     fetchData();
+  }, [fetchData]);
+
+  // Separate useEffect for auto-refresh to prevent flickering
+  useEffect(() => {
+    if (!autoRefreshEnabled) return;
     
     // Auto-refresh every 5 minutes during market hours
     const interval = setInterval(() => {
@@ -111,22 +119,24 @@ export function FuturesAnalysisPageClient() {
       const isWeekday = istTime.getDay() >= 1 && istTime.getDay() <= 5;
       const isMarketHours = hours >= 9 && hours < 15 && (hours > 9 || minutes >= 15) && (hours < 15 || minutes <= 30);
       
-      if (isWeekday && isMarketHours && autoRefreshEnabled) {
+      if (isWeekday && isMarketHours) {
         console.log('🔄 Auto-refreshing Futures Analysis data...');
         fetchData();
       }
     }, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [fetchData, autoRefreshEnabled]);
+  }, [autoRefreshEnabled, fetchData]);
 
   useEffect(() => {
-    if (!Array.isArray(data)) {
-      setFilteredData([]);
-      return;
-    }
-    
-    let filtered = [...data];
+    // Debounce filtering to prevent rapid re-renders
+    const timeoutId = setTimeout(() => {
+      if (!Array.isArray(data)) {
+        setFilteredData([]);
+        return;
+      }
+      
+      let filtered = [...data];
     
     // Apply signal type filter
     if (filter !== 'ALL') {
@@ -154,9 +164,12 @@ export function FuturesAnalysisPageClient() {
         default:
           return b.signal_strength - a.signal_strength;
       }
-    });
+      });
+      
+      setFilteredData(filtered);
+    }, 100); // 100ms debounce
     
-    setFilteredData(filtered);
+    return () => clearTimeout(timeoutId);
   }, [data, filter, oiFilter, sortBy]);
 
   const getSignalIcon = (signal: string) => {

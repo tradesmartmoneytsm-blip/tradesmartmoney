@@ -60,7 +60,7 @@ INSERT INTO fno_symbols (symbol_name) VALUES
 ('ITC')
 ON CONFLICT (symbol_name) DO NOTHING;
 
-COMMENT ON TABLE fno_symbols IS 'Stores F&O symbols fetched daily from NiftyTrader API';
+COMMENT ON TABLE fno_symbols IS 'Stores F&O symbols fetched daily from market data API';
 COMMENT ON COLUMN fno_symbols.symbol_name IS 'F&O symbol name (e.g., NIFTY, RELIANCE)';
 COMMENT ON COLUMN fno_symbols.is_active IS 'Whether the symbol is currently active for trading';
 COMMENT ON COLUMN fno_symbols.created_at IS 'When the symbol was first added';

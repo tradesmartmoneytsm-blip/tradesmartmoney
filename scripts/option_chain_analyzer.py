@@ -35,7 +35,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%dT%H:%M:%SZ",
 )
 
-# NiftyTrader API Configuration
+# Market Data API Configuration
 NIFTY_TRADER_BASE = 'https://webapi.niftytrader.in/webapi'
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
@@ -46,9 +46,9 @@ HEADERS = {
 }
 
 # Environment variables
-SUPABASE_URL = os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
-SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
-FORCE_RUN = os.environ.get("FORCE_RUN", "false").lower() == "true"
+SUPABASE_URL = "https://ejnuocizpsfcobhyxgrd.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbnVvY2l6cHNmY29iaHl4Z3JkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzAxMjAyMCwiZXhwIjoyMDcyNTg4MDIwfQ.VvnrQCXDcya-pHhKn7Jp9bUgzj61eLFrdO8r-0fZhmY"
+FORCE_RUN = os.environ.get("FORCE_RUN", "false").lower() == "true"  # Keep this as env var for flexibility
 
 # FNO Symbols will be fetched from Supabase table
 
@@ -122,7 +122,7 @@ def fetch_fno_symbols() -> List[str]:
         return []
 
 def fetch_option_chain_data(symbol: str) -> Optional[Dict]:
-    """Fetch option chain data from NiftyTrader API"""
+    """Fetch option chain data from market data API"""
     try:
         url = f"{NIFTY_TRADER_BASE}/option/option-chain-data?symbol={symbol.lower()}&exchange=nse&expiryDate=&atmBelow=5&atmAbove=5"
         
@@ -147,7 +147,7 @@ def fetch_option_chain_data(symbol: str) -> Optional[Dict]:
         return None
 
 def analyze_option_buildup(option_chain: List[Dict], current_price: float) -> Dict:
-    """Analyze option buildup patterns using NiftyTrader classifications"""
+    """Analyze option buildup patterns using market data classifications"""
     
     institutional_bullish_flow = 0
     institutional_bearish_flow = 0
@@ -451,10 +451,7 @@ def main():
     """Main execution function"""
     logging.info("🚀 Starting Option Chain Analysis Collector")
     
-    # Validate environment
-    if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
-        logging.error("Missing required environment variables")
-        sys.exit(1)
+    # Environment is now hardcoded - no validation needed
     
     # Check market hours
     if not is_market_hours():

@@ -33,7 +33,7 @@ export function AdvancedScannerPageClient() {
               <h3 className="font-semibold text-blue-900 mb-2">Advanced Scanner - Reference Tool</h3>
               <p className="text-blue-800 text-sm mb-2">
                 This is the live Advanced Scanner component that provides real-time option chain analysis. 
-                It fetches fresh data from NiftyTrader API and applies the enhanced Indian market algorithm.
+                It fetches fresh data from live market sources and applies the enhanced Indian market algorithm.
               </p>
               <div className="text-blue-700 text-xs">
                 <strong>Key Features:</strong> Live data fetching • Real-time analysis • Interactive filtering • 
@@ -78,7 +78,7 @@ export function AdvancedScannerPageClient() {
             <div>
               <h4 className="font-semibold mb-2">Data Source:</h4>
               <ul className="space-y-1 text-xs">
-                <li>• NiftyTrader API (Live option chain data)</li>
+                <li>• Live Market Data (Real-time option chain)</li>
                 <li>• Real-time PCR calculations</li>
                 <li>• Live institutional flow analysis</li>
                 <li>• Dynamic support/resistance levels</li>

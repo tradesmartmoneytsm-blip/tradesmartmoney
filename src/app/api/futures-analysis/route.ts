@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     // Apply minimum strength filter
     if (filters.min_strength) {
-      results = results.filter(item => item.signal_strength >= filters.min_strength);
+      results = results.filter(item => item.signal_strength >= filters.min_strength!);
     }
 
     // Apply symbol filter

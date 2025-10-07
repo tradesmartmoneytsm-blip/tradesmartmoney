@@ -53,7 +53,7 @@ export function OptionAnalysisPageClient() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterType>('ALL');
   const [sortBy, setSortBy] = useState<SortType>('SCORE_DESC');
-  const [minScore, setMinScore] = useState<number>(50);
+  const [minScore, setMinScore] = useState<number>(0);
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState<boolean>(true);
@@ -63,7 +63,7 @@ export function OptionAnalysisPageClient() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`/api/option-analysis?min_score=${minScore}&limit=100`);
+      const response = await fetch(`/api/option-analysis?min_score=${minScore}&limit=200`);
       const result = await response.json();
       
       if (result.success) {
@@ -105,7 +105,7 @@ export function OptionAnalysisPageClient() {
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval);
-  }, [fetchData]);
+  }, [fetchData, autoRefreshEnabled]);
 
   useEffect(() => {
     // Ensure data is an array before processing
@@ -631,7 +631,7 @@ export function OptionAnalysisPageClient() {
         {/* Compact Footer */}
         <div className="mt-8 text-center text-xs text-gray-500">
           <p>
-            🤖 Enhanced Indian Market Algorithm • 📊 NiftyTrader API • ⚠️ Educational Only
+            🤖 Enhanced Indian Market Algorithm • 📊 Live Market Data • ⚠️ Educational Only
           </p>
         </div>
       </div>
