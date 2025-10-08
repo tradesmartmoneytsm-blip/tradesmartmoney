@@ -1,0 +1,65 @@
+name: Daily Table Cleanup
+
+on:
+  schedule:
+    # Run at 9:00 AM UTC Monday to Friday (2:30 PM IST)
+    - cron: '0 9 * * 1-5'
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  delete-analysis-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Delete Option Chain Analysis Data
+        run: |
+          echo "🗑️ Deleting all data from option_chain_analysis table..."
+          
+          curl -X DELETE \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/option_chain_analysis?id=gte.0"
+          
+          echo "✅ Option chain analysis table cleared"
+
+      - name: Delete Futures Analysis Data
+        run: |
+          echo "🗑️ Deleting all data from futures_analysis table..."
+          
+          curl -X DELETE \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/futures_analysis?id=gte.0"
+          
+          echo "✅ Futures analysis table cleared"
+
+      - name: Verify Cleanup
+        run: |
+          echo "🔍 Verifying tables are empty..."
+          
+          # Check option analysis count
+          OPTION_COUNT=$(curl -s \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/option_chain_analysis?select=id" \
+            | jq '. | length')
+          
+          # Check futures analysis count  
+          FUTURES_COUNT=$(curl -s \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/futures_analysis?select=id" \
+            | jq '. | length')
+          
+          echo "📊 Final Count:"
+          echo "   option_chain_analysis: $OPTION_COUNT records"
+          echo "   futures_analysis: $FUTURES_COUNT records"
+          
+          if [ "$OPTION_COUNT" -eq 0 ] && [ "$FUTURES_COUNT" -eq 0 ]; then
+            echo "✅ SUCCESS: Both tables are completely empty!"
+          else
+            echo "⚠️ WARNING: Tables still contain data"
+            exit 1
+          fi
