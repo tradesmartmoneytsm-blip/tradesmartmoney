@@ -400,68 +400,120 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
         proximity_weight = 3 if distance_from_spot < 0.05 else (2 if distance_from_spot < 0.1 else 1)
         
         # SUPER INTELLIGENT CALL ANALYSIS
-        if call_oi_change > 0 and call_volume > 500:  # Fresh call positions (lowered threshold)
+        if call_oi_change > 0 and call_volume > 500:  # Fresh call positions
             # DYNAMIC THRESHOLDS based on price momentum and volume
             volume_threshold = 3000 if price_momentum.get('volume_ratio', 1) > 2 else 5000
             massive_threshold = 8000 if price_momentum.get('volume_ratio', 1) > 2 else 10000
             
-            if call_volume > volume_threshold:  # Dynamic institutional detection
-                # ENHANCED WEIGHT based on multiple factors
-                base_weight = proximity_weight * 3
-                
-                # VOLUME SURGE BONUS
-                if call_volume > massive_threshold:
-                    base_weight *= 1.5  # 50% bonus for massive volume
-                
-                # PRICE MOMENTUM ALIGNMENT BONUS
-                if price_momentum.get('day_change_pct', 0) > 2:
-                    base_weight *= 1.3  # 30% bonus for bullish price action
-                
-                institutional_bullish_flow += base_weight
-                detailed_analysis.append(f"{strike}CE: SUPER INSTITUTIONAL Call Buying (+{base_weight:.1f}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
-                
-                if call_volume > massive_threshold:
-                    unusual_activity.append(f"🚀 EXPLOSIVE Call Buying at {strike} (Vol: {call_volume:,}, OI: +{call_oi_change:,})")
-                elif call_volume > volume_threshold:
-                    unusual_activity.append(f"📈 MASSIVE Call Buying at {strike} (Vol: {call_volume:,}, OI: +{call_oi_change:,})")
+            if call_volume > volume_threshold:  # High volume = institutional
+                # Determine if it's CALL BUYING (bullish) or CALL WRITING (bearish)
+                if call_change > 0:  # Call prices rising = call buying (bullish)
+                    base_weight = proximity_weight * 3
+                    
+                    # VOLUME SURGE BONUS
+                    if call_volume > massive_threshold:
+                        base_weight *= 1.5
+                    
+                    # PRICE MOMENTUM ALIGNMENT BONUS
+                    if price_momentum.get('day_change_pct', 0) > 2:
+                        base_weight *= 1.3
+                    
+                    institutional_bullish_flow += base_weight
+                    detailed_analysis.append(f"{strike}CE: INSTITUTIONAL Call Buying (+{base_weight:.1f}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
+                    
+                    if call_volume > massive_threshold:
+                        unusual_activity.append(f"🚀 EXPLOSIVE Call Buying at {strike} (Vol: {call_volume:,})")
+                    elif call_volume > volume_threshold:
+                        unusual_activity.append(f"📈 MASSIVE Call Buying at {strike} (Vol: {call_volume:,})")
+                        
+                else:  # Call prices stable/falling with high OI = call writing (bearish)
+                    base_weight = proximity_weight * 3
+                    
+                    # VOLUME SURGE PENALTY (more bearish with higher volume)
+                    if call_volume > massive_threshold:
+                        base_weight *= 1.5
+                    
+                    institutional_bearish_flow += base_weight
+                    detailed_analysis.append(f"{strike}CE: INSTITUTIONAL Call Writing (-{base_weight:.1f}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
+                    
+                    if call_volume > massive_threshold:
+                        unusual_activity.append(f"📉 MASSIVE Call Writing at {strike} (Vol: {call_volume:,})")
+                    elif call_volume > volume_threshold:
+                        unusual_activity.append(f"🔻 HEAVY Call Writing at {strike} (Vol: {call_volume:,})")
             
             # MEDIUM VOLUME ACTIVITY
             elif call_volume > 1000:
-                weight = proximity_weight * 1.5
-                institutional_bullish_flow += weight
-                detailed_analysis.append(f"{strike}CE: Call Buying (+{weight}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
+                if call_change > 0:  # Call buying
+                    weight = proximity_weight * 1.5
+                    institutional_bullish_flow += weight
+                    detailed_analysis.append(f"{strike}CE: Call Buying (+{weight}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
+                else:  # Call writing
+                    weight = proximity_weight * 1.5
+                    institutional_bearish_flow += weight
+                    detailed_analysis.append(f"{strike}CE: Call Writing (-{weight}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
                     
         elif call_oi_change < 0 and call_volume > 1000:  # Call unwinding/profit booking
-            if abs(call_oi_change) > 50:  # Lowered threshold
-                weight = proximity_weight * 1
+            if abs(call_oi_change) > 50:
+                weight = proximity_weight * 0.5
                 detailed_analysis.append(f"{strike}CE: Call Unwinding/Profit Booking [OI: {call_oi_change:,}, Vol: {call_volume:,}]")
                 
-        # INTELLIGENT PUT ANALYSIS  
-        if put_oi_change > 0 and put_volume > 1000:  # Fresh put positions
-            if put_volume > 5000:  # High volume = institutional
-                # Determine if it's put buying (bearish) or put writing (bullish)
-                if put_change > 0:  # Put prices rising = put buying (bearish)
-                    weight = proximity_weight * 3
-                    institutional_bearish_flow += weight
-                    detailed_analysis.append(f"{strike}PE: Institutional Put Buying (-{weight}) [OI: +{put_oi_change:,}, Vol: {put_volume:,}]")
+        # ENHANCED PUT ANALYSIS WITH BETTER BEARISH DETECTION
+        if put_oi_change > 0 and put_volume > 500:  # Fresh put positions (lowered threshold)
+            # DYNAMIC THRESHOLDS
+            volume_threshold = 3000 if price_momentum.get('volume_ratio', 1) > 2 else 5000
+            massive_threshold = 8000 if price_momentum.get('volume_ratio', 1) > 2 else 10000
+            
+            if put_volume > volume_threshold:  # High volume = institutional
+                # ENHANCED BEARISH DETECTION: Put buying vs put writing
+                if put_change > 0.5:  # Put prices rising significantly = put buying (BEARISH)
+                    base_weight = proximity_weight * 3
                     
-                    if put_volume > 10000:
-                        unusual_activity.append(f"📉 MASSIVE Put Buying at {strike} (Vol: {put_volume:,})")
-                    elif put_volume > 5000:
-                        unusual_activity.append(f"🔻 Heavy Put Buying at {strike} (Vol: {put_volume:,})")
+                    # VOLUME SURGE AMPLIFICATION for bearish signals
+                    if put_volume > massive_threshold:
+                        base_weight *= 1.5
+                    
+                    # PRICE CONFLICT AMPLIFICATION (put buying while price rising = extra bearish)
+                    if price_momentum.get('day_change_pct', 0) > 1:
+                        base_weight *= 1.4  # 40% amplification for conflicting signals
+                    
+                    institutional_bearish_flow += base_weight
+                    detailed_analysis.append(f"{strike}PE: INSTITUTIONAL Put Buying (-{base_weight:.1f}) [OI: +{put_oi_change:,}, Vol: {put_volume:,}, Price: +{put_change:.2f}]")
+                    
+                    if put_volume > massive_threshold:
+                        unusual_activity.append(f"📉 MASSIVE Put Buying at {strike} (Vol: {put_volume:,}, Price: +{put_change:.2f})")
+                    elif put_volume > volume_threshold:
+                        unusual_activity.append(f"🔻 HEAVY Put Buying at {strike} (Vol: {put_volume:,}, Price: +{put_change:.2f})")
                         
-                else:  # Put prices stable/falling with high OI = put writing (bullish)
-                    weight = proximity_weight * 3
-                    institutional_bullish_flow += weight
-                    detailed_analysis.append(f"{strike}PE: Institutional Put Writing (+{weight}) [OI: +{put_oi_change:,}, Vol: {put_volume:,}]")
+                elif put_change <= 0:  # Put prices stable/falling with high OI = put writing (bullish)
+                    base_weight = proximity_weight * 3
                     
-                    if put_volume > 10000:
+                    if put_volume > massive_threshold:
+                        base_weight *= 1.5
+                    
+                    if price_momentum.get('day_change_pct', 0) > 2:
+                        base_weight *= 1.3
+                    
+                    institutional_bullish_flow += base_weight
+                    detailed_analysis.append(f"{strike}PE: INSTITUTIONAL Put Writing (+{base_weight:.1f}) [OI: +{put_oi_change:,}, Vol: {put_volume:,}]")
+                    
+                    if put_volume > massive_threshold:
                         unusual_activity.append(f"🛡️ MASSIVE Put Writing at {strike} (Vol: {put_volume:,})")
-                    elif put_volume > 5000:
-                        unusual_activity.append(f"💪 Heavy Put Writing at {strike} (Vol: {put_volume:,})")
+                    elif put_volume > volume_threshold:
+                        unusual_activity.append(f"💪 HEAVY Put Writing at {strike} (Vol: {put_volume:,})")
+            
+            # MEDIUM VOLUME ACTIVITY
+            elif put_volume > 1000:
+                if put_change > 0.5:  # Put buying (bearish)
+                    weight = proximity_weight * 2
+                    institutional_bearish_flow += weight
+                    detailed_analysis.append(f"{strike}PE: Put Buying (-{weight}) [OI: +{put_oi_change:,}, Vol: {put_volume:,}]")
+                else:  # Put writing (bullish)
+                    weight = proximity_weight * 1.5
+                    institutional_bullish_flow += weight
+                    detailed_analysis.append(f"{strike}PE: Put Writing (+{weight}) [OI: +{put_oi_change:,}, Vol: {put_volume:,}]")
                         
         elif put_oi_change < 0 and put_volume > 1000:  # Put unwinding
-            if abs(put_oi_change) > 100:
+            if abs(put_oi_change) > 50:
                 detailed_analysis.append(f"{strike}PE: Put Unwinding [OI: {put_oi_change:,}, Vol: {put_volume:,}]")
         
         # IDENTIFY SUPPORT AND RESISTANCE LEVELS
@@ -472,6 +524,9 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
     
     # Calculate net institutional flow
     net_institutional_flow = institutional_bullish_flow - institutional_bearish_flow
+    
+    # Calculate PCR first (needed for bearish detection)
+    pcr = total_put_oi / total_call_oi if total_call_oi > 0 else 1.0
     
     # SUPER INTELLIGENCE: Apply price momentum and sector strength
     base_score = net_institutional_flow * 2
@@ -513,6 +568,14 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
     combined_reasoning += sector_strength.get('reasoning', '')
     combined_signals.extend(sector_strength.get('signals', []))
     
+    # ENHANCED BEARISH DETECTION: High PCR + Negative momentum
+    if pcr > 1.2 and price_momentum.get('day_change_pct', 0) < -2:
+        # High PCR with falling price = strong bearish signal
+        bearish_amplification = 40
+        final_score -= bearish_amplification
+        combined_signals.append('HIGH_PCR_BEARISH_MOMENTUM')
+        combined_reasoning += f'📉 HIGH PCR ({pcr:.3f}) + falling price = strong bearish signal! '
+    
     # SPECIAL CASE: MASSIVE INSTITUTIONAL + PRICE MOMENTUM ALIGNMENT
     if (net_institutional_flow > 10 and price_momentum.get('day_change_pct', 0) > 3):
         combined_signals.append('PERFECT_BULLISH_STORM')
@@ -523,6 +586,18 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
         combined_reasoning += '⚡ PERFECT STORM: Massive institutional selling + price crash! '
         final_score -= 50  # Penalty for perfect bearish alignment
     
+    # ADDITIONAL BEARISH SCENARIOS
+    elif (net_institutional_flow < -5 and pcr > 1.1):
+        # Moderate bearish flow + high PCR = amplified bearish signal
+        combined_signals.append('BEARISH_FLOW_HIGH_PCR')
+        combined_reasoning += '🔻 Bearish institutional flow + high PCR = amplified bearish signal! '
+        final_score -= 25
+    elif (price_momentum.get('day_change_pct', 0) < -4 and pcr > 0.9):
+        # Strong price decline + elevated PCR = bearish momentum
+        combined_signals.append('PRICE_DECLINE_BEARISH')
+        combined_reasoning += '📉 Strong price decline + elevated PCR = bearish momentum! '
+        final_score -= 30
+    
     # CONFLICT DETECTION: Options vs Price Action
     if (net_institutional_flow > 8 and price_momentum.get('day_change_pct', 0) < -2):
         combined_signals.append('OPTION_PRICE_CONFLICT')
@@ -532,9 +607,6 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
         combined_signals.append('OPTION_PRICE_CONFLICT')
         combined_reasoning += '⚠️ CONFLICT: Bearish options but price rising - mixed signals! '
         final_score *= 0.7  # Reduce score by 30% for conflicts
-    
-    # Calculate PCR
-    pcr = total_put_oi / total_call_oi if total_call_oi > 0 else 1.0
     
     return {
         'score': final_score,  # SUPER INTELLIGENT FINAL SCORE
