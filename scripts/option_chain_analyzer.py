@@ -121,41 +121,105 @@ def fetch_fno_symbols() -> List[str]:
         # Return empty list instead of hardcoded fallback
         return []
 
-def fetch_option_chain_data(symbol: str) -> Optional[Dict]:
-    """Fetch option chain data from market data API"""
+# NSE API Configuration (Using proven cookie approach from futures_analyzer)
+NSE_BASE = 'https://www.nseindia.com/api'
+SET_COOKIE_URL = "https://www.nseindia.com/market-data/oi-spurts"
+NSE_HEADERS = {
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+    'sec-ch-ua': '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"macOS"',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+}
+
+# Create session for cookie management (proven approach)
+nse_session = requests.Session()
+nse_cookies = dict()
+
+def set_nse_cookie(url: str = SET_COOKIE_URL):
+    """Set cookies for NSE API access (proven method from futures_analyzer)"""
     try:
-        url = f"{NIFTY_TRADER_BASE}/option/option-chain-data?symbol={symbol.lower()}&exchange=nse&expiryDate=&atmBelow=5&atmAbove=5"
+        request = nse_session.get(url, headers=NSE_HEADERS, timeout=10)
+        global nse_cookies
+        nse_cookies = dict(request.cookies)
+        logging.debug(f"🍪 NSE cookies set from {url}")
+    except Exception as e:
+        logging.warning(f"⚠️ Failed to set NSE cookies: {e}")
+
+def get_nse_data(url: str) -> Optional[str]:
+    """Get data from NSE using cookie-based session (proven method)"""
+    try:
+        logging.debug(f"📡 NSE API Call: {url}")
+        response = nse_session.get(url, headers=NSE_HEADERS, timeout=15, cookies=nse_cookies)
         
-        response = requests.get(url, headers=HEADERS, timeout=30)
-        if response.status_code != 200:
-            logging.warning(f"Failed to fetch option chain for {symbol}: HTTP {response.status_code}")
+        # Handle 401 errors by refreshing cookies (proven method)
+        if response.status_code == 401:
+            logging.info("🔄 401 error, refreshing NSE cookies...")
+            set_nse_cookie(SET_COOKIE_URL)
+            response = nse_session.get(url, headers=NSE_HEADERS, timeout=15, cookies=nse_cookies)
+        
+        if response.status_code == 200:
+            logging.debug("✅ NSE Response OK")
+            return response.text
+        else:
+            logging.debug(f"⚠️ NSE Response status: {response.status_code}")
             return None
             
-        data = response.json()
+    except requests.exceptions.Timeout:
+        logging.warning("⏰ NSE Request timed out")
+    except requests.exceptions.ConnectionError:
+        logging.warning("🌐 NSE Connection error")
+    except requests.exceptions.HTTPError as e:
+        logging.warning(f"🚫 NSE HTTP error: {e.response.status_code}")
+    except Exception as e:
+        logging.warning(f"❌ NSE Request error: {e}")
+    
+    return None
+
+def fetch_option_chain_data(symbol: str) -> Optional[Dict]:
+    """Fetch option chain data from NSE official API using proven cookie method"""
+    try:
+        # Initialize cookies if not set
+        if not nse_cookies:
+            logging.info("🔐 Setting initial NSE cookies...")
+            set_nse_cookie()
         
-        if not data.get('result') or not data.get('resultData') or not data.get('resultData', {}).get('opDatas'):
-            logging.warning(f"Invalid option chain data structure for {symbol}")
+        # NSE Official API endpoint
+        url = f"https://www.nseindia.com/api/option-chain-equities?symbol={symbol}"
+        
+        # Get data using proven cookie method
+        response_text = get_nse_data(url)
+        
+        if not response_text:
+            logging.warning(f"⚠️ No response data for {symbol}")
             return None
             
-        return {
-            'optionChain': data['resultData']['opDatas'],
-            'totals': data['resultData']['opTotals']
-        }
+        # Try to parse JSON
+        try:
+            import json
+            data = json.loads(response_text)
+        except ValueError as e:
+            logging.error(f"❌ Invalid JSON response for {symbol}: {e}")
+            return None
+        
+        if not data or 'records' not in data:
+            logging.warning(f"⚠️ No option chain data found for {symbol}")
+            return None
+            
+        logging.info(f"✅ Successfully fetched option chain for {symbol}")
+        return data
         
     except Exception as e:
-        logging.error(f"Error fetching option chain for {symbol}: {e}")
+        logging.error(f"❌ Unexpected error fetching NSE option chain for {symbol}: {e}")
         return None
 
-def analyze_option_buildup(option_chain: List[Dict], current_price: float) -> Dict:
-    """Analyze option buildup patterns using market data classifications"""
+def analyze_nse_option_buildup(option_data: List[Dict], current_price: float) -> Dict:
+    """Analyze NSE option chain with intelligent institutional flow detection"""
     
     institutional_bullish_flow = 0
     institutional_bearish_flow = 0
-    retail_bullish_flow = 0
-    retail_bearish_flow = 0
-    
-    call_activity = 0
-    put_activity = 0
     max_pain = current_price
     max_oi = 0
     support_levels = []
@@ -163,153 +227,164 @@ def analyze_option_buildup(option_chain: List[Dict], current_price: float) -> Di
     unusual_activity = []
     detailed_analysis = []
     
-    for option in option_chain:
-        strike = option.get('strike_price', 0)
-        call_buildup = option.get('calls_builtup', '')
-        put_buildup = option.get('puts_builtup', '')
-        total_oi = (option.get('calls_oi', 0) or 0) + (option.get('puts_oi', 0) or 0)
-        call_volume = option.get('calls_volume', 0) or 0
-        put_volume = option.get('puts_volume', 0) or 0
-        call_oi_value = abs(option.get('calls_change_oi_value', 0) or 0)
-        put_oi_value = abs(option.get('puts_change_oi_value', 0) or 0)
+    # Track total call and put activity
+    total_call_oi = 0
+    total_put_oi = 0
+    
+    for option_row in option_data:
+        strike = option_row.get('strikePrice', 0)
         
-        # Find max pain (highest total OI)
+        # Extract call data
+        ce_data = option_row.get('CE', {})
+        call_oi = ce_data.get('openInterest', 0) or 0
+        call_oi_change = ce_data.get('changeinOpenInterest', 0) or 0
+        call_volume = ce_data.get('totalTradedVolume', 0) or 0
+        call_ltp = ce_data.get('lastPrice', 0) or 0
+        call_change = ce_data.get('change', 0) or 0
+        
+        # Extract put data  
+        pe_data = option_row.get('PE', {})
+        put_oi = pe_data.get('openInterest', 0) or 0
+        put_oi_change = pe_data.get('changeinOpenInterest', 0) or 0
+        put_volume = pe_data.get('totalTradedVolume', 0) or 0
+        put_ltp = pe_data.get('lastPrice', 0) or 0
+        put_change = pe_data.get('change', 0) or 0
+        
+        # Calculate total OI for max pain
+        total_oi = call_oi + put_oi
         if total_oi > max_oi:
             max_oi = total_oi
             max_pain = strike
+            
+        # Track totals for PCR calculation
+        total_call_oi += call_oi
+        total_put_oi += put_oi
         
-        # Distance from current price (weight by proximity)
+        # Distance-based weighting (closer to spot = more important)
         distance_from_spot = abs(strike - current_price) / current_price
         proximity_weight = 3 if distance_from_spot < 0.05 else (2 if distance_from_spot < 0.1 else 1)
         
-        # Advanced Call Analysis
-        if 'Call Buying' in call_buildup:
-            weight = proximity_weight * 2
-            institutional_bullish_flow += weight
-            call_activity += call_oi_value
-            detailed_analysis.append(f"{strike}: Call Buying (+{weight})")
-            if call_volume > 100000:
-                unusual_activity.append(f"Large Call Buying at {strike}")
+        # INTELLIGENT CALL ANALYSIS
+        if call_oi_change > 0 and call_volume > 1000:  # Fresh call positions
+            if call_volume > 5000:  # High volume = institutional
+                weight = proximity_weight * 3  # Increased weight for institutional activity
+                institutional_bullish_flow += weight
+                detailed_analysis.append(f"{strike}CE: Institutional Call Buying (+{weight}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
                 
-        elif 'Call Writing' in call_buildup:
-            weight = proximity_weight * 2
-            institutional_bearish_flow += weight
-            call_activity += call_oi_value
-            detailed_analysis.append(f"{strike}: Call Writing (-{weight})")
-            if call_volume > 100000:
-                unusual_activity.append(f"Heavy Call Writing at {strike}")
+                if call_volume > 10000:  # Massive volume
+                    unusual_activity.append(f"🚀 MASSIVE Call Buying at {strike} (Vol: {call_volume:,})")
+                elif call_volume > 5000:
+                    unusual_activity.append(f"📈 Heavy Call Buying at {strike} (Vol: {call_volume:,})")
+                    
+        elif call_oi_change < 0 and call_volume > 1000:  # Call unwinding/profit booking
+            if abs(call_oi_change) > 100:
+                weight = proximity_weight * 1
+                detailed_analysis.append(f"{strike}CE: Call Unwinding/Profit Booking [OI: {call_oi_change:,}, Vol: {call_volume:,}]")
                 
-        elif 'Call Short Covering' in call_buildup:
-            weight = proximity_weight * 0.5
-            retail_bullish_flow += weight
-            detailed_analysis.append(f"{strike}: Call Short Covering (+{weight})")
-            
-        elif 'Call Long Covering' in call_buildup:
-            weight = proximity_weight * 0.5
-            retail_bearish_flow += weight
-            detailed_analysis.append(f"{strike}: Call Long Covering (-{weight})")
+        # INTELLIGENT PUT ANALYSIS  
+        if put_oi_change > 0 and put_volume > 1000:  # Fresh put positions
+            if put_volume > 5000:  # High volume = institutional
+                # Determine if it's put buying (bearish) or put writing (bullish)
+                if put_change > 0:  # Put prices rising = put buying (bearish)
+                    weight = proximity_weight * 3
+                    institutional_bearish_flow += weight
+                    detailed_analysis.append(f"{strike}PE: Institutional Put Buying (-{weight}) [OI: +{put_oi_change:,}, Vol: {put_volume:,}]")
+                    
+                    if put_volume > 10000:
+                        unusual_activity.append(f"📉 MASSIVE Put Buying at {strike} (Vol: {put_volume:,})")
+                    elif put_volume > 5000:
+                        unusual_activity.append(f"🔻 Heavy Put Buying at {strike} (Vol: {put_volume:,})")
+                        
+                else:  # Put prices stable/falling with high OI = put writing (bullish)
+                    weight = proximity_weight * 3
+                    institutional_bullish_flow += weight
+                    detailed_analysis.append(f"{strike}PE: Institutional Put Writing (+{weight}) [OI: +{put_oi_change:,}, Vol: {put_volume:,}]")
+                    
+                    if put_volume > 10000:
+                        unusual_activity.append(f"🛡️ MASSIVE Put Writing at {strike} (Vol: {put_volume:,})")
+                    elif put_volume > 5000:
+                        unusual_activity.append(f"💪 Heavy Put Writing at {strike} (Vol: {put_volume:,})")
+                        
+        elif put_oi_change < 0 and put_volume > 1000:  # Put unwinding
+            if abs(put_oi_change) > 100:
+                detailed_analysis.append(f"{strike}PE: Put Unwinding [OI: {put_oi_change:,}, Vol: {put_volume:,}]")
         
-        # Advanced Put Analysis
-        if 'Put Writing' in put_buildup:
-            weight = proximity_weight * 2
-            institutional_bullish_flow += weight
-            put_activity += put_oi_value
-            detailed_analysis.append(f"{strike}: Put Writing (+{weight})")
-            if put_volume > 100000:
-                unusual_activity.append(f"Heavy Put Writing at {strike}")
-                
-        elif 'Put Buying' in put_buildup:
-            weight = proximity_weight * 2
-            institutional_bearish_flow += weight
-            put_activity += put_oi_value
-            detailed_analysis.append(f"{strike}: Put Buying (-{weight})")
-            if put_volume > 100000:
-                unusual_activity.append(f"Large Put Buying at {strike}")
-                
-        elif 'Put Long Covering' in put_buildup:
-            weight = proximity_weight * 0.5
-            retail_bullish_flow += weight
-            detailed_analysis.append(f"{strike}: Put Long Covering (+{weight})")
-            
-        elif 'Put Short Covering' in put_buildup:
-            weight = proximity_weight * 0.5
-            retail_bearish_flow += weight
-            detailed_analysis.append(f"{strike}: Put Short Covering (-{weight})")
-        
-        # Identify key levels
-        if strike < current_price and (option.get('puts_oi', 0) or 0) > 100000:
+        # IDENTIFY SUPPORT AND RESISTANCE LEVELS
+        if strike < current_price and put_oi > 50000:  # High put OI below spot = support
             support_levels.append(strike)
-        if strike > current_price and (option.get('calls_oi', 0) or 0) > 100000:
+        if strike > current_price and call_oi > 50000:  # High call OI above spot = resistance  
             resistance_levels.append(strike)
     
-    # Calculate net flows
+    # Calculate net institutional flow
     net_institutional_flow = institutional_bullish_flow - institutional_bearish_flow
-    net_retail_flow = retail_bullish_flow - retail_bearish_flow
     
-    # Institutional flow weighted 4x more than retail
-    final_net_score = net_institutional_flow + (net_retail_flow * 0.25)
-    
-    # Determine signals
+    # Determine signals and reasoning
     signals = []
     reasoning = ""
     
-    if final_net_score >= 8:
+    if net_institutional_flow >= 15:  # Adjusted thresholds for NSE data
         signals.append('STRONG_INSTITUTIONAL_BULLISH')
-        reasoning += 'Strong institutional bullish flow dominates. '
-    elif final_net_score >= 4:
+        reasoning += '🚀 MASSIVE institutional bullish flow dominates. '
+    elif net_institutional_flow >= 8:
         signals.append('MODERATE_INSTITUTIONAL_BULLISH')
-        reasoning += 'Moderate institutional bullish flow. '
-    elif final_net_score <= -8:
+        reasoning += '📈 Strong institutional bullish flow. '
+    elif net_institutional_flow <= -15:
         signals.append('STRONG_INSTITUTIONAL_BEARISH')
-        reasoning += 'Strong institutional bearish flow dominates. '
-    elif final_net_score <= -4:
+        reasoning += '📉 MASSIVE institutional bearish flow dominates. '
+    elif net_institutional_flow <= -8:
         signals.append('MODERATE_INSTITUTIONAL_BEARISH')
-        reasoning += 'Moderate institutional bearish flow. '
+        reasoning += '🔻 Strong institutional bearish flow. '
     else:
         signals.append('MIXED_INSTITUTIONAL_FLOW')
-        reasoning += 'Mixed institutional signals. '
+        reasoning += '⚖️ Mixed institutional signals. '
+    
+    # Calculate PCR
+    pcr = total_put_oi / total_call_oi if total_call_oi > 0 else 1.0
     
     return {
-        'score': final_net_score * 3,
+        'score': net_institutional_flow * 2,  # Scale for final scoring
         'signals': signals,
         'reasoning': reasoning,
-        'confidence': abs(final_net_score) * 3,
-        'call_activity': call_activity,
-        'put_activity': put_activity,
+        'confidence': min(abs(net_institutional_flow) * 2, 100),
+        'call_activity': total_call_oi,
+        'put_activity': total_put_oi,
         'max_pain': max_pain,
+        'pcr': pcr,
         'support_levels': sorted(support_levels, reverse=True)[:3],
         'resistance_levels': sorted(resistance_levels)[:3],
-        'unusual_activity': unusual_activity,
-        'summary': f"Smart Money Flow: Institutional {'Bullish' if net_institutional_flow > 0 else 'Bearish'} ({net_institutional_flow:.1f}), Retail {'Bullish' if net_retail_flow > 0 else 'Bearish'} ({net_retail_flow:.1f}), Final: {final_net_score:.1f}",
+        'unusual_activity': unusual_activity[:10],  # Top 10 unusual activities
+        'summary': f"NSE Analysis: Net Institutional Flow: {net_institutional_flow:.1f}, PCR: {pcr:.3f}, Max Pain: {max_pain}",
         'detailed_analysis': detailed_analysis,
         'institutional_bullish_flow': institutional_bullish_flow,
         'institutional_bearish_flow': institutional_bearish_flow,
         'net_institutional_flow': net_institutional_flow,
-        'net_retail_flow': net_retail_flow
+        'total_call_oi': total_call_oi,
+        'total_put_oi': total_put_oi
     }
 
-def perform_option_chain_analysis(symbol: str, option_chain_data: Dict) -> Optional[Dict]:
-    """Perform complete option chain analysis with Indian market enhancements"""
+def perform_option_chain_analysis(symbol: str, nse_data: Dict) -> Optional[Dict]:
+    """Perform complete NSE option chain analysis with intelligent flow detection"""
     try:
-        option_chain = option_chain_data['optionChain']
-        totals = option_chain_data['totals']
+        records = nse_data.get('records', {})
+        option_data = records.get('data', [])
         
-        if not option_chain:
+        if not option_data:
+            logging.warning(f"No option data found for {symbol}")
             return None
         
-        # Get current price
-        current_price = option_chain[0].get('index_close', 100)
+        # Get current price from NSE data
+        current_price = records.get('underlyingValue', 100)
         
-        # Indian Market Specific Enhancements
+        # Get market context
         market_context = get_indian_market_context(symbol)
         
-        # Analyze buildup patterns
-        buildup_analysis = analyze_option_buildup(option_chain, current_price)
+        # Analyze NSE option buildup patterns
+        buildup_analysis = analyze_nse_option_buildup(option_data, current_price)
         
-        # Calculate overall PCR from totals with Indian market adjustments
-        total_calls_oi = totals.get('total_calls_puts', {}).get('total_calls_oi_value', 1) or 1
-        total_puts_oi = totals.get('total_calls_puts', {}).get('total_puts_oi_value', 1) or 1
-        overall_pcr = total_puts_oi / total_calls_oi if total_calls_oi > 0 else 1
+        # Use PCR from buildup analysis (already calculated from NSE data)
+        overall_pcr = buildup_analysis['pcr']
+        total_calls_oi = buildup_analysis['total_call_oi']
+        total_puts_oi = buildup_analysis['total_put_oi']
         
         # Get previous PCR for change calculation
         previous_pcr, pcr_change, pcr_change_percent = get_pcr_change(symbol, overall_pcr)
