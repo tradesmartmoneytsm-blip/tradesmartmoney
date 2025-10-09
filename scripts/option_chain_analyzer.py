@@ -215,8 +215,139 @@ def fetch_option_chain_data(symbol: str) -> Optional[Dict]:
         logging.error(f"❌ Unexpected error fetching NSE option chain for {symbol}: {e}")
         return None
 
-def analyze_nse_option_buildup(option_data: List[Dict], current_price: float) -> Dict:
-    """Analyze NSE option chain with intelligent institutional flow detection"""
+def get_price_momentum_score(symbol: str, current_price: float) -> Dict:
+    """Get price momentum and volume analysis for enhanced scoring"""
+    try:
+        import yfinance as yf
+        
+        # Get 5 days of data for trend analysis
+        ticker = yf.Ticker(f"{symbol}.NS")
+        hist = ticker.history(period="5d", interval="1d")
+        
+        if len(hist) < 2:
+            return {'score': 0, 'reasoning': '', 'signals': [], 'volume_score': 0}
+        
+        # Calculate price momentum
+        today_close = hist['Close'].iloc[-1]
+        yesterday_close = hist['Close'].iloc[-2]
+        day_change_pct = ((today_close - yesterday_close) / yesterday_close) * 100
+        
+        # Calculate 5-day trend
+        week_start = hist['Close'].iloc[0]
+        week_trend_pct = ((today_close - week_start) / week_start) * 100
+        
+        # Volume analysis
+        today_volume = hist['Volume'].iloc[-1]
+        avg_volume = hist['Volume'].mean()
+        volume_ratio = today_volume / avg_volume if avg_volume > 0 else 1
+        
+        # Price momentum scoring
+        momentum_score = 0
+        volume_score = 0
+        reasoning = ""
+        signals = []
+        
+        # STRONG PRICE MOMENTUM
+        if day_change_pct > 5:
+            momentum_score += 60
+            reasoning += f"🚀 EXPLOSIVE: +{day_change_pct:.1f}% today! "
+            signals.append('EXPLOSIVE_BULLISH_MOMENTUM')
+        elif day_change_pct > 3:
+            momentum_score += 40
+            reasoning += f"🚀 Strong bullish: +{day_change_pct:.1f}% today. "
+            signals.append('STRONG_BULLISH_MOMENTUM')
+        elif day_change_pct > 1.5:
+            momentum_score += 20
+            reasoning += f"📈 Moderate bullish: +{day_change_pct:.1f}%. "
+            signals.append('MODERATE_BULLISH_MOMENTUM')
+        elif day_change_pct < -5:
+            momentum_score -= 60
+            reasoning += f"📉 CRASH: {day_change_pct:.1f}% today! "
+            signals.append('EXPLOSIVE_BEARISH_MOMENTUM')
+        elif day_change_pct < -3:
+            momentum_score -= 40
+            reasoning += f"📉 Strong bearish: {day_change_pct:.1f}% today. "
+            signals.append('STRONG_BEARISH_MOMENTUM')
+        
+        # VOLUME SURGE ANALYSIS
+        if volume_ratio > 3:
+            volume_score += 50
+            reasoning += f"📊 MASSIVE volume surge: {volume_ratio:.1f}x avg! "
+            signals.append('MASSIVE_VOLUME_SURGE')
+        elif volume_ratio > 2:
+            volume_score += 30
+            reasoning += f"📊 High volume: {volume_ratio:.1f}x avg. "
+            signals.append('HIGH_VOLUME_SURGE')
+        elif volume_ratio > 1.5:
+            volume_score += 15
+            reasoning += f"📊 Above avg volume: {volume_ratio:.1f}x. "
+            signals.append('ABOVE_AVERAGE_VOLUME')
+        
+        # TREND CONFIRMATION
+        if week_trend_pct > 10 and day_change_pct > 0:
+            momentum_score += 25
+            reasoning += f"📈 Strong weekly uptrend: +{week_trend_pct:.1f}%. "
+            signals.append('STRONG_WEEKLY_UPTREND')
+        elif week_trend_pct < -10 and day_change_pct < 0:
+            momentum_score -= 25
+            reasoning += f"📉 Strong weekly downtrend: {week_trend_pct:.1f}%. "
+            signals.append('STRONG_WEEKLY_DOWNTREND')
+        
+        return {
+            'score': momentum_score + volume_score,
+            'reasoning': reasoning,
+            'signals': signals,
+            'volume_score': volume_score,
+            'day_change_pct': day_change_pct,
+            'week_trend_pct': week_trend_pct,
+            'volume_ratio': volume_ratio
+        }
+        
+    except Exception as e:
+        logging.debug(f"Price momentum error for {symbol}: {e}")
+        return {'score': 0, 'reasoning': '', 'signals': [], 'volume_score': 0}
+
+def get_sector_strength_score(symbol: str) -> Dict:
+    """Get sector strength multiplier"""
+    # Sector mapping with current strength (you can make this dynamic)
+    sector_strength = {
+        # IT Sector (Strong)
+        'TCS': 1.3, 'INFY': 1.3, 'HCLTECH': 1.3, 'TECHM': 1.3, 'WIPRO': 1.2,
+        'LTTS': 1.2, 'LTIM': 1.2, 'COFORGE': 1.2, 'MPHASIS': 1.2,
+        
+        # Banking (Moderate)
+        'HDFCBANK': 1.1, 'ICICIBANK': 1.1, 'KOTAKBANK': 1.1, 'AXISBANK': 1.0,
+        'SBIN': 1.0, 'BANKBARODA': 1.0, 'PNB': 1.0,
+        
+        # Auto (Strong)
+        'MARUTI': 1.2, 'TATAMOTORS': 1.2, 'M&M': 1.2, 'BAJAJ-AUTO': 1.2,
+        'HEROMOTOCO': 1.1, 'EICHERMOT': 1.1, 'TVSMOTOR': 1.1, 'SONACOMS': 1.3,
+        
+        # Metals (Very Strong)
+        'TATASTEEL': 1.4, 'JSWSTEEL': 1.4, 'HINDALCO': 1.3, 'VEDL': 1.3,
+        'HINDZINC': 1.3, 'NATIONALUM': 1.2, 'NMDC': 1.2, 'SAIL': 1.2,
+        
+        # Pharma (Moderate)
+        'SUNPHARMA': 1.1, 'DRREDDY': 1.1, 'CIPLA': 1.1, 'LUPIN': 1.0,
+        
+        # Infrastructure (Strong)
+        'LT': 1.3, 'GMRINFRA': 1.2, 'DLF': 1.2, 'OBEROIRLTY': 1.2,
+        
+        # Default for others
+        'DEFAULT': 1.0
+    }
+    
+    multiplier = sector_strength.get(symbol, sector_strength['DEFAULT'])
+    
+    if multiplier > 1.2:
+        return {'multiplier': multiplier, 'reasoning': f"🔥 Hot sector (x{multiplier}). ", 'signals': ['HOT_SECTOR']}
+    elif multiplier > 1.1:
+        return {'multiplier': multiplier, 'reasoning': f"📈 Strong sector (x{multiplier}). ", 'signals': ['STRONG_SECTOR']}
+    else:
+        return {'multiplier': multiplier, 'reasoning': '', 'signals': []}
+
+def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, symbol: str = "") -> Dict:
+    """SUPER INTELLIGENT NSE option chain analysis with price action, volume, and sector intelligence"""
     
     institutional_bullish_flow = 0
     institutional_bearish_flow = 0
@@ -230,6 +361,10 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float) ->
     # Track total call and put activity
     total_call_oi = 0
     total_put_oi = 0
+    
+    # SUPER INTELLIGENCE: Get price momentum and sector strength
+    price_momentum = get_price_momentum_score(symbol, current_price)
+    sector_strength = get_sector_strength_score(symbol)
     
     for option_row in option_data:
         strike = option_row.get('strikePrice', 0)
@@ -264,20 +399,40 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float) ->
         distance_from_spot = abs(strike - current_price) / current_price
         proximity_weight = 3 if distance_from_spot < 0.05 else (2 if distance_from_spot < 0.1 else 1)
         
-        # INTELLIGENT CALL ANALYSIS
-        if call_oi_change > 0 and call_volume > 1000:  # Fresh call positions
-            if call_volume > 5000:  # High volume = institutional
-                weight = proximity_weight * 3  # Increased weight for institutional activity
-                institutional_bullish_flow += weight
-                detailed_analysis.append(f"{strike}CE: Institutional Call Buying (+{weight}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
+        # SUPER INTELLIGENT CALL ANALYSIS
+        if call_oi_change > 0 and call_volume > 500:  # Fresh call positions (lowered threshold)
+            # DYNAMIC THRESHOLDS based on price momentum and volume
+            volume_threshold = 3000 if price_momentum.get('volume_ratio', 1) > 2 else 5000
+            massive_threshold = 8000 if price_momentum.get('volume_ratio', 1) > 2 else 10000
+            
+            if call_volume > volume_threshold:  # Dynamic institutional detection
+                # ENHANCED WEIGHT based on multiple factors
+                base_weight = proximity_weight * 3
                 
-                if call_volume > 10000:  # Massive volume
-                    unusual_activity.append(f"🚀 MASSIVE Call Buying at {strike} (Vol: {call_volume:,})")
-                elif call_volume > 5000:
-                    unusual_activity.append(f"📈 Heavy Call Buying at {strike} (Vol: {call_volume:,})")
+                # VOLUME SURGE BONUS
+                if call_volume > massive_threshold:
+                    base_weight *= 1.5  # 50% bonus for massive volume
+                
+                # PRICE MOMENTUM ALIGNMENT BONUS
+                if price_momentum.get('day_change_pct', 0) > 2:
+                    base_weight *= 1.3  # 30% bonus for bullish price action
+                
+                institutional_bullish_flow += base_weight
+                detailed_analysis.append(f"{strike}CE: SUPER INSTITUTIONAL Call Buying (+{base_weight:.1f}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
+                
+                if call_volume > massive_threshold:
+                    unusual_activity.append(f"🚀 EXPLOSIVE Call Buying at {strike} (Vol: {call_volume:,}, OI: +{call_oi_change:,})")
+                elif call_volume > volume_threshold:
+                    unusual_activity.append(f"📈 MASSIVE Call Buying at {strike} (Vol: {call_volume:,}, OI: +{call_oi_change:,})")
+            
+            # MEDIUM VOLUME ACTIVITY
+            elif call_volume > 1000:
+                weight = proximity_weight * 1.5
+                institutional_bullish_flow += weight
+                detailed_analysis.append(f"{strike}CE: Call Buying (+{weight}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
                     
         elif call_oi_change < 0 and call_volume > 1000:  # Call unwinding/profit booking
-            if abs(call_oi_change) > 100:
+            if abs(call_oi_change) > 50:  # Lowered threshold
                 weight = proximity_weight * 1
                 detailed_analysis.append(f"{strike}CE: Call Unwinding/Profit Booking [OI: {call_oi_change:,}, Vol: {call_volume:,}]")
                 
@@ -318,48 +473,90 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float) ->
     # Calculate net institutional flow
     net_institutional_flow = institutional_bullish_flow - institutional_bearish_flow
     
-    # Determine signals and reasoning
-    signals = []
-    reasoning = ""
+    # SUPER INTELLIGENCE: Apply price momentum and sector strength
+    base_score = net_institutional_flow * 2
     
-    if net_institutional_flow >= 15:  # Adjusted thresholds for NSE data
-        signals.append('STRONG_INSTITUTIONAL_BULLISH')
-        reasoning += '🚀 MASSIVE institutional bullish flow dominates. '
+    # ADD PRICE MOMENTUM SCORE
+    momentum_score = price_momentum.get('score', 0)
+    base_score += momentum_score
+    
+    # APPLY SECTOR STRENGTH MULTIPLIER
+    sector_multiplier = sector_strength.get('multiplier', 1.0)
+    final_score = base_score * sector_multiplier
+    
+    # Combine all reasoning
+    combined_reasoning = ""
+    combined_signals = []
+    
+    # INSTITUTIONAL FLOW REASONING
+    if net_institutional_flow >= 15:
+        combined_signals.append('STRONG_INSTITUTIONAL_BULLISH')
+        combined_reasoning += '🚀 MASSIVE institutional bullish flow dominates. '
     elif net_institutional_flow >= 8:
-        signals.append('MODERATE_INSTITUTIONAL_BULLISH')
-        reasoning += '📈 Strong institutional bullish flow. '
+        combined_signals.append('MODERATE_INSTITUTIONAL_BULLISH')
+        combined_reasoning += '📈 Strong institutional bullish flow. '
     elif net_institutional_flow <= -15:
-        signals.append('STRONG_INSTITUTIONAL_BEARISH')
-        reasoning += '📉 MASSIVE institutional bearish flow dominates. '
+        combined_signals.append('STRONG_INSTITUTIONAL_BEARISH')
+        combined_reasoning += '📉 MASSIVE institutional bearish flow dominates. '
     elif net_institutional_flow <= -8:
-        signals.append('MODERATE_INSTITUTIONAL_BEARISH')
-        reasoning += '🔻 Strong institutional bearish flow. '
+        combined_signals.append('MODERATE_INSTITUTIONAL_BEARISH')
+        combined_reasoning += '🔻 Strong institutional bearish flow. '
     else:
-        signals.append('MIXED_INSTITUTIONAL_FLOW')
-        reasoning += '⚖️ Mixed institutional signals. '
+        combined_signals.append('MIXED_INSTITUTIONAL_FLOW')
+        combined_reasoning += '⚖️ Mixed institutional signals. '
+    
+    # ADD PRICE MOMENTUM REASONING
+    combined_reasoning += price_momentum.get('reasoning', '')
+    combined_signals.extend(price_momentum.get('signals', []))
+    
+    # ADD SECTOR STRENGTH REASONING
+    combined_reasoning += sector_strength.get('reasoning', '')
+    combined_signals.extend(sector_strength.get('signals', []))
+    
+    # SPECIAL CASE: MASSIVE INSTITUTIONAL + PRICE MOMENTUM ALIGNMENT
+    if (net_institutional_flow > 10 and price_momentum.get('day_change_pct', 0) > 3):
+        combined_signals.append('PERFECT_BULLISH_STORM')
+        combined_reasoning += '⚡ PERFECT STORM: Massive institutional buying + explosive price action! '
+        final_score += 50  # Bonus for perfect alignment
+    elif (net_institutional_flow < -10 and price_momentum.get('day_change_pct', 0) < -3):
+        combined_signals.append('PERFECT_BEARISH_STORM')
+        combined_reasoning += '⚡ PERFECT STORM: Massive institutional selling + price crash! '
+        final_score -= 50  # Penalty for perfect bearish alignment
+    
+    # CONFLICT DETECTION: Options vs Price Action
+    if (net_institutional_flow > 8 and price_momentum.get('day_change_pct', 0) < -2):
+        combined_signals.append('OPTION_PRICE_CONFLICT')
+        combined_reasoning += '⚠️ CONFLICT: Bullish options but price falling - mixed signals! '
+        final_score *= 0.7  # Reduce score by 30% for conflicts
+    elif (net_institutional_flow < -8 and price_momentum.get('day_change_pct', 0) > 2):
+        combined_signals.append('OPTION_PRICE_CONFLICT')
+        combined_reasoning += '⚠️ CONFLICT: Bearish options but price rising - mixed signals! '
+        final_score *= 0.7  # Reduce score by 30% for conflicts
     
     # Calculate PCR
     pcr = total_put_oi / total_call_oi if total_call_oi > 0 else 1.0
     
     return {
-        'score': net_institutional_flow * 2,  # Scale for final scoring
-        'signals': signals,
-        'reasoning': reasoning,
-        'confidence': min(abs(net_institutional_flow) * 2, 100),
+        'score': final_score,  # SUPER INTELLIGENT FINAL SCORE
+        'signals': combined_signals,
+        'reasoning': combined_reasoning.strip(),
+        'confidence': min(abs(net_institutional_flow) * 2 + price_momentum.get('volume_score', 0), 100),
         'call_activity': total_call_oi,
         'put_activity': total_put_oi,
         'max_pain': max_pain,
         'pcr': pcr,
         'support_levels': sorted(support_levels, reverse=True)[:3],
         'resistance_levels': sorted(resistance_levels)[:3],
-        'unusual_activity': unusual_activity[:10],  # Top 10 unusual activities
-        'summary': f"NSE Analysis: Net Institutional Flow: {net_institutional_flow:.1f}, PCR: {pcr:.3f}, Max Pain: {max_pain}",
+        'unusual_activity': unusual_activity[:15],  # More unusual activities
+        'summary': f"SUPER ANALYSIS: Institutional: {net_institutional_flow:.1f}, Price: {momentum_score:.1f}, Sector: x{sector_multiplier}, Final: {final_score:.1f}",
         'detailed_analysis': detailed_analysis,
         'institutional_bullish_flow': institutional_bullish_flow,
         'institutional_bearish_flow': institutional_bearish_flow,
         'net_institutional_flow': net_institutional_flow,
         'total_call_oi': total_call_oi,
-        'total_put_oi': total_put_oi
+        'total_put_oi': total_put_oi,
+        'price_momentum': price_momentum,
+        'sector_strength': sector_strength
     }
 
 def perform_option_chain_analysis(symbol: str, nse_data: Dict) -> Optional[Dict]:
@@ -378,8 +575,8 @@ def perform_option_chain_analysis(symbol: str, nse_data: Dict) -> Optional[Dict]
         # Get market context
         market_context = get_indian_market_context(symbol)
         
-        # Analyze NSE option buildup patterns
-        buildup_analysis = analyze_nse_option_buildup(option_data, current_price)
+        # Analyze NSE option buildup patterns with SUPER INTELLIGENCE
+        buildup_analysis = analyze_nse_option_buildup(option_data, current_price, symbol)
         
         # Use PCR from buildup analysis (already calculated from NSE data)
         overall_pcr = buildup_analysis['pcr']
