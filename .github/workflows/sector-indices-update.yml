@@ -1,0 +1,78 @@
+name: Weekly Sector Indices Update
+
+on:
+  workflow_dispatch: # Allows manual triggering
+  schedule:
+    - cron: '0 3 * * 6' # Runs at 3:00 AM UTC every Saturday (8:30 AM IST)
+
+jobs:
+  update-sector-indices:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests python-dotenv
+
+      - name: Download and update sector indices
+        run: |
+          cd scripts
+          python sector_indices_updater.py
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Verify sector indices update
+        run: |
+          # Verify data was inserted successfully
+          TOTAL_COUNT=$(curl -s "${{ secrets.SUPABASE_URL }}/rest/v1/sector_indices?select=count" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" | jq -r '.[0].count // 0')
+          
+          echo "📊 Total sector index mappings: $TOTAL_COUNT"
+          
+          if [ "$TOTAL_COUNT" -lt 100 ]; then
+            echo "❌ Insufficient sector data. Expected at least 100 mappings, got $TOTAL_COUNT"
+            exit 1
+          else
+            echo "✅ Sector indices updated successfully with $TOTAL_COUNT mappings"
+          fi
+          
+          # Check unique stocks count
+          UNIQUE_STOCKS=$(curl -s "${{ secrets.SUPABASE_URL }}/rest/v1/stock_sector_mapping?select=symbol" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" | jq '. | length')
+          
+          echo "📈 Unique stocks with sector mapping: $UNIQUE_STOCKS"
+          
+          # Sample some data to verify structure
+          echo "🔍 Sample sector mappings:"
+          curl -s "${{ secrets.SUPABASE_URL }}/rest/v1/stock_sector_mapping?select=symbol,indices&limit=5" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" | jq -r '.[] | "\(.symbol): \(.indices | join(", "))"'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Notify completion
+        if: success()
+        run: |
+          echo "🎉 Sector indices update completed successfully"
+          echo "📅 Next update: Next Saturday at 3:00 AM UTC (8:30 AM IST)"
+          
+      - name: Handle failure
+        if: failure()
+        run: |
+          echo "❌ Sector indices update failed"
+          echo "🔍 Check logs above for error details"
+          echo "🛠️ Manual intervention may be required"
