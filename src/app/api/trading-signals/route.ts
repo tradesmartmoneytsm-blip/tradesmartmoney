@@ -429,7 +429,7 @@ function calculateTechnicalScore(
 
 function calculateRiskScore(
   symbol: string,
-  currentPrice: number
+  _currentPrice: number
 ) {
   let riskScore = 0
   let confidence = 0

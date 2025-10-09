@@ -8,10 +8,7 @@ import {
   TrendingUp, 
   Activity, 
   Shield, 
-  Clock,
   Zap,
-  Brain,
-  Database,
   Settings
 } from 'lucide-react'
 

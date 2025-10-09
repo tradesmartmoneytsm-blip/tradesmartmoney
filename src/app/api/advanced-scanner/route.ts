@@ -766,11 +766,11 @@ async function getPriceMovementData(symbol: string, currentPrice: number) {
     // For now, we'll extract momentum from the option chain patterns
     // This is a more universal approach that works for all stocks
     
-    // Default values
-    let dayChangePercent = 0;
-    let momentum: 'BULLISH' | 'BEARISH' | 'NEUTRAL' = 'NEUTRAL';
-    let trend: 'UPTREND' | 'DOWNTREND' | 'SIDEWAYS' = 'SIDEWAYS';
-    let volume = 0;
+    // Default values (unused in current implementation)
+    const dayChangePercent = 0;
+    const momentum: 'BULLISH' | 'BEARISH' | 'NEUTRAL' = 'NEUTRAL';
+    const trend: 'UPTREND' | 'DOWNTREND' | 'SIDEWAYS' = 'SIDEWAYS';
+    const volume = 0;
     
     // TODO: In production, replace this with actual NSE API call:
     // const response = await fetch(`https://api.nse.com/quote/${symbol}`)
@@ -801,7 +801,7 @@ async function getPriceMovementData(symbol: string, currentPrice: number) {
   }
 }
 
-function calculateMomentumScore(priceMovement: any, optionScore: number) {
+function calculateMomentumScore(priceMovement: {dayChangePercent: number; [key: string]: unknown}, optionScore: number) {
   let score = 0;
   let confidence = 0;
   let reasoning = '';
