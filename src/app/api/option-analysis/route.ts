@@ -60,7 +60,8 @@ export async function GET(request: NextRequest) {
     // Simple query - get latest data and sort by score DESC (like your working query)
     const { data: rawData, error } = await supabaseAdmin
       .from('latest_option_analysis')
-      .select('*');
+      .select('*')
+      .limit(1000); // Explicit limit to ensure all data is fetched
 
     if (error) {
       console.error('❌ Database error:', error);
