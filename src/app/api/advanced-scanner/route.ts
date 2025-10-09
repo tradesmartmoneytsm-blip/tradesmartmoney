@@ -757,85 +757,185 @@ function normalizeIndianPCR(rawPCR: number, symbol: string, context: IndianMarke
 
 async function getPriceMovementData(symbol: string, currentPrice: number) {
   try {
-    // UNIVERSAL PRICE MOVEMENT DETECTION FOR ALL STOCKS
-    // This should work for any stock symbol dynamically
+    // REAL PRICE MOVEMENT DATA FROM INTRADAYSCREENER API
+    const response = await fetch(`https://intradayscreener.com/api/CandlestickAnalysis/chartData/${symbol}/daily`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Price API failed: ${response.status}`);
+    }
+
+    const priceData = await response.json();
     
-    // Try to get price movement from the option chain data itself
-    // The option chain contains price change information
+    if (!priceData.data || priceData.data.length < 2) {
+      throw new Error('Insufficient price data');
+    }
+
+    // Get last 5 days of data for trend analysis
+    const recentData = priceData.data.slice(-5);
+    const lastCandle = recentData[recentData.length - 1];
+    const prevCandle = recentData[recentData.length - 2];
     
-    // For now, we'll extract momentum from the option chain patterns
-    // This is a more universal approach that works for all stocks
+    // Extract OHLC data: y = [Open, High, Low, Close]
+    const [open, high, low, close] = lastCandle.y;
+    const [, , , prevClose] = prevCandle.y;
     
-    // Default values (unused in current implementation)
-    const dayChangePercent = 0;
-    const momentum: 'BULLISH' | 'BEARISH' | 'NEUTRAL' = 'NEUTRAL';
-    const trend: 'UPTREND' | 'DOWNTREND' | 'SIDEWAYS' = 'SIDEWAYS';
-    const volume = 0;
+    // Calculate price movement metrics
+    const dayChange = close - prevClose;
+    const dayChangePercent = (dayChange / prevClose) * 100;
     
-    // TODO: In production, replace this with actual NSE API call:
-    // const response = await fetch(`https://api.nse.com/quote/${symbol}`)
-    // const priceData = await response.json()
-    // dayChangePercent = priceData.change_percent
+    // Calculate trend strength over last 5 days
+    const closes = recentData.map((d: {y: number[]}) => d.y[3]); // Get all close prices
+    const trendStrength = (closes[closes.length - 1] - closes[0]) / closes[0] * 100;
     
-    // For now, we'll disable price momentum to avoid hardcoding
-    // The algorithm will rely on option flow analysis only
+    // Determine momentum and trend
+    let momentum: 'BULLISH' | 'BEARISH' | 'NEUTRAL' = 'NEUTRAL';
+    let trend: 'UPTREND' | 'DOWNTREND' | 'SIDEWAYS' = 'SIDEWAYS';
+    
+    // Momentum based on daily change
+    if (dayChangePercent > 2) momentum = 'BULLISH';
+    else if (dayChangePercent < -2) momentum = 'BEARISH';
+    
+    // Trend based on 5-day performance
+    if (trendStrength > 5) trend = 'UPTREND';
+    else if (trendStrength < -5) trend = 'DOWNTREND';
+    
+    // Get volume data
+    const volumeData = priceData.volume || [];
+    const lastVolume = volumeData[volumeData.length - 1]?.y || 0;
+    
+    console.log(`📈 ${symbol}: Price ${dayChangePercent.toFixed(1)}%, Trend ${trendStrength.toFixed(1)}%, Volume ${lastVolume}`);
     
     return {
-      currentPrice,
-      dayChange: 0,
-      dayChangePercent: 0, // Disabled until real API integration
-      volume: 0,
-      momentum: 'NEUTRAL' as 'BULLISH' | 'BEARISH' | 'NEUTRAL',
-      trend: 'SIDEWAYS' as 'UPTREND' | 'DOWNTREND' | 'SIDEWAYS'
+      currentPrice: close,
+      dayChange,
+      dayChangePercent,
+      volume: lastVolume,
+      momentum,
+      trend,
+      trendStrength,
+      volatility: ((high - low) / close) * 100, // Daily volatility
+      priceData: {
+        open,
+        high, 
+        low,
+        close,
+        prevClose
+      }
     };
   } catch (error) {
     console.error(`❌ Error fetching price movement for ${symbol}:`, error);
+    // Fallback to neutral values
     return {
       currentPrice,
       dayChange: 0,
       dayChangePercent: 0,
       volume: 0,
       momentum: 'NEUTRAL' as 'BULLISH' | 'BEARISH' | 'NEUTRAL',
-      trend: 'SIDEWAYS' as 'UPTREND' | 'DOWNTREND' | 'SIDEWAYS'
+      trend: 'SIDEWAYS' as 'UPTREND' | 'DOWNTREND' | 'SIDEWAYS',
+      trendStrength: 0,
+      volatility: 0,
+      priceData: {
+        open: currentPrice,
+        high: currentPrice,
+        low: currentPrice,
+        close: currentPrice,
+        prevClose: currentPrice
+      }
     };
   }
 }
 
-function calculateMomentumScore(priceMovement: {dayChangePercent: number; [key: string]: unknown}, optionScore: number) {
+function calculateMomentumScore(priceMovement: {dayChangePercent: number; trendStrength?: number; volume?: number; momentum?: string; trend?: string; [key: string]: unknown}, optionScore: number) {
   let score = 0;
   let confidence = 0;
   let reasoning = '';
   const signals: string[] = [];
   
-  // CRITICAL FIX: If option signals are bullish but price is falling, reduce score significantly
-  if (optionScore > 50 && priceMovement.dayChangePercent < -2) {
-    score -= 100; // Heavy penalty for bullish options with falling price
-    confidence -= 30;
-    reasoning += '⚠️ Price declining despite bullish options - conflicting signals. ';
-    signals.push('PRICE_OPTION_CONFLICT');
+  const { dayChangePercent, trendStrength = 0, volume = 0 } = priceMovement;
+  
+  // STRONG PRICE MOMENTUM SCORING
+  if (Math.abs(dayChangePercent) > 3) {
+    if (dayChangePercent > 3) {
+      score += 40; // Strong bullish price momentum
+      confidence += 20;
+      reasoning += `🚀 Strong bullish momentum: +${dayChangePercent.toFixed(1)}% today. `;
+      signals.push('STRONG_PRICE_MOMENTUM_BULLISH');
+    } else {
+      score -= 40; // Strong bearish price momentum
+      confidence += 20;
+      reasoning += `📉 Strong bearish momentum: ${dayChangePercent.toFixed(1)}% today. `;
+      signals.push('STRONG_PRICE_MOMENTUM_BEARISH');
+    }
+  } else if (Math.abs(dayChangePercent) > 1.5) {
+    if (dayChangePercent > 1.5) {
+      score += 20; // Moderate bullish momentum
+      confidence += 10;
+      reasoning += `📈 Moderate bullish momentum: +${dayChangePercent.toFixed(1)}%. `;
+      signals.push('PRICE_MOMENTUM_BULLISH');
+    } else {
+      score -= 20; // Moderate bearish momentum
+      confidence += 10;
+      reasoning += `📉 Moderate bearish momentum: ${dayChangePercent.toFixed(1)}%. `;
+      signals.push('PRICE_MOMENTUM_BEARISH');
+    }
   }
   
-  // If option signals are bearish but price is rising, reduce bearish score
-  if (optionScore < -50 && priceMovement.dayChangePercent > 2) {
-    score += 50; // Reduce bearish score if price is rising
-    confidence -= 20;
-    reasoning += '⚠️ Price rising despite bearish options - mixed signals. ';
+  // TREND STRENGTH SCORING (5-day trend)
+  if (Math.abs(trendStrength) > 10) {
+    if (trendStrength > 10) {
+      score += 30; // Strong uptrend
+      confidence += 15;
+      reasoning += `📊 Strong 5-day uptrend: +${trendStrength.toFixed(1)}%. `;
+      signals.push('STRONG_UPTREND');
+    } else {
+      score -= 30; // Strong downtrend
+      confidence += 15;
+      reasoning += `📊 Strong 5-day downtrend: ${trendStrength.toFixed(1)}%. `;
+      signals.push('STRONG_DOWNTREND');
+    }
+  }
+  
+  // VOLUME CONFIRMATION
+  if (volume > 500000) {
+    score += dayChangePercent > 0 ? 15 : -15; // High volume amplifies direction
+    confidence += 10;
+    reasoning += `📊 High volume confirmation: ${Math.round(volume/1000)}K. `;
+    signals.push('HIGH_VOLUME_CONFIRMATION');
+  }
+  
+  // CRITICAL: OPTION-PRICE CONFLICT DETECTION
+  if (optionScore > 50 && dayChangePercent < -2) {
+    score -= 80; // Heavy penalty for bullish options with falling price
+    confidence -= 25;
+    reasoning += '⚠️ MAJOR CONFLICT: Bullish options but price falling. ';
+    signals.push('MAJOR_PRICE_OPTION_CONFLICT');
+  }
+  
+  if (optionScore < -50 && dayChangePercent > 2) {
+    score += 60; // Reduce bearish score if price is rising strongly
+    confidence -= 15;
+    reasoning += '⚠️ CONFLICT: Bearish options but price rising. ';
     signals.push('PRICE_OPTION_DIVERGENCE');
   }
   
-  // Reward alignment between options and price action
-  if (optionScore > 50 && priceMovement.dayChangePercent > 1) {
-    score += 25; // Bonus for aligned bullish signals
-    confidence += 15;
-    reasoning += '✅ Price momentum confirms bullish options. ';
-    signals.push('PRICE_OPTION_ALIGNMENT');
+  // REWARD PERFECT ALIGNMENT
+  if (optionScore > 50 && dayChangePercent > 2 && trendStrength > 5) {
+    score += 50; // Perfect bullish alignment
+    confidence += 25;
+    reasoning += '🎯 PERFECT ALIGNMENT: Bullish options + rising price + uptrend. ';
+    signals.push('PERFECT_BULLISH_ALIGNMENT');
   }
   
-  if (optionScore < -50 && priceMovement.dayChangePercent < -1) {
-    score -= 25; // Bonus for aligned bearish signals (more negative)
-    confidence += 15;
-    reasoning += '✅ Price decline confirms bearish options. ';
-    signals.push('PRICE_OPTION_ALIGNMENT');
+  if (optionScore < -50 && dayChangePercent < -2 && trendStrength < -5) {
+    score -= 50; // Perfect bearish alignment (more negative)
+    confidence += 25;
+    reasoning += '🎯 PERFECT ALIGNMENT: Bearish options + falling price + downtrend. ';
+    signals.push('PERFECT_BEARISH_ALIGNMENT');
   }
   
   return {

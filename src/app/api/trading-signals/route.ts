@@ -233,8 +233,7 @@ async function generateTradingSignal(optionData: OptionAnalysisData): Promise<Tr
 
     // 5. RISK ASSESSMENT (5% weight)
     const riskScore = calculateRiskScore(
-      symbol,
-      current_price
+      symbol
     )
     factors.risk_score = riskScore.score
     totalScore += riskScore.score * 0.05
@@ -428,8 +427,7 @@ function calculateTechnicalScore(
 }
 
 function calculateRiskScore(
-  symbol: string,
-  _currentPrice: number
+  symbol: string
 ) {
   let riskScore = 0
   let confidence = 0
