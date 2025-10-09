@@ -26,7 +26,7 @@ jobs:
       - name: Download and update sector indices
         run: |
           cd scripts
-          python sector_indices_updater.py
+          python3 sector_indices_updater.py
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -34,10 +34,11 @@ jobs:
       - name: Verify sector indices update
         run: |
           # Verify data was inserted successfully
-          TOTAL_COUNT=$(curl -s "${{ secrets.SUPABASE_URL }}/rest/v1/sector_indices?select=count" \
+          TOTAL_COUNT=$(curl -s "${{ secrets.SUPABASE_URL }}/rest/v1/sector_indices?select=*&count=exact&limit=0" \
             -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-            -H "Content-Type: application/json" | jq -r '.[0].count // 0')
+            -H "Content-Type: application/json" \
+            -H "Prefer: count=exact" | jq -r '.count // 0')
           
           echo "📊 Total sector index mappings: $TOTAL_COUNT"
           
