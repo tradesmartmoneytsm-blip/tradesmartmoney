@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     
     const filters: OptionAnalysisFilters = {
       analysis_type: (searchParams.get('analysis_type') as 'COMPREHENSIVE' | 'BULLISH_SETUPS' | 'BEARISH_SETUPS' | 'UNUSUAL_ACTIVITY') || 'COMPREHENSIVE',
-      min_score: parseInt(searchParams.get('min_score') || '50'), // Default to 50 like advanced scanner
+      min_score: parseInt(searchParams.get('min_score') || '0'), // Default to 0 to include bearish stocks
       symbols: searchParams.get('symbols')?.split(',') || undefined,
       limit: parseInt(searchParams.get('limit') || '50')
     };
