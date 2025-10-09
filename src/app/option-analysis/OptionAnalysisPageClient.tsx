@@ -63,7 +63,7 @@ export function OptionAnalysisPageClient() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`/api/option-analysis?min_score=${minScore}&limit=200`);
+      const response = await fetch(`/api/option-analysis?min_score=${minScore}&limit=1000`);
       const result = await response.json();
       
       if (result.success) {
@@ -121,19 +121,31 @@ export function OptionAnalysisPageClient() {
       filtered = filtered.filter(item => item.institutional_sentiment === filter);
     }
     
-    // Apply sorting
+    // Apply sorting with special handling for bearish stocks
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'SCORE_DESC':
-          return b.score - a.score;
+          // For bearish filters, show most negative scores first
+          if (filter === 'BEARISH' || filter === 'STRONGLY_BEARISH') {
+            return a.score - b.score; // Ascending for bearish (most negative first)
+          }
+          return b.score - a.score; // Descending for bullish (highest first)
         case 'SCORE_ASC':
-          return a.score - b.score;
+          // For bearish filters, show least negative scores first  
+          if (filter === 'BEARISH' || filter === 'STRONGLY_BEARISH') {
+            return b.score - a.score; // Descending for bearish (least negative first)
+          }
+          return a.score - b.score; // Ascending for bullish (lowest first)
         case 'SYMBOL':
           return a.symbol.localeCompare(b.symbol);
         case 'TIMESTAMP':
           return new Date(b.analysis_timestamp).getTime() - new Date(a.analysis_timestamp).getTime();
         default:
-          return b.score - a.score;
+          // Default: For bearish filters, show most negative first
+          if (filter === 'BEARISH' || filter === 'STRONGLY_BEARISH') {
+            return a.score - b.score; // Most negative first
+          }
+          return b.score - a.score; // Highest first for bullish
       }
     });
     
