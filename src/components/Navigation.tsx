@@ -182,16 +182,10 @@ export function Navigation({
       description: 'Multi-day trading examples and analysis'
     },
     {
-      id: 'intraday',
+      id: 'fno',
       label: 'FNO',
       icon: <BarChart3 className={brandTokens.icons.sm} />,
       description: 'Futures & Options trading analysis'
-    },
-    {
-      id: 'smart-money-flow',
-      label: 'Smart Money Flow',
-      icon: <TrendingUp className={brandTokens.icons.sm} />,
-      description: 'Track institutional money movement and flow'
     },
     {
       id: 'news',
@@ -261,10 +255,34 @@ export function Navigation({
       return;
     }
     
+    // Handle Market navigation - navigate to Market with sector performance as default
+    if (itemId === 'market') {
+      window.location.href = '/market/sector-performance';
+      return;
+    }
     
-    // Handle market submenus - navigate to separate pages
-    if (itemId === 'market' && subItemId) {
-      window.location.href = `/market/${subItemId}`;
+    // Handle FNO navigation - navigate to FNO with option analysis as default
+    if (itemId === 'fno') {
+      window.location.href = '/fno/option-analysis';
+      return;
+    }
+    
+    // Handle submenu clicks
+    if (subItemId) {
+      // Handle market submenus - navigate to separate pages
+      if (itemId === 'market') {
+        window.location.href = `/market/${subItemId}`;
+        return;
+      }
+      
+      // Handle FNO submenus - navigate to FNO subpages
+      if (itemId === 'fno') {
+        window.location.href = `/fno/${subItemId}`;
+        return;
+      }
+      
+      onSectionChange(itemId, subItemId);
+      setShowMobileMenu(false);
       return;
     }
     

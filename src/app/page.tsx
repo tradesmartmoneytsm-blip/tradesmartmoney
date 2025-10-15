@@ -144,8 +144,9 @@ function HomeComponent() {
   const handleSectionChange = (section: string) => {
     // Navigate to dedicated pages for better SEO
     const routes: { [key: string]: string } = {
-      'market': '/market',
+      'market': '/market/sector-performance',
       'swing': '/swing-trades', 
+      'fno': '/fno/option-analysis',
       'intraday': '/intraday-trades',
       'smart-money-flow': '/smart-money-flow',
       'news': '/news',

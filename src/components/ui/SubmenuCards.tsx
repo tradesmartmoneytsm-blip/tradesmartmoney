@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, BarChart3, Building2, Microscope, Bot } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, Building2, Microscope, Bot, Activity } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
 interface SubmenuCardsProps {
