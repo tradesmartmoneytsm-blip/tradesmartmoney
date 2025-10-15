@@ -45,7 +45,6 @@ export default function StockProgressionChart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('2025-10-10'); // Set to date with full day data
-  const [minScore, setMinScore] = useState<number>(100);
   const [autoRefresh, setAutoRefresh] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [selectedStocks, setSelectedStocks] = useState<Set<string>>(new Set());
@@ -153,6 +152,7 @@ export default function StockProgressionChart() {
           
           // Auto-select top 5 stocks by peak score if no stocks are selected (from ALL data)
           if (selectedStocks.size === 0) {
+            const uniqueSymbols = [...new Set(rawData.map((item: OptionAnalysisData) => item.symbol))];
             const topStocks = uniqueSymbols
               .map(symbol => {
                 const symbolData = rawData.filter((item: OptionAnalysisData) => item.symbol === symbol);
@@ -176,8 +176,6 @@ export default function StockProgressionChart() {
           setChartData([]);
           setError(`No option analysis data found for ${selectedDate}`);
         }
-      } else {
-        throw new Error(`HTTP ${response.status}`);
       }
     } catch (err) {
       console.error('Error fetching progression data:', err);
@@ -187,7 +185,7 @@ export default function StockProgressionChart() {
     } finally {
       setLoading(false);
     }
-  }, [selectedDate, minScore]);
+  }, [selectedDate, selectedStocks.size]);
 
   useEffect(() => {
     fetchProgressionData();
@@ -563,7 +561,7 @@ export default function StockProgressionChart() {
               <div className="text-center">
                 <div className="text-gray-500 mb-2">📊 No strong bullish stocks found</div>
                 <div className="text-sm text-gray-400">
-                  No stocks with score ≥ {minScore} found for {selectedDate}
+                  No stocks with score ≥ {scoreFilter} found for {selectedDate}
                 </div>
                 <div className="text-xs text-gray-400 mt-2">
                   Try lowering the minimum score or selecting a different date
@@ -607,10 +605,10 @@ export default function StockProgressionChart() {
                     }}
                     labelStyle={{ color: '#1f2937', fontWeight: 'bold', marginBottom: '8px' }}
                     formatter={(value: number, name: string) => [
-                      <span style={{ fontWeight: 'bold', color: colors[uniqueSymbols.indexOf(name) % colors.length] }}>
+                      <span key="value" style={{ fontWeight: 'bold', color: colors[uniqueSymbols.indexOf(name) % colors.length] }}>
                         {value.toFixed(1)}
                       </span>, 
-                      <span style={{ fontWeight: 'bold' }}>{name}</span>
+                      <span key="name" style={{ fontWeight: 'bold' }}>{name}</span>
                     ]}
                   />
                   <Legend 
@@ -629,28 +627,28 @@ export default function StockProgressionChart() {
                     stroke="#f59e0b" 
                     strokeDasharray="8 4" 
                     strokeWidth={2}
-                    label={{ value: "Strong (100)", position: "topRight", style: { fontSize: '11px', fill: '#f59e0b' } }}
+                    label={{ value: "Strong (100)", style: { fontSize: '11px', fill: '#f59e0b' } }}
                   />
                   <ReferenceLine 
                     y={200} 
                     stroke="#ef4444" 
                     strokeDasharray="6 3" 
                     strokeWidth={2}
-                    label={{ value: "Explosive (200)", position: "topRight", style: { fontSize: '11px', fill: '#ef4444' } }}
+                    label={{ value: "Explosive (200)", style: { fontSize: '11px', fill: '#ef4444' } }}
                   />
                   <ReferenceLine 
                     y={300} 
                     stroke="#dc2626" 
                     strokeDasharray="4 2" 
                     strokeWidth={2}
-                    label={{ value: "Extreme (300)", position: "topRight", style: { fontSize: '11px', fill: '#dc2626' } }}
+                    label={{ value: "Extreme (300)", style: { fontSize: '11px', fill: '#dc2626' } }}
                   />
                   <ReferenceLine 
                     y={0} 
                     stroke="#6b7280" 
                     strokeWidth={1} 
                     strokeOpacity={0.5}
-                    label={{ value: "Neutral", position: "topLeft", style: { fontSize: '10px', fill: '#6b7280' } }}
+                    label={{ value: "Neutral", style: { fontSize: '10px', fill: '#6b7280' } }}
                   />
                   
                   {/* Enhanced lines for SELECTED stocks only */}
@@ -798,7 +796,7 @@ export default function StockProgressionChart() {
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-gray-500">
           <p>
-            📊 Strong Bullish Progression Analysis • ⏱️ Real-time Tracking • 🎯 Score ≥ {minScore} Filter • 🔒 Internal Use Only
+            📊 Strong Bullish Progression Analysis • ⏱️ Real-time Tracking • 🎯 Score ≥ {scoreFilter} Filter • 🔒 Internal Use Only
           </p>
         </div>
       </div>

@@ -8,8 +8,6 @@ import {
   Filter, 
   RefreshCw, 
   BarChart3, 
-  Target, 
-  Shield,
   Clock,
   Activity,
   AlertTriangle
@@ -196,15 +194,6 @@ export function OptionAnalysisContent() {
     return 'text-red-700 font-bold';
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString('en-IN', {
-      timeZone: 'Asia/Kolkata',
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
   const filterOptions = [
     { value: 'ALL', label: 'All Signals', count: Array.isArray(data) ? data.length : 0 },

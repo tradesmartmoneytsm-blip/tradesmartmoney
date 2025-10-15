@@ -7,12 +7,9 @@ import {
   Minus, 
   Filter, 
   RefreshCw, 
-  Target, 
   Clock,
   Activity,
-  ArrowUpDown,
-  Calendar,
-  DollarSign
+  ArrowUpDown
 } from 'lucide-react';
 
 interface FuturesAnalysisResult {
