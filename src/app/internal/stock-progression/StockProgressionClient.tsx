@@ -45,7 +45,7 @@ export default function StockProgressionClient() {
 
   const fetchAvailableStocks = async () => {
     try {
-      const response = await fetch('/api/option-analysis?limit=200&min_score=-500')
+      const response = await fetch('/api/option-analysis?limit=300&min_score=-500')
       const result = await response.json()
       
       if (result.success && result.data?.results) {

@@ -849,7 +849,7 @@ def main():
                 
                 # Perform analysis
                 analysis = perform_option_chain_analysis(symbol, option_chain_data)
-                if analysis and abs(analysis['score']) >= 15:  # Minimum score threshold
+                if analysis and abs(analysis['score']) >= 10:  # Reduced minimum threshold to capture more bearish stocks
                     results.append(analysis)
                     logging.info(f"✅ {symbol}: {analysis['institutional_sentiment']} (Score: {analysis['score']:.1f})")
                 else:
@@ -1281,14 +1281,14 @@ def determine_indian_market_sentiment(final_score: float, normalized_pcr: float,
         # High PCR reduces bullish sentiment
         return 'NEUTRAL' if context['market_cap'] == 'LARGE_CAP' else 'BEARISH'
     
-    # Enhanced thresholds for Indian market
-    if adjusted_score >= 40:
+    # Enhanced thresholds for Indian market (more sensitive to bearish signals)
+    if adjusted_score >= 35:
         return 'STRONGLY_BULLISH'
-    elif adjusted_score >= 15:
+    elif adjusted_score >= 12:
         return 'BULLISH'
-    elif adjusted_score <= -40:
+    elif adjusted_score <= -35:
         return 'STRONGLY_BEARISH'
-    elif adjusted_score <= -15:
+    elif adjusted_score <= -10:  # More sensitive bearish threshold
         return 'BEARISH'
     else:
         return 'NEUTRAL'
