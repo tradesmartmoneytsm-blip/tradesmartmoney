@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { TrendingUp, BarChart3, Activity } from 'lucide-react';
 import { OptionAnalysisContent } from './OptionAnalysisContent';
 import { FuturesAnalysisContent } from './FuturesAnalysisContent';
+import { MostActiveCallsContent } from './MostActiveCallsContent';
 import { PcrStormContent } from './PcrStormContent';
 
 interface FnoSubSection {
@@ -41,6 +42,12 @@ export function Fno({ initialSubSection }: FnoProps) {
       description: 'Futures market analysis and OI buildup patterns' 
     },
     { 
+      id: 'most-active-calls-puts', 
+      label: 'Most Active Calls/Puts', 
+      icon: <Activity className="w-4 h-4" />, 
+      description: 'Most active options with highest trading activity' 
+    },
+    { 
       id: 'pcr-storm', 
       label: 'PCR Storm', 
       icon: <Activity className="w-4 h-4" />, 
@@ -55,6 +62,9 @@ export function Fno({ initialSubSection }: FnoProps) {
 
       case 'futures-analysis':
         return <FuturesAnalysisContent />;
+
+      case 'most-active-calls-puts':
+        return <MostActiveCallsContent />;
 
       case 'pcr-storm':
         return <PcrStormContent />;

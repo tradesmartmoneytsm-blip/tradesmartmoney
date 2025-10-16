@@ -53,6 +53,30 @@ jobs:
           
           echo "✅ Futures analysis table cleared"
 
+      - name: Delete Most Active Stock Calls Data
+        run: |
+          echo "🗑️ Deleting all data from most_active_stock_calls table..."
+          
+          curl -X DELETE \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/most_active_stock_calls?id=gte.0"
+          
+          echo "✅ Most active stock calls table cleared"
+
+      - name: Delete Most Active Stock Puts Data
+        run: |
+          echo "🗑️ Deleting all data from most_active_stock_puts table..."
+          
+          curl -X DELETE \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/most_active_stock_puts?id=gte.0"
+          
+          echo "✅ Most active stock puts table cleared"
+
       - name: Verify Cleanup
         run: |
           echo "🔍 Verifying tables are empty..."
@@ -71,13 +95,29 @@ jobs:
             "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/futures_analysis?select=id" \
             | jq '. | length')
           
+          # Check most active stock calls count
+          CALLS_COUNT=$(curl -s \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/most_active_stock_calls?select=id" \
+            | jq '. | length')
+          
+          # Check most active stock puts count
+          PUTS_COUNT=$(curl -s \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/most_active_stock_puts?select=id" \
+            | jq '. | length')
+          
           echo "📊 Final Count:"
           echo "   option_chain_analysis: $OPTION_COUNT records"
           echo "   futures_analysis: $FUTURES_COUNT records"
+          echo "   most_active_stock_calls: $CALLS_COUNT records"
+          echo "   most_active_stock_puts: $PUTS_COUNT records"
           
-          if [ "$OPTION_COUNT" -eq 0 ] && [ "$FUTURES_COUNT" -eq 0 ]; then
-            echo "✅ SUCCESS: Both tables are completely empty!"
+          if [ "$OPTION_COUNT" -eq 0 ] && [ "$FUTURES_COUNT" -eq 0 ] && [ "$CALLS_COUNT" -eq 0 ] && [ "$PUTS_COUNT" -eq 0 ]; then
+            echo "✅ SUCCESS: All tables are completely empty!"
           else
-            echo "⚠️ WARNING: Tables still contain data"
+            echo "⚠️ WARNING: Some tables still contain data"
             exit 1
           fi

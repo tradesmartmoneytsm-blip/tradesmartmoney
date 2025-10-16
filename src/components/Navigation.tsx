@@ -211,7 +211,33 @@ export function Navigation({
       id: 'fno',
       label: 'FNO',
       icon: <BarChart3 className={brandTokens.icons.sm} />,
-      description: 'Futures & Options trading analysis'
+      description: 'Futures & Options trading analysis',
+      subItems: [
+        { 
+          id: 'option-analysis', 
+          label: 'Option Analysis', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Advanced option chain analysis and institutional flow'
+        },
+        { 
+          id: 'futures-analysis', 
+          label: 'Futures Analysis', 
+          icon: <BarChart3 className={brandTokens.icons.sm} />,
+          description: 'Futures market analysis and OI buildup patterns'
+        },
+        { 
+          id: 'most-active-calls-puts', 
+          label: 'Most Active Calls/Puts', 
+          icon: <Activity className={brandTokens.icons.sm} />,
+          description: 'Most active options with highest trading activity'
+        },
+        { 
+          id: 'pcr-storm', 
+          label: 'PCR Storm', 
+          icon: <Activity className={brandTokens.icons.sm} />,
+          description: 'Put-Call Ratio storm detection and analysis'
+        }
+      ]
     },
     {
       id: 'news',
