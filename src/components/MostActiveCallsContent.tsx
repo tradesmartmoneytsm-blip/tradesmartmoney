@@ -49,7 +49,7 @@ export function MostActiveCallsContent() {
       } else {
         setError('Failed to fetch most active options data');
       }
-    } catch (err) {
+    } catch {
       setError('Error loading most active options data');
     } finally {
       setLoading(false);
