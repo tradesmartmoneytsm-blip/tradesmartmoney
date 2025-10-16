@@ -255,14 +255,25 @@ const ValueBuying = () => {
   );
 };
 
-export function SwingTrades() {
+interface SwingTradesProps {
+  initialStrategy?: string;
+}
+
+export function SwingTrades({ initialStrategy }: SwingTradesProps = {}) {
   const [trades, setTrades] = useState<SwingTrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [, setLastUpdated] = useState<Date | null>(null);
   const [selectedImage, setSelectedImage] = useState<{ url: string; symbol: string } | null>(null);
-  const [activeStrategy, setActiveStrategy] = useState<string>('BIT');
+  const [activeStrategy, setActiveStrategy] = useState<string>(initialStrategy || 'BIT');
   const [valueBuyingStocks, setValueBuyingStocks] = useState<ValueStock[]>([]);
+
+  // Update active strategy when initialStrategy prop changes
+  useEffect(() => {
+    if (initialStrategy) {
+      setActiveStrategy(initialStrategy);
+    }
+  }, [initialStrategy]);
 
   const fetchTrades = useCallback(async () => {
     try {

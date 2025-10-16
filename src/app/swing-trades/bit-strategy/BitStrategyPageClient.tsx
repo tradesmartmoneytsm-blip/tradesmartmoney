@@ -4,20 +4,23 @@ import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
 import { Swing } from '@/components/Swing';
 
-export function SwingTradesPageClient() {
+export function BitStrategyPageClient() {
   const router = useRouter();
 
   const handleSectionChange = (section: string, subSection?: string) => {
+    // Handle Swing Trade submenus - navigate to separate pages
     if (section === 'swing' && subSection) {
       router.push(`/swing-trades/${subSection}`);
       return;
     }
     
     if (section === 'swing') {
+      // Stay on Swing main page
       router.push('/swing-trades');
       return;
     }
     
+    // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
       'market': '/market/sector-performance',
@@ -39,9 +42,9 @@ export function SwingTradesPageClient() {
         activeSection="swing" 
         onSectionChange={handleSectionChange}
       />
-      <main className="relative" role="main" aria-label="Swing Trading">
-        <Swing />
+      <main className="relative" role="main" aria-label="BIT Strategy">
+        <Swing initialSubSection="bit-strategy" />
       </main>
     </div>
   );
-} 
+}

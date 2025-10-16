@@ -38,6 +38,14 @@ export default function InternalDashboard() {
       category: 'ANALYSIS'
     },
     {
+      title: 'Strong Bullish Progression Chart',
+      description: 'Interactive timeline chart showing how stocks with score > 100 evolve throughout the day. Y-axis: Score, X-axis: Time, Lines: Stocks.',
+      href: '/internal/stock-progression-chart',
+      icon: <TrendingUp className="w-6 h-6" />,
+      status: 'ACTIVE',
+      category: 'ANALYSIS'
+    },
+    {
       title: 'AI Trading Signals',
       description: 'Advanced multi-factor algorithm that pinpoints exact stocks for profitable trades with entry/exit points.',
       href: '/internal/trading-signals',

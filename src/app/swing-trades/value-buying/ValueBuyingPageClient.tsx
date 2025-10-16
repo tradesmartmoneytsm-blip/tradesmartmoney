@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
 import { Swing } from '@/components/Swing';
 
-export function SwingTradesPageClient() {
+export function ValueBuyingPageClient() {
   const router = useRouter();
 
   const handleSectionChange = (section: string, subSection?: string) => {
@@ -39,9 +39,9 @@ export function SwingTradesPageClient() {
         activeSection="swing" 
         onSectionChange={handleSectionChange}
       />
-      <main className="relative" role="main" aria-label="Swing Trading">
-        <Swing />
+      <main className="relative" role="main" aria-label="Value Buying Strategy">
+        <Swing initialSubSection="value-buying" />
       </main>
     </div>
   );
-} 
+}

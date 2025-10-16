@@ -179,7 +179,33 @@ export function Navigation({
       id: 'swing',
       label: 'Swing Trade',
       icon: <TrendingUp className={brandTokens.icons.sm} />,
-      description: 'Multi-day trading examples and analysis'
+      description: 'Multi-day trading examples and analysis',
+      subItems: [
+        { 
+          id: 'bit-strategy', 
+          label: 'BIT Strategy', 
+          icon: <BarChart3 className={brandTokens.icons.sm} />,
+          description: 'Buyer Initiated Trades Analysis'
+        },
+        { 
+          id: 'swing-angle', 
+          label: 'Swing Angle', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Angular Momentum Strategy'
+        },
+        { 
+          id: 'bottom-formation', 
+          label: 'Bottom Formation', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Reversal Pattern Strategy'
+        },
+        { 
+          id: 'value-buying', 
+          label: 'Value Buying', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Oversold Quality Stocks'
+        }
+      ]
     },
     {
       id: 'fno',
@@ -261,6 +287,12 @@ export function Navigation({
       return;
     }
     
+    // Handle Swing Trade navigation - navigate to Swing with BIT strategy as default
+    if (itemId === 'swing') {
+      window.location.href = '/swing-trades/bit-strategy';
+      return;
+    }
+    
     // Handle FNO navigation - navigate to FNO with option analysis as default
     if (itemId === 'fno') {
       window.location.href = '/fno/option-analysis';
@@ -272,6 +304,12 @@ export function Navigation({
       // Handle market submenus - navigate to separate pages
       if (itemId === 'market') {
         window.location.href = `/market/${subItemId}`;
+        return;
+      }
+      
+      // Handle Swing Trade submenus - navigate to Swing subpages
+      if (itemId === 'swing') {
+        window.location.href = `/swing-trades/${subItemId}`;
         return;
       }
       
