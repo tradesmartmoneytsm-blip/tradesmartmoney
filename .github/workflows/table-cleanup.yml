@@ -77,6 +77,18 @@ jobs:
           
           echo "✅ Most active stock puts table cleared"
 
+      - name: Delete NSE Sector Data
+        run: |
+          echo "🗑️ Deleting all data from nse_sector_data table..."
+          
+          curl -X DELETE \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/nse_sector_data?id=gte.0"
+          
+          echo "✅ NSE sector data table cleared"
+
       - name: Verify Cleanup
         run: |
           echo "🔍 Verifying tables are empty..."
@@ -109,13 +121,21 @@ jobs:
             "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/most_active_stock_puts?select=id" \
             | jq '. | length')
           
+          # Check NSE sector data count
+          SECTOR_COUNT=$(curl -s \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/nse_sector_data?select=id" \
+            | jq '. | length')
+          
           echo "📊 Final Count:"
           echo "   option_chain_analysis: $OPTION_COUNT records"
           echo "   futures_analysis: $FUTURES_COUNT records"
           echo "   most_active_stock_calls: $CALLS_COUNT records"
           echo "   most_active_stock_puts: $PUTS_COUNT records"
+          echo "   nse_sector_data: $SECTOR_COUNT records"
           
-          if [ "$OPTION_COUNT" -eq 0 ] && [ "$FUTURES_COUNT" -eq 0 ] && [ "$CALLS_COUNT" -eq 0 ] && [ "$PUTS_COUNT" -eq 0 ]; then
+          if [ "$OPTION_COUNT" -eq 0 ] && [ "$FUTURES_COUNT" -eq 0 ] && [ "$CALLS_COUNT" -eq 0 ] && [ "$PUTS_COUNT" -eq 0 ] && [ "$SECTOR_COUNT" -eq 0 ]; then
             echo "✅ SUCCESS: All tables are completely empty!"
           else
             echo "⚠️ WARNING: Some tables still contain data"
