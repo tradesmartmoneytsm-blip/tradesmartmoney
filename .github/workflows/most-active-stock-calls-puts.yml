@@ -1,55 +1,33 @@
 name: Most Active Stock Calls/Puts Collector
 
 on:
-  # Run every 5 minutes from 9:20 AM to 1:00 PM IST (Monday to Friday)
-  # Converted to UTC: 3:50 AM to 7:30 AM UTC
+  # Run every 15 minutes from 9:30 AM to 3:00 PM IST (Monday to Friday)
+  # Converted to UTC: 4:00 AM to 9:30 AM UTC
   schedule:
-    # 9:20 AM IST = 3:50 AM UTC
-    - cron: '50 3 * * 1-5'    # 9:20 AM IST
-    - cron: '55 3 * * 1-5'    # 9:25 AM IST  
+    # 9:30 AM IST = 4:00 AM UTC
     - cron: '0 4 * * 1-5'     # 9:30 AM IST
-    - cron: '5 4 * * 1-5'     # 9:35 AM IST
-    - cron: '10 4 * * 1-5'    # 9:40 AM IST
     - cron: '15 4 * * 1-5'    # 9:45 AM IST
-    - cron: '20 4 * * 1-5'    # 9:50 AM IST
-    - cron: '25 4 * * 1-5'    # 9:55 AM IST
     - cron: '30 4 * * 1-5'    # 10:00 AM IST
-    - cron: '35 4 * * 1-5'    # 10:05 AM IST
-    - cron: '40 4 * * 1-5'    # 10:10 AM IST
     - cron: '45 4 * * 1-5'    # 10:15 AM IST
-    - cron: '50 4 * * 1-5'    # 10:20 AM IST
-    - cron: '55 4 * * 1-5'    # 10:25 AM IST
     - cron: '0 5 * * 1-5'     # 10:30 AM IST
-    - cron: '5 5 * * 1-5'     # 10:35 AM IST
-    - cron: '10 5 * * 1-5'    # 10:40 AM IST
     - cron: '15 5 * * 1-5'    # 10:45 AM IST
-    - cron: '20 5 * * 1-5'    # 10:50 AM IST
-    - cron: '25 5 * * 1-5'    # 10:55 AM IST
     - cron: '30 5 * * 1-5'    # 11:00 AM IST
-    - cron: '35 5 * * 1-5'    # 11:05 AM IST
-    - cron: '40 5 * * 1-5'    # 11:10 AM IST
     - cron: '45 5 * * 1-5'    # 11:15 AM IST
-    - cron: '50 5 * * 1-5'    # 11:20 AM IST
-    - cron: '55 5 * * 1-5'    # 11:25 AM IST
     - cron: '0 6 * * 1-5'     # 11:30 AM IST
-    - cron: '5 6 * * 1-5'     # 11:35 AM IST
-    - cron: '10 6 * * 1-5'    # 11:40 AM IST
     - cron: '15 6 * * 1-5'    # 11:45 AM IST
-    - cron: '20 6 * * 1-5'    # 11:50 AM IST
-    - cron: '25 6 * * 1-5'    # 11:55 AM IST
     - cron: '30 6 * * 1-5'    # 12:00 PM IST
-    - cron: '35 6 * * 1-5'    # 12:05 PM IST
-    - cron: '40 6 * * 1-5'    # 12:10 PM IST
     - cron: '45 6 * * 1-5'    # 12:15 PM IST
-    - cron: '50 6 * * 1-5'    # 12:20 PM IST
-    - cron: '55 6 * * 1-5'    # 12:25 PM IST
     - cron: '0 7 * * 1-5'     # 12:30 PM IST
-    - cron: '5 7 * * 1-5'     # 12:35 PM IST
-    - cron: '10 7 * * 1-5'    # 12:40 PM IST
     - cron: '15 7 * * 1-5'    # 12:45 PM IST
-    - cron: '20 7 * * 1-5'    # 12:50 PM IST
-    - cron: '25 7 * * 1-5'    # 12:55 PM IST
     - cron: '30 7 * * 1-5'    # 1:00 PM IST
+    - cron: '45 7 * * 1-5'    # 1:15 PM IST
+    - cron: '0 8 * * 1-5'     # 1:30 PM IST
+    - cron: '15 8 * * 1-5'    # 1:45 PM IST
+    - cron: '30 8 * * 1-5'    # 2:00 PM IST
+    - cron: '45 8 * * 1-5'    # 2:15 PM IST
+    - cron: '0 9 * * 1-5'     # 2:30 PM IST
+    - cron: '15 9 * * 1-5'    # 2:45 PM IST
+    - cron: '30 9 * * 1-5'    # 3:00 PM IST
 
   # Manual trigger for testing
   workflow_dispatch:
@@ -88,8 +66,8 @@ jobs:
         echo "Current IST time: $(TZ='Asia/Kolkata' date)"
         echo "Time: $CURRENT_TIME, Day: $DAY_OF_WEEK"
         
-        # Market hours: 9:20 AM (0920) to 1:00 PM (1300) IST, Monday to Friday (1-5)
-        if [[ $DAY_OF_WEEK -ge 1 && $DAY_OF_WEEK -le 5 && $CURRENT_TIME -ge 920 && $CURRENT_TIME -le 1300 ]]; then
+        # Market hours: 9:30 AM (0930) to 3:00 PM (1500) IST, Monday to Friday (1-5)
+        if [[ $DAY_OF_WEEK -ge 1 && $DAY_OF_WEEK -le 5 && $CURRENT_TIME -ge 930 && $CURRENT_TIME -le 1500 ]]; then
           echo "is_market_hours=true" >> $GITHUB_OUTPUT
         else
           echo "is_market_hours=false" >> $GITHUB_OUTPUT
@@ -112,7 +90,7 @@ jobs:
       run: |
         echo "⏰ Outside market hours or weekend - skipping data collection"
         echo "Current time: $(TZ='Asia/Kolkata' date)"
-        echo "Market hours: 9:20 AM - 1:00 PM IST, Monday to Friday"
+        echo "Market hours: 9:30 AM - 3:00 PM IST, Monday to Friday"
 
     - name: Cleanup
       if: always()
