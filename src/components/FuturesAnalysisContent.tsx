@@ -236,7 +236,7 @@ export function FuturesAnalysisContent() {
           Live Open Interest Buildup & Basis Analysis
         </p>
         <p className="text-xs text-gray-500">
-          Enhanced with OI Patterns • Rollover Intelligence • Updated Every 5 Minutes
+          Enhanced with OI Patterns • Rollover Intelligence • Updated Every 5 Minutes • Algo starts running from 9:20 AM
         </p>
       </div>
 

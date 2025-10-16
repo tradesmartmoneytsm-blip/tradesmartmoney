@@ -33,19 +33,6 @@ CREATE TABLE IF NOT EXISTS volume_gainers (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Table for Active Equities (for future use)
-CREATE TABLE IF NOT EXISTS active_equities (
-    id BIGSERIAL PRIMARY KEY,
-    symbol VARCHAR(20) NOT NULL,
-    open_price DECIMAL(12, 4) NOT NULL,
-    ltp DECIMAL(12, 4) NOT NULL,
-    change_percent DECIMAL(10, 4),
-    turnover BIGINT,
-    session_id VARCHAR(50) NOT NULL,
-    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
 -- Indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_most_active_calls_timestamp ON most_active_stock_calls(timestamp DESC);
 CREATE INDEX IF NOT EXISTS idx_most_active_calls_session ON most_active_stock_calls(session_id);
@@ -58,26 +45,21 @@ CREATE INDEX IF NOT EXISTS idx_most_active_puts_symbol ON most_active_stock_puts
 CREATE INDEX IF NOT EXISTS idx_volume_gainers_timestamp ON volume_gainers(timestamp DESC);
 CREATE INDEX IF NOT EXISTS idx_volume_gainers_session ON volume_gainers(session_id);
 
-CREATE INDEX IF NOT EXISTS idx_active_equities_timestamp ON active_equities(timestamp DESC);
-CREATE INDEX IF NOT EXISTS idx_active_equities_session ON active_equities(session_id);
 
 -- RLS (Row Level Security) Policies
 ALTER TABLE most_active_stock_calls ENABLE ROW LEVEL SECURITY;
 ALTER TABLE most_active_stock_puts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE volume_gainers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE active_equities ENABLE ROW LEVEL SECURITY;
 
 -- Policy to allow public read access
 CREATE POLICY "Allow public read access on most_active_stock_calls" ON most_active_stock_calls FOR SELECT USING (true);
 CREATE POLICY "Allow public read access on most_active_stock_puts" ON most_active_stock_puts FOR SELECT USING (true);
 CREATE POLICY "Allow public read access on volume_gainers" ON volume_gainers FOR SELECT USING (true);
-CREATE POLICY "Allow public read access on active_equities" ON active_equities FOR SELECT USING (true);
 
 -- Policy to allow service role to insert/update/delete (for GitHub Actions)
 CREATE POLICY "Allow service role full access on most_active_stock_calls" ON most_active_stock_calls FOR ALL USING (auth.role() = 'service_role');
 CREATE POLICY "Allow service role full access on most_active_stock_puts" ON most_active_stock_puts FOR ALL USING (auth.role() = 'service_role');
 CREATE POLICY "Allow service role full access on volume_gainers" ON volume_gainers FOR ALL USING (auth.role() = 'service_role');
-CREATE POLICY "Allow service role full access on active_equities" ON active_equities FOR ALL USING (auth.role() = 'service_role');
 
 -- Function to clean old data (keep only last 7 days)
 CREATE OR REPLACE FUNCTION cleanup_old_intraday_data()
@@ -86,7 +68,6 @@ BEGIN
     DELETE FROM most_active_stock_calls WHERE created_at < NOW() - INTERVAL '7 days';
     DELETE FROM most_active_stock_puts WHERE created_at < NOW() - INTERVAL '7 days';
     DELETE FROM volume_gainers WHERE created_at < NOW() - INTERVAL '7 days';
-    DELETE FROM active_equities WHERE created_at < NOW() - INTERVAL '7 days';
 END;
 $$ LANGUAGE plpgsql;
 

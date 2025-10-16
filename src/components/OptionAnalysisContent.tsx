@@ -215,7 +215,7 @@ export function OptionAnalysisContent() {
           Live Institutional Flow & Smart Money Analysis
         </p>
         <p className="text-xs text-gray-500">
-          Enhanced with Indian Market Intelligence • Updated Every 5 Minutes
+          Enhanced with Indian Market Intelligence • Updated Every 5 Minutes • Algo starts running from 9:20 AM
         </p>
       </div>
 
