@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity } from 'lucide-react';
+import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, DollarSign } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
 interface MarketIndex {
@@ -240,6 +240,20 @@ export function Navigation({
       ]
     },
     {
+      id: 'equity',
+      label: 'Equity',
+      icon: <DollarSign className={brandTokens.icons.sm} />,
+      description: 'Equity analysis and smart money flow',
+      subItems: [
+        { 
+          id: 'smart-money-flow', 
+          label: 'Intraday Smart Money Flow', 
+          icon: <Activity className={brandTokens.icons.sm} />,
+          description: 'Institutional Money Flow'
+        }
+      ]
+    },
+    {
       id: 'news',
       label: 'News',
       icon: <Newspaper className={brandTokens.icons.sm} />,
@@ -325,6 +339,12 @@ export function Navigation({
       return;
     }
     
+    // Handle Equity navigation - navigate to Equity with smart money flow as default
+    if (itemId === 'equity') {
+      window.location.href = '/equity/smart-money-flow';
+      return;
+    }
+    
     // Handle submenu clicks
     if (subItemId) {
       // Handle market submenus - navigate to separate pages
@@ -342,6 +362,12 @@ export function Navigation({
       // Handle FNO submenus - navigate to FNO subpages
       if (itemId === 'fno') {
         window.location.href = `/fno/${subItemId}`;
+        return;
+      }
+      
+      // Handle Equity submenus - navigate to Equity subpages
+      if (itemId === 'equity') {
+        window.location.href = `/equity/${subItemId}`;
         return;
       }
       

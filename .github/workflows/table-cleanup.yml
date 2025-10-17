@@ -77,17 +77,29 @@ jobs:
           
           echo "✅ Most active stock puts table cleared"
 
-      - name: Delete NSE Sector Data
+      - name: Delete Intraday Activities Data
         run: |
-          echo "🗑️ Deleting all data from nse_sector_data table..."
+          echo "🗑️ Deleting all data from intraday_activities table..."
           
           curl -X DELETE \
             -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
             -H "Content-Type: application/json" \
-            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/nse_sector_data?id=gte.0"
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/intraday_activities?id=gte.0"
           
-          echo "✅ NSE sector data table cleared"
+          echo "✅ Intraday activities table cleared"
+
+      # - name: Delete NSE Sector Data
+      #   run: |
+      #     echo "🗑️ Deleting all data from nse_sector_data table..."
+      #     
+      #     curl -X DELETE \
+      #       -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+      #       -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+      #       -H "Content-Type: application/json" \
+      #       "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/nse_sector_data?id=gte.0"
+      #     
+      #     echo "✅ NSE sector data table cleared"
 
       - name: Verify Cleanup
         run: |
@@ -121,23 +133,31 @@ jobs:
             "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/most_active_stock_puts?select=id" \
             | jq '. | length')
           
-          # Check NSE sector data count
-          SECTOR_COUNT=$(curl -s \
+          # Check intraday activities count
+          ACTIVITIES_COUNT=$(curl -s \
             -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/nse_sector_data?select=id" \
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/intraday_activities?select=id" \
             | jq '. | length')
+          
+          # Check NSE sector data count (commented out - preserving data for Smart Money Flow)
+          # SECTOR_COUNT=$(curl -s \
+          #   -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+          #   -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+          #   "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/nse_sector_data?select=id" \
+          #   | jq '. | length')
           
           echo "📊 Final Count:"
           echo "   option_chain_analysis: $OPTION_COUNT records"
           echo "   futures_analysis: $FUTURES_COUNT records"
           echo "   most_active_stock_calls: $CALLS_COUNT records"
           echo "   most_active_stock_puts: $PUTS_COUNT records"
-          echo "   nse_sector_data: $SECTOR_COUNT records"
+          echo "   intraday_activities: $ACTIVITIES_COUNT records"
+          echo "   nse_sector_data: PRESERVED (not cleaned - needed for Smart Money Flow)"
           
-          if [ "$OPTION_COUNT" -eq 0 ] && [ "$FUTURES_COUNT" -eq 0 ] && [ "$CALLS_COUNT" -eq 0 ] && [ "$PUTS_COUNT" -eq 0 ] && [ "$SECTOR_COUNT" -eq 0 ]; then
-            echo "✅ SUCCESS: All tables are completely empty!"
+          if [ "$OPTION_COUNT" -eq 0 ] && [ "$FUTURES_COUNT" -eq 0 ] && [ "$CALLS_COUNT" -eq 0 ] && [ "$PUTS_COUNT" -eq 0 ] && [ "$ACTIVITIES_COUNT" -eq 0 ]; then
+            echo "✅ SUCCESS: All daily tables are empty (nse_sector_data preserved for Smart Money Flow)!"
           else
-            echo "⚠️ WARNING: Some tables still contain data"
+            echo "⚠️ WARNING: Some daily tables still contain data"
             exit 1
           fi

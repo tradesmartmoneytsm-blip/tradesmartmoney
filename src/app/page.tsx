@@ -147,6 +147,7 @@ function HomeComponent() {
       'market': '/market/sector-performance',
       'swing': '/swing-trades/bit-strategy', 
       'fno': '/fno/option-analysis',
+      'equity': '/equity/smart-money-flow',
       'intraday': '/intraday-trades',
       'smart-money-flow': '/smart-money-flow',
       'news': '/news',
