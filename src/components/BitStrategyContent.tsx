@@ -1,19 +1,34 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { TrendingUp, Target, AlertCircle, RefreshCw, BarChart3 } from 'lucide-react';
-import { SwingTrade } from '@/app/api/swing-trades/route';
+import { TrendingUp, AlertCircle, RefreshCw, BarChart3 } from 'lucide-react';
+
+// Extended interface for momentum stocks
+interface MomentumStock {
+  id: string;
+  symbol: string;
+  stock_symbol: string;
+  strategy: string;
+  entry_date: string;
+  entry_price: number;
+  current_price: number;
+  target_price: number;
+  stop_loss: number;
+  status: string;
+  market_cap: number;
+  performance_1month: number;
+  pe_ratio: number;
+  roce: number;
+}
 
 type FilterType = 'ALL' | 'HIGH_PERFORMANCE' | 'LARGE_CAP';
-type SortType = 'MARKET_CAP' | 'PERFORMANCE' | 'SYMBOL';
 
 export function BitStrategyContent() {
-  const [trades, setTrades] = useState<SwingTrade[]>([]);
-  const [filteredTrades, setFilteredTrades] = useState<SwingTrade[]>([]);
+  const [trades, setTrades] = useState<MomentumStock[]>([]);
+  const [filteredTrades, setFilteredTrades] = useState<MomentumStock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterType>('ALL');
-  const [sortBy, setSortBy] = useState<SortType>('MARKET_CAP');
   const [selectedDate, setSelectedDate] = useState<string>('ALL');
   const [availableDates, setAvailableDates] = useState<string[]>([]);
 
@@ -28,7 +43,19 @@ export function BitStrategyContent() {
       
       if (response.ok && result.success && Array.isArray(result.data)) {
         // Transform momentum stocks data to match SwingTrade interface
-        const momentumStocks = result.data.map((stock: any) => ({
+        interface ApiMomentumStock {
+          id: number;
+          symbol: string;
+          current_price: number;
+          market_cap: number;
+          price_change_1month: number;
+          pe_ratio: number;
+          roce: number;
+          analysis_date?: string;
+          created_at: string;
+        }
+        
+        const momentumStocks = result.data.map((stock: ApiMomentumStock) => ({
           id: stock.id,
           symbol: stock.symbol,
           stock_symbol: stock.symbol, // Add this field that the template expects
@@ -47,7 +74,7 @@ export function BitStrategyContent() {
         setTrades(momentumStocks);
         
         // Extract available dates
-        const uniqueDates = [...new Set(momentumStocks.map(stock => stock.entry_date))].sort().reverse();
+        const uniqueDates = [...new Set(momentumStocks.map((stock: MomentumStock) => stock.entry_date))].sort().reverse() as string[];
         setAvailableDates(uniqueDates);
       } else {
         setError('No momentum stocks available. Data updates daily at 3:00 PM.');
@@ -90,14 +117,6 @@ export function BitStrategyContent() {
     setFilteredTrades(filtered);
   }, [trades, filter, selectedDate]);
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'running': return 'text-blue-600 bg-blue-50 border-blue-200';
-      case 'completed': return 'text-green-600 bg-green-50 border-green-200';
-      case 'stopped': return 'text-red-600 bg-red-50 border-red-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
-    }
-  };
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-IN', {
@@ -114,7 +133,6 @@ export function BitStrategyContent() {
   };
 
   const runningTrades = filteredTrades.filter(trade => trade.status.toLowerCase() === 'running');
-  const completedTrades = filteredTrades.filter(trade => trade.status.toLowerCase() === 'completed');
 
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
