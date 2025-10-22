@@ -24,7 +24,7 @@ export function SmartMoneyFlowPageClient() {
     const routes: { [key: string]: string } = {
       'home': '/',
       'market': '/market/sector-performance',
-      'swing': '/swing-trades/bit-strategy',
+      'swing': '/swing-trades/momentum-strategy',
       'fno': '/fno/option-analysis',
       'news': '/news',
       'eodscans': '/eod-scans',

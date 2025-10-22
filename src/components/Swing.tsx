@@ -19,7 +19,7 @@ interface SwingProps {
 }
 
 export function Swing({ initialSubSection }: SwingProps) {
-  const [activeSubSection, setActiveSubSection] = useState(initialSubSection || 'bit-strategy');
+  const [activeSubSection, setActiveSubSection] = useState(initialSubSection || 'momentum-strategy');
 
   // Update active subsection when initialSubSection prop changes
   useEffect(() => {
@@ -30,10 +30,10 @@ export function Swing({ initialSubSection }: SwingProps) {
 
   const subSections: SwingSubSection[] = [
     { 
-      id: 'bit-strategy', 
-      label: 'BIT Strategy', 
+      id: 'momentum-strategy', 
+      label: 'Momentum Strategy', 
       icon: <BarChart3 className="w-4 h-4" />, 
-      description: 'Buyer Initiated Trades Analysis' 
+      description: 'Momentum-Based Trading Analysis'
     },
     { 
       id: 'swing-angle', 
@@ -57,8 +57,8 @@ export function Swing({ initialSubSection }: SwingProps) {
 
   const renderContent = () => {
     switch (activeSubSection) {
-      case 'bit-strategy':
-        return <BitStrategyContent />;
+      case 'momentum-strategy':
+        return <BitStrategyContent />;  // Reusing BitStrategyContent for now
 
       case 'swing-angle':
         return <SwingAngleContent />;

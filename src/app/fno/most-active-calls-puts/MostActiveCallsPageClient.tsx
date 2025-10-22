@@ -24,7 +24,7 @@ export function MostActiveCallsPageClient() {
     const routes: { [key: string]: string } = {
       'home': '/',
       'market': '/market/sector-performance',
-      'swing': '/swing-trades/bit-strategy',
+      'swing': '/swing-trades/momentum-strategy',
       'news': '/news',
       'eodscans': '/eod-scans',
       'algo-trading': '/algo-trading',

@@ -1,18 +1,12 @@
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import MomentumStrategyPageClient from './MomentumStrategyPageClient';
 
 export const metadata: Metadata = {
   title: 'Momentum Strategy - Swing Trading | TradeSmartMoney',
   description: 'Advanced momentum-based swing trading strategy with institutional flow analysis and technical indicators.',
   keywords: 'momentum trading, swing trading, momentum strategy, technical analysis, stock momentum',
-  openGraph: {
-    title: 'Momentum Strategy - Swing Trading',
-    description: 'Advanced momentum-based swing trading strategy',
-    type: 'website',
-  },
 };
 
-export default function BitStrategyPage() {
-  // Redirect old BIT Strategy URL to new Momentum Strategy URL
-  redirect('/swing-trades/momentum-strategy');
+export default function MomentumStrategyPage() {
+  return <MomentumStrategyPageClient />;
 }

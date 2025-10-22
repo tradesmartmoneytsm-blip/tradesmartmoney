@@ -145,7 +145,7 @@ function HomeComponent() {
     // Navigate to dedicated pages for better SEO
     const routes: { [key: string]: string } = {
       'market': '/market/sector-performance',
-      'swing': '/swing-trades/bit-strategy', 
+      'swing': '/swing-trades/momentum-strategy', 
       'fno': '/fno/option-analysis',
       'equity': '/equity/smart-money-flow',
       'intraday': '/intraday-trades',

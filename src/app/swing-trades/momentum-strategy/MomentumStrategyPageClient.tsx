@@ -4,27 +4,25 @@ import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
 import { Swing } from '@/components/Swing';
 
-export function BitStrategyPageClient() {
+export default function MomentumStrategyPageClient() {
   const router = useRouter();
 
   const handleSectionChange = (section: string, subSection?: string) => {
-    // Handle Swing Trade submenus - navigate to separate pages
     if (section === 'swing' && subSection) {
       router.push(`/swing-trades/${subSection}`);
       return;
     }
     
     if (section === 'swing') {
-      // Stay on Swing main page
       router.push('/swing-trades');
       return;
     }
     
-    // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
       'market': '/market/sector-performance',
       'fno': '/fno/option-analysis',
+      'equity': '/equity/smart-money-flow',
       'news': '/news',
       'eodscans': '/eod-scans',
       'algo-trading': '/algo-trading',
@@ -42,7 +40,7 @@ export function BitStrategyPageClient() {
         activeSection="swing" 
         onSectionChange={handleSectionChange}
       />
-      <main className="relative" role="main" aria-label="Momentum Strategy">
+      <main className="relative" role="main" aria-label="Momentum Strategy Trading">
         <Swing initialSubSection="momentum-strategy" />
       </main>
     </div>

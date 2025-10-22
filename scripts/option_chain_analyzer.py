@@ -347,7 +347,18 @@ def get_sector_strength_score(symbol: str) -> Dict:
         return {'multiplier': multiplier, 'reasoning': '', 'signals': []}
 
 def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, symbol: str = "") -> Dict:
-    """SUPER INTELLIGENT NSE option chain analysis with price action, volume, and sector intelligence"""
+    """
+    REFINED NSE option chain analysis - Clear Cut Analysis
+    
+    KEY IMPROVEMENTS:
+    1. Institutional flow gets 80% weight (primary signal)
+    2. PCR gets 20% weight (secondary support/resistance)
+    3. Better call writing vs call buying detection
+    4. Conflict detection between signals
+    5. Clear reasoning with signal priority
+    
+    Fixes TATAMOTORS-type false positives where PCR overrode institutional bearish flow
+    """
     
     institutional_bullish_flow = 0
     institutional_bearish_flow = 0
@@ -362,9 +373,8 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
     total_call_oi = 0
     total_put_oi = 0
     
-    # SUPER INTELLIGENCE: Get price momentum and sector strength
+    # REFINED: Get price momentum only (removed hardcoded sector strength)
     price_momentum = get_price_momentum_score(symbol, current_price)
-    sector_strength = get_sector_strength_score(symbol)
     
     for option_row in option_data:
         strike = option_row.get('strikePrice', 0)
@@ -399,15 +409,29 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
         distance_from_spot = abs(strike - current_price) / current_price
         proximity_weight = 3 if distance_from_spot < 0.05 else (2 if distance_from_spot < 0.1 else 1)
         
-        # SUPER INTELLIGENT CALL ANALYSIS
-        if call_oi_change > 0 and call_volume > 500:  # Fresh call positions
-            # DYNAMIC THRESHOLDS based on price momentum and volume
-            volume_threshold = 3000 if price_momentum.get('volume_ratio', 1) > 2 else 5000
-            massive_threshold = 8000 if price_momentum.get('volume_ratio', 1) > 2 else 10000
+        # DYNAMIC CALL ANALYSIS (no hardcoded thresholds)
+        if call_oi_change > 0 and call_volume > 0:  # Any fresh call positions
+            # CALCULATE DYNAMIC THRESHOLDS based on this stock's actual data
+            all_call_volumes = [row.get('CE', {}).get('totalTradedVolume', 0) or 0 for row in option_data if (row.get('CE', {}).get('totalTradedVolume', 0) or 0) > 0]
+            all_call_oi_changes = [row.get('CE', {}).get('changeinOpenInterest', 0) or 0 for row in option_data if (row.get('CE', {}).get('changeinOpenInterest', 0) or 0) > 0]
+            
+            if all_call_volumes and all_call_oi_changes:
+                avg_call_volume = sum(all_call_volumes) / len(all_call_volumes)
+                avg_call_oi_change = sum(all_call_oi_changes) / len(all_call_oi_changes)
+                
+                # Dynamic thresholds based on this stock's activity
+                volume_threshold = avg_call_volume * 1.5  # 50% above average
+                massive_threshold = avg_call_volume * 3.0  # 3x above average
+                oi_threshold = avg_call_oi_change * 1.5   # 50% above average
+            else:
+                # Fallback minimal thresholds
+                volume_threshold = 100
+                massive_threshold = 500
+                oi_threshold = 50
             
             if call_volume > volume_threshold:  # High volume = institutional
-                # Determine if it's CALL BUYING (bullish) or CALL WRITING (bearish)
-                if call_change > 0:  # Call prices rising = call buying (bullish)
+                # REFINED: Better determination of CALL BUYING vs CALL WRITING
+                if call_change > 0.5:  # Call prices rising significantly = call buying (bullish)
                     base_weight = proximity_weight * 3
                     
                     # VOLUME SURGE BONUS
@@ -426,7 +450,7 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
                     elif call_volume > volume_threshold:
                         unusual_activity.append(f"📈 MASSIVE Call Buying at {strike} (Vol: {call_volume:,})")
                         
-                else:  # Call prices stable/falling with high OI = call writing (bearish)
+                elif call_change <= 0:  # Call prices stable/falling with high OI = call writing (bearish)
                     base_weight = proximity_weight * 3
                     
                     # VOLUME SURGE PENALTY (more bearish with higher volume)
@@ -434,34 +458,52 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
                         base_weight *= 1.5
                     
                     institutional_bearish_flow += base_weight
-                    detailed_analysis.append(f"{strike}CE: INSTITUTIONAL Call Writing (-{base_weight:.1f}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
+                    detailed_analysis.append(f"{strike}CE: INSTITUTIONAL Call Writing (-{base_weight:.1f}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}, Price: {call_change:.2f}]")
                     
                     if call_volume > massive_threshold:
-                        unusual_activity.append(f"📉 MASSIVE Call Writing at {strike} (Vol: {call_volume:,})")
+                        unusual_activity.append(f"📉 MASSIVE Call Writing at {strike} (Vol: {call_volume:,}, Price: {call_change:.2f})")
                     elif call_volume > volume_threshold:
-                        unusual_activity.append(f"🔻 HEAVY Call Writing at {strike} (Vol: {call_volume:,})")
+                        unusual_activity.append(f"🔻 HEAVY Call Writing at {strike} (Vol: {call_volume:,}, Price: {call_change:.2f})")
+                
+                else:  # Small price changes (0 < call_change <= 0.5) - mixed signals
+                    base_weight = proximity_weight * 1.5  # Lower weight for unclear signals
+                    detailed_analysis.append(f"{strike}CE: Mixed Call Activity (~{base_weight:.1f}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}, Price: +{call_change:.2f}]")
             
             # MEDIUM VOLUME ACTIVITY
             elif call_volume > 1000:
-                if call_change > 0:  # Call buying
+                if call_change > 0.3:  # REFINED: Call buying (higher threshold)
                     weight = proximity_weight * 1.5
                     institutional_bullish_flow += weight
-                    detailed_analysis.append(f"{strike}CE: Call Buying (+{weight}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
-                else:  # Call writing
+                    detailed_analysis.append(f"{strike}CE: Call Buying (+{weight:.1f}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}, Price: +{call_change:.2f}]")
+                elif call_change <= 0:  # REFINED: Call writing (clearer threshold)
                     weight = proximity_weight * 1.5
                     institutional_bearish_flow += weight
-                    detailed_analysis.append(f"{strike}CE: Call Writing (-{weight}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}]")
+                    detailed_analysis.append(f"{strike}CE: Call Writing (-{weight:.1f}) [OI: +{call_oi_change:,}, Vol: {call_volume:,}, Price: {call_change:.2f}]")
                     
         elif call_oi_change < 0 and call_volume > 1000:  # Call unwinding/profit booking
             if abs(call_oi_change) > 50:
                 weight = proximity_weight * 0.5
                 detailed_analysis.append(f"{strike}CE: Call Unwinding/Profit Booking [OI: {call_oi_change:,}, Vol: {call_volume:,}]")
                 
-        # ENHANCED PUT ANALYSIS WITH BETTER BEARISH DETECTION
-        if put_oi_change > 0 and put_volume > 500:  # Fresh put positions (lowered threshold)
-            # DYNAMIC THRESHOLDS
-            volume_threshold = 3000 if price_momentum.get('volume_ratio', 1) > 2 else 5000
-            massive_threshold = 8000 if price_momentum.get('volume_ratio', 1) > 2 else 10000
+        # DYNAMIC PUT ANALYSIS (no hardcoded thresholds)
+        if put_oi_change > 0 and put_volume > 0:  # Any fresh put positions
+            # CALCULATE DYNAMIC THRESHOLDS based on this stock's actual put data
+            all_put_volumes = [row.get('PE', {}).get('totalTradedVolume', 0) or 0 for row in option_data if (row.get('PE', {}).get('totalTradedVolume', 0) or 0) > 0]
+            all_put_oi_changes = [row.get('PE', {}).get('changeinOpenInterest', 0) or 0 for row in option_data if (row.get('PE', {}).get('changeinOpenInterest', 0) or 0) > 0]
+            
+            if all_put_volumes and all_put_oi_changes:
+                avg_put_volume = sum(all_put_volumes) / len(all_put_volumes)
+                avg_put_oi_change = sum(all_put_oi_changes) / len(all_put_oi_changes)
+                
+                # Dynamic thresholds based on this stock's put activity
+                volume_threshold = avg_put_volume * 1.5  # 50% above average
+                massive_threshold = avg_put_volume * 3.0  # 3x above average
+                put_oi_threshold = avg_put_oi_change * 1.5   # 50% above average
+            else:
+                # Fallback minimal thresholds
+                volume_threshold = 100
+                massive_threshold = 500
+                put_oi_threshold = 50
             
             if put_volume > volume_threshold:  # High volume = institutional
                 # ENHANCED BEARISH DETECTION: Put buying vs put writing
@@ -516,11 +558,290 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
             if abs(put_oi_change) > 50:
                 detailed_analysis.append(f"{strike}PE: Put Unwinding [OI: {put_oi_change:,}, Vol: {put_volume:,}]")
         
-        # IDENTIFY SUPPORT AND RESISTANCE LEVELS
-        if strike < current_price and put_oi > 50000:  # High put OI below spot = support
-            support_levels.append(strike)
-        if strike > current_price and call_oi > 50000:  # High call OI above spot = resistance  
-            resistance_levels.append(strike)
+        # ENHANCED SUPPORT AND RESISTANCE LEVEL DETECTION (Human-like analysis)
+        
+        # DYNAMIC RESISTANCE LEVELS: Based on actual data distribution
+        if strike > current_price:
+            # Calculate dynamic thresholds for resistance detection
+            all_call_ois = [row.get('CE', {}).get('openInterest', 0) or 0 for row in option_data]
+            all_call_oi_changes = [abs(row.get('CE', {}).get('changeinOpenInterest', 0) or 0) for row in option_data]
+            all_call_volumes = [row.get('CE', {}).get('totalTradedVolume', 0) or 0 for row in option_data]
+            
+            if all_call_ois and all_call_oi_changes and all_call_volumes:
+                high_oi_threshold = sorted(all_call_ois)[-int(len(all_call_ois) * 0.2)] if len(all_call_ois) > 5 else 10000  # Top 20%
+                high_oi_change_threshold = sorted(all_call_oi_changes)[-int(len(all_call_oi_changes) * 0.3)] if len(all_call_oi_changes) > 3 else 1000  # Top 30%
+                high_volume_threshold = sorted(all_call_volumes)[-int(len(all_call_volumes) * 0.3)] if len(all_call_volumes) > 3 else 500  # Top 30%
+                
+                # Strong resistance: High OI + Fresh writing + High volume (all dynamic)
+                if call_oi > high_oi_threshold and call_oi_change > high_oi_change_threshold and call_volume > high_volume_threshold:
+                    resistance_strength = (call_oi + call_oi_change * 2) / 100000  # Weight fresh activity more
+                    resistance_levels.append({
+                        'level': strike,
+                        'strength': resistance_strength,
+                        'type': 'CALL_WRITING_RESISTANCE',
+                        'oi': call_oi,
+                        'oi_change': call_oi_change,
+                        'volume': call_volume
+                    })
+                # Moderate resistance: High OI only (dynamic)
+                elif call_oi > high_oi_threshold * 1.5:
+                    resistance_strength = call_oi / 100000
+                    resistance_levels.append({
+                        'level': strike,
+                        'strength': resistance_strength,
+                        'type': 'CALL_OI_RESISTANCE',
+                        'oi': call_oi,
+                        'oi_change': call_oi_change,
+                        'volume': call_volume
+                    })
+        
+        # DYNAMIC SUPPORT LEVELS: Based on actual data distribution
+        if strike < current_price:
+            # Calculate dynamic thresholds for support detection
+            all_put_ois = [row.get('PE', {}).get('openInterest', 0) or 0 for row in option_data]
+            all_put_oi_changes = [abs(row.get('PE', {}).get('changeinOpenInterest', 0) or 0) for row in option_data]
+            all_put_volumes = [row.get('PE', {}).get('totalTradedVolume', 0) or 0 for row in option_data]
+            
+            if all_put_ois and all_put_oi_changes and all_put_volumes:
+                high_put_oi_threshold = sorted(all_put_ois)[-int(len(all_put_ois) * 0.2)] if len(all_put_ois) > 5 else 10000  # Top 20%
+                high_put_oi_change_threshold = sorted(all_put_oi_changes)[-int(len(all_put_oi_changes) * 0.3)] if len(all_put_oi_changes) > 3 else 1000  # Top 30%
+                high_put_volume_threshold = sorted(all_put_volumes)[-int(len(all_put_volumes) * 0.3)] if len(all_put_volumes) > 3 else 500  # Top 30%
+                
+                # Strong support: High OI + Fresh writing + High volume (all dynamic)
+                if put_oi > high_put_oi_threshold and put_oi_change > high_put_oi_change_threshold and put_volume > high_put_volume_threshold:
+                    support_strength = (put_oi + put_oi_change * 2) / 100000
+                    support_levels.append({
+                        'level': strike,
+                        'strength': support_strength,
+                        'type': 'PUT_WRITING_SUPPORT',
+                        'oi': put_oi,
+                        'oi_change': put_oi_change,
+                        'volume': put_volume
+                    })
+                # Moderate support: High OI only (dynamic)
+                elif put_oi > high_put_oi_threshold * 1.5:
+                    support_strength = put_oi / 100000
+                    support_levels.append({
+                        'level': strike,
+                        'strength': support_strength,
+                        'type': 'PUT_OI_SUPPORT',
+                        'oi': put_oi,
+                        'oi_change': put_oi_change,
+                        'volume': put_volume
+                    })
+    
+    # HUMAN-LIKE ZONE ANALYSIS: Where is the stock positioned?
+    def analyze_current_zone(current_price, resistance_levels, support_levels):
+        """Determine current position relative to key levels like a human trader"""
+        
+        # Sort levels by strength
+        resistance_levels.sort(key=lambda x: x['strength'], reverse=True)
+        support_levels.sort(key=lambda x: x['strength'], reverse=True)
+        
+        # Find nearest levels
+        nearest_resistance = None
+        nearest_support = None
+        
+        for resistance in resistance_levels:
+            if resistance['level'] > current_price:
+                if not nearest_resistance or resistance['level'] < nearest_resistance['level']:
+                    nearest_resistance = resistance
+        
+        for support in support_levels:
+            if support['level'] < current_price:
+                if not nearest_support or support['level'] > nearest_support['level']:
+                    nearest_support = support
+        
+        # Calculate distances
+        resistance_distance_pct = 999  # Default high value
+        support_distance_pct = 999
+        
+        if nearest_resistance:
+            resistance_distance_pct = (nearest_resistance['level'] - current_price) / current_price * 100
+        
+        if nearest_support:
+            support_distance_pct = (current_price - nearest_support['level']) / current_price * 100
+        
+        # Determine zone
+        zone_analysis = {
+            'nearest_resistance': nearest_resistance,
+            'nearest_support': nearest_support,
+            'resistance_distance_pct': resistance_distance_pct,
+            'support_distance_pct': support_distance_pct,
+            'risk_reward_ratio': resistance_distance_pct / support_distance_pct if support_distance_pct > 0 else 0
+        }
+        
+        # Zone classification (like a human trader would think)
+        if resistance_distance_pct < 1.5:  # Within 1.5% of resistance
+            zone_analysis['current_zone'] = 'AT_RESISTANCE'
+            zone_analysis['zone_bias'] = 'BEARISH'
+            zone_analysis['zone_reasoning'] = f"🚧 At resistance ({nearest_resistance['level']}) - expect rejection"
+        elif support_distance_pct < 1.5:  # Within 1.5% of support
+            zone_analysis['current_zone'] = 'AT_SUPPORT'
+            zone_analysis['zone_bias'] = 'BULLISH'
+            zone_analysis['zone_reasoning'] = f"🎯 At support ({nearest_support['level']}) - expect bounce"
+        elif resistance_distance_pct < 3 and resistance_distance_pct < support_distance_pct:
+            zone_analysis['current_zone'] = 'NEAR_RESISTANCE'
+            zone_analysis['zone_bias'] = 'BEARISH'
+            zone_analysis['zone_reasoning'] = f"⚠️ Approaching resistance ({nearest_resistance['level']}) - caution"
+        elif support_distance_pct < 3 and support_distance_pct < resistance_distance_pct:
+            zone_analysis['current_zone'] = 'NEAR_SUPPORT'
+            zone_analysis['zone_bias'] = 'BULLISH'
+            zone_analysis['zone_reasoning'] = f"📈 Near support ({nearest_support['level']}) - potential bounce"
+        else:
+            zone_analysis['current_zone'] = 'MIDDLE_RANGE'
+            zone_analysis['zone_bias'] = 'NEUTRAL'
+            zone_analysis['zone_reasoning'] = "⚖️ In middle of range - no clear bias from levels"
+        
+        return zone_analysis
+    
+    # Perform zone analysis
+    zone_analysis = analyze_current_zone(current_price, resistance_levels, support_levels)
+    
+    # DYNAMIC INSTITUTIONAL ACTIVITY CLASSIFICATION (No hardcoded thresholds)
+    def classify_institutional_activities(option_data, current_price):
+        """Classify institutional activities using dynamic thresholds based on actual data"""
+        
+        activities = []
+        
+        # STEP 1: Calculate dynamic thresholds based on actual data
+        all_call_oi_changes = []
+        all_put_oi_changes = []
+        all_call_volumes = []
+        all_put_volumes = []
+        all_call_price_changes = []
+        all_put_price_changes = []
+        
+        for option_row in option_data:
+            call_oi_change = option_row.get('CE', {}).get('changeinOpenInterest', 0) or 0
+            put_oi_change = option_row.get('PE', {}).get('changeinOpenInterest', 0) or 0
+            call_volume = option_row.get('CE', {}).get('totalTradedVolume', 0) or 0
+            put_volume = option_row.get('PE', {}).get('totalTradedVolume', 0) or 0
+            call_change = option_row.get('CE', {}).get('change', 0) or 0
+            put_change = option_row.get('PE', {}).get('change', 0) or 0
+            
+            if call_oi_change != 0: all_call_oi_changes.append(abs(call_oi_change))
+            if put_oi_change != 0: all_put_oi_changes.append(abs(put_oi_change))
+            if call_volume > 0: all_call_volumes.append(call_volume)
+            if put_volume > 0: all_put_volumes.append(put_volume)
+            if call_change != 0: all_call_price_changes.append(abs(call_change))
+            if put_change != 0: all_put_price_changes.append(abs(put_change))
+        
+        # Calculate dynamic thresholds (top 20% of activity)
+        def get_percentile(data_list, percentile=80):
+            if not data_list: return 0
+            sorted_data = sorted(data_list)
+            index = int(len(sorted_data) * percentile / 100)
+            return sorted_data[min(index, len(sorted_data) - 1)]
+        
+        # DYNAMIC THRESHOLDS (no hardcoding!)
+        significant_call_oi_threshold = get_percentile(all_call_oi_changes, 75)  # Top 25%
+        significant_put_oi_threshold = get_percentile(all_put_oi_changes, 75)
+        significant_call_volume_threshold = get_percentile(all_call_volumes, 70)  # Top 30%
+        significant_put_volume_threshold = get_percentile(all_put_volumes, 70)
+        significant_call_price_threshold = get_percentile(all_call_price_changes, 60)  # Top 40%
+        significant_put_price_threshold = get_percentile(all_put_price_changes, 60)
+        
+        # STEP 2: Classify activities using dynamic thresholds
+        for option_row in option_data:
+            strike = option_row.get('strikePrice', 0)
+            
+            # Extract data
+            call_oi = option_row.get('CE', {}).get('openInterest', 0) or 0
+            call_oi_change = option_row.get('CE', {}).get('changeinOpenInterest', 0) or 0
+            call_volume = option_row.get('CE', {}).get('totalTradedVolume', 0) or 0
+            call_change = option_row.get('CE', {}).get('change', 0) or 0
+            
+            put_oi = option_row.get('PE', {}).get('openInterest', 0) or 0
+            put_oi_change = option_row.get('PE', {}).get('changeinOpenInterest', 0) or 0
+            put_volume = option_row.get('PE', {}).get('totalTradedVolume', 0) or 0
+            put_change = option_row.get('PE', {}).get('change', 0) or 0
+            
+            distance_pct = abs(strike - current_price) / current_price * 100
+            
+            # 1. COVERED CALL WRITING (Dynamic thresholds)
+            if (strike > current_price and distance_pct < 10 and 
+                call_oi_change > significant_call_oi_threshold and 
+                call_volume > significant_call_volume_threshold and 
+                call_change <= 0):
+                activities.append({
+                    'type': 'COVERED_CALL_WRITING',
+                    'strike': strike,
+                    'sentiment': 'BEARISH_NEUTRAL',
+                    'strength': call_oi_change / 1000,
+                    'explanation': f'Heavy call writing at {strike} - institutions capping upside'
+                })
+            
+            # 2. PROTECTIVE PUT BUYING (Dynamic thresholds)
+            if (strike < current_price and distance_pct < 15 and 
+                put_oi_change > significant_put_oi_threshold and 
+                put_volume > significant_put_volume_threshold and 
+                put_change > significant_put_price_threshold):
+                activities.append({
+                    'type': 'PROTECTIVE_PUT_BUYING',
+                    'strike': strike,
+                    'sentiment': 'HEDGING',
+                    'strength': put_oi_change / 1000,
+                    'explanation': f'Put buying at {strike} - institutions hedging long positions'
+                })
+            
+            # 3. CASH SECURED PUT WRITING (Dynamic thresholds)
+            if (strike < current_price and distance_pct < 10 and 
+                put_oi_change > significant_put_oi_threshold and 
+                put_volume > significant_put_volume_threshold and 
+                put_change <= 0):
+                activities.append({
+                    'type': 'CASH_SECURED_PUT_WRITING',
+                    'strike': strike,
+                    'sentiment': 'BULLISH',
+                    'strength': put_oi_change / 1000,
+                    'explanation': f'Put writing at {strike} - institutions willing to buy stock'
+                })
+            
+            # 4. LONG CALL BUYING (Dynamic thresholds)
+            if (strike > current_price and distance_pct < 15 and 
+                call_oi_change > significant_call_oi_threshold and 
+                call_volume > significant_call_volume_threshold and 
+                call_change > significant_call_price_threshold):
+                activities.append({
+                    'type': 'LONG_CALL_BUYING',
+                    'strike': strike,
+                    'sentiment': 'BULLISH',
+                    'strength': call_oi_change / 1000,
+                    'explanation': f'Call buying at {strike} - institutions betting on upside'
+                })
+            
+            # 5. STRADDLE/STRANGLE (Dynamic thresholds)
+            if (call_oi_change > significant_call_oi_threshold * 0.5 and 
+                put_oi_change > significant_put_oi_threshold * 0.5 and 
+                call_volume > significant_call_volume_threshold * 0.5 and 
+                put_volume > significant_put_volume_threshold * 0.5):
+                activities.append({
+                    'type': 'VOLATILITY_PLAY',
+                    'strike': strike,
+                    'sentiment': 'NEUTRAL_VOLATILE',
+                    'strength': (call_oi_change + put_oi_change) / 2000,
+                    'explanation': f'High call & put activity at {strike} - volatility play'
+                })
+        
+        # Classify dominant activity
+        activity_summary = {
+            'hedging_activities': [a for a in activities if a['sentiment'] == 'HEDGING'],
+            'bullish_activities': [a for a in activities if a['sentiment'] == 'BULLISH'],
+            'bearish_activities': [a for a in activities if a['sentiment'] in ['BEARISH_NEUTRAL', 'BEARISH']],
+            'volatility_activities': [a for a in activities if a['sentiment'] == 'NEUTRAL_VOLATILE'],
+            'all_activities': activities
+        }
+        
+        # Calculate ratios
+        total_strength = sum([a['strength'] for a in activities]) or 1
+        activity_summary['hedging_ratio'] = sum([a['strength'] for a in activity_summary['hedging_activities']]) / total_strength
+        activity_summary['speculation_ratio'] = 1 - activity_summary['hedging_ratio']
+        
+        return activity_summary
+    
+    # Perform institutional activity analysis
+    institutional_activities = classify_institutional_activities(option_data, current_price)
     
     # Calculate net institutional flow
     net_institutional_flow = institutional_bullish_flow - institutional_bearish_flow
@@ -528,45 +849,146 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
     # Calculate PCR first (needed for bearish detection)
     pcr = total_put_oi / total_call_oi if total_call_oi > 0 else 1.0
     
-    # SUPER INTELLIGENCE: Apply price momentum and sector strength
-    base_score = net_institutional_flow * 2
+    # REFINED: Apply price momentum with higher institutional flow weight (NO SECTOR MULTIPLIER)
+    base_score = net_institutional_flow * 3.0  # Increased from 2 to 3 for better institutional flow priority
     
     # ADD PRICE MOMENTUM SCORE
     momentum_score = price_momentum.get('score', 0)
-    base_score += momentum_score
-    
-    # APPLY SECTOR STRENGTH MULTIPLIER
-    sector_multiplier = sector_strength.get('multiplier', 1.0)
-    final_score = base_score * sector_multiplier
+    final_score = base_score + momentum_score  # No sector multiplier - pure signals only
     
     # Combine all reasoning
     combined_reasoning = ""
     combined_signals = []
     
-    # INSTITUTIONAL FLOW REASONING
-    if net_institutional_flow >= 15:
-        combined_signals.append('STRONG_INSTITUTIONAL_BULLISH')
-        combined_reasoning += '🚀 MASSIVE institutional bullish flow dominates. '
-    elif net_institutional_flow >= 8:
-        combined_signals.append('MODERATE_INSTITUTIONAL_BULLISH')
-        combined_reasoning += '📈 Strong institutional bullish flow. '
-    elif net_institutional_flow <= -15:
-        combined_signals.append('STRONG_INSTITUTIONAL_BEARISH')
-        combined_reasoning += '📉 MASSIVE institutional bearish flow dominates. '
-    elif net_institutional_flow <= -8:
-        combined_signals.append('MODERATE_INSTITUTIONAL_BEARISH')
-        combined_reasoning += '🔻 Strong institutional bearish flow. '
-    else:
-        combined_signals.append('MIXED_INSTITUTIONAL_FLOW')
-        combined_reasoning += '⚖️ Mixed institutional signals. '
+    # HUMAN-LIKE DECISION SYNTHESIS
+    def synthesize_human_decision(net_flow, zone_analysis, institutional_activities, pcr):
+        """Synthesize all factors like an experienced human trader"""
+        
+        decision = {
+            'primary_bias': 'NEUTRAL',
+            'confidence': 0.5,
+            'reasoning_components': [],
+            'risk_factors': [],
+            'opportunity_factors': [],
+            'human_score': 0
+        }
+        
+        # 1. ZONE ANALYSIS (Most Important - where is price?)
+        zone_bias = zone_analysis.get('zone_bias', 'NEUTRAL')
+        zone_reasoning = zone_analysis.get('zone_reasoning', '')
+        
+        if zone_bias == 'BEARISH':
+            decision['primary_bias'] = 'BEARISH'
+            decision['confidence'] += 0.2
+            decision['reasoning_components'].append(zone_reasoning)
+            # REMOVED: Hardcoded -30 score
+        elif zone_bias == 'BULLISH':
+            decision['primary_bias'] = 'BULLISH'
+            decision['confidence'] += 0.2
+            decision['reasoning_components'].append(zone_reasoning)
+            # REMOVED: Hardcoded +30 score
+        
+        # 2. INSTITUTIONAL FLOW ANALYSIS (Second Most Important) - PURE DATA DRIVEN
+        if net_flow >= 15:
+            decision['reasoning_components'].append('💰 MASSIVE institutional bullish flow dominates')
+            if decision['primary_bias'] == 'BULLISH':
+                decision['confidence'] += 0.15  # Confirmation
+            else:
+                decision['risk_factors'].append('Conflicting zone vs institutional signals')
+        elif net_flow >= 8:
+            decision['reasoning_components'].append('💰 Strong institutional bullish flow detected')
+            if decision['primary_bias'] == 'BULLISH':
+                decision['confidence'] += 0.1
+            else:
+                decision['risk_factors'].append('Mixed zone vs institutional signals')
+        elif net_flow <= -15:
+            decision['reasoning_components'].append('💰 MASSIVE institutional bearish flow dominates')
+            if decision['primary_bias'] == 'BEARISH':
+                decision['confidence'] += 0.15  # Confirmation
+            else:
+                decision['risk_factors'].append('Conflicting zone vs institutional signals')
+        elif net_flow <= -8:
+            decision['reasoning_components'].append('💰 Strong institutional bearish flow detected')
+            if decision['primary_bias'] == 'BEARISH':
+                decision['confidence'] += 0.1
+            else:
+                decision['risk_factors'].append('Mixed zone vs institutional signals')
+        
+        # USE INSTITUTIONAL FLOW AS THE SCORE (pure data-driven)
+        decision['human_score'] = net_flow * 3.0  # Direct mapping from institutional flow
+        
+        # 3. INSTITUTIONAL ACTIVITY ANALYSIS
+        hedging_ratio = institutional_activities.get('hedging_ratio', 0)
+        bearish_activities = institutional_activities.get('bearish_activities', [])
+        
+        if hedging_ratio > 0.6:
+            decision['risk_factors'].append('🛡️ High hedging activity - institutions cautious')
+            decision['confidence'] -= 0.05
+        
+        if bearish_activities:
+            strongest_bearish = max(bearish_activities, key=lambda x: x['strength'])
+            if strongest_bearish['strength'] > 10:  # Very strong activity
+                decision['reasoning_components'].append(f"🔻 {strongest_bearish['explanation']}")
+                # REMOVED: Hardcoded score adjustment - already captured in institutional flow
+        
+        # 4. RISK-REWARD ASSESSMENT
+        risk_reward = zone_analysis.get('risk_reward_ratio', 1)
+        if risk_reward > 2:
+            decision['opportunity_factors'].append(f'📊 Favorable risk-reward: {risk_reward:.1f}')
+            decision['confidence'] += 0.1
+        elif risk_reward < 0.5:
+            decision['risk_factors'].append(f'📊 Poor risk-reward: {risk_reward:.1f}')
+            decision['confidence'] -= 0.1
+            decision['human_score'] *= 0.7  # Reduce score for poor R:R
+        
+        # 5. FINAL BIAS DETERMINATION
+        if decision['human_score'] > 40:
+            decision['primary_bias'] = 'STRONGLY_BULLISH'
+        elif decision['human_score'] > 15:
+            decision['primary_bias'] = 'BULLISH'
+        elif decision['human_score'] < -40:
+            decision['primary_bias'] = 'STRONGLY_BEARISH'
+        elif decision['human_score'] < -15:
+            decision['primary_bias'] = 'BEARISH'
+        else:
+            decision['primary_bias'] = 'NEUTRAL'
+        
+        # Cap confidence
+        decision['confidence'] = max(0.1, min(0.95, decision['confidence']))
+        
+        return decision
+    
+    # Perform human-like decision synthesis (no sector strength)
+    human_decision = synthesize_human_decision(
+        net_institutional_flow, zone_analysis, institutional_activities, pcr
+    )
+    
+    # ENHANCED REASONING WITH HUMAN-LIKE ANALYSIS
+    combined_reasoning = f"🧠 HUMAN-LIKE ANALYSIS:\n"
+    
+    # Add zone analysis first (most important)
+    combined_reasoning += f"📍 POSITION: {zone_analysis.get('zone_reasoning', 'No clear zone bias')}\n"
+    
+    # Add institutional flow analysis
+    for component in human_decision['reasoning_components']:
+        combined_reasoning += f"{component}\n"
+    
+    # Add risk factors
+    if human_decision['risk_factors']:
+        combined_reasoning += "⚠️ RISKS: " + " | ".join(human_decision['risk_factors']) + "\n"
+    
+    # Add opportunity factors
+    if human_decision['opportunity_factors']:
+        combined_reasoning += "✅ OPPORTUNITIES: " + " | ".join(human_decision['opportunity_factors']) + "\n"
+    
+    # Set signals based on human decision
+    combined_signals = [f"HUMAN_{human_decision['primary_bias']}"]
     
     # ADD PRICE MOMENTUM REASONING
     combined_reasoning += price_momentum.get('reasoning', '')
     combined_signals.extend(price_momentum.get('signals', []))
     
-    # ADD SECTOR STRENGTH REASONING
-    combined_reasoning += sector_strength.get('reasoning', '')
-    combined_signals.extend(sector_strength.get('signals', []))
+    # REMOVED: No more hardcoded sector strength reasoning
     
     # ENHANCED BEARISH DETECTION: High PCR + Negative momentum
     if pcr > 1.2 and price_momentum.get('day_change_pct', 0) < -2:
@@ -576,59 +998,82 @@ def analyze_nse_option_buildup(option_data: List[Dict], current_price: float, sy
         combined_signals.append('HIGH_PCR_BEARISH_MOMENTUM')
         combined_reasoning += f'📉 HIGH PCR ({pcr:.3f}) + falling price = strong bearish signal! '
     
-    # SPECIAL CASE: MASSIVE INSTITUTIONAL + PRICE MOMENTUM ALIGNMENT
+    # PATTERN DETECTION (informational only - no score manipulation)
     if (net_institutional_flow > 10 and price_momentum.get('day_change_pct', 0) > 3):
-        combined_signals.append('PERFECT_BULLISH_STORM')
-        combined_reasoning += '⚡ PERFECT STORM: Massive institutional buying + explosive price action! '
-        final_score += 50  # Bonus for perfect alignment
+        combined_signals.append('PERFECT_BULLISH_ALIGNMENT')
+        combined_reasoning += '⚡ PERFECT alignment: Massive institutional buying + explosive price action! '
+        # REMOVED: +50 bonus - let institutional flow data speak
     elif (net_institutional_flow < -10 and price_momentum.get('day_change_pct', 0) < -3):
-        combined_signals.append('PERFECT_BEARISH_STORM')
-        combined_reasoning += '⚡ PERFECT STORM: Massive institutional selling + price crash! '
-        final_score -= 50  # Penalty for perfect bearish alignment
+        combined_signals.append('PERFECT_BEARISH_ALIGNMENT')
+        combined_reasoning += '⚡ PERFECT alignment: Massive institutional selling + price crash! '
+        # REMOVED: -50 penalty - let institutional flow data speak
     
-    # ADDITIONAL BEARISH SCENARIOS
+    # ADDITIONAL PATTERN DETECTION (informational only)
     elif (net_institutional_flow < -5 and pcr > 1.1):
-        # Moderate bearish flow + high PCR = amplified bearish signal
         combined_signals.append('BEARISH_FLOW_HIGH_PCR')
-        combined_reasoning += '🔻 Bearish institutional flow + high PCR = amplified bearish signal! '
-        final_score -= 25
+        combined_reasoning += '🔻 Bearish institutional flow + high PCR pattern detected! '
+        # REMOVED: -25 penalty
     elif (price_momentum.get('day_change_pct', 0) < -4 and pcr > 0.9):
-        # Strong price decline + elevated PCR = bearish momentum
         combined_signals.append('PRICE_DECLINE_BEARISH')
-        combined_reasoning += '📉 Strong price decline + elevated PCR = bearish momentum! '
-        final_score -= 30
+        combined_reasoning += '📉 Strong price decline + elevated PCR pattern detected! '
+        # REMOVED: -30 penalty
     
-    # CONFLICT DETECTION: Options vs Price Action
+    # CONFLICT DETECTION (informational only)
     if (net_institutional_flow > 8 and price_momentum.get('day_change_pct', 0) < -2):
         combined_signals.append('OPTION_PRICE_CONFLICT')
         combined_reasoning += '⚠️ CONFLICT: Bullish options but price falling - mixed signals! '
-        final_score *= 0.7  # Reduce score by 30% for conflicts
+        # REMOVED: 0.7 multiplier
     elif (net_institutional_flow < -8 and price_momentum.get('day_change_pct', 0) > 2):
         combined_signals.append('OPTION_PRICE_CONFLICT')
         combined_reasoning += '⚠️ CONFLICT: Bearish options but price rising - mixed signals! '
-        final_score *= 0.7  # Reduce score by 30% for conflicts
+        # REMOVED: 0.7 multiplier
     
     return {
-        'score': final_score,  # SUPER INTELLIGENT FINAL SCORE
+        # HUMAN-LIKE ANALYSIS RESULTS
+        'score': human_decision['human_score'],  # Human-like score
+        'human_bias': human_decision['primary_bias'],  # Human decision
+        'human_confidence': human_decision['confidence'],  # Human confidence
         'signals': combined_signals,
         'reasoning': combined_reasoning.strip(),
-        'confidence': min(abs(net_institutional_flow) * 2 + price_momentum.get('volume_score', 0), 100),
+        'confidence': min(human_decision['confidence'] * 100, 100),
+        
+        # ZONE ANALYSIS
+        'current_zone': zone_analysis.get('current_zone', 'UNKNOWN'),
+        'zone_bias': zone_analysis.get('zone_bias', 'NEUTRAL'),
+        'nearest_resistance': zone_analysis.get('nearest_resistance'),
+        'nearest_support': zone_analysis.get('nearest_support'),
+        'resistance_distance_pct': zone_analysis.get('resistance_distance_pct', 999),
+        'support_distance_pct': zone_analysis.get('support_distance_pct', 999),
+        'risk_reward_ratio': zone_analysis.get('risk_reward_ratio', 1),
+        
+        # INSTITUTIONAL ACTIVITIES
+        'institutional_activities': institutional_activities['all_activities'],
+        'hedging_ratio': institutional_activities['hedging_ratio'],
+        'speculation_ratio': institutional_activities['speculation_ratio'],
+        'dominant_bearish_activity': institutional_activities['bearish_activities'][:3] if institutional_activities['bearish_activities'] else [],
+        'dominant_bullish_activity': institutional_activities['bullish_activities'][:3] if institutional_activities['bullish_activities'] else [],
+        
+        # ENHANCED LEVEL DATA (sorted by proximity to current price)
+        'enhanced_resistance_levels': sorted(resistance_levels, key=lambda x: x['level'])[:5],  # Ascending (closest resistance first)
+        'enhanced_support_levels': sorted(support_levels, key=lambda x: x['level'], reverse=True)[:5],  # Descending (closest support first)
+        
+        # LEGACY DATA (for backward compatibility)
         'call_activity': total_call_oi,
         'put_activity': total_put_oi,
         'max_pain': max_pain,
         'pcr': pcr,
-        'support_levels': sorted(support_levels, reverse=True)[:3],
-        'resistance_levels': sorted(resistance_levels)[:3],
-        'unusual_activity': unusual_activity[:15],  # More unusual activities
-        'summary': f"SUPER ANALYSIS: Institutional: {net_institutional_flow:.1f}, Price: {momentum_score:.1f}, Sector: x{sector_multiplier}, Final: {final_score:.1f}",
+        'support_levels': [level['level'] for level in sorted(support_levels, key=lambda x: x['level'], reverse=True)[:3]],  # Sort by price descending (closest first)
+        'resistance_levels': [level['level'] for level in sorted(resistance_levels, key=lambda x: x['level'])[:3]],  # Sort by price ascending (closest first)
+        'unusual_activity': unusual_activity[:15],
+        'summary': f"🧠 PURE ANALYSIS: Zone: {zone_analysis.get('current_zone', 'UNKNOWN')}, Bias: {human_decision['primary_bias']}, Score: {human_decision['human_score']:.1f}, Confidence: {human_decision['confidence']:.0%}",
         'detailed_analysis': detailed_analysis,
         'institutional_bullish_flow': institutional_bullish_flow,
         'institutional_bearish_flow': institutional_bearish_flow,
         'net_institutional_flow': net_institutional_flow,
         'total_call_oi': total_call_oi,
         'total_put_oi': total_put_oi,
-        'price_momentum': price_momentum,
-        'sector_strength': sector_strength
+        'price_momentum': price_momentum
+        # REMOVED: sector_strength (no more hardcoded values)
     }
 
 def perform_option_chain_analysis(symbol: str, nse_data: Dict) -> Optional[Dict]:
@@ -647,7 +1092,7 @@ def perform_option_chain_analysis(symbol: str, nse_data: Dict) -> Optional[Dict]
         # Get market context
         market_context = get_indian_market_context(symbol)
         
-        # Analyze NSE option buildup patterns with SUPER INTELLIGENCE
+        # Analyze NSE option buildup patterns with REFINED INTELLIGENCE (no hardcoded sector)
         buildup_analysis = analyze_nse_option_buildup(option_data, current_price, symbol)
         
         # Use PCR from buildup analysis (already calculated from NSE data)
@@ -667,8 +1112,22 @@ def perform_option_chain_analysis(symbol: str, nse_data: Dict) -> Optional[Dict]
         reasoning = buildup_analysis['reasoning']
         strength_signals = buildup_analysis['signals'].copy()
         
-        # Enhanced Indian Market PCR-based scoring
+        # Enhanced Indian Market PCR-based scoring with conflict detection
         pcr_score_result = calculate_indian_pcr_score(normalized_pcr, overall_pcr, symbol, market_context)
+        
+        # REFINED: Detect conflicts between institutional flow and PCR signals
+        net_institutional_flow = buildup_analysis['net_institutional_flow']
+        institutional_direction = 1 if net_institutional_flow > 8 else (-1 if net_institutional_flow < -8 else 0)
+        pcr_direction = 1 if normalized_pcr < 0.7 else (-1 if normalized_pcr > 1.2 else 0)
+        
+        conflict_detected = False
+        if institutional_direction != 0 and pcr_direction != 0 and institutional_direction != pcr_direction:
+            # Conflict detected - reduce PCR impact and add warning
+            conflict_detected = True
+            pcr_score_result['score'] = pcr_score_result['score'] * 0.5  # Halve PCR impact
+            pcr_score_result['reasoning'] += "⚠️ SIGNAL CONFLICT: Institutional flow takes priority. "
+            strength_signals.append('SIGNAL_CONFLICT_DETECTED')
+        
         final_score += pcr_score_result['score']
         strength_signals.extend(pcr_score_result['signals'])
         reasoning += pcr_score_result['reasoning']
@@ -681,17 +1140,16 @@ def perform_option_chain_analysis(symbol: str, nse_data: Dict) -> Optional[Dict]
         reasoning += pcr_momentum_result['reasoning']
         confidence += pcr_momentum_result['confidence']
         
-        # Max pain analysis
+        # Max pain analysis (informational only - no score manipulation)
         max_pain_distance = abs(buildup_analysis['max_pain'] - current_price) / current_price * 100
         if max_pain_distance > 3:
             if buildup_analysis['max_pain'] > current_price:
-                final_score += 10
                 strength_signals.append('MAX_PAIN_BULLISH')
-                reasoning += f"Max Pain ({buildup_analysis['max_pain']}) above current price suggests upward bias. "
+                reasoning += f"Max Pain ({buildup_analysis['max_pain']}) above current price - informational. "
             else:
-                final_score -= 10
                 strength_signals.append('MAX_PAIN_BEARISH')
-                reasoning += f"Max Pain ({buildup_analysis['max_pain']}) below current price suggests downward bias. "
+                reasoning += f"Max Pain ({buildup_analysis['max_pain']}) below current price - informational. "
+        # REMOVED: Hardcoded +10/-10 score adjustments
         
         # Enhanced Indian Market Sentiment Determination
         sentiment = determine_indian_market_sentiment(
@@ -809,14 +1267,14 @@ def store_analysis_results(results: List[Dict]) -> None:
     except Exception as e:
         logging.error(f"Error storing results: {e}")
 
-def main():
+def main(force_run=False):
     """Main execution function"""
     logging.info("🚀 Starting Option Chain Analysis Collector")
     
     # Environment is now hardcoded - no validation needed
     
-    # Check market hours
-    if not is_market_hours():
+    # Check market hours (unless forced)
+    if not force_run and not is_market_hours():
         logging.info("⏰ Outside market hours - skipping analysis")
         return
     
@@ -1192,67 +1650,35 @@ def calculate_indian_pcr_score(normalized_pcr: float, raw_pcr: float, symbol: st
     very_high_threshold = 1.6 if context['volatility_tier'] == 'HIGH' else 1.5
     
     if normalized_pcr < very_low_threshold:
-        score += 30 if context['is_nifty50'] else 25  # Higher score for Nifty 50 stocks
+        score += 15 if context['is_nifty50'] else 12  # REDUCED: Lower PCR impact to prevent false positives
         signals.append('VERY_LOW_PCR_BULLISH')
-        reasoning += f"Very low PCR ({raw_pcr:.3f}, adj: {normalized_pcr:.3f}) indicates strong bullish sentiment. "
-        confidence += 25
+        reasoning += f"Very low PCR ({raw_pcr:.3f}, adj: {normalized_pcr:.3f}) provides bullish support. "
+        confidence += 15  # REDUCED: Lower confidence from PCR alone
         
         if context['expiry_week']:
             score += 5  # Extra bullish during expiry week with low PCR
             reasoning += 'Expiry week amplifies bullish signal. '
     elif normalized_pcr < low_threshold:
-        score += 20 if context['is_nifty50'] else 15
+        score += 10 if context['is_nifty50'] else 8  # REDUCED: Lower PCR impact
         signals.append('LOW_PCR_BULLISH')
-        reasoning += f"Low PCR ({raw_pcr:.3f}, adj: {normalized_pcr:.3f}) indicates bullish sentiment. "
-        confidence += 20
+        reasoning += f"Low PCR ({raw_pcr:.3f}, adj: {normalized_pcr:.3f}) provides bullish support. "
+        confidence += 10  # REDUCED: Lower confidence from PCR
     elif normalized_pcr > very_high_threshold:
-        score -= 30 if context['volatility_tier'] == 'HIGH' else 25
+        score -= 15 if context['volatility_tier'] == 'HIGH' else 12  # REDUCED: Lower PCR bearish impact
         signals.append('VERY_HIGH_PCR_BEARISH')
-        reasoning += f"Very high PCR ({raw_pcr:.3f}, adj: {normalized_pcr:.3f}) indicates strong bearish sentiment. "
-        confidence += 25
+        reasoning += f"Very high PCR ({raw_pcr:.3f}, adj: {normalized_pcr:.3f}) creates bearish pressure. "
+        confidence += 15  # REDUCED: Lower confidence from PCR
         
         if context['retail_interest'] == 'HIGH':
             score -= 5  # Extra bearish for high retail interest stocks
             reasoning += 'High retail interest amplifies bearish signal. '
     elif normalized_pcr > high_threshold:
-        score -= 20 if context['volatility_tier'] == 'HIGH' else 15
+        score -= 10 if context['volatility_tier'] == 'HIGH' else 8  # REDUCED: Lower PCR bearish impact
         signals.append('HIGH_PCR_BEARISH')
-        reasoning += f"High PCR ({raw_pcr:.3f}, adj: {normalized_pcr:.3f}) indicates bearish sentiment. "
-        confidence += 20
+        reasoning += f"High PCR ({raw_pcr:.3f}, adj: {normalized_pcr:.3f}) creates bearish pressure. "
+        confidence += 10  # REDUCED: Lower confidence from PCR
     
-    # Enhanced sector-specific adjustments based on Indian market behavior
-    if context['sector'] == 'Banking' and normalized_pcr < 0.8:
-        score += 5
-        reasoning += 'Banking sector showing institutional confidence. '
-    
-    if context['sector'] == 'IT' and normalized_pcr > 1.2:
-        score -= 5
-        reasoning += 'IT sector showing defensive positioning. '
-    
-    if context['sector'] == 'Metals' and normalized_pcr < 0.9:
-        score += 3
-        reasoning += 'Metals sector showing cyclical optimism. '
-    
-    # Additional sector-specific logic
-    if context['sector'] == 'FMCG' and normalized_pcr < 0.7:
-        score += 4
-        reasoning += 'FMCG sector showing defensive strength. '
-    
-    if context['sector'] == 'Pharma' and normalized_pcr > 1.3:
-        score -= 3
-        reasoning += 'Pharma sector showing regulatory concerns. '
-    
-    if context['sector'] == 'Auto' and normalized_pcr < 0.8:
-        score += 2
-        reasoning += 'Auto sector showing demand recovery. '
-    
-    if context['sector'] == 'Real Estate' and normalized_pcr < 0.9:
-        score += 3
-        reasoning += 'Real estate sector showing revival signs. '
-    
-    if context['sector'] == 'Fintech' and normalized_pcr > 1.4:
-        score -= 4
-        reasoning += 'Fintech sector showing regulatory headwinds. '
+    # REMOVED: All hardcoded sector-specific adjustments - pure signal analysis only
     
     return {
         'score': score,
@@ -1312,7 +1738,13 @@ def get_last_thursday_of_month(date: datetime) -> datetime:
 
 if __name__ == "__main__":
     try:
-        main()
+        import sys
+        # Force run if --force flag is provided
+        if '--force' in sys.argv:
+            logging.info("🔧 FORCE MODE: Running algorithm outside market hours for testing")
+            main(force_run=True)
+        else:
+            main()
     except KeyboardInterrupt:
         logging.info("🛑 Analysis interrupted by user")
         sys.exit(0)

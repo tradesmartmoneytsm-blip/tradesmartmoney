@@ -25,7 +25,7 @@ SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdX
 # Configuration
 MIDCAP_SMALLCAP_INDICES = ['NIFTY MIDCAP 50', 'NIFTY SMALLCAP 50']
 MIN_TURNOVER_THRESHOLD = 50000000  # 5 Cr minimum turnover to consider
-SIGNIFICANT_INCREASE_THRESHOLD = 1.2  # 20% increase threshold
+SIGNIFICANT_INCREASE_THRESHOLD = 1.5  # 50% increase threshold
 MIN_ABSOLUTE_INCREASE = 250000000  # 25 Cr minimum absolute increase
 
 class SmartMoneyFlowAnalyzer:
@@ -163,7 +163,7 @@ class SmartMoneyFlowAnalyzer:
                 
                 # Check if this is significant money flow increase
                 is_significant = (
-                    percentage_increase >= (SIGNIFICANT_INCREASE_THRESHOLD - 1) * 100 and  # 20%+ increase
+                    percentage_increase >= (SIGNIFICANT_INCREASE_THRESHOLD - 1) * 100 and  # 50%+ increase
                     absolute_increase >= MIN_ABSOLUTE_INCREASE  # 25Cr+ absolute increase
                 )
                 

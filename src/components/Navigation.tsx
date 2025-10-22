@@ -182,10 +182,10 @@ export function Navigation({
       description: 'Multi-day trading examples and analysis',
       subItems: [
         { 
-          id: 'bit-strategy', 
-          label: 'BIT Strategy', 
+          id: 'momentum-strategy', 
+          label: 'Momentum Strategy', 
           icon: <BarChart3 className={brandTokens.icons.sm} />,
-          description: 'Buyer Initiated Trades Analysis'
+          description: 'Momentum-Based Trading Analysis'
         },
         { 
           id: 'swing-angle', 
@@ -327,9 +327,9 @@ export function Navigation({
       return;
     }
     
-    // Handle Swing Trade navigation - navigate to Swing with BIT strategy as default
+    // Handle Swing Trade navigation - navigate to Swing with Momentum strategy as default
     if (itemId === 'swing') {
-      window.location.href = '/swing-trades/bit-strategy';
+      window.location.href = '/swing-trades/momentum-strategy';
       return;
     }
     
