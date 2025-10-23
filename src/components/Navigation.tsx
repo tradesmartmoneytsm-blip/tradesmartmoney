@@ -254,6 +254,20 @@ export function Navigation({
       ]
     },
     {
+      id: 'commodity',
+      label: 'Commodity',
+      icon: <BarChart3 className={brandTokens.icons.sm} />,
+      description: 'Commodity trading analysis and signals',
+      subItems: [
+        { 
+          id: 'coming-soon', 
+          label: 'Coming Soon', 
+          icon: <Activity className={brandTokens.icons.sm} />,
+          description: 'Commodity analysis features coming soon'
+        }
+      ]
+    },
+    {
       id: 'news',
       label: 'News',
       icon: <Newspaper className={brandTokens.icons.sm} />,
