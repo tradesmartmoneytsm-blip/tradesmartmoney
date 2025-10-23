@@ -359,6 +359,12 @@ export function Navigation({
       return;
     }
     
+    // Handle Commodity navigation - navigate to Commodity with coming soon as default
+    if (itemId === 'commodity') {
+      window.location.href = '/commodity';
+      return;
+    }
+    
     // Handle submenu clicks
     if (subItemId) {
       // Handle market submenus - navigate to separate pages
