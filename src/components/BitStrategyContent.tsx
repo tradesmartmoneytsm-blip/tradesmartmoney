@@ -314,8 +314,11 @@ export function BitStrategyContent() {
                     <div key={trade.id || index} className="bg-white rounded-lg border border-green-200 p-3 hover:shadow-md transition-all">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-bold text-gray-900 text-sm">{trade.stock_symbol || trade.symbol}</h4>
-                        <div className="text-xs text-green-600 font-bold">
-                          {trade.performance_1month > 0 ? '+' : ''}{trade.performance_1month.toFixed(1)}%
+                        <div className="text-right">
+                          <div className="text-xs text-green-600 font-bold">
+                            {trade.performance_1month > 0 ? '+' : ''}{trade.performance_1month.toFixed(1)}%
+                          </div>
+                          <div className="text-xs text-gray-500">1M Change</div>
                         </div>
                       </div>
                       <div className="text-xs text-gray-600 mb-2">
@@ -349,12 +352,15 @@ export function BitStrategyContent() {
                     <div key={trade.id || index} className="bg-white rounded-lg border border-blue-200 p-3 hover:shadow-md transition-all">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-bold text-gray-900 text-sm">{trade.stock_symbol || trade.symbol}</h4>
-                        <div className="text-xs text-blue-600 font-bold">
-                          ₹{(trade.market_cap / 10000).toFixed(0)}K CR
+                        <div className="text-right">
+                          <div className={`text-xs font-bold ${trade.performance_1month >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {trade.performance_1month > 0 ? '+' : ''}{trade.performance_1month.toFixed(1)}%
+                          </div>
+                          <div className="text-xs text-gray-500">1M Change</div>
                         </div>
                       </div>
                       <div className="text-xs text-gray-600 mb-2">
-                        ₹{trade.current_price.toFixed(2)} • 1M: {trade.performance_1month > 0 ? '+' : ''}{trade.performance_1month.toFixed(1)}%
+                        ₹{trade.current_price.toFixed(2)} • MCap: ₹{(trade.market_cap / 10000).toFixed(0)}K CR
                       </div>
                       <div className="text-xs text-gray-500 mb-2">
                         P/E: {trade.pe_ratio > 0 ? trade.pe_ratio.toFixed(1) : 'N/A'} • Entry: {formatDate(trade.entry_date)}
@@ -384,8 +390,11 @@ export function BitStrategyContent() {
                     <div key={trade.id || index} className="bg-white rounded-lg border border-purple-200 p-3 hover:shadow-md transition-all">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-bold text-gray-900 text-sm">{trade.stock_symbol || trade.symbol}</h4>
-                        <div className={`text-xs font-bold ${trade.performance_1month >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {trade.performance_1month > 0 ? '+' : ''}{trade.performance_1month.toFixed(1)}%
+                        <div className="text-right">
+                          <div className={`text-xs font-bold ${trade.performance_1month >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {trade.performance_1month > 0 ? '+' : ''}{trade.performance_1month.toFixed(1)}%
+                          </div>
+                          <div className="text-xs text-gray-500">1M Change</div>
                         </div>
                       </div>
                       <div className="text-xs text-gray-600 mb-2">
