@@ -261,7 +261,7 @@ export function News() {
       {/* Header Advertisement */}
       {/* Auto ads will handle all ad placement automatically */}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="modern-card p-6">
         {/* Main Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">

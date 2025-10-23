@@ -115,11 +115,11 @@ export function SmartMoneyFlowContent() {
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div className="modern-card p-6">
       {/* Header */}
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">
-          💰 SmartMoneyFlow Analysis
+        <h3 className="text-h3 mb-3">
+          <span className="text-gradient">💰 SmartMoneyFlow Analysis</span>
         </h3>
       </div>
 
@@ -219,7 +219,7 @@ export function SmartMoneyFlowContent() {
               <p className="text-sm text-gray-500">No stocks available for the selected filter</p>
             </div>
           ) : (
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="data-table">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">

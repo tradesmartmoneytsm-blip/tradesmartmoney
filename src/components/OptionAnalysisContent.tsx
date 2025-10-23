@@ -142,14 +142,14 @@ export function OptionAnalysisContent() {
       const isWeekday = istTime.getDay() >= 1 && istTime.getDay() <= 5; // Monday to Friday
       const isMarketHours = hours >= 9 && hours < 15 && (hours > 9 || minutes >= 15) && (hours < 15 || minutes <= 30);
       
-      if (isWeekday && isMarketHours && autoRefreshEnabled) {
+      if (isWeekday && isMarketHours && autoRefreshEnabled && !showDetailModal) {
         console.log('🔄 Auto-refreshing Option Analysis data...');
         fetchData();
       }
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval);
-  }, [fetchData, autoRefreshEnabled]);
+  }, [fetchData, autoRefreshEnabled, showDetailModal]);
 
   useEffect(() => {
     // Ensure data is an array before processing
@@ -241,6 +241,9 @@ export function OptionAnalysisContent() {
   };
 
   const showDetailedAnalysis = (stock: OptionAnalysisResult) => {
+    // Prevent multiple rapid clicks
+    if (showDetailModal) return;
+    
     console.log('🔍 Opening detailed analysis for:', stock.symbol);
     setSelectedStock(stock);
     setShowDetailModal(true);
@@ -660,8 +663,8 @@ export function OptionAnalysisContent() {
 
       {/* Detailed Analysis Modal */}
       {showDetailModal && selectedStock && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
-          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative" style={{ zIndex: 10000 }}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-xl">
               <div className="flex items-center justify-between">

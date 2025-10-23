@@ -96,11 +96,11 @@ export function MostActiveCallsContent() {
   const currentData = activeTab === 'calls' ? callsData : putsData;
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div className="modern-card p-6">
       {/* Header */}
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">
-          📊 Most Active Options
+        <h3 className="text-h3 mb-3">
+          <span className="text-gradient">📊 Most Active Options</span>
         </h3>
         <p className="text-sm text-gray-600 mb-1">
           Most active stock calls and puts with highest trading activity
@@ -219,7 +219,7 @@ export function MostActiveCallsContent() {
               <p className="text-sm text-gray-500">No most active {activeTab} data available at the moment</p>
             </div>
           ) : (
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="data-table">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">

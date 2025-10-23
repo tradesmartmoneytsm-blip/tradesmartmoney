@@ -132,8 +132,8 @@ export function FiiDiiActivity({ className }: FiiDiiActivityProps) {
       )}
 
       {/* Historical Chart */}
-      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 font-serif">
+      <div className="modern-card p-6">
+        <h3 className="text-h4 mb-4">
           15-Day Net Flow Trend (₹ Crores)
         </h3>
         <ResponsiveContainer width="100%" height={350}>
@@ -215,8 +215,8 @@ export function FiiDiiActivity({ className }: FiiDiiActivityProps) {
       </div>
 
       {/* Recent Activity Table */}
-      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 font-serif">Recent Activity</h3>
+      <div className="modern-card p-6">
+        <h3 className="text-h4 mb-4">Recent Activity</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -277,7 +277,7 @@ function SummaryCard({ title, icon, netValue, buyValue, sellValue, trend }: Summ
   const isNegative = netValue < 0;
   
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
+    <div className="modern-card p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="text-blue-600">{icon}</div>
