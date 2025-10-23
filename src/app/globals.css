@@ -173,7 +173,7 @@ body {
 h1, .text-h1 {
   font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif;
   font-weight: 700;
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
   line-height: 1.1;
   letter-spacing: -0.025em;
   color: #0f172a;
@@ -182,7 +182,7 @@ h1, .text-h1 {
 h2, .text-h2 {
   font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif;
   font-weight: 600;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
   line-height: 1.2;
   letter-spacing: -0.025em;
   color: #1e293b;
@@ -191,7 +191,7 @@ h2, .text-h2 {
 h3, .text-h3 {
   font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif;
   font-weight: 600;
-  font-size: clamp(1.25rem, 3vw, 1.875rem);
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
   line-height: 1.3;
   letter-spacing: -0.015em;
   color: #334155;
@@ -200,7 +200,7 @@ h3, .text-h3 {
 h4, .text-h4 {
   font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif;
   font-weight: 600;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.4;
   color: #475569;
 }
@@ -208,8 +208,8 @@ h4, .text-h4 {
 p, .text-body {
   font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
   font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.5;
   letter-spacing: 0.01em;
   color: #64748b;
 }
@@ -770,6 +770,67 @@ p, .text-body {
   box-shadow: var(--shadow-inner);
 }
 
+/* Compact Design Utilities */
+.compact-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0.75rem;
+}
+
+.compact-card {
+  background: #ffffff;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.compact-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-gray-300);
+}
+
+.compact-spacing {
+  gap: 0.75rem;
+}
+
+.compact-padding {
+  padding: 0.75rem;
+}
+
+.compact-margin {
+  margin: 0.5rem 0;
+}
+
+/* Compact Table Styles */
+.compact-table th {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.compact-table td {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+/* Dense Information Layout */
+.info-dense {
+  line-height: 1.3;
+  font-size: 0.85rem;
+}
+
+.info-dense h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.info-dense p {
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
 /* Number formatting */
 .number {
   font-family: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
@@ -801,9 +862,9 @@ p, .text-body {
 
 .container-fluid {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 0.75rem;
 }
 
 @media (min-width: 640px) {
@@ -892,19 +953,19 @@ p, .text-body {
 /* Responsive Typography */
 @media (max-width: 768px) {
   body {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
   
   h1, .text-h1 {
-    font-size: clamp(1.75rem, 8vw, 2.5rem);
-  }
-  
-  h2, .text-h2 {
     font-size: clamp(1.5rem, 6vw, 2rem);
   }
   
+  h2, .text-h2 {
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+  }
+  
   h3, .text-h3 {
-    font-size: clamp(1.25rem, 5vw, 1.5rem);
+    font-size: clamp(1.125rem, 4vw, 1.25rem);
   }
   
   .premium-card {

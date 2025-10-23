@@ -265,7 +265,7 @@ export function OptionAnalysisContent() {
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div className="compact-card info-dense">
       {/* Compact Header */}
       <div className="mb-6">
         <h3 className="text-h3 mb-3">
@@ -280,7 +280,7 @@ export function OptionAnalysisContent() {
       </div>
 
       {/* Compact Controls */}
-      <div className="bg-gray-50 rounded-lg p-4 mb-6">
+      <div className="bg-gray-50 rounded-lg compact-padding mb-4">
         <div className="flex flex-wrap gap-4 items-center justify-between">
           {/* Filters */}
           <div className="flex flex-wrap gap-2">
@@ -449,7 +449,7 @@ export function OptionAnalysisContent() {
             </div>
           ) : viewMode === 'table' ? (
             /* Compact Table View */
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="compact-card overflow-hidden compact-table">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">

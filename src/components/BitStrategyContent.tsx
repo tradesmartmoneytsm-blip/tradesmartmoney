@@ -135,9 +135,9 @@ export function BitStrategyContent() {
   const runningTrades = filteredTrades.filter(trade => trade.status.toLowerCase() === 'running');
 
   return (
-    <div className="modern-card p-6">
+    <div className="compact-card info-dense">
       {/* Header */}
-      <div className="mb-6">
+      <div className="compact-margin">
         <h3 className="text-h3 mb-3">
           <span className="text-gradient">📈 Momentum Strategy</span>
         </h3>

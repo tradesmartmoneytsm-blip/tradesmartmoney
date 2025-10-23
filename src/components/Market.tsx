@@ -140,7 +140,7 @@ export function Market({ initialSubSection }: MarketProps) {
     switch (activeSubSection) {
       case 'sector-performance':
         return (
-          <div className="modern-card p-4 lg:p-6">
+          <div className="compact-card info-dense">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-h3">
                 <span className="text-gradient">Sector Performance</span>
@@ -276,10 +276,10 @@ export function Market({ initialSubSection }: MarketProps) {
       </header>
 
       {/* Compact Professional Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5">
         {/* Compact Left Sidebar Navigation */}
         <aside className="lg:col-span-1" role="navigation" aria-label="Market sections">
-          <nav className="modern-card p-4">
+          <nav className="compact-card compact-padding">
             <h2 className="text-h4 mb-4">Market Sections</h2>
             <ul className="space-y-1" role="menu">
               {subSections.map((section) => (
