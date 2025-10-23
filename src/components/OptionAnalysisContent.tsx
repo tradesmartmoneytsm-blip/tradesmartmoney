@@ -261,22 +261,22 @@ export function OptionAnalysisContent() {
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div className="modern-card p-6">
       {/* Compact Header */}
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">
-          🎯 Option Chain Analysis
+        <h3 className="text-h3 mb-3">
+          <span className="text-gradient">🎯 Option Chain Analysis</span>
         </h3>
-        <p className="text-sm text-gray-600 mb-1">
+        <p className="text-body mb-2">
           Live Institutional Flow & Smart Money Analysis
         </p>
-        <p className="text-xs text-gray-500">
+        <p className="text-caption text-muted">
           Enhanced with Indian Market Intelligence • Updated Every 5 Minutes • Algo starts running from 9:20 AM
         </p>
       </div>
 
       {/* Compact Controls */}
-      <div className="bg-gray-50 rounded-lg p-4 mb-6">
+      <div className="surface-elevated rounded-xl p-4 mb-6">
         <div className="flex flex-wrap gap-4 items-center justify-between">
           {/* Filters */}
           <div className="flex flex-wrap gap-2">
@@ -445,7 +445,7 @@ export function OptionAnalysisContent() {
             </div>
           ) : viewMode === 'table' ? (
             /* Compact Table View */
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="data-table">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">

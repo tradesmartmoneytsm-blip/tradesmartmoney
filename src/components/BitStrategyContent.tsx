@@ -135,16 +135,16 @@ export function BitStrategyContent() {
   const runningTrades = filteredTrades.filter(trade => trade.status.toLowerCase() === 'running');
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div className="modern-card p-6">
       {/* Header */}
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">
-          📈 Momentum Strategy
+        <h3 className="text-h3 mb-3">
+          <span className="text-gradient">📈 Momentum Strategy</span>
         </h3>
-        <p className="text-sm text-gray-600 mb-1">
+        <p className="text-body mb-2">
           High-momentum stocks with strong institutional flow and technical breakouts
         </p>
-        <p className="text-xs text-gray-500">
+        <p className="text-caption text-muted">
           Market Cap &gt; 10,000 CR • Price &gt; ₹200 • Updated Daily at 3:00 PM
         </p>
       </div>

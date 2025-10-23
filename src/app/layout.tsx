@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { TrafficTracker } from '@/components/TrafficTracker';
@@ -8,18 +8,31 @@ import { StructuredData } from '@/components/StructuredData';
 import { AdvanceDeclineWidget } from '@/components/AdvanceDeclineWidget';
 import { ActivityManager } from '@/components/ActivityManager';
 
-const geistSans = Geist({
+// Primary font - Inter (excellent readability, modern)
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-inter",
   display: 'swap',
   preload: true,
+  weight: ['300', '400', '500', '600', '700', '800'],
 });
 
-const geistMono = Geist_Mono({
+// Heading font - Poppins (professional, friendly)
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-poppins",
+  display: 'swap',
+  preload: true,
+  weight: ['400', '500', '600', '700', '800'],
+});
+
+// Monospace font - JetBrains Mono (code, numbers)
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
   display: 'swap',
   preload: false,
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
@@ -225,7 +238,7 @@ export default function RootLayout({
         
         
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50`}>
+      <body className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable} font-inter antialiased min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50`}>
         {/* Skip link for accessibility */}
         <a href="#main-content" className="skip-link">
           Skip to main content

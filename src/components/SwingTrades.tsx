@@ -527,8 +527,8 @@ export function SwingTrades({ initialStrategy }: SwingTradesProps = {}) {
     const performanceTrend = getPerformanceTrend(trade);
     const expectedReturn = calculateExpectedReturn(trade);
 
-  return (
-    <div className="group bg-white rounded-lg shadow-md border border-gray-100 p-4 hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-gray-50 to-white">
+    return (
+      <div className="group modern-card p-4 interactive-scale">
               <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
@@ -855,7 +855,7 @@ export function SwingTrades({ initialStrategy }: SwingTradesProps = {}) {
 
     return (
       <div className="mb-4">
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-2 sm:p-3">
+        <div className="modern-card p-2 sm:p-3">
           <div className="flex flex-wrap gap-1 sm:gap-2">
             {strategies.map((strategy) => {
               // Special handling for Value Buying strategy
