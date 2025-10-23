@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     const { data: rawData, error } = await supabaseAdmin
       .from('latest_option_analysis')
       .select('*')
-      .limit(1000); // Explicit limit to ensure all data is fetched
+      .limit(500); // Reasonable limit for latest analysis per symbol
 
     if (error) {
       console.error('❌ Database error:', error);

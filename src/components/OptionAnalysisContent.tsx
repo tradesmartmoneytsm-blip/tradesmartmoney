@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -90,7 +90,6 @@ type SortType = 'SCORE_DESC' | 'SCORE_ASC' | 'SYMBOL' | 'TIMESTAMP';
 
 export function OptionAnalysisContent() {
   const [data, setData] = useState<OptionAnalysisResult[]>([]);
-  const [filteredData, setFilteredData] = useState<OptionAnalysisResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterType>('ALL');
@@ -101,14 +100,13 @@ export function OptionAnalysisContent() {
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState<boolean>(true);
   const [selectedStock, setSelectedStock] = useState<OptionAnalysisResult | null>(null);
   const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
-  const [isModalStable, setIsModalStable] = useState<boolean>(true);
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`/api/option-analysis?min_score=${minScore}&limit=1000`);
+      const response = await fetch(`/api/option-analysis?min_score=${minScore}&limit=500`);
       const result = await response.json();
       
       if (result.success) {
@@ -118,12 +116,10 @@ export function OptionAnalysisContent() {
         setLastUpdated(new Date().toLocaleString());
       } else {
         // Handle no data gracefully without throwing errors
-        console.log('ℹ️ No option analysis data available yet');
         setData([]);
         setError('No option data available. Run the Python script to collect data.');
       }
     } catch (err) {
-      console.log('ℹ️ Option analysis data not available:', err);
       setData([]);
       setError('Option analysis data not available. Please run the Python script to collect data.');
     } finally {
@@ -143,9 +139,7 @@ export function OptionAnalysisContent() {
       const isWeekday = istTime.getDay() >= 1 && istTime.getDay() <= 5; // Monday to Friday
       const isMarketHours = hours >= 9 && hours < 15 && (hours > 9 || minutes >= 15) && (hours < 15 || minutes <= 30);
       
-      // Only refresh if modal is not open AND system is stable
-      if (isWeekday && isMarketHours && autoRefreshEnabled && !showDetailModal && isModalStable) {
-        console.log('🔄 Auto-refreshing Option Analysis data...');
+      if (isWeekday && isMarketHours && autoRefreshEnabled && !showDetailModal) {
         fetchData();
       }
     }, 5 * 60 * 1000); // 5 minutes
@@ -153,11 +147,11 @@ export function OptionAnalysisContent() {
     return () => clearInterval(interval);
   }, [fetchData, autoRefreshEnabled]);
 
-  useEffect(() => {
+  // Optimize filtering and sorting with useMemo
+  const filteredData = useMemo(() => {
     // Ensure data is an array before processing
     if (!Array.isArray(data)) {
-      setFilteredData([]);
-      return;
+      return [];
     }
     
     let filtered = [...data];
@@ -195,7 +189,7 @@ export function OptionAnalysisContent() {
       }
     });
     
-    setFilteredData(filtered);
+    return filtered;
   }, [data, filter, sortBy]);
 
   const getSentimentIcon = (sentiment: string) => {
@@ -243,48 +237,27 @@ export function OptionAnalysisContent() {
   };
 
   const showDetailedAnalysis = (stock: OptionAnalysisResult) => {
-    // Prevent multiple rapid clicks or if modal is unstable
-    if (showDetailModal || !isModalStable) return;
+    // Prevent multiple rapid clicks
+    if (showDetailModal) return;
     
-    console.log('🔍 Opening detailed analysis for:', stock.symbol);
-    
-    // Disable auto-refresh completely while modal operations
-    setAutoRefreshEnabled(false);
-    setIsModalStable(false);
-    
-    // Use requestAnimationFrame for smooth state updates
-    requestAnimationFrame(() => {
-      setSelectedStock(stock);
-      setShowDetailModal(true);
-      
-      // Re-enable stability after modal is fully rendered
-      setTimeout(() => {
-        setIsModalStable(true);
-      }, 300);
-    });
+    setSelectedStock(stock);
+    setShowDetailModal(true);
   };
 
   const closeDetailModal = () => {
-    setIsModalStable(false);
     setShowDetailModal(false);
-    
-    // Clean up after modal closes
-    setTimeout(() => {
-      setSelectedStock(null);
-      setAutoRefreshEnabled(true); // Re-enable auto-refresh
-      setIsModalStable(true);
-    }, 200);
+    setSelectedStock(null);
   };
 
 
-  const filterOptions = [
+  const filterOptions = useMemo(() => [
     { value: 'ALL', label: 'All Signals', count: Array.isArray(data) ? data.length : 0 },
     { value: 'STRONGLY_BULLISH', label: 'Strongly Bullish', count: Array.isArray(data) ? data.filter(d => d.institutional_sentiment === 'STRONGLY_BULLISH').length : 0 },
     { value: 'BULLISH', label: 'Bullish', count: Array.isArray(data) ? data.filter(d => d.institutional_sentiment === 'BULLISH').length : 0 },
     { value: 'NEUTRAL', label: 'Neutral', count: Array.isArray(data) ? data.filter(d => d.institutional_sentiment === 'NEUTRAL').length : 0 },
     { value: 'BEARISH', label: 'Bearish', count: Array.isArray(data) ? data.filter(d => d.institutional_sentiment === 'BEARISH').length : 0 },
     { value: 'STRONGLY_BEARISH', label: 'Strongly Bearish', count: Array.isArray(data) ? data.filter(d => d.institutional_sentiment === 'STRONGLY_BEARISH').length : 0 },
-  ];
+  ], [data]);
 
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
