@@ -46,6 +46,42 @@ class SmartMoneyFlowAnalyzer:
     def format_time_for_query(self, dt: datetime) -> str:
         """Format datetime for NSE timestamp comparison"""
         return dt.strftime('%d-%b-%Y %H:%M:%S')
+    
+    def get_last_trading_day(self, current_date: datetime) -> datetime:
+        """Find the last trading day (skip weekends and holidays)"""
+        # Start from yesterday and go back until we find a trading day
+        check_date = current_date - timedelta(days=1)
+        
+        # Go back up to 7 days to handle long weekends/holidays
+        for _ in range(7):
+            # Skip weekends (Saturday=5, Sunday=6)
+            if check_date.weekday() < 5:  # Monday=0 to Friday=4
+                # Check if we have data for this date in the database
+                date_str = check_date.strftime('%d-%b-%Y')
+                
+                # Quick check if data exists for this date
+                try:
+                    url = f"{SUPABASE_URL}/rest/v1/nse_sector_data"
+                    params = {
+                        'select': 'timestamp',
+                        'timestamp': f'like.{date_str}*',
+                        'limit': '1'
+                    }
+                    
+                    response = self.session.get(url, headers=self.headers, params=params, timeout=10)
+                    if response.status_code == 200 and response.json():
+                        logging.info(f"✅ Found last trading day: {date_str}")
+                        return check_date
+                        
+                except Exception as e:
+                    logging.warning(f"⚠️ Error checking date {date_str}: {e}")
+            
+            # Go back one more day
+            check_date -= timedelta(days=1)
+        
+        # Fallback: use 1 day ago if no data found
+        logging.warning("⚠️ Could not find last trading day, using yesterday as fallback")
+        return current_date - timedelta(days=1)
 
     def get_stock_turnover_at_time(self, symbol: str, target_date: str, target_time: str) -> Optional[float]:
         """Get stock's latest turnover at or before specific time on specific date"""
@@ -122,16 +158,19 @@ class SmartMoneyFlowAnalyzer:
             return []
 
     def analyze_money_flow_pacing(self) -> List[Dict]:
-        """Main analysis function to compare today vs yesterday money flow pacing"""
+        """Main analysis function to compare today vs last trading day money flow pacing"""
         current_time = self.get_current_ist_time()
         
         # Format dates for queries
         today_date = current_time.strftime('%d-%b-%Y')
-        yesterday_date = (current_time - timedelta(days=1)).strftime('%d-%b-%Y')
+        
+        # Find last trading day (skip weekends and holidays)
+        last_trading_date = self.get_last_trading_day(current_time)
+        last_trading_date_str = last_trading_date.strftime('%d-%b-%Y')
         current_time_str = current_time.strftime('%H:%M:%S')
         
         logging.info(f"🔍 Analyzing money flow pacing at {today_date} {current_time_str}")
-        logging.info(f"📊 Comparing with yesterday: {yesterday_date}")
+        logging.info(f"📊 Comparing with last trading day: {last_trading_date_str}")
         
         # Get all MIDCAP/SMALLCAP stocks
         stocks = self.get_midcap_smallcap_stocks()
@@ -147,8 +186,8 @@ class SmartMoneyFlowAnalyzer:
                 # Get today's turnover at current time
                 today_turnover = self.get_stock_turnover_at_time(symbol, today_date, current_time_str)
                 
-                # Get yesterday's turnover at same time
-                yesterday_turnover = self.get_stock_turnover_at_time(symbol, yesterday_date, current_time_str)
+                # Get last trading day's turnover at same time
+                yesterday_turnover = self.get_stock_turnover_at_time(symbol, last_trading_date_str, current_time_str)
                 
                 if today_turnover is None or yesterday_turnover is None:
                     continue
@@ -182,7 +221,7 @@ class SmartMoneyFlowAnalyzer:
                     
                     significant_flows.append(flow_data)
                     
-                    logging.info(f"🚀 {symbol}: Today ₹{flow_data['today_turnover_cr']}Cr vs Yesterday ₹{flow_data['yesterday_turnover_cr']}Cr (+{percentage_increase:.1f}%)")
+                    logging.info(f"🚀 {symbol}: Today ₹{flow_data['today_turnover_cr']}Cr vs Last Trading Day ₹{flow_data['yesterday_turnover_cr']}Cr (+{percentage_increase:.1f}%)")
                 
             except Exception as e:
                 logging.error(f"❌ Error analyzing {symbol}: {e}")
