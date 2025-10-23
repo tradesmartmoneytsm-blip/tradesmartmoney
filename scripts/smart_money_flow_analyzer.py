@@ -26,7 +26,7 @@ SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdX
 MIDCAP_SMALLCAP_INDICES = ['NIFTY MIDCAP 50', 'NIFTY SMALLCAP 50']
 MIN_TURNOVER_THRESHOLD = 50000000  # 5 Cr minimum turnover to consider
 SIGNIFICANT_INCREASE_THRESHOLD = 1.5  # 50% increase threshold
-MIN_ABSOLUTE_INCREASE = 250000000  # 25 Cr minimum absolute increase
+MIN_ABSOLUTE_INCREASE = 100000000  # 10 Cr minimum absolute increase
 
 class SmartMoneyFlowAnalyzer:
     def __init__(self):
@@ -91,9 +91,10 @@ class SmartMoneyFlowAnalyzer:
             params = {
                 'select': 'total_traded_value,timestamp',
                 'symbol': f'eq.{symbol}',
+                'timestamp': f'like.{target_date}*',
                 'data_type': 'eq.STOCK',
-                'order': 'analysis_timestamp.desc',
-                'limit': '50'  # Get recent records to find the right time
+                'order': 'timestamp.desc',  # Order by timestamp, not analysis_timestamp
+                'limit': '100'  # Get more records to find the right time
             }
             
             response = self.session.get(url, headers=self.headers, params=params, timeout=10)
@@ -103,25 +104,24 @@ class SmartMoneyFlowAnalyzer:
                 
                 # Find the latest record at or before target time on target date
                 target_datetime_str = f"{target_date} {target_time}"
+                best_turnover = None
+                best_timestamp = None
                 
                 for record in records:
                     record_timestamp = record.get('timestamp', '')
+                    turnover = record.get('total_traded_value', 0)
                     
-                    # Check if this record is from target date and at/before target time
-                    if target_date in record_timestamp:
-                        # Simple string comparison for time (works for same date)
+                    # Check if this record is at or before target time
+                    if record_timestamp and turnover and turnover > 0:
                         if record_timestamp <= target_datetime_str:
-                            turnover = record.get('total_traded_value', 0)
-                            if turnover and turnover > 0:
-                                logging.debug(f"✅ {symbol} turnover at {record_timestamp}: ₹{turnover/10000000:.2f}Cr")
-                                return float(turnover)
+                            # Take the latest (highest timestamp) that's still before target time
+                            if best_timestamp is None or record_timestamp > best_timestamp:
+                                best_turnover = turnover
+                                best_timestamp = record_timestamp
                 
-                # If no exact match, try to get latest from that date
-                for record in records:
-                    if target_date in record.get('timestamp', ''):
-                        turnover = record.get('total_traded_value', 0)
-                        if turnover and turnover > 0:
-                            return float(turnover)
+                if best_turnover:
+                    logging.debug(f"✅ {symbol} latest turnover until {target_time} on {target_date}: ₹{best_turnover/10000000:.2f}Cr at {best_timestamp}")
+                    return float(best_turnover)
             
             return None
             
@@ -180,13 +180,16 @@ class SmartMoneyFlowAnalyzer:
             return []
         
         significant_flows = []
+        processed_count = 0
         
         for symbol in stocks:
             try:
-                # Get today's turnover at current time
+                processed_count += 1
+                
+                # Get today's latest turnover until current time
                 today_turnover = self.get_stock_turnover_at_time(symbol, today_date, current_time_str)
                 
-                # Get last trading day's turnover at same time
+                # Get last trading day's latest turnover until same time
                 yesterday_turnover = self.get_stock_turnover_at_time(symbol, last_trading_date_str, current_time_str)
                 
                 if today_turnover is None or yesterday_turnover is None:
@@ -230,7 +233,7 @@ class SmartMoneyFlowAnalyzer:
         # Sort by percentage increase (highest first)
         significant_flows.sort(key=lambda x: x['percentage_increase'], reverse=True)
         
-        logging.info(f"🎯 Found {len(significant_flows)} stocks with significant money flow increase")
+        logging.info(f"🎯 Processed {processed_count} stocks, found {len(significant_flows)} with significant money flow increase")
         
         return significant_flows
 
