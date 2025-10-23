@@ -101,6 +101,7 @@ export function OptionAnalysisContent() {
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState<boolean>(true);
   const [selectedStock, setSelectedStock] = useState<OptionAnalysisResult | null>(null);
   const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
+  const [isModalStable, setIsModalStable] = useState<boolean>(true);
 
   const fetchData = useCallback(async () => {
     try {
@@ -142,7 +143,8 @@ export function OptionAnalysisContent() {
       const isWeekday = istTime.getDay() >= 1 && istTime.getDay() <= 5; // Monday to Friday
       const isMarketHours = hours >= 9 && hours < 15 && (hours > 9 || minutes >= 15) && (hours < 15 || minutes <= 30);
       
-      if (isWeekday && isMarketHours && autoRefreshEnabled && !showDetailModal) {
+      // Only refresh if modal is not open AND system is stable
+      if (isWeekday && isMarketHours && autoRefreshEnabled && !showDetailModal && isModalStable) {
         console.log('🔄 Auto-refreshing Option Analysis data...');
         fetchData();
       }
@@ -241,17 +243,37 @@ export function OptionAnalysisContent() {
   };
 
   const showDetailedAnalysis = (stock: OptionAnalysisResult) => {
-    // Prevent multiple rapid clicks
-    if (showDetailModal) return;
+    // Prevent multiple rapid clicks or if modal is unstable
+    if (showDetailModal || !isModalStable) return;
     
     console.log('🔍 Opening detailed analysis for:', stock.symbol);
-    setSelectedStock(stock);
-    setShowDetailModal(true);
+    
+    // Disable auto-refresh completely while modal operations
+    setAutoRefreshEnabled(false);
+    setIsModalStable(false);
+    
+    // Use requestAnimationFrame for smooth state updates
+    requestAnimationFrame(() => {
+      setSelectedStock(stock);
+      setShowDetailModal(true);
+      
+      // Re-enable stability after modal is fully rendered
+      setTimeout(() => {
+        setIsModalStable(true);
+      }, 300);
+    });
   };
 
   const closeDetailModal = () => {
+    setIsModalStable(false);
     setShowDetailModal(false);
-    setSelectedStock(null);
+    
+    // Clean up after modal closes
+    setTimeout(() => {
+      setSelectedStock(null);
+      setAutoRefreshEnabled(true); // Re-enable auto-refresh
+      setIsModalStable(true);
+    }, 200);
   };
 
 
@@ -265,7 +287,7 @@ export function OptionAnalysisContent() {
   ];
 
   return (
-    <div className="compact-card info-dense">
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
       {/* Compact Header */}
       <div className="mb-6">
         <h3 className="text-h3 mb-3">
@@ -449,7 +471,7 @@ export function OptionAnalysisContent() {
             </div>
           ) : viewMode === 'table' ? (
             /* Compact Table View */
-            <div className="compact-card overflow-hidden compact-table">
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">
