@@ -130,7 +130,7 @@ export function ActivityManager({}: ActivityManagerProps) {
 
   if (loading) {
     return (
-      <div className="fixed bottom-5 right-5 bg-white shadow-lg rounded-lg border p-4 w-80">
+      <div className="fixed bottom-24 left-6 bg-white shadow-lg rounded-lg border p-4 w-80">
         <div className="flex items-center space-x-2">
           <Activity className="w-4 h-4 animate-spin" />
           <span className="text-sm text-gray-600">Loading activities...</span>
@@ -140,7 +140,7 @@ export function ActivityManager({}: ActivityManagerProps) {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50">
+    <div className="fixed bottom-24 left-6 z-50">
       {/* Collapsed State - Floating Button */}
       {isCollapsed && (
         <button
