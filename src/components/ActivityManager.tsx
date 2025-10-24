@@ -6,7 +6,9 @@ import {
   Activity, 
   Settings,
   TrendingUp,
-  Minimize2
+  Minimize2,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { IntradayActivity, IntradayActivityFilters } from '@/types/activities';
 import { supabase } from '@/lib/supabase';
@@ -21,8 +23,66 @@ export function ActivityManager({}: ActivityManagerProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [filters] = useState<IntradayActivityFilters>({});
   const [isConnected, setIsConnected] = useState(false);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize sound preference from localStorage
+  useEffect(() => {
+    const savedSoundPreference = localStorage.getItem('activitySoundEnabled');
+    if (savedSoundPreference !== null) {
+      setIsSoundEnabled(JSON.parse(savedSoundPreference));
+    }
+  }, []);
+
+  // Create audio element for notification sound
+  useEffect(() => {
+    // Create a simple notification sound using Web Audio API
+    const createNotificationSound = () => {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    };
+
+    audioRef.current = {
+      play: () => {
+        if (isSoundEnabled) {
+          try {
+            createNotificationSound();
+          } catch (error) {
+            console.warn('Could not play notification sound:', error);
+          }
+        }
+      }
+    } as HTMLAudioElement;
+  }, [isSoundEnabled]);
+
+  // Toggle sound preference
+  const toggleSound = () => {
+    const newSoundState = !isSoundEnabled;
+    setIsSoundEnabled(newSoundState);
+    localStorage.setItem('activitySoundEnabled', JSON.stringify(newSoundState));
+  };
+
+  // Play notification sound
+  const playNotificationSound = () => {
+    if (isSoundEnabled && audioRef.current) {
+      audioRef.current.play();
+    }
+  };
 
   // Fetch initial activities
   const fetchInitialData = useCallback(async () => {
@@ -66,6 +126,9 @@ export function ActivityManager({}: ActivityManagerProps) {
           
           if (shouldShow) {
             setActivities(prev => [newActivity, ...prev.slice(0, 99)]); // Keep max 100
+            
+            // Play notification sound for new activity
+            playNotificationSound();
             
             // Auto-scroll to top when new activity arrives
             if (scrollContainerRef.current) {
@@ -176,6 +239,13 @@ export function ActivityManager({}: ActivityManagerProps) {
             </div>
             <div className="flex items-center space-x-1">
               <button
+                onClick={toggleSound}
+                className={`p-1 hover:bg-gray-200 rounded ${isSoundEnabled ? 'text-blue-600' : 'text-gray-400'}`}
+                title={isSoundEnabled ? 'Mute notifications' : 'Unmute notifications'}
+              >
+                {isSoundEnabled ? <Volume2 className="w-3 h-3" /> : <VolumeX className="w-3 h-3" />}
+              </button>
+              <button
                 onClick={() => setShowSettings(!showSettings)}
                 className="p-1 hover:bg-gray-200 rounded"
                 title="Settings"
@@ -201,6 +271,9 @@ export function ActivityManager({}: ActivityManagerProps) {
               </p>
               <p className="text-gray-500 mt-1">
                 Activities: {activities.length} today
+              </p>
+              <p className="text-gray-500 mt-1">
+                Sound: {isSoundEnabled ? '🔊 Enabled' : '🔇 Muted'}
               </p>
             </div>
           )}
