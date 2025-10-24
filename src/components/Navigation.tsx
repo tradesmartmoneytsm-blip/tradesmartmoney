@@ -268,6 +268,20 @@ export function Navigation({
       ]
     },
     {
+      id: 'us-stock-market',
+      label: 'US Market',
+      icon: <TrendingUp className={brandTokens.icons.sm} />,
+      description: 'US equity market analysis and sector performance',
+      subItems: [
+        { 
+          id: 'coming-soon', 
+          label: 'Coming Soon', 
+          icon: <Activity className={brandTokens.icons.sm} />,
+          description: 'US market analysis features coming soon'
+        }
+      ]
+    },
+    {
       id: 'news',
       label: 'News',
       icon: <Newspaper className={brandTokens.icons.sm} />,
@@ -365,6 +379,12 @@ export function Navigation({
       return;
     }
     
+    // Handle US Stock Market navigation - navigate to US Stock Market with coming soon as default
+    if (itemId === 'us-stock-market') {
+      window.location.href = '/us-stock-market';
+      return;
+    }
+    
     // Handle submenu clicks
     if (subItemId) {
       // Handle market submenus - navigate to separate pages
@@ -388,6 +408,12 @@ export function Navigation({
       // Handle Equity submenus - navigate to Equity subpages
       if (itemId === 'equity') {
         window.location.href = `/equity/${subItemId}`;
+        return;
+      }
+      
+      // Handle US Stock Market submenus - navigate to US Stock Market subpages
+      if (itemId === 'us-stock-market') {
+        window.location.href = `/us-stock-market/${subItemId}`;
         return;
       }
       
