@@ -55,34 +55,33 @@ export default function StockProgressionChart() {
       setLoading(true);
       setError(null);
 
-      // Fetch ALL option analysis data using pagination to get around Supabase limits
+      // Fetch ALL option analysis data using pagination via secure API route
       let allRawData: OptionAnalysisData[] = [];
       let offset = 0;
       const batchSize = 1000;
       
       while (true) {
         const response = await fetch(
-          `https://ejnuocizpsfcobhyxgrd.supabase.co/rest/v1/option_chain_analysis?trading_date=eq.${selectedDate}&order=analysis_timestamp.asc&limit=${batchSize}&offset=${offset}`,
-          {
-            headers: {
-              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbnVvY2l6cHNmY29iaHl4Z3JkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzAxMjAyMCwiZXhwIjoyMDcyNTg4MDIwfQ.VvnrQCXDcya-pHhKn7Jp9bUgzj61eLFrdO8r-0fZhmY',
-              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbnVvY2l6cHNmY29iaHl4Z3JkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzAxMjAyMCwiZXhwIjoyMDcyNTg4MDIwfQ.VvnrQCXDcya-pHhKn7Jp9bUgzj61eLFrdO8r-0fZhmY'
-            }
-          }
+          `/api/internal/option-chain-data?trading_date=${selectedDate}&limit=${batchSize}&offset=${offset}`
         );
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
 
-        const batchData = await response.json();
+        const result = await response.json();
         
-        if (!batchData || batchData.length === 0) {
+        if (!result.success || !result.data || result.data.length === 0) {
           break; // No more data
         }
         
-        allRawData = allRawData.concat(batchData);
+        allRawData = allRawData.concat(result.data);
         offset += batchSize;
+        
+        // Check if there's more data
+        if (!result.hasMore) {
+          break;
+        }
         
         // Safety check to prevent infinite loops
         if (offset > 20000) {

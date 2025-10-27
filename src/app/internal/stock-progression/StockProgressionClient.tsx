@@ -70,18 +70,16 @@ export default function StockProgressionClient() {
       const today = new Date().toISOString().split('T')[0]
       
       const response = await fetch(
-        `https://ejnuocizpsfcobhyxgrd.supabase.co/rest/v1/option_chain_analysis?symbol=eq.${symbol}&trading_date=eq.${today}&order=analysis_timestamp.asc`,
-        {
-          headers: {
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbnVvY2l6cHNmY29iaHl4Z3JkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzAxMjAyMCwiZXhwIjoyMDcyNTg4MDIwfQ.VvnrQCXDcya-pHhKn7Jp9bUgzj61eLFrdO8r-0fZhmY',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbnVvY2l6cHNmY29iaHl4Z3JkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzAxMjAyMCwiZXhwIjoyMDcyNTg4MDIwfQ.VvnrQCXDcya-pHhKn7Jp9bUgzj61eLFrdO8r-0fZhmY'
-          }
-        }
+        `/api/internal/option-chain-data?symbol=${symbol}&trading_date=${today}`
       )
       
       if (response.ok) {
-        const data = await response.json()
-        setProgressionData(data)
+        const result = await response.json()
+        if (result.success) {
+          setProgressionData(result.data)
+        } else {
+          setError(`Failed to fetch data for ${symbol}`)
+        }
       } else {
         setError(`Failed to fetch data for ${symbol}`)
       }

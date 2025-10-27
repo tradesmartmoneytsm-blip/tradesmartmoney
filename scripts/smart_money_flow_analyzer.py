@@ -7,7 +7,7 @@ Identifies stocks with significantly higher turnover pacing than previous day
 
 import requests
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 import logging
 
@@ -22,8 +22,15 @@ logging.basicConfig(
 SUPABASE_URL = "https://ejnuocizpsfcobhyxgrd.supabase.co"
 SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbnVvY2l6cHNmY29iaHl4Z3JkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzAxMjAyMCwiZXhwIjoyMDcyNTg4MDIwfQ.VvnrQCXDcya-pHhKn7Jp9bUgzj61eLFrdO8r-0fZhmY"
 
-# Configuration
-MIDCAP_SMALLCAP_INDICES = ['NIFTY MIDCAP 50', 'NIFTY SMALLCAP 50']
+# Configuration - All NSE Indices for comprehensive coverage
+ALL_NSE_INDICES = [
+    'NIFTY 50', 'NIFTY NEXT 50', 'NIFTY MIDCAP 50', 'NIFTY SMALLCAP 50',
+    'NIFTY BANK', 'NIFTY IT', 'NIFTY PHARMA', 'NIFTY AUTO', 'NIFTY FMCG',
+    'NIFTY ENERGY', 'NIFTY METAL', 'NIFTY REALTY', 'NIFTY HEALTHCARE',
+    'NIFTY CONSUMPTION', 'NIFTY CONSUMER DURABLE', 'NIFTY INFRA', 'NIFTY MEDIA',
+    'NIFTY OIL & GAS', 'NIFTY COMMODITIES', 'NIFTY PSE', 'NIFTY CPSE',
+    'FINNIFTY', 'NIFTY PSU BANK', 'NIFTY PRIVATE BANK'
+]
 MIN_TURNOVER_THRESHOLD = 50000000  # 5 Cr minimum turnover to consider
 SIGNIFICANT_INCREASE_THRESHOLD = 1.5  # 50% increase threshold
 MIN_ABSOLUTE_INCREASE = 100000000  # 10 Cr minimum absolute increase
@@ -39,7 +46,7 @@ class SmartMoneyFlowAnalyzer:
 
     def get_current_ist_time(self) -> datetime:
         """Get current IST time"""
-        utc_now = datetime.utcnow()
+        utc_now = datetime.now(timezone.utc)
         ist_now = utc_now + timedelta(hours=5, minutes=30)
         return ist_now
 
@@ -129,17 +136,45 @@ class SmartMoneyFlowAnalyzer:
             logging.error(f"❌ Error getting turnover for {symbol}: {e}")
             return None
 
-    def get_midcap_smallcap_stocks(self) -> List[str]:
-        """Get all MIDCAP 50 and SMALLCAP 50 stock symbols"""
+    def check_existing_alert_today(self, symbol: str, trading_date: str) -> bool:
+        """Check if stock already has a smart money alert today"""
         try:
-            # Get latest data from both indices
+            url = f"{SUPABASE_URL}/rest/v1/intraday_activities"
+            params = {
+                'select': 'id',
+                'stock_name': f'eq.{symbol}',
+                'trading_date': f'eq.{trading_date}',
+                'activity_name': 'like.*Smart Money Alert*',
+                'limit': '1'
+            }
+            
+            response = self.session.get(url, headers=self.headers, params=params, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                exists = len(data) > 0
+                if exists:
+                    logging.debug(f"🔄 {symbol} already has smart money alert today - skipping")
+                return exists
+            else:
+                logging.warning(f"⚠️ Could not check existing alerts for {symbol}: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            logging.error(f"❌ Error checking existing alert for {symbol}: {e}")
+            return False
+
+    def get_all_nse_stocks(self) -> List[str]:
+        """Get all NSE stock symbols from all indices"""
+        try:
+            # Get latest data from all indices
             url = f"{SUPABASE_URL}/rest/v1/nse_sector_data"
             params = {
                 'select': 'symbol',
-                'index_name': f'in.({",".join(MIDCAP_SMALLCAP_INDICES)})',
+                'index_name': f'in.({",".join(ALL_NSE_INDICES)})',
                 'data_type': 'eq.STOCK',
                 'order': 'analysis_timestamp.desc',
-                'limit': '200'
+                'limit': '1000'  # Increased limit for all indices
             }
             
             response = self.session.get(url, headers=self.headers, params=params, timeout=15)
@@ -147,7 +182,7 @@ class SmartMoneyFlowAnalyzer:
             if response.status_code == 200:
                 data = response.json()
                 symbols = list(set([item['symbol'] for item in data]))
-                logging.info(f"✅ Found {len(symbols)} unique MIDCAP/SMALLCAP stocks")
+                logging.info(f"✅ Found {len(symbols)} unique stocks across all NSE indices")
                 return symbols
             else:
                 logging.error(f"❌ Failed to get stock symbols: {response.status_code}")
@@ -172,8 +207,8 @@ class SmartMoneyFlowAnalyzer:
         logging.info(f"🔍 Analyzing money flow pacing at {today_date} {current_time_str}")
         logging.info(f"📊 Comparing with last trading day: {last_trading_date_str}")
         
-        # Get all MIDCAP/SMALLCAP stocks
-        stocks = self.get_midcap_smallcap_stocks()
+        # Get all NSE stocks from all indices
+        stocks = self.get_all_nse_stocks()
         
         if not stocks:
             logging.error("❌ No stocks found for analysis")
@@ -206,10 +241,14 @@ class SmartMoneyFlowAnalyzer:
                 # Check if this is significant money flow increase
                 is_significant = (
                     percentage_increase >= (SIGNIFICANT_INCREASE_THRESHOLD - 1) * 100 and  # 50%+ increase
-                    absolute_increase >= MIN_ABSOLUTE_INCREASE  # 25Cr+ absolute increase
+                    absolute_increase >= MIN_ABSOLUTE_INCREASE  # 10Cr+ absolute increase
                 )
                 
                 if is_significant:
+                    # Check if stock already has an alert today (prevent duplicates)
+                    if self.check_existing_alert_today(symbol, current_time.strftime('%Y-%m-%d')):
+                        logging.info(f"🔄 {symbol} already alerted today - skipping duplicate")
+                        continue
                     flow_data = {
                         'symbol': symbol,
                         'today_turnover': today_turnover,
@@ -245,14 +284,14 @@ class SmartMoneyFlowAnalyzer:
         
         try:
             activities = []
-            current_time = datetime.utcnow().isoformat()
+            current_time = datetime.now(timezone.utc).isoformat()
             
             for stock_flow in flow_data[:10]:  # Top 10 stocks
                 activity = {
                     'stock_name': stock_flow['symbol'],
                     'activity_name': f"🚀 Smart Money Alert: {stock_flow['symbol']} turnover surged {stock_flow['percentage_increase']:.1f}% to ₹{stock_flow['today_turnover_cr']}Cr (vs ₹{stock_flow['yesterday_turnover_cr']}Cr yesterday)",
                     'activity_timestamp': current_time,
-                    'trading_date': datetime.utcnow().strftime('%Y-%m-%d'),
+                    'trading_date': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
                     'is_active': True
                 }
                 activities.append(activity)
