@@ -53,6 +53,12 @@ export function Fno({ initialSubSection }: FnoProps) {
       icon: <Activity className="w-4 h-4" />, 
       description: 'Put-Call Ratio storm detection and analysis' 
     },
+    { 
+      id: 'heatmap', 
+      label: 'Options Heatmap', 
+      icon: <BarChart3 className="w-4 h-4" />, 
+      description: 'Live heatmap of price, OI, and volume changes' 
+    },
   ];
 
   const renderContent = () => {

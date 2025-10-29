@@ -236,6 +236,12 @@ export function Navigation({
           label: 'PCR Storm', 
           icon: <Activity className={brandTokens.icons.sm} />,
           description: 'Put-Call Ratio storm detection and analysis'
+        },
+        { 
+          id: 'heatmap', 
+          label: 'Options Heatmap', 
+          icon: <BarChart3 className={brandTokens.icons.sm} />,
+          description: 'Live heatmap of price, OI, and volume changes'
         }
       ]
     },
