@@ -206,50 +206,48 @@ export function ActivityManager({}: ActivityManagerProps) {
         </button>
       </div>
 
-      {/* Modal */}
+      {/* Right Sidebar Panel */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-          onClick={(e) => {
-            // Close modal when clicking on the backdrop
-            if (e.target === e.currentTarget) {
-              setIsOpen(false);
-            }
-          }}
-        >
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/30 z-40 transition-opacity"
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Vertical Sidebar */}
+          <div className="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-50 overflow-hidden flex flex-col animate-slide-in-right">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
-              <div className="flex items-center space-x-2">
-                <Activity className="w-5 h-5 text-blue-600" />
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-blue-600 text-white flex-shrink-0">
+              <div className="flex items-center space-x-3">
+                <Activity className="w-5 h-5" />
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Live Activities</h2>
-                  <p className="text-xs text-gray-600">Real-time smart money alerts</p>
+                  <h2 className="text-lg font-bold">Live Activities</h2>
+                  <p className="text-xs text-white/80">Real-time alerts</p>
                 </div>
-                {isConnected ? (
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse ml-2" title="Connected"></span>
-                ) : (
-                  <span className="w-2 h-2 bg-red-500 rounded-full ml-2" title="Disconnected"></span>
+                {isConnected && (
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" title="Connected"></span>
                 )}
               </div>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={toggleSound}
-                  className={`p-2 hover:bg-white/60 rounded transition-colors ${isSoundEnabled ? 'text-blue-600' : 'text-gray-400'}`}
+                  className="p-2 hover:bg-white/10 rounded transition-colors"
                   title={isSoundEnabled ? 'Mute notifications' : 'Unmute notifications'}
                 >
                   {isSoundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                 </button>
                 <button
                   onClick={() => setShowSettings(!showSettings)}
-                  className="p-2 hover:bg-white/60 rounded transition-colors"
+                  className="p-2 hover:bg-white/10 rounded transition-colors"
                   title="Settings"
                 >
                   <Settings className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="p-2 hover:bg-white/10 rounded transition-colors"
+                  title="Close"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -272,15 +270,31 @@ export function ActivityManager({}: ActivityManagerProps) {
               </div>
             )}
 
-            {/* Content */}
+            {/* Settings Panel */}
+            {showSettings && (
+              <div className="p-3 border-b bg-purple-50 text-xs flex-shrink-0">
+                <p className="text-gray-600 mb-1 font-medium">Settings</p>
+                <p className="text-gray-500">
+                  Status: {isConnected ? '🟢 Connected' : '🔴 Reconnecting...'}
+                </p>
+                <p className="text-gray-500 mt-1">
+                  Activities: {activities.length} today
+                </p>
+                <p className="text-gray-500 mt-1">
+                  Sound: {isSoundEnabled ? '🔊 Enabled' : '🔇 Muted'}
+                </p>
+              </div>
+            )}
+
+            {/* Activities List - Scrollable */}
             <div 
               ref={scrollContainerRef}
-              className="flex-1 overflow-y-auto p-4 bg-gray-50/50"
+              className="flex-1 overflow-y-auto p-4 bg-gray-50"
             >
               {loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Activity className="w-6 h-6 animate-spin text-blue-600" />
-                  <span className="ml-3 text-gray-600">Loading activities...</span>
+                  <Activity className="w-6 h-6 animate-spin text-purple-600" />
+                  <span className="ml-3 text-gray-600 text-sm">Loading activities...</span>
                 </div>
               ) : activities.length === 0 ? (
                 <div className="text-center py-12">
@@ -303,7 +317,7 @@ export function ActivityManager({}: ActivityManagerProps) {
               )}
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );

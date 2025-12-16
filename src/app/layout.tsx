@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { StructuredData } from '@/components/StructuredData';
 import { AdvanceDeclineWidget } from '@/components/AdvanceDeclineWidget';
 import { ConditionalActivityManager } from '@/components/ConditionalActivityManager';
+import { SectorDataProvider } from '@/contexts/SectorDataContext';
 
 // Primary font - Inter (excellent readability, modern)
 const inter = Inter({
@@ -247,22 +248,23 @@ export default function RootLayout({
         {/* Traffic Tracking */}
         <TrafficTracker />
         
-        <main role="main" id="main-content">
-          {children}
-        </main>
-        
-        {/* Activity Manager - Floating button (appears on all pages) */}
-        <ConditionalActivityManager />
-        
-        <Footer />
-        
-
-        
-        {/* Advance-Decline Widget - Global floating button */}
-        <AdvanceDeclineWidget />
-        
-        {/* Structured Data - Added client-side to avoid hydration issues */}
-        <StructuredData />
+        {/* Sector Data Provider - Global state for sector performance with 1-min auto-refresh */}
+        <SectorDataProvider>
+          <main role="main" id="main-content">
+            {children}
+          </main>
+          
+          {/* Activity Manager - Floating button (appears on all pages) */}
+          <ConditionalActivityManager />
+          
+          <Footer />
+          
+          {/* Advance-Decline Widget - Global floating button */}
+          <AdvanceDeclineWidget />
+          
+          {/* Structured Data - Added client-side to avoid hydration issues */}
+          <StructuredData />
+        </SectorDataProvider>
       </body>
     </html>
   );

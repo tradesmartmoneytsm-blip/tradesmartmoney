@@ -1,99 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import type { SectorData } from '@/services/marketDataService';
+import { useState } from 'react';
+import { useSectorData } from '@/contexts/SectorDataContext';
 
 interface SectorPerformanceHistogramProps {
   className?: string;
 }
 
 export function SectorPerformanceHistogram({ className = '' }: SectorPerformanceHistogramProps) {
-  const [sectorData, setSectorData] = useState<SectorData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { sectorData, isLoading } = useSectorData();
   const [timeRange, setTimeRange] = useState<'1D' | '7D' | '30D' | '90D' | '52W'>('1D');
-
-  // Fetch sector data
-  const fetchSectorData = useCallback(async () => {
-    try {
-      const response = await fetch('/api/sector-data', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        signal: AbortSignal.timeout(30000)
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      
-      if (result.success && result.data && Array.isArray(result.data)) {
-        // Sort from most positive to most negative - ensure proper number comparison
-        const sortedData = [...result.data].sort((a, b) => {
-          const aChange = typeof a.change === 'string' ? parseFloat(a.change) : a.change;
-          const bChange = typeof b.change === 'string' ? parseFloat(b.change) : b.change;
-          return bChange - aChange;
-        });
-        
-        setSectorData(sortedData);
-      } else {
-        // Fallback data
-        const fallbackData = [
-          { name: 'Nifty Consumer Durables', change: 0.35, value: '₹37,200', lastUpdated: new Date() },
-          { name: 'CONSUMER GOODS', change: 0.08, value: '₹54,918', lastUpdated: new Date() },
-          { name: 'Consumption', change: 0.02, value: '₹12,209', lastUpdated: new Date() },
-          { name: 'AUTOMOBILE', change: -0.01, value: '₹27,538', lastUpdated: new Date() },
-          { name: 'MEDIA & ENTERTAINMENT', change: -0.22, value: '₹1,432', lastUpdated: new Date() },
-          { name: 'Nifty Healthcare Index', change: -0.42, value: '₹14,662', lastUpdated: new Date() },
-          { name: 'PHARMA', change: -0.47, value: '₹22,618', lastUpdated: new Date() },
-          { name: 'Bank Nifty', change: -0.66, value: '₹59,052', lastUpdated: new Date() },
-          { name: 'Nifty Financial Services', change: -0.66, value: '₹25,888', lastUpdated: new Date() },
-          { name: 'Nifty Financial Services 25/50', change: -0.71, value: '₹27,415', lastUpdated: new Date() },
-          { name: 'Energy', change: -0.82, value: '₹34,738', lastUpdated: new Date() },
-          { name: 'Nifty Oil & Gas', change: -0.88, value: '₹35,746', lastUpdated: new Date() },
-          { name: 'PSU Bank', change: -0.95, value: '₹55,459', lastUpdated: new Date() },
-          { name: 'IT', change: -0.98, value: '₹38,024', lastUpdated: new Date() },
-          { name: 'PVT Bank', change: -1.15, value: '₹56,273', lastUpdated: new Date() },
-          { name: 'CONSTRUCTION', change: -1.21, value: '₹9,510', lastUpdated: new Date() },
-          { name: 'METALS', change: -1.27, value: '₹10,406', lastUpdated: new Date() }
-        ].sort((a, b) => b.change - a.change);
-        setSectorData(fallbackData);
-      }
-    } catch (error) {
-      console.error('Failed to fetch sector data:', error);
-      // Use fallback data
-      const fallbackData = [
-        { name: 'Nifty Consumer Durables', change: 0.35, value: '₹37,200', lastUpdated: new Date() },
-        { name: 'CONSUMER GOODS', change: 0.08, value: '₹54,918', lastUpdated: new Date() },
-        { name: 'Consumption', change: 0.02, value: '₹12,209', lastUpdated: new Date() },
-        { name: 'AUTOMOBILE', change: -0.01, value: '₹27,538', lastUpdated: new Date() },
-        { name: 'MEDIA & ENTERTAINMENT', change: -0.22, value: '₹1,432', lastUpdated: new Date() },
-        { name: 'Nifty Healthcare Index', change: -0.42, value: '₹14,662', lastUpdated: new Date() },
-        { name: 'PHARMA', change: -0.47, value: '₹22,618', lastUpdated: new Date() },
-        { name: 'Bank Nifty', change: -0.66, value: '₹59,052', lastUpdated: new Date() },
-        { name: 'Nifty Financial Services', change: -0.66, value: '₹25,888', lastUpdated: new Date() },
-        { name: 'Nifty Financial Services 25/50', change: -0.71, value: '₹27,415', lastUpdated: new Date() },
-        { name: 'Energy', change: -0.82, value: '₹34,738', lastUpdated: new Date() },
-        { name: 'Nifty Oil & Gas', change: -0.88, value: '₹35,746', lastUpdated: new Date() },
-        { name: 'PSU Bank', change: -0.95, value: '₹55,459', lastUpdated: new Date() },
-        { name: 'IT', change: -0.98, value: '₹38,024', lastUpdated: new Date() },
-        { name: 'PVT Bank', change: -1.15, value: '₹56,273', lastUpdated: new Date() },
-        { name: 'CONSTRUCTION', change: -1.21, value: '₹9,510', lastUpdated: new Date() },
-        { name: 'METALS', change: -1.27, value: '₹10,406', lastUpdated: new Date() }
-      ].sort((a, b) => b.change - a.change);
-      setSectorData(fallbackData);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchSectorData();
-    const interval = setInterval(fetchSectorData, 5 * 60 * 1000); // Refresh every 5 minutes
-    return () => clearInterval(interval);
-  }, [fetchSectorData]);
 
   // Calculate max absolute value for scaling
   const maxAbsValue = Math.max(
