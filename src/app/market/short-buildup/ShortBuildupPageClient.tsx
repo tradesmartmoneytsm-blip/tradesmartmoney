@@ -43,7 +43,7 @@ export function ShortBuildupPageClient() {
         onSectionChange={handleSectionChange}
       />
       {/* Main Content */}
-      <div className="py-8">
+      <div>
         <Market initialSubSection="short-buildup" />
       </div>
 

@@ -43,7 +43,7 @@ export function FiftyTwoWeekHighPageClient() {
         onSectionChange={handleSectionChange}
       />
       {/* Main Content */}
-      <div className="py-8">
+      <div>
         <Market initialSubSection="52w-high" />
       </div>
 

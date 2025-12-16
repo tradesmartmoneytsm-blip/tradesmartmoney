@@ -4,6 +4,8 @@ import { useState, lazy, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
+import { ModernNav } from '@/components/ui/ModernNav';
+import { ModernHero } from '@/components/ui/ModernHero';
 
 // Dynamic imports for better performance
 const SwingTrades = lazy(() => import('@/components/SwingTrades').then(module => ({ default: module.SwingTrades })));
@@ -12,7 +14,7 @@ const News = lazy(() => import('@/components/News').then(module => ({ default: m
 const Market = lazy(() => import('@/components/Market').then(module => ({ default: module.Market })));
 const EodScans = lazy(() => import('@/components/EodScans').then(module => ({ default: module.EodScans })));
 const AlgoTrading = lazy(() => import('@/components/AlgoTrading').then(module => ({ default: module.AlgoTrading })));
-import { Brain, Bot, Settings, ArrowRight, BookOpen, TrendingUp, BarChart3, Zap, Shield, Users, Star, Play, ChevronRight } from 'lucide-react';
+import { Brain, Bot, Settings, ArrowRight, BookOpen, TrendingUp } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 import { SubmenuCards } from '@/components/ui/SubmenuCards';
 import { FAQSchema } from '@/components/FAQSchema';
@@ -176,158 +178,7 @@ function HomeComponent() {
     }
   };
 
-  // Optimized Hero Section Component
-  const HeroSection = () => (
-    <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden">
-      {/* Lazy-loaded Background Effects */}
-      <div className="absolute inset-0 will-change-transform">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '0s', transform: 'translate3d(0,0,0)'}}></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s', transform: 'translate3d(0,0,0)'}}></div>
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" style={{transform: 'translate3d(-50%,-50%,0)'}}></div>
-      </div>
-      
-      {/* Navigation */}
-      <Navigation
-        activeSection={activeSection}
-        onSectionChange={handleSectionChange}
-      />
-      
-      {/* Hero Content */}
-      <div className="relative pt-4 pb-32 lg:pt-8 lg:pb-40">
-        <div className={`${brandTokens.spacing.page.container} ${brandTokens.spacing.page.x}`}>
-          
-          {/* Main Hero Content */}
-          <div className="text-center animate-fade-in">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-              <Star className="w-4 h-4 text-yellow-400" />
-              <span className="text-white text-sm font-medium">Trusted by 10,000+ Professional Traders</span>
-              <TrendingUp className="w-4 h-4 text-green-400" />
-            </div>
-            
-            {/* Main Heading - Optimized for LCP */}
-            <h1 className={`${brandTokens.typography.display.xl} text-white mb-6 premium-text`} style={{willChange: 'transform'}}>
-              Trade Smart Money Like
-              <span className="block mt-2 text-gradient-brand">Professional Institutions</span>
-            </h1>
-            
-            {/* Subheading */}
-            <p className={`${brandTokens.typography.body.xl} text-blue-100 mb-10 max-w-4xl mx-auto animate-slide-up delay-200`}>
-              Master smart money trading with our professional platform. Learn smart money concepts, institutional trading patterns, and advanced market analysis. Trade like smart money with real-time data and proven smart money strategies.
-            </p>
-            
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8 animate-slide-up delay-400">
-              <button 
-                onClick={() => handleSectionChange('market')}
-                className="group btn-brand px-8 py-4 text-lg font-semibold flex items-center gap-3"
-              >
-                <Play className="w-5 h-5" />
-                Start Trading Now
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              
-              <Link 
-                href="/smart-money-concepts"
-                className="group px-8 py-4 text-lg font-semibold text-white border-2 border-white/30 rounded-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 flex items-center gap-3"
-              >
-                <BookOpen className="w-5 h-5" />
-                Learn SMC
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-            
-            {/* Platform Features Section */}
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-white mb-4">Why Smart Money Traders Choose Us</h2>
-              <p className="text-blue-200 text-lg max-w-2xl mx-auto">
-                Trade smart money strategies with professional-grade tools and institutional-level market analysis to master smart money concepts
-              </p>
-            </div>
-
-            {/* Development Progress Notice */}
-            <div className="max-w-4xl mx-auto mb-8 p-6 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-2xl border border-blue-400/30">
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <Bot className="w-6 h-6 text-blue-400" />
-                  <h3 className="text-xl font-semibold text-white">🚀 Exciting Features in Development</h3>
-                  <Brain className="w-6 h-6 text-purple-400" />
-                </div>
-                <p className="text-blue-100 mb-4">
-                  We're actively building advanced trading tools, real-time alerts, portfolio analytics, and AI-powered market insights. 
-                  Stay tuned for regular updates and new features!
-                </p>
-                <div className="flex flex-wrap justify-center gap-2 text-sm">
-                  <span className="px-3 py-1 bg-blue-500/30 rounded-full text-blue-200">📊 Advanced Analytics</span>
-                  <span className="px-3 py-1 bg-purple-500/30 rounded-full text-purple-200">🤖 AI Insights</span>
-                  <span className="px-3 py-1 bg-green-500/30 rounded-full text-green-200">⚡ Real-time Alerts</span>
-                  <span className="px-3 py-1 bg-orange-500/30 rounded-full text-orange-200">📱 Mobile App</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 animate-fade-in delay-600">
-              <button 
-                onClick={() => handleSectionChange('market')}
-                className="glass-card p-6 text-center hover:scale-105 hover:bg-white/5 transition-all duration-300 group cursor-pointer"
-              >
-                <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500/30 transition-colors">
-                  <BarChart3 className="w-6 h-6 text-blue-400 group-hover:text-blue-300" />
-                </div>
-                <h3 className="text-white font-semibold mb-2 group-hover:text-blue-200">Real-time Data</h3>
-                <p className="text-blue-200 text-sm">Live market indices, sector performance, and institutional activity</p>
-              </button>
-              
-              <div className="glass-card p-6 text-center">
-                <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Brain className="w-6 h-6 text-purple-400" />
-                </div>
-                <h3 className="text-white font-semibold mb-2">AI Algorithms</h3>
-                <p className="text-blue-200 text-sm">Machine learning powered trading signals and market predictions</p>
-              </div>
-              
-              <Link 
-                href="/smart-money-concepts"
-                className="glass-card p-6 text-center hover:scale-105 hover:bg-white/5 transition-all duration-300 group cursor-pointer block"
-              >
-                <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500/30 transition-colors">
-                  <Zap className="w-6 h-6 text-green-400 group-hover:text-green-300" />
-                </div>
-                <h3 className="text-white font-semibold mb-2 group-hover:text-green-200">Smart Money</h3>
-                <p className="text-blue-200 text-sm">Institutional order flow analysis and smart money concepts</p>
-              </Link>
-              
-              <div className="glass-card p-6 text-center">
-                <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-6 h-6 text-orange-400" />
-                </div>
-                <h3 className="text-white font-semibold mb-2">Risk Management</h3>
-                <p className="text-blue-200 text-sm">Advanced risk assessment and portfolio protection strategies</p>
-              </div>
-            </div>
-            
-            {/* Social Proof */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-white/80 animate-fade-in delay-800">
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-400" />
-                <span className="text-sm">10,000+ Active Traders</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-400" />
-                <span className="text-sm">₹50Cr+ Trading Volume</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-yellow-400" />
-                <span className="text-sm">4.9/5 Rating</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  // Modern Hero Section - Using new ModernHero component
 
   // Loading fallback component
   const LoadingFallback = () => (
@@ -342,7 +193,7 @@ function HomeComponent() {
   const renderContent = () => {
     switch (activeSection) {
       case 'home':
-        return <HeroSection />;
+        return <ModernHero />;
       case 'swing':
         return (
           <Suspense fallback={<LoadingFallback />}>
@@ -399,19 +250,22 @@ function HomeComponent() {
           </Suspense>
         );
       default:
-        return <HeroSection />;
+        return <ModernHero />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen">
       {/* Advanced SEO Schema */}
       <HomepageSchema />
       
       {/* FAQ Schema only on homepage */}
       {activeSection === 'home' && <FAQSchema />}
       
-      {/* Show Navigation for non-home sections */}
+      {/* Modern Navigation - Always visible */}
+      <ModernNav />
+      
+      {/* Show old Navigation for non-home sections (fallback) */}
       {activeSection !== 'home' && (
       <Navigation
         activeSection={activeSection}

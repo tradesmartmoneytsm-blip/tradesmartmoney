@@ -44,7 +44,7 @@ export function TopGainersPageClient() {
         onSectionChange={handleSectionChange}
       />
       {/* Main Content - Market Component with Top Gainers Focus */}
-      <div className="py-8">
+      <div>
         <Market initialSubSection="top-gainers" />
       </div>
 

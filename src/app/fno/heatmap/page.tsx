@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import FNOHeatmapClient from './FNOHeatmapClient';
+import { HeatmapPageClient } from './HeatmapPageClient';
 
 export const metadata: Metadata = {
   title: 'F&O Options Heatmap | TradeSmart Money',
@@ -8,6 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default function FNOHeatmapPage() {
-  return <FNOHeatmapClient />;
+  return <HeatmapPageClient />;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, DollarSign } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
@@ -452,90 +452,87 @@ export function Navigation({
 
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-lg navigation-compact">
-      {/* Top Status Bar */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white py-2 px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="w-full flex items-center justify-between text-xs sm:text-sm lg:text-base">
+      {/* Top Status Bar - Very Thin */}
+      <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white py-0.5 px-2 sm:px-4 lg:px-6 xl:px-8">
+        <div className="w-full flex items-center justify-between text-xs">
           {/* Market Status & Time */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-1.5">
               {isMarketOpen ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-green-400 font-medium">Market Open</span>
+                <div className="flex items-center space-x-1.5">
+                  <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-green-400 font-medium text-xs">Market Open</span>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                  <span className="text-red-400 font-medium">Market Closed</span>
+                <div className="flex items-center space-x-1.5">
+                  <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                  <span className="text-red-400 font-medium text-xs">Market Closed</span>
                 </div>
               )}
               <span className="text-white/70">•</span>
-              <span className="text-white/90 font-mono">{currentTime}</span>
+              <span className="text-white/90 font-mono text-xs">{currentTime || '--:--:--'}</span>
             </div>
           </div>
 
-          {/* Market Indices - Desktop Only */}
-          <div className="hidden lg:flex items-center space-x-6 flex-shrink-0">
+          {/* Market Indices - Compact Horizontal Layout */}
+          <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
             {marketIndices.length > 0 ? (
               marketIndices.map((index, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleIndexClick(index.name)}
-                  className="flex flex-col items-center min-w-0 hover:bg-white/20 rounded-lg px-3 py-2 transition-all duration-200 cursor-pointer group border border-white/20 hover:border-white/40 hover:shadow-lg bg-white/5 transform hover:scale-105 will-change-transform"
+                  className="flex items-center space-x-1.5 hover:bg-white/10 rounded px-2 py-0.5 transition-all duration-200 cursor-pointer group relative"
                   title={`Click to view ${index.displayName} 5-minute chart on TradingView`}
+                  aria-label={`Click to view ${index.displayName} 5-minute chart`}
                 >
-                  <div className="flex items-center space-x-1 mb-1">
-                    <span className="text-white font-bold text-sm whitespace-nowrap group-hover:text-blue-200 underline decoration-dotted decoration-white/50">
-                      {index.displayName}
-                    </span>
-                    <span className="text-blue-300 group-hover:text-blue-100 text-xs">📊</span>
-                  </div>
-                  <div className="flex items-center space-x-1 text-xs">
-                    <span className="text-white/90 font-mono group-hover:text-white font-semibold">
-                      {formatCurrency(index.current)}
-                    </span>
-                    {formatChange(index.change, index.changePercent)}
-                  </div>
-                  <div className="text-xs text-blue-200 mt-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                    🔗 Click for 5min chart
-                  </div>
+                  <span className="text-white font-semibold text-xs whitespace-nowrap group-hover:text-blue-200">
+                    {index.displayName}
+                  </span>
+                  <span className="text-white/90 font-mono text-xs group-hover:text-white">
+                    {formatCurrency(index.current)}
+                  </span>
+                  {formatChange(index.change, index.changePercent)}
+                  {/* Custom Tooltip */}
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-50">
+                    Click for 5min chart
+                    <span className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></span>
+                  </span>
                 </button>
               ))
             ) : (
               <div className="flex items-center space-x-2">
-                <div className="loading-shimmer w-20 h-4 rounded"></div>
+                <div className="loading-shimmer w-20 h-3 rounded"></div>
                 <div className="loading-shimmer w-16 h-3 rounded"></div>
               </div>
             )}
           </div>
 
-                  {/* User Actions */}
-                  <div className="flex items-center space-x-3">
-                    <button
-                      onClick={() => handleMenuItemClick('blog')}
-                      className="hidden sm:flex items-center space-x-2 px-3 py-2 bg-white/10 text-white hover:bg-white/20 hover:text-white rounded-lg transition-all duration-200 text-sm font-semibold border border-white/20 shadow-sm"
-                      aria-label="Blog"
-                      title="Trading Blog & Market Insights"
-                    >
-                      <Newspaper className="w-4 h-4" />
-                      <span className="hidden md:inline">Blog</span>
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse hidden lg:block ml-1"></div>
-                    </button>
-                    <button
-                      className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                      aria-label="Notifications"
-                      title="Notifications"
-                    >
-                      <Bell className={brandTokens.icons.sm} />
-                    </button>
-                    <button
-                      className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                      aria-label="User menu"
-                      title="User menu"
-                    >
-                      <User className={brandTokens.icons.sm} />
-                    </button>
-                  </div>
+          {/* User Actions */}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => handleMenuItemClick('blog')}
+              className="hidden sm:flex items-center space-x-1.5 px-2 py-1 bg-white/10 text-white hover:bg-white/20 hover:text-white rounded transition-all duration-200 text-xs font-semibold"
+              aria-label="Blog"
+              title="Trading Blog & Market Insights"
+            >
+              <Newspaper className="w-3 h-3" />
+              <span className="hidden md:inline">Blog</span>
+            </button>
+            <button
+              className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded transition-colors"
+              aria-label="Notifications"
+              title="Notifications"
+            >
+              <Bell className="w-3.5 h-3.5" />
+            </button>
+            <button
+              className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded transition-colors"
+              aria-label="User menu"
+              title="User menu"
+            >
+              <User className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -561,45 +558,47 @@ export function Navigation({
         </div>
       </div>
 
-              {/* Main Navigation with Integrated Branding */}
-              <div className="w-full px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 py-2 sm:py-3 md:py-3 lg:py-4 bg-white border-b border-gray-100 shadow-sm">
+              {/* Main Navigation with Integrated Branding - Medium Thickness */}
+              <div className="w-full px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 py-1.5 sm:py-2 bg-white border-b border-gray-100 shadow-sm">
                 <div className="flex items-center">
                   {/* TradeSmartMoney Branding - Left Side */}
                   <div className="flex items-center">
                     <button
                       onClick={() => handleMenuItemClick('home')}
-                      className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity"
+                      className="flex items-center space-x-2 sm:space-x-2.5 hover:opacity-80 transition-opacity"
                       aria-label="Go to homepage"
                       title="TradeSmartMoney - Go to homepage"
                     >
-                      <div className="w-10 sm:w-11 md:w-12 lg:w-13 xl:w-14 h-10 sm:h-11 md:h-12 lg:h-13 xl:h-14 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-                        <TrendingUp className="w-5 sm:w-6 md:w-6 lg:w-7 xl:w-8 h-5 sm:h-6 md:h-6 lg:h-7 xl:h-8 text-white" />
+                      <div className="w-8 h-8 sm:w-9 md:w-10 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                        <TrendingUp className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-white" />
                       </div>
                       <div className="hidden sm:block">
-                        <h1 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900">TradeSmartMoney</h1>
-                        <p className="text-xs sm:text-sm text-gray-600 hidden lg:block">Professional Trading Platform</p>
+                        <h1 className="text-sm sm:text-base md:text-lg font-bold text-gray-900">TradeSmartMoney</h1>
+                        <p className="text-xs text-gray-600 hidden lg:block">Professional Trading Platform</p>
                       </div>
                     </button>
                   </div>
 
                   {/* Desktop Navigation - Immediately After Branding */}
-                  <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 flex-wrap ml-2 lg:ml-4 xl:ml-6 menu-container">
+                  <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 flex-wrap ml-2 lg:ml-3 xl:ml-5 menu-container">
                     {menuItems.map((item) => (
                       <button
                         key={item.id}
                         onClick={() => handleMenuItemClick(item.id)}
-                        className={`menu-item flex items-center space-x-1 sm:space-x-1.5 px-1 sm:px-2 md:px-3 lg:px-4 py-1 sm:py-1.5 rounded-lg font-medium transition-all duration-300 group text-xs sm:text-sm md:text-sm lg:text-base whitespace-nowrap ${
+                        className={`menu-item flex items-center space-x-1 px-2.5 py-1 rounded-lg font-medium transition-all duration-300 group text-xs sm:text-sm whitespace-nowrap ${
                           activeSection === item.id
                             ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg'
                             : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                         }`}
                       >
-                        <div className={`p-1 lg:p-1.5 rounded ${
+                        <div className={`p-1 rounded ${
                           activeSection === item.id
                             ? 'bg-white/20'
                             : 'bg-gray-100 group-hover:bg-blue-100'
                         }`}>
-                          {item.icon}
+                          <div className="w-4 h-4 flex items-center justify-center">
+                            {React.cloneElement(item.icon, { className: 'w-4 h-4' })}
+                          </div>
                         </div>
                         <span className="whitespace-nowrap">{item.label}</span>
                       </button>

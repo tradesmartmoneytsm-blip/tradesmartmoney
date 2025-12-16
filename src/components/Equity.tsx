@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Activity } from 'lucide-react';
 import { SmartMoneyFlowContent } from './SmartMoneyFlowContent';
+import { SectorPerformanceHistogram } from './SectorPerformanceHistogram';
 
 interface EquitySubSection {
   id: string;
@@ -46,20 +47,13 @@ export function Equity({ initialSubSection }: EquityProps) {
 
   return (
     <article className="w-full px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 2xl:px-8 py-2 sm:py-3 md:py-4 lg:py-5">
-      {/* Compact Page Header */}
-      <header className="mb-3 sm:mb-4 lg:mb-6">
-        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">Equity Analysis</h1>
-        <p className="text-sm lg:text-base text-gray-600">
-          Smart money flow analysis and equity market insights with institutional activity tracking.
-        </p>
-      </header>
 
       {/* Compact Professional Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
         {/* Compact Left Sidebar Navigation */}
         <aside className="lg:col-span-1" role="navigation" aria-label="Equity sections">
           <nav className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
-            <h2 className="text-sm lg:text-base font-bold text-gray-900 mb-4 font-serif">Equity Sections</h2>
+            <h2 className="text-sm lg:text-base font-bold text-gray-900 mb-2 font-serif">Equity Sections</h2>
             <ul className="space-y-1" role="menu">
               {subSections.map((section) => (
                 <li key={section.id} role="none">
@@ -89,6 +83,11 @@ export function Equity({ initialSubSection }: EquityProps) {
               ))}
             </ul>
           </nav>
+          
+          {/* Sector Performance Histogram - Below Submenu */}
+          <div className="mt-3">
+            <SectorPerformanceHistogram />
+          </div>
         </aside>
 
         {/* Main Content Area */}

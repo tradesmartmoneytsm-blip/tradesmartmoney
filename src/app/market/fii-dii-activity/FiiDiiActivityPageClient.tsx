@@ -44,7 +44,7 @@ export function FiiDiiActivityPageClient() {
         onSectionChange={handleSectionChange}
       />
       {/* Main Content - Market Component with FII DII Focus */}
-      <div className="py-8">
+      <div>
         <Market initialSubSection="fii-dii-activity" />
       </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BarChart3, Activity, TrendingUp, Clock } from 'lucide-react';
+import { BarChart3, Clock } from 'lucide-react';
 
 interface CommoditySubSection {
   id: string;

@@ -6,9 +6,9 @@ import {
   Activity, 
   Settings,
   TrendingUp,
-  Minimize2,
   Volume2,
-  VolumeX
+  VolumeX,
+  X
 } from 'lucide-react';
 import { IntradayActivity, IntradayActivityFilters } from '@/types/activities';
 import { supabase } from '@/lib/supabase';
@@ -17,7 +17,7 @@ import { supabase } from '@/lib/supabase';
 interface ActivityManagerProps {}
 
 export function ActivityManager({}: ActivityManagerProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [activities, setActivities] = useState<IntradayActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
@@ -40,7 +40,7 @@ export function ActivityManager({}: ActivityManagerProps) {
   useEffect(() => {
     // Create a simple notification sound using Web Audio API
     const createNotificationSound = () => {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
@@ -78,11 +78,11 @@ export function ActivityManager({}: ActivityManagerProps) {
   };
 
   // Play notification sound
-  const playNotificationSound = () => {
+  const playNotificationSound = useCallback(() => {
     if (isSoundEnabled && audioRef.current) {
       audioRef.current.play();
     }
-  };
+  }, [isSoundEnabled]);
 
   // Fetch initial activities
   const fetchInitialData = useCallback(async () => {
@@ -162,16 +162,13 @@ export function ActivityManager({}: ActivityManagerProps) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [filters.stock_names]);
+  }, [filters.stock_names, playNotificationSound]);
 
   // Load initial data
   useEffect(() => {
     fetchInitialData();
   }, [fetchInitialData]);
 
-  const toggleCollapsed = () => {
-    setIsCollapsed(!isCollapsed);
-  };
 
   const formatTimeAgo = (timestamp: string) => {
     const activityTime = new Date(timestamp);
@@ -191,121 +188,124 @@ export function ActivityManager({}: ActivityManagerProps) {
     return `${dateStr} ${timeStr}`;
   };
 
-  if (loading) {
-    return (
-      <div className="fixed bottom-24 left-6 bg-white shadow-lg rounded-lg border p-4 w-80">
-        <div className="flex items-center space-x-2">
-          <Activity className="w-4 h-4 animate-spin" />
-          <span className="text-sm text-gray-600">Loading activities...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="fixed bottom-24 left-6 z-50">
-      {/* Collapsed State - Floating Button */}
-      {isCollapsed && (
+    <>
+      {/* Floating Button - Left bottom, positioned above AdvanceDeclineWidget */}
+      <div className="fixed bottom-6 right-32 z-40 md:right-32 sm:right-28">
         <button
-          onClick={toggleCollapsed}
-          className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-colors relative"
-          title="Activity Manager"
+          onClick={() => setIsOpen(true)}
+          className="bg-purple-600 hover:bg-purple-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 group relative"
+          title="Live Activities"
         >
-          <Activity className="w-5 h-5" />
+          <Activity className="w-6 h-6 group-hover:scale-110 transition-transform" />
           {activities.length > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
               {activities.length > 9 ? '9+' : activities.length}
             </span>
           )}
-          {isConnected && (
-            <span className="absolute bottom-0 right-0 bg-green-500 w-2 h-2 rounded-full"></span>
-          )}
         </button>
-      )}
+      </div>
 
-      {/* Expanded State - Activity Panel */}
-      {!isCollapsed && (
-        <div className="bg-white shadow-xl rounded-lg border w-80 max-h-96 flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between p-3 border-b bg-gray-50 rounded-t-lg">
-            <div className="flex items-center space-x-2">
-              <Activity className="w-4 h-4 text-blue-600" />
-              <h3 className="font-medium text-sm">Live Activities</h3>
-              {isConnected ? (
-                <span className="w-2 h-2 bg-green-500 rounded-full" title="Connected"></span>
-              ) : (
-                <span className="w-2 h-2 bg-red-500 rounded-full" title="Disconnected"></span>
-              )}
+      {/* Modal */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          onClick={(e) => {
+            // Close modal when clicking on the backdrop
+            if (e.target === e.currentTarget) {
+              setIsOpen(false);
+            }
+          }}
+        >
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+              <div className="flex items-center space-x-2">
+                <Activity className="w-5 h-5 text-blue-600" />
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">Live Activities</h2>
+                  <p className="text-xs text-gray-600">Real-time smart money alerts</p>
+                </div>
+                {isConnected ? (
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse ml-2" title="Connected"></span>
+                ) : (
+                  <span className="w-2 h-2 bg-red-500 rounded-full ml-2" title="Disconnected"></span>
+                )}
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={toggleSound}
+                  className={`p-2 hover:bg-white/60 rounded transition-colors ${isSoundEnabled ? 'text-blue-600' : 'text-gray-400'}`}
+                  title={isSoundEnabled ? 'Mute notifications' : 'Unmute notifications'}
+                >
+                  {isSoundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                </button>
+                <button
+                  onClick={() => setShowSettings(!showSettings)}
+                  className="p-2 hover:bg-white/60 rounded transition-colors"
+                  title="Settings"
+                >
+                  <Settings className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
-            <div className="flex items-center space-x-1">
-              <button
-                onClick={toggleSound}
-                className={`p-1 hover:bg-gray-200 rounded ${isSoundEnabled ? 'text-blue-600' : 'text-gray-400'}`}
-                title={isSoundEnabled ? 'Mute notifications' : 'Unmute notifications'}
-              >
-                {isSoundEnabled ? <Volume2 className="w-3 h-3" /> : <VolumeX className="w-3 h-3" />}
-              </button>
-              <button
-                onClick={() => setShowSettings(!showSettings)}
-                className="p-1 hover:bg-gray-200 rounded"
-                title="Settings"
-              >
-                <Settings className="w-3 h-3" />
-              </button>
-              <button
-                onClick={toggleCollapsed}
-                className="p-1 hover:bg-gray-200 rounded"
-                title="Minimize"
-              >
-                <Minimize2 className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
 
-          {/* Settings Panel */}
-          {showSettings && (
-            <div className="p-3 border-b bg-gray-50 text-xs">
-              <p className="text-gray-600 mb-2">Real-time push updates enabled</p>
-              <p className="text-gray-500">
-                Status: {isConnected ? '🟢 Connected' : '🔴 Reconnecting...'}
-              </p>
-              <p className="text-gray-500 mt-1">
-                Activities: {activities.length} today
-              </p>
-              <p className="text-gray-500 mt-1">
-                Sound: {isSoundEnabled ? '🔊 Enabled' : '🔇 Muted'}
-              </p>
-            </div>
-          )}
-
-          {/* Activities List */}
-          <div 
-            ref={scrollContainerRef}
-            className="flex-1 overflow-y-auto min-h-0"
-          >
-            {activities.length === 0 ? (
-              <div className="p-4 text-center text-gray-500">
-                <Activity className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                <p className="text-sm font-medium text-orange-600">Coming Soon</p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Live intraday activities will be available soon
+            {/* Settings Panel */}
+            {showSettings && (
+              <div className="p-3 border-b bg-gray-50 text-xs">
+                <p className="text-gray-600 mb-1">Real-time push updates enabled</p>
+                <p className="text-gray-500">
+                  Status: {isConnected ? '🟢 Connected' : '🔴 Reconnecting...'}
+                </p>
+                <p className="text-gray-500 mt-1">
+                  Activities: {activities.length} today
+                </p>
+                <p className="text-gray-500 mt-1">
+                  Sound: {isSoundEnabled ? '🔊 Enabled' : '🔇 Muted'}
                 </p>
               </div>
-            ) : (
-              <div className="space-y-1 p-2">
-                {activities.map((activity) => (
-                  <ActivityItem 
-                    key={activity.id}
-                    activity={activity}
-                    timeAgo={formatTimeAgo(activity.activity_timestamp)}
-                  />
-                ))}
-              </div>
             )}
+
+            {/* Content */}
+            <div 
+              ref={scrollContainerRef}
+              className="flex-1 overflow-y-auto p-4 bg-gray-50/50"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Activity className="w-6 h-6 animate-spin text-blue-600" />
+                  <span className="ml-3 text-gray-600">Loading activities...</span>
+                </div>
+              ) : activities.length === 0 ? (
+                <div className="text-center py-12">
+                  <Activity className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm font-medium text-orange-600">Coming Soon</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Live intraday activities will be available soon
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {activities.map((activity) => (
+                    <ActivityItem 
+                      key={activity.id}
+                      activity={activity}
+                      timeAgo={formatTimeAgo(activity.activity_timestamp)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -329,15 +329,15 @@ function ActivityItem({ activity, timeAgo }: ActivityItemProps) {
   return (
     <div className="p-3 rounded-lg border transition-colors hover:bg-gray-50 bg-white border-gray-200">
       <div className="flex items-start space-x-3">
-        <div className="flex-shrink-0 p-1.5 rounded-md bg-blue-100">
-          <TrendingUp className="w-3 h-3 text-blue-600" />
+        <div className="flex-shrink-0 p-2 rounded-md bg-blue-100">
+          <TrendingUp className="w-4 h-4 text-blue-600" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => openTradingView(activity.stock_name)}
-                className="font-medium text-sm text-blue-600 hover:text-blue-800 hover:underline truncate transition-colors cursor-pointer"
+                className="font-semibold text-sm text-blue-600 hover:text-blue-800 hover:underline truncate transition-colors cursor-pointer"
                 title={`View ${activity.stock_name} chart on TradingView`}
               >
                 {activity.stock_name}
@@ -347,7 +347,7 @@ function ActivityItem({ activity, timeAgo }: ActivityItemProps) {
               {timeAgo}
             </span>
           </div>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 leading-relaxed">
             {activity.activity_name}
           </p>
         </div>

@@ -44,7 +44,7 @@ export function MarketSentimentPageClient() {
       />
       
       {/* Main Content - Market Component with Market Sentiment Focus */}
-      <div className="py-8">
+      <div>
         <Market initialSubSection="market-sentiment" />
       </div>
 

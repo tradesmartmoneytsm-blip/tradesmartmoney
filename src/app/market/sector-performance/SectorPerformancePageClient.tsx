@@ -44,7 +44,7 @@ export function SectorPerformancePageClient() {
         onSectionChange={handleSectionChange}
       />
       {/* Main Content - Market Component with Sector Focus */}
-      <div className="py-8">
+      <div>
         <Market initialSubSection="sector-performance" />
       </div>
 

@@ -6,7 +6,7 @@ import { TrafficTracker } from '@/components/TrafficTracker';
 import { Footer } from '@/components/Footer';
 import { StructuredData } from '@/components/StructuredData';
 import { AdvanceDeclineWidget } from '@/components/AdvanceDeclineWidget';
-import { ActivityManager } from '@/components/ActivityManager';
+import { ConditionalActivityManager } from '@/components/ConditionalActivityManager';
 
 // Primary font - Inter (excellent readability, modern)
 const inter = Inter({
@@ -244,32 +244,22 @@ export default function RootLayout({
           Skip to main content
         </a>
         
-        {/* Global Construction Banner */}
-        <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white py-3 px-4 text-center relative z-50 shadow-lg">
-          <div className="flex items-center justify-center gap-3 text-sm font-semibold">
-            <span className="animate-pulse text-yellow-300">⚡</span>
-            <span className="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
-              🚧 Site Under Construction - Exciting New Features Coming Soon! 🚀
-            </span>
-            <span className="animate-bounce text-yellow-300">✨</span>
-          </div>
-        </div>
-        
         {/* Traffic Tracking */}
         <TrafficTracker />
         
         <main role="main" id="main-content">
           {children}
         </main>
+        
+        {/* Activity Manager - Floating button (appears on all pages) */}
+        <ConditionalActivityManager />
+        
         <Footer />
         
 
         
         {/* Advance-Decline Widget - Global floating button */}
         <AdvanceDeclineWidget />
-        
-        {/* Activity Manager - Real-time stock activities */}
-        <ActivityManager />
         
         {/* Structured Data - Added client-side to avoid hydration issues */}
         <StructuredData />

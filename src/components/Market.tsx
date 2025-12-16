@@ -8,6 +8,7 @@ import { FiiDiiActivity } from '@/components/FiiDiiActivity';
 import { TopMovers } from '@/components/TopMovers';
 import { IndianMarketSentiment } from '@/components/IndianMarketSentiment';
 import { trackBusinessEvent, trackPageView } from '@/lib/analytics';
+import { ModernSidebar, SidebarItem } from './ui/ModernSidebar';
 
 interface MarketSubSection {
   id: string;
@@ -265,61 +266,31 @@ export function Market({ initialSubSection }: MarketProps) {
 
   return (
     <article className="w-full px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 2xl:px-8 py-2 sm:py-3 md:py-4 lg:py-5">
-      {/* Google Auto Ads will handle ad placement automatically */}
-      
-      {/* Compact Page Header */}
-      <header className="mb-3 sm:mb-4 lg:mb-6">
-        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 font-serif">Market Analysis</h1>
-        <p className="text-sm lg:text-base text-gray-600">
-          Real-time market data, sector performance analysis, and institutional investment flows.
-        </p>
-      </header>
+      {/* Modern Professional Layout with Glassmorphism Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+        {/* Modern Glassmorphism Sidebar */}
+        <div className="lg:col-span-1" role="navigation" aria-label="Market sections">
+          <ModernSidebar
+            title="Market Sections"
+            items={subSections.map((section): SidebarItem => ({
+              id: section.id,
+              label: section.label,
+              icon: section.icon,
+              description: section.description,
+              onClick: () => {
+                setActiveSubSection(section.id);
+                // Navigate to separate Market subpage
+                window.location.href = `/market/${section.id}`;
+              },
+            }))}
+            activeItemId={activeSubSection}
+          />
+        </div>
 
-      {/* Compact Professional Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5">
-        {/* Compact Left Sidebar Navigation */}
-        <aside className="lg:col-span-1" role="navigation" aria-label="Market sections">
-          <nav className="compact-card compact-padding">
-            <h2 className="text-h4 mb-4">Market Sections</h2>
-            <ul className="space-y-1" role="menu">
-              {subSections.map((section) => (
-                <li key={section.id} role="none">
-                  <button
-                    onClick={() => {
-                      // Navigate to separate page for each market section
-                      window.location.href = `/market/${section.id}`;
-                    }}
-                    className={`w-full flex items-center space-x-2 px-3 py-2 lg:py-3 rounded-lg font-medium transition-all duration-300 text-left ${
-                      activeSubSection === section.id
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md'
-                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:shadow-sm'
-                    }`}
-                    role="menuitem"
-                    aria-current={activeSubSection === section.id ? 'page' : undefined}
-                    aria-label={`View ${section.label} - ${section.description}`}
-                  >
-                    <div className={`${activeSubSection === section.id ? 'text-blue-200' : 'text-gray-500'}`} aria-hidden="true">
-                      {section.icon}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-xs lg:text-sm">{section.label}</div>
-                      <div className={`text-xs ${
-                        activeSubSection === section.id ? 'text-blue-200' : 'text-gray-500'
-                      }`}>
-                        {section.description}
-                      </div>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </aside>
-
-        {/* Compact Right Content Area */}
-        <section className="lg:col-span-4" role="main" aria-live="polite">
+        {/* Main Content Area */}
+        <main className="lg:col-span-4" role="main" aria-label="Market analysis content">
           {renderSubSection()}
-        </section>
+        </main>
       </div>
       
       {/* Auto Ads will handle in-content placement automatically */}

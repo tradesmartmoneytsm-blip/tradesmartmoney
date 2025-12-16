@@ -44,7 +44,7 @@ export function LongBuildupPageClient() {
         onSectionChange={handleSectionChange}
       />
       {/* Main Content - Market Component with Long Buildup Focus */}
-      <div className="py-8">
+      <div>
         <Market initialSubSection="long-buildup" />
       </div>
 

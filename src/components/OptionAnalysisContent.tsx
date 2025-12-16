@@ -119,7 +119,7 @@ export function OptionAnalysisContent() {
         setData([]);
         setError('No option data available. Run the Python script to collect data.');
       }
-    } catch (err) {
+    } catch {
       setData([]);
       setError('Option analysis data not available. Please run the Python script to collect data.');
     } finally {
@@ -145,7 +145,7 @@ export function OptionAnalysisContent() {
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval);
-  }, [fetchData, autoRefreshEnabled]);
+  }, [fetchData, autoRefreshEnabled, showDetailModal]);
 
   // Optimize filtering and sorting with useMemo
   const filteredData = useMemo(() => {

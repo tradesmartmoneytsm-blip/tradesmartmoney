@@ -1,0 +1,7 @@
+# Research360 Cookies
+# Update these from your browser's DevTools > Network > Cookies
+# These expire frequently, so update them before running the fetcher
+
+PHPSESSID=4b4dd3c0c6903047275355b57117126e
+moversToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpIjoiMzAwIiwibSI6Ikx8U3xJfEN8TnxSfEZ8RHxCfFUiLCJhIjoiNjgiLCJleHAiOjE3NjE3NTg5MDMsImlzcyI6Ik1PU0wiLCJhdWQiOiJMRiJ9.hNJu1VwS4zClGlOw2cu7QDh8lytJj5ZtX-g3bNKkTIg
+
