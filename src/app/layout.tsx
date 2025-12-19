@@ -250,20 +250,20 @@ export default function RootLayout({
         
         {/* Sector Data Provider - Global state for sector performance with 1-min auto-refresh */}
         <SectorDataProvider>
-          <main role="main" id="main-content">
-            {children}
-          </main>
+        <main role="main" id="main-content">
+          {children}
+        </main>
           
           {/* Activity Manager - Floating button (appears on all pages) */}
           <ConditionalActivityManager />
           
-          <Footer />
-          
-          {/* Advance-Decline Widget - Global floating button */}
-          <AdvanceDeclineWidget />
-          
-          {/* Structured Data - Added client-side to avoid hydration issues */}
-          <StructuredData />
+        <Footer />
+        
+        {/* Advance-Decline Widget - Global floating button */}
+        <AdvanceDeclineWidget />
+        
+        {/* Structured Data - Added client-side to avoid hydration issues */}
+        <StructuredData />
         </SectorDataProvider>
       </body>
     </html>

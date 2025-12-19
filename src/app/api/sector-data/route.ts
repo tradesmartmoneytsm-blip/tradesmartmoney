@@ -28,27 +28,46 @@ export async function GET() {
     // NSE Index mapping - expanded to include major indices
     const nseIndexMapping: Record<string, string> = {
       'IT': 'NIFTY IT',
-      'Banking': 'NIFTY BANK', 
+      'NIFTY BANK': 'NIFTY BANK',
+      'PSU Bank': 'NIFTY PSU BANK',
+      'Private Bank': 'NIFTY PRIVATE BANK',
       'Pharma': 'NIFTY PHARMA',
       'Auto': 'NIFTY AUTO',
       'FMCG': 'NIFTY FMCG',
       'Energy': 'NIFTY ENERGY',
+      'Oil & Gas': 'NIFTY OIL AND GAS',
       'Metals': 'NIFTY METAL',
       'Realty': 'NIFTY REALTY',
       'Nifty 50': 'NIFTY 50',
       'Finnifty': 'FINNIFTY',
       'Healthcare': 'NIFTY HEALTHCARE',
       'Consumption': 'NIFTY CONSUMPTION', 
-      'Consumer Durables': 'NIFTY CONSUMER DURABLE',
+      'CONSR DURBL': 'NIFTY CONSUMER DURABLE',
       'Infrastructure': 'NIFTY INFRA',
       'Media': 'NIFTY MEDIA'
     };
     
     const scrapedSectors: SectorData[] = [];
     
+    // Log the first few rows for debugging
+    console.log('📊 Parsing table data...');
+    const firstRow = $('table tr').first();
+    console.log('First row HTML:', firstRow.html()?.substring(0, 200));
+    
     // Parse the table data
-    $('table tr').each((_, row) => {
+    $('table tr').each((index, row) => {
       const cells = $(row).find('td');
+      
+      // Log first 3 rows for debugging
+      if (index < 3) {
+        console.log(`Row ${index}: ${cells.length} cells`);
+        if (cells.length >= 3) {
+          console.log(`  - Cell 0: ${$(cells[0]).text().trim()}`);
+          console.log(`  - Cell 1: ${$(cells[1]).text().trim()}`);
+          console.log(`  - Cell 2: ${$(cells[2]).text().trim()}`);
+        }
+      }
+      
       if (cells.length >= 3) {
         const indexNameText = $(cells[0]).text().trim();
         const ltpText = $(cells[1]).text().trim();
@@ -77,16 +96,23 @@ export async function GET() {
 
     console.log(`✅ API: Found ${scrapedSectors.length} sectors`);
     
-    // If no sectors found from scraping, return fallback data
+    // If no sectors found from scraping, return error
     if (scrapedSectors.length === 0) {
-      console.warn('⚠️ No sectors scraped, returning fallback data');
-      const fallbackSectors = getFallbackSectorData();
+      console.error('❌ No sectors scraped from website');
+      console.error('Response status:', response.status);
+      console.error('Response content-type:', response.headers.get('content-type'));
+      console.error('HTML length:', html.length);
+      console.error('Table rows found:', $('table tr').length);
+      
       return NextResponse.json({ 
-        success: true, 
-        data: fallbackSectors,
-        scrapedAt: new Date().toISOString(),
-        source: 'fallback'
-      });
+        success: false, 
+        error: 'Failed to scrape sector data',
+        debug: {
+          status: response.status,
+          htmlLength: html.length,
+          tableRowsFound: $('table tr').length
+        }
+      }, { status: 500 });
     }
 
     return NextResponse.json({ 
@@ -97,39 +123,12 @@ export async function GET() {
     });
     
   } catch (error) {
-    console.error('❌ API: Failed to scrape sector data:', error);
-    
-    // Return fallback data even on complete failure
-    console.log('🔄 Returning fallback data due to scraping error');
-    const fallbackSectors = getFallbackSectorData();
+    console.error('❌ Error fetching sector data:', error);
     
     return NextResponse.json({ 
-      success: true, 
-      data: fallbackSectors,
-      scrapedAt: new Date().toISOString(),
-      source: 'fallback_error',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
+      success: false, 
+      error: 'Failed to fetch sector data',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
-}
-
-// Fallback sector data when scraping fails
-function getFallbackSectorData(): SectorData[] {
-  return [
-    { name: 'Banking', change: -0.48, value: '₹55,459', lastUpdated: new Date() },
-    { name: 'IT', change: -0.47, value: '₹36,578', lastUpdated: new Date() },
-    { name: 'Pharma', change: 0.50, value: '₹22,687', lastUpdated: new Date() },
-    { name: 'Auto', change: -0.40, value: '₹27,220', lastUpdated: new Date() },
-    { name: 'FMCG', change: -0.44, value: '₹56,273', lastUpdated: new Date() },
-    { name: 'Energy', change: 0.86, value: '₹35,746', lastUpdated: new Date() },
-    { name: 'Metals', change: 0.35, value: '₹9,990', lastUpdated: new Date() },
-    { name: 'Realty', change: 0.55, value: '₹924', lastUpdated: new Date() },
-    { name: 'Healthcare', change: 0.17, value: '₹14,881', lastUpdated: new Date() },
-    { name: 'Infrastructure', change: 0.08, value: '₹9,238', lastUpdated: new Date() },
-    { name: 'Consumption', change: -0.18, value: '₹12,463', lastUpdated: new Date() },
-    { name: 'Consumer Durables', change: -0.65, value: '₹39,342', lastUpdated: new Date() },
-    { name: 'Media', change: -0.50, value: '₹1,619', lastUpdated: new Date() },
-    { name: 'Finnifty', change: -0.64, value: '₹26,528', lastUpdated: new Date() },
-    { name: 'Nifty 50', change: -0.38, value: '₹25,327', lastUpdated: new Date() }
-  ];
 } 

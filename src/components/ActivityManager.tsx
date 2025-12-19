@@ -188,6 +188,18 @@ export function ActivityManager({}: ActivityManagerProps) {
     return `${dateStr} ${timeStr}`;
   };
 
+  // Handle Escape key to close sidebar
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+
   return (
     <>
       {/* Floating Button - Left bottom, positioned above AdvanceDeclineWidget */}
@@ -217,7 +229,7 @@ export function ActivityManager({}: ActivityManagerProps) {
           
           {/* Vertical Sidebar */}
           <div className="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-50 overflow-hidden flex flex-col animate-slide-in-right">
-            {/* Header */}
+          {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-blue-600 text-white flex-shrink-0">
               <div className="flex items-center space-x-3">
                 <Activity className="w-5 h-5" />
@@ -227,36 +239,36 @@ export function ActivityManager({}: ActivityManagerProps) {
                 </div>
                 {isConnected && (
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" title="Connected"></span>
-                )}
-              </div>
+              )}
+            </div>
               <div className="flex items-center space-x-2">
-                <button
-                  onClick={toggleSound}
+              <button
+                onClick={toggleSound}
                   className="p-2 hover:bg-white/10 rounded transition-colors"
-                  title={isSoundEnabled ? 'Mute notifications' : 'Unmute notifications'}
-                >
+                title={isSoundEnabled ? 'Mute notifications' : 'Unmute notifications'}
+              >
                   {isSoundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                </button>
-                <button
-                  onClick={() => setShowSettings(!showSettings)}
+              </button>
+              <button
+                onClick={() => setShowSettings(!showSettings)}
                   className="p-2 hover:bg-white/10 rounded transition-colors"
-                  title="Settings"
-                >
+                title="Settings"
+              >
                   <Settings className="w-4 h-4" />
-                </button>
-                <button
+              </button>
+              <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 hover:bg-white/10 rounded transition-colors"
                   title="Close"
-                >
+              >
                   <X className="w-5 h-5" />
-                </button>
-              </div>
+              </button>
             </div>
+          </div>
 
-            {/* Settings Panel */}
-            {showSettings && (
-              <div className="p-3 border-b bg-gray-50 text-xs">
+          {/* Settings Panel */}
+          {showSettings && (
+            <div className="p-3 border-b bg-gray-50 text-xs">
                 <p className="text-gray-600 mb-1">Real-time push updates enabled</p>
                 <p className="text-gray-500">
                   Status: {isConnected ? '🟢 Connected' : '🔴 Reconnecting...'}
@@ -274,21 +286,21 @@ export function ActivityManager({}: ActivityManagerProps) {
             {showSettings && (
               <div className="p-3 border-b bg-purple-50 text-xs flex-shrink-0">
                 <p className="text-gray-600 mb-1 font-medium">Settings</p>
-                <p className="text-gray-500">
-                  Status: {isConnected ? '🟢 Connected' : '🔴 Reconnecting...'}
-                </p>
-                <p className="text-gray-500 mt-1">
-                  Activities: {activities.length} today
-                </p>
-                <p className="text-gray-500 mt-1">
-                  Sound: {isSoundEnabled ? '🔊 Enabled' : '🔇 Muted'}
-                </p>
-              </div>
-            )}
+              <p className="text-gray-500">
+                Status: {isConnected ? '🟢 Connected' : '🔴 Reconnecting...'}
+              </p>
+              <p className="text-gray-500 mt-1">
+                Activities: {activities.length} today
+              </p>
+              <p className="text-gray-500 mt-1">
+                Sound: {isSoundEnabled ? '🔊 Enabled' : '🔇 Muted'}
+              </p>
+            </div>
+          )}
 
             {/* Activities List - Scrollable */}
-            <div 
-              ref={scrollContainerRef}
+          <div 
+            ref={scrollContainerRef}
               className="flex-1 overflow-y-auto p-4 bg-gray-50"
             >
               {loading ? (
@@ -299,24 +311,24 @@ export function ActivityManager({}: ActivityManagerProps) {
               ) : activities.length === 0 ? (
                 <div className="text-center py-12">
                   <Activity className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                  <p className="text-sm font-medium text-orange-600">Coming Soon</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Live intraday activities will be available soon
-                  </p>
-                </div>
-              ) : (
+                <p className="text-sm font-medium text-orange-600">Coming Soon</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Live intraday activities will be available soon
+                </p>
+              </div>
+            ) : (
                 <div className="space-y-2">
-                  {activities.map((activity) => (
-                    <ActivityItem 
-                      key={activity.id}
-                      activity={activity}
-                      timeAgo={formatTimeAgo(activity.activity_timestamp)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
+                {activities.map((activity) => (
+                  <ActivityItem 
+                    key={activity.id}
+                    activity={activity}
+                    timeAgo={formatTimeAgo(activity.activity_timestamp)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
+        </div>
         </>
       )}
     </>

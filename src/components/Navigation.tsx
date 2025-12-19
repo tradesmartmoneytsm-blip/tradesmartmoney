@@ -486,12 +486,12 @@ export function Navigation({
                   aria-label={`Click to view ${index.displayName} 5-minute chart`}
                 >
                   <span className="text-white font-semibold text-xs whitespace-nowrap group-hover:text-blue-200">
-                    {index.displayName}
-                  </span>
+                      {index.displayName}
+                    </span>
                   <span className="text-white/90 font-mono text-xs group-hover:text-white">
-                    {formatCurrency(index.current)}
-                  </span>
-                  {formatChange(index.change, index.changePercent)}
+                      {formatCurrency(index.current)}
+                    </span>
+                    {formatChange(index.change, index.changePercent)}
                   {/* Custom Tooltip */}
                   <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-50">
                     Click for 5min chart
@@ -507,32 +507,32 @@ export function Navigation({
             )}
           </div>
 
-          {/* User Actions */}
+                  {/* User Actions */}
           <div className="flex items-center space-x-2">
-            <button
-              onClick={() => handleMenuItemClick('blog')}
+                    <button
+                      onClick={() => handleMenuItemClick('blog')}
               className="hidden sm:flex items-center space-x-1.5 px-2 py-1 bg-white/10 text-white hover:bg-white/20 hover:text-white rounded transition-all duration-200 text-xs font-semibold"
-              aria-label="Blog"
-              title="Trading Blog & Market Insights"
-            >
+                      aria-label="Blog"
+                      title="Trading Blog & Market Insights"
+                    >
               <Newspaper className="w-3 h-3" />
-              <span className="hidden md:inline">Blog</span>
-            </button>
-            <button
+                      <span className="hidden md:inline">Blog</span>
+                    </button>
+                    <button
               className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded transition-colors"
-              aria-label="Notifications"
-              title="Notifications"
-            >
+                      aria-label="Notifications"
+                      title="Notifications"
+                    >
               <Bell className="w-3.5 h-3.5" />
-            </button>
-            <button
+                    </button>
+                    <button
               className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded transition-colors"
-              aria-label="User menu"
-              title="User menu"
-            >
+                      aria-label="User menu"
+                      title="User menu"
+                    >
               <User className="w-3.5 h-3.5" />
-            </button>
-          </div>
+                    </button>
+                  </div>
         </div>
       </div>
 

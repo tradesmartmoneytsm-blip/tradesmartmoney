@@ -59,6 +59,18 @@ export function AdvanceDeclineWidget() {
     }
   }, [isOpen, data.length, fetchData]);
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString('en-IN', {
       hour: '2-digit',
@@ -104,6 +116,7 @@ export function AdvanceDeclineWidget() {
           onClick={() => setIsOpen(true)}
           className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 group"
           title="Advance-Decline Ratio"
+          aria-label="Advance-Decline Ratio"
         >
           <BarChart3 className="w-6 h-6 group-hover:scale-110 transition-transform" />
         </button>
