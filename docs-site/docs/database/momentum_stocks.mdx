@@ -1,0 +1,42 @@
+---
+sidebar_position: 1
+title: momentum_stocks
+description: Daily snapshot of high-momentum stocks with fundamental metrics.
+---
+
+# momentum_stocks
+
+<span className="badge badge--success">Supabase</span> <span className="badge badge--info">Dhan</span> <span className="badge badge--warning">Python</span>
+
+## Purpose
+
+Daily snapshot of high-momentum stocks with fundamental metrics.
+
+## Data Flow
+
+```mermaid
+graph LR
+    A[Data Source] --> B[momentum_stocks_collector.py]
+    B --> C[momentum_stocks]
+    C --> D[API]
+    D --> E[Frontend]
+```
+
+Dhan Momentum API → momentum_stocks_collector.py → momentum_stocks table → /api/momentum-stocks
+
+## Update Frequency
+
+**Daily at 3:00 PM IST**
+
+## Key Columns
+
+- `symbol: Stock symbol`\n- `market_cap: Market cap in crores`\n- `price_change_1month, price_change_1year: Performance`\n- `roce, roe: Return metrics`\n- `eps_growth_1year: Growth metrics`
+
+## Used By
+
+Market momentum display
+
+## Related Script
+
+See [momentum_stocks_collector.py](/scripts/momentum_stocks_collector) for implementation details.
+

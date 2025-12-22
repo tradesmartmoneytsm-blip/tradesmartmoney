@@ -1,0 +1,32 @@
+---
+sidebar_position: 1
+title: futures_analyzer.py
+description: Real-time futures market analysis with OI buildup detection.
+---
+
+# futures_analyzer.py
+
+<span className="badge badge--warning">Python 3.x</span> <span className="badge badge--danger">NSE API</span>
+
+## Purpose
+
+Real-time futures market analysis with OI buildup detection.
+
+## What It Does
+
+1. Fetches futures data from NSE\n2. Analyzes OI changes and price movements\n3. Detects buildup patterns\n4. Generates trading signals with targets
+
+## Usage
+
+```bash
+Runs via VPS cron job
+```
+
+## Output Table
+
+Data is stored in [futures_analysis](/database/futures_analysis)
+
+## Schedule
+
+**Every 5 minutes during market hours**
+

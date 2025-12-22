@@ -1,0 +1,42 @@
+---
+sidebar_position: 1
+title: futures_analysis
+description: Real-time futures analysis with OI buildup patterns and signals.
+---
+
+# futures_analysis
+
+<span className="badge badge--success">Supabase</span> <span className="badge badge--danger">NSE API</span> <span className="badge badge--warning">Python</span>
+
+## Purpose
+
+Real-time futures analysis with OI buildup patterns and signals.
+
+## Data Flow
+
+```mermaid
+graph LR
+    A[Data Source] --> B[futures_analyzer.py]
+    B --> C[futures_analysis]
+    C --> D[API]
+    D --> E[Frontend]
+```
+
+NSE Derivatives API → futures_analyzer.py (VPS) → futures_analysis table → /api/futures-analysis
+
+## Update Frequency
+
+**Every 5 minutes during market hours**
+
+## Key Columns
+
+- `symbol: Stock/Index symbol`\n- `oi_buildup_type: LONG_BUILDUP, SHORT_BUILDUP, etc.`\n- `basis: Futures premium/discount`\n- `signal_type: BULLISH, BEARISH, NEUTRAL`
+
+## Used By
+
+FNO Futures Analysis page
+
+## Related Script
+
+See [futures_analyzer.py](/scripts/futures_analyzer) for implementation details.
+

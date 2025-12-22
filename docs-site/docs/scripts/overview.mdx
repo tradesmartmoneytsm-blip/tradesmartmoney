@@ -1,0 +1,36 @@
+---
+sidebar_position: 1
+title: Scripts Overview
+description: Overview of all Python data collection scripts
+---
+
+# Python Scripts
+
+All scripts are located in the `scripts/` directory.
+
+## Quick Reference
+
+| Script | Output Table | Schedule |
+|--------|--------------|----------|
+| `nse_sector_data_collector.py` | `nse_sector_data` | On-demand / Real-time |
+| `dhan_indices_collector.py` | `dhan_sector_indices_config` | Daily / On-demand |
+| `momentum_stocks_collector.py` | `momentum_stocks` | Daily at 3:00 PM IST |
+| `futures_analyzer.py` | `futures_analysis` | Every 5 minutes during market hours |
+| `option_chain_analyzer.py` | `option_chain_analysis` | Every 5 minutes during market hours |
+
+## All Scripts
+
+- [nse_sector_data_collector.py](/scripts/nse_sector_data_collector) - Fetches sector indices and constituent stocks from NSE official APIs.\n- [dhan_indices_collector.py](/scripts/dhan_indices_collector) - Scrapes comprehensive indices metadata from Dhan.co including SEC_IDs.\n- [momentum_stocks_collector.py](/scripts/momentum_stocks_collector) - Daily collection of high-momentum stocks from Dhan API.\n- [futures_analyzer.py](/scripts/futures_analyzer) - Real-time futures market analysis with OI buildup detection.\n- [option_chain_analyzer.py](/scripts/option_chain_analyzer) - Institutional sentiment analysis from option chain.
+
+## Running Scripts
+
+Most scripts require the virtual environment:
+
+```bash
+source myenv/bin/activate
+python3 scripts/script_name.py
+```
+
+:::tip Dependencies
+Each script has its dependencies listed in `requirements-*.txt` files.
+:::

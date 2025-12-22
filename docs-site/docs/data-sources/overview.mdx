@@ -1,0 +1,77 @@
+---
+sidebar_position: 1
+title: Data Sources
+description: APIs and data sources used by the system
+---
+
+# Data Sources
+
+TradeSmartMoney aggregates data from multiple sources.
+
+
+## NSE (National Stock Exchange) APIs
+
+**Type**: Official API
+
+### Endpoints
+
+- `https://www.nseindia.com/api/equity-stockIndices?index=...`\n- `https://www.nseindia.com/api/option-chain-indices?symbol=...`\n- `https://www.nseindia.com/api/quote-derivative?symbol=...`
+
+### Used For
+
+Sector data, Futures & Options, Real-time prices
+
+### Pros
+
+- ✅ Official\n- ✅ Reliable\n- ✅ Real-time
+
+### Cons
+
+- ⚠️ Needs proper headers\n- ⚠️ Rate limiting
+
+
+## Dhan.co Web Scraping
+
+**Type**: Web Scraping
+
+### Endpoints
+
+- `https://dhan.co/all-nse-indices/`\n- `https://dhan.co/indices/nifty-it-companies/`
+
+### Used For
+
+SEC_ID mapping, 1D stock changes, Momentum data
+
+### Pros
+
+- ✅ Rich metadata\n- ✅ Clean JSON data
+
+### Cons
+
+- ⚠️ May be detectable\n- ⚠️ Structure may change
+
+:::tip Recommendation
+Add delays, cache aggressively, rotate user agents
+:::
+
+
+## Dhan Historical Data API
+
+**Type**: API
+
+### Endpoints
+
+- `POST https://openweb-ticks.dhan.co/getDataH`
+
+### Used For
+
+Historical OHLCV data, Calculate 7D/30D/90D/52W changes
+
+:::info Required
+SEC_ID from dhan_sector_indices_config table
+:::
+
+### Returns
+
+Open, High, Low, Close prices, Volume and OI data
+

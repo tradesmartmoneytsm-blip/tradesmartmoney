@@ -1,0 +1,32 @@
+---
+sidebar_position: 1
+title: momentum_stocks_collector.py
+description: Daily collection of high-momentum stocks from Dhan API.
+---
+
+# momentum_stocks_collector.py
+
+<span className="badge badge--warning">Python 3.x</span> <span className="badge badge--info">Dhan API</span>
+
+## Purpose
+
+Daily collection of high-momentum stocks from Dhan API.
+
+## What It Does
+
+1. Calls Dhan momentum stocks API\n2. Filters and processes stock data\n3. Updates/inserts into momentum_stocks table
+
+## Usage
+
+```bash
+python3 scripts/momentum_stocks_collector.py
+```
+
+## Output Table
+
+Data is stored in [momentum_stocks](/database/momentum_stocks)
+
+## Schedule
+
+**Daily at 3:00 PM IST**
+

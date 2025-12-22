@@ -1,0 +1,38 @@
+---
+sidebar_position: 1
+title: nse_sector_data_collector.py
+description: Fetches sector indices and constituent stocks from NSE official APIs.
+---
+
+# nse_sector_data_collector.py
+
+<span className="badge badge--warning">Python 3.x</span> <span className="badge badge--danger">NSE API</span>
+
+## Purpose
+
+Fetches sector indices and constituent stocks from NSE official APIs.
+
+## What It Does
+
+1. Reads config from nse_sector_indices_config table\n2. Fetches sector & stock data from NSE APIs\n3. Processes and cleanses the data\n4. Stores in nse_sector_data table
+
+## Usage
+
+```bash
+python3 scripts/nse_sector_data_collector.py
+```
+
+## Dependencies
+
+```bash
+pip install requirements-nse-sector-collector.txt
+```
+
+## Output Table
+
+Data is stored in [nse_sector_data](/database/nse_sector_data)
+
+## Schedule
+
+**On-demand / Real-time**
+

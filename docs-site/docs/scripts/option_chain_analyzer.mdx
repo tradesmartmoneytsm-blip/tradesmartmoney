@@ -1,0 +1,32 @@
+---
+sidebar_position: 1
+title: option_chain_analyzer.py
+description: Institutional sentiment analysis from option chain.
+---
+
+# option_chain_analyzer.py
+
+<span className="badge badge--warning">Python 3.x</span> <span className="badge badge--danger">NSE API</span>
+
+## Purpose
+
+Institutional sentiment analysis from option chain.
+
+## What It Does
+
+1. Fetches complete option chain from NSE\n2. Calculates Put-Call Ratio (PCR)\n3. Identifies max pain strike\n4. Detects unusual option activity\n5. Generates sentiment score
+
+## Usage
+
+```bash
+Runs via VPS cron job
+```
+
+## Output Table
+
+Data is stored in [option_chain_analysis](/database/option_chain_analysis)
+
+## Schedule
+
+**Every 5 minutes during market hours**
+

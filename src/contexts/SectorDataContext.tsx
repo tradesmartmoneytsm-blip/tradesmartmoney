@@ -7,6 +7,8 @@ interface SectorDataContextType {
   sectorData: SectorData[];
   isLoading: boolean;
   lastUpdated: Date | null;
+  timeRange: string;
+  setTimeRange: (range: string) => void;
   refetch: () => Promise<void>;
 }
 
@@ -41,6 +43,7 @@ export function SectorDataProvider({ children }: { children: ReactNode }) {
   const [sectorData, setSectorData] = useState<SectorData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [timeRange, setTimeRange] = useState('1D');
 
   // Load initial data from localStorage
   useEffect(() => {
@@ -75,7 +78,8 @@ export function SectorDataProvider({ children }: { children: ReactNode }) {
   // Fetch sector data from API
   const fetchSectorData = useCallback(async () => {
     try {
-      const response = await fetch('/api/sector-data', {
+      const url = `/api/sector-data?timeRange=${timeRange}`;
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -102,11 +106,11 @@ export function SectorDataProvider({ children }: { children: ReactNode }) {
         const now = new Date();
         setLastUpdated(now);
         
-        // Save to localStorage
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedData));
-        localStorage.setItem(STORAGE_TIMESTAMP_KEY, now.toISOString());
+        // Save to localStorage (keyed by time range)
+        localStorage.setItem(`${STORAGE_KEY}_${timeRange}`, JSON.stringify(sortedData));
+        localStorage.setItem(`${STORAGE_TIMESTAMP_KEY}_${timeRange}`, now.toISOString());
         
-        console.log(`✅ Sector data updated at ${now.toLocaleTimeString()}`);
+        console.log(`✅ Sector data updated at ${now.toLocaleTimeString()} (${timeRange})`);
       } else {
         console.warn('⚠️ API returned unsuccessful response');
       }
@@ -116,36 +120,33 @@ export function SectorDataProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [timeRange]);
 
-  // Set up 1-minute auto-refresh timer
+  // Refetch data when time range changes
   useEffect(() => {
-    // Initial fetch (but only if we don't have cached data)
-    if (sectorData.length === 0) {
-      fetchSectorData();
-    } else {
-      // We have cached data, fetch in background after a short delay
-      const initialDelay = setTimeout(() => {
-        fetchSectorData();
-      }, 2000); // 2 seconds after page load
-      
-      return () => clearTimeout(initialDelay);
+    setIsLoading(true);
+    fetchSectorData();
+  }, [timeRange, fetchSectorData]);
+
+  // Set up 1-minute auto-refresh timer (only for 1D)
+  useEffect(() => {
+    if (timeRange !== '1D') {
+      return; // Don't auto-refresh for historical data
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Set up continuous 1-minute refresh
-  useEffect(() => {
+    
     const interval = setInterval(() => {
       fetchSectorData();
     }, REFRESH_INTERVAL);
     
     return () => clearInterval(interval);
-  }, [fetchSectorData]);
+  }, [fetchSectorData, timeRange]);
 
   const value: SectorDataContextType = {
     sectorData,
     isLoading,
     lastUpdated,
+    timeRange,
+    setTimeRange,
     refetch: fetchSectorData
   };
 

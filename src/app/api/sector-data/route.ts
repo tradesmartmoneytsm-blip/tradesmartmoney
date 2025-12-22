@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 import { getWebScrapingHeaders } from '@/lib/api-headers';
+import { createClient } from '@supabase/supabase-js';
 
 interface SectorData {
   name: string;
@@ -10,9 +11,120 @@ interface SectorData {
   lastUpdated: Date;
 }
 
-export async function GET() {
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ejnuocizpsfcobhyxgrd.supabase.co';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbnVvY2l6cHNmY29iaHl4Z3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMTIwMjAsImV4cCI6MjA3MjU4ODAyMH0.r5EkP_91v9e9yuBZj2KCOxXZS8K1sKSVx_QY7xqZQ1k';
+
+export async function GET(request: Request) {
   try {
-    console.log('🔄 API: Fetching sector data...');
+    const { searchParams } = new URL(request.url);
+    const timeRange = searchParams.get('timeRange') || '1D';
+    
+    console.log(`🔄 API: Fetching sector data for ${timeRange}...`);
+    
+    // For historical data (7D, 30D, 90D, 52W), fetch from database
+    if (timeRange !== '1D') {
+      return await fetchHistoricalData(timeRange);
+    }
+    
+    // For 1D, use existing scraping logic
+    return await fetch1DData();
+    
+  } catch (error) {
+    console.error('❌ Error fetching sector data:', error);
+    
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Failed to fetch sector data',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
+  }
+}
+
+async function fetchHistoricalData(timeRange: string) {
+  try {
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // Map time range to column name
+    const columnMap: Record<string, string> = {
+      '7D': 'price_change_7d',
+      '30D': 'price_change_30d',
+      '90D': 'price_change_90d',
+      '52W': 'price_change_52w'
+    };
+    
+    const column = columnMap[timeRange];
+    if (!column) {
+      throw new Error(`Invalid time range: ${timeRange}`);
+    }
+    
+    const { data, error } = await supabase
+      .from('dhan_sector_data')
+      .select(`symbol, ${column}, current_price, updated_at`)
+      .eq('data_type', 'SECTOR')  // Only fetch sectors, not stocks
+      .order(column, { ascending: false, nullsFirst: false });
+    
+    if (error) {
+      console.error('Supabase error:', error);
+      throw new Error(`Database error: ${error.message}`);
+    }
+    
+    if (!data || data.length === 0) {
+      console.error('❌ No historical data found in database');
+      return NextResponse.json({ 
+        success: false, 
+        error: 'No historical data available',
+        message: 'Please run the dhan_historical_data_collector script first'
+      }, { status: 404 });
+    }
+    
+    // Map symbol names to display names (matching 1D scraping format)
+    const symbolToDisplayName: Record<string, string> = {
+      'NIFTY Auto': 'Auto',
+      'Nifty Bank': 'NIFTY BANK',
+      'Finnifty': 'Finnifty',
+      'NIFTY FMCG': 'FMCG',
+      'Nifty IT': 'IT',
+      'NIFTY Media': 'Media',
+      'NIFTY Metal': 'Metals',
+      'NIFTY Pharma': 'Pharma',
+      'NIFTY PSU Bank': 'PSU Bank',
+      'NIFTY Realty': 'Realty',
+      'NIFTY Consumption': 'Consumption',
+      'NIFTY Energy': 'Energy',
+      'NIFTY Infra': 'Infrastructure',
+      'Nifty Consumer Durable': 'CONSR DURBL',
+      'NIFTY Private Bank': 'Private Bank',
+      'Nifty Healthcare': 'Healthcare',
+      'Nifty Oil and Gas': 'Oil & Gas',
+      'Nifty 50': 'Nifty 50'
+    };
+    
+    const sectors: SectorData[] = data.map((row: any) => ({
+      name: symbolToDisplayName[row.symbol] || row.symbol,
+      change: row[column] || 0,
+      value: row.current_price ? `₹${Math.round(row.current_price).toLocaleString('en-IN')}` : 'N/A',
+      lastUpdated: new Date(row.updated_at)
+    }));
+    
+    console.log(`✅ API: Found ${sectors.length} sectors from database (${timeRange})`);
+    
+    return NextResponse.json({ 
+      success: true, 
+      data: sectors,
+      scrapedAt: new Date().toISOString(),
+      source: 'database',
+      timeRange
+    });
+    
+  } catch (error) {
+    console.error('❌ Error fetching historical data:', error);
+    throw error;
+  }
+}
+
+async function fetch1DData() {
+  try {
+    console.log('🔄 API: Fetching 1D sector data via scraping...');
     
     const response = await fetch('https://dhan.co/all-nse-indices/', {
       headers: getWebScrapingHeaders()
@@ -94,7 +206,7 @@ export async function GET() {
       }
     });
 
-    console.log(`✅ API: Found ${scrapedSectors.length} sectors`);
+    console.log(`✅ API: Found ${scrapedSectors.length} sectors (1D scraping)`);
     
     // If no sectors found from scraping, return error
     if (scrapedSectors.length === 0) {
@@ -119,16 +231,12 @@ export async function GET() {
       success: true, 
       data: scrapedSectors,
       scrapedAt: new Date().toISOString(),
-      source: 'scraped'
+      source: 'scraped',
+      timeRange: '1D'
     });
     
   } catch (error) {
-    console.error('❌ Error fetching sector data:', error);
-    
-    return NextResponse.json({ 
-      success: false, 
-      error: 'Failed to fetch sector data',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    console.error('❌ Error scraping 1D data:', error);
+    throw error;
   }
-} 
+}

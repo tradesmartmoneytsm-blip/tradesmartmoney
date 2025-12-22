@@ -1,0 +1,34 @@
+---
+sidebar_position: 1
+title: Database Overview
+description: Overview of all Supabase database tables
+---
+
+# Database Tables
+
+All tables are stored in **Supabase** (PostgreSQL) with Row Level Security (RLS) enabled.
+
+## Quick Reference
+
+| Table | Script | Data Source | Update Frequency |
+|-------|--------|-------------|------------------|
+| `nse_sector_data` | `nse_sector_data_collector.py` | NSE API | On-demand via API calls, background refresh every 1 minute |
+| `dhan_sector_indices_config` | `dhan_indices_collector.py` | Dhan | Daily or on-demand |
+| `momentum_stocks` | `momentum_stocks_collector.py` | Dhan | Daily at 3:00 PM IST |
+| `futures_analysis` | `futures_analyzer.py` | NSE API | Every 5 minutes during market hours |
+| `option_chain_analysis` | `option_chain_analyzer.py` | NSE API | Every 5 minutes during market hours |
+
+## All Tables
+
+- [nse_sector_data](/database/nse_sector_data) - Main table for sector performance - stores NSE sector indices and their constituent stocks.\n- [dhan_sector_indices_config](/database/dhan_sector_indices_config) - Stores 119 NSE indices metadata from Dhan including SEC_ID for historical data API.\n- [momentum_stocks](/database/momentum_stocks) - Daily snapshot of high-momentum stocks with fundamental metrics.\n- [futures_analysis](/database/futures_analysis) - Real-time futures analysis with OI buildup patterns and signals.\n- [option_chain_analysis](/database/option_chain_analysis) - Institutional sentiment from option chain (PCR, max pain, unusual activity).
+
+## Database Connection
+
+```typescript
+// Supabase URL
+const SUPABASE_URL = "https://ejnuocizpsfcobhyxgrd.supabase.co"
+```
+
+:::info Service Role Key
+Required for Python scripts to write data. Available in environment variables.
+:::

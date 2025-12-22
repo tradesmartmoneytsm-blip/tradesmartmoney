@@ -27,8 +27,7 @@ interface SectorPerformanceHistogramProps {
 }
 
 export function SectorPerformanceHistogram({ className = '' }: SectorPerformanceHistogramProps) {
-  const { sectorData, isLoading } = useSectorData();
-  const [timeRange, setTimeRange] = useState<'1D' | '7D' | '30D' | '90D' | '52W'>('1D');
+  const { sectorData, isLoading, timeRange, setTimeRange } = useSectorData();
   const [advanceDeclineData, setAdvanceDeclineData] = useState<AdvanceDeclineData | null>(null);
   const [adLoading, setAdLoading] = useState(true);
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
@@ -67,7 +66,7 @@ export function SectorPerformanceHistogram({ className = '' }: SectorPerformance
   const fetchSectorStocks = useCallback(async (sectorName: string) => {
     setStocksLoading(true);
     try {
-      const response = await fetch(`/api/sector-stocks?sector=${encodeURIComponent(sectorName)}`);
+      const response = await fetch(`/api/sector-stocks?sector=${encodeURIComponent(sectorName)}&timeRange=${timeRange}`);
       const result = await response.json();
       
       if (result.success && result.data) {
@@ -80,7 +79,7 @@ export function SectorPerformanceHistogram({ className = '' }: SectorPerformance
     } finally {
       setStocksLoading(false);
     }
-  }, []);
+  }, [timeRange]);
 
   // Handle sector click
   const handleSectorClick = (sectorName: string) => {
@@ -93,6 +92,26 @@ export function SectorPerformanceHistogram({ className = '' }: SectorPerformance
     setSelectedSector(null);
     setStocksData([]);
   };
+
+  // Refetch stocks when time range changes (if a sector is selected)
+  useEffect(() => {
+    if (selectedSector) {
+      fetchSectorStocks(selectedSector);
+    }
+  }, [timeRange, selectedSector, fetchSectorStocks]);
+
+  // Auto-refresh stocks every minute (only for 1D timeRange)
+  useEffect(() => {
+    if (!selectedSector || timeRange !== '1D') {
+      return; // Don't auto-refresh for historical data or when no sector is selected
+    }
+
+    const interval = setInterval(() => {
+      fetchSectorStocks(selectedSector);
+    }, 60000); // 1 minute
+
+    return () => clearInterval(interval);
+  }, [selectedSector, timeRange, fetchSectorStocks]);
 
   // Calculate max absolute value for scaling
   const maxAbsValue = Math.max(

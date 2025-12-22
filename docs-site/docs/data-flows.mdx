@@ -1,0 +1,85 @@
+---
+sidebar_position: 5
+title: Data Flows
+description: How data moves through the system
+---
+
+# Data Flows
+
+## Sector Performance Display
+
+```mermaid
+sequenceDiagram
+    participant NSE as NSE API
+    participant Script as nse_sector_data_collector.py
+    participant DB as Supabase (nse_sector_data)
+    participant API as /api/nse-sector-data
+    participant UI as SectorPerformanceHistogram
+
+    NSE->>Script: Fetch sector/stock data
+    Script->>DB: Store data
+    API->>DB: Query data
+    UI->>API: Request data
+    API->>UI: Return JSON
+    Note over UI: Display histogram
+```
+
+### Steps
+
+1. **NSE API** provides sector and stock data
+2. **Python script** fetches and processes
+3. **Supabase** stores in `nse_sector_data` table
+4. **API route** reads from database
+5. **React context** provides to components
+6. **Component** displays histogram
+
+## Stock Drill-Down
+
+When user clicks a sector:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI as Frontend
+    participant API as /api/sector-stocks
+    participant Dhan as Dhan.co
+
+    User->>UI: Click sector
+    UI->>API: GET /api/sector-stocks?sector=NIFTY IT
+    API->>Dhan: Scrape sector page
+    Dhan->>API: Return HTML
+    API->>API: Extract __NEXT_DATA__
+    API->>API: Sort by % change
+    API->>UI: Return sorted stocks
+    UI->>User: Display stock list
+```
+
+## Futures Analysis (Real-time)
+
+```mermaid
+graph TB
+    A[VPS Cron Job<br/>Every 5 min] --> B[futures_analyzer.py]
+    B --> C[NSE Derivatives API]
+    C --> D[Fetch OI + Price Data]
+    D --> E[Analyze Patterns]
+    E --> F[Detect Buildup Type]
+    F --> G[Generate Signals]
+    G --> H[Store in futures_analysis]
+    H --> I[/api/futures-analysis]
+    I --> J[FNO Page]
+```
+
+## Update Schedule Summary
+
+| Component | Frequency | Method |
+|-----------|-----------|--------|
+| Sector Performance | Every 1 minute | Background refresh (SectorDataContext) |
+| Stock Drill-Down | On-demand | User click → API scrape |
+| Futures Analysis | Every 5 minutes | VPS cron job |
+| Option Analysis | Every 5 minutes | VPS cron job |
+| Momentum Stocks | Daily at 3 PM IST | VPS cron job |
+| Dhan Indices Config | Daily / On-demand | Manual script run |
+
+:::tip Caching
+Consider implementing caching layers to reduce API calls and improve performance.
+:::

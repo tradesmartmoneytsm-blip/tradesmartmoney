@@ -1,0 +1,42 @@
+---
+sidebar_position: 1
+title: nse_sector_data
+description: Main table for sector performance - stores NSE sector indices and their constituent stocks.
+---
+
+# nse_sector_data
+
+<span className="badge badge--success">Supabase</span> <span className="badge badge--danger">NSE API</span> <span className="badge badge--warning">Python</span>
+
+## Purpose
+
+Main table for sector performance - stores NSE sector indices and their constituent stocks.
+
+## Data Flow
+
+```mermaid
+graph LR
+    A[Data Source] --> B[nse_sector_data_collector.py]
+    B --> C[nse_sector_data]
+    C --> D[API]
+    D --> E[Frontend]
+```
+
+NSE API → nse_sector_data_collector.py → nse_sector_data table → /api/nse-sector-data → UI
+
+## Update Frequency
+
+**On-demand via API calls, background refresh every 1 minute**
+
+## Key Columns
+
+- `data_type: 'INDEX' or 'STOCK'`\n- `index_name: e.g., 'NIFTY IT', 'NIFTY AUTO'`\n- `symbol: Stock/Index symbol`\n- `current_price, day_change_percent: Price data`\n- `advances, declines: Market breadth (INDEX only)`
+
+## Used By
+
+SectorPerformanceHistogram, Market Breadth display
+
+## Related Script
+
+See [nse_sector_data_collector.py](/scripts/nse_sector_data_collector) for implementation details.
+
