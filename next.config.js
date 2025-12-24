@@ -97,7 +97,17 @@ const nextConfig = {
   env: {
     SITE_URL: 'https://www.tradesmartmoney.com',
     SITE_NAME: 'TradeSmartMoney',
-  }
+  },
+  
+  // Webpack configuration to exclude docs-site
+  webpack: (config, { isServer }) => {
+    // Exclude docs-site from the build
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ['**/node_modules', '**/docs-site/**'],
+    };
+    return config;
+  },
 };
 
 module.exports = nextConfig; 
