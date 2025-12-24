@@ -60,7 +60,7 @@ interface StockData {
   pe: number;
 }
 
-interface StockDataFromDB {
+interface DatabaseStockRow {
   symbol: string;
   price_change_7d?: number;
   price_change_30d?: number;
@@ -68,6 +68,7 @@ interface StockDataFromDB {
   price_change_52w?: number;
   current_price?: number;
   updated_at: string;
+  [key: string]: string | number | undefined;
 }
 
 // Map sector display names to database parent_sector names
@@ -151,12 +152,12 @@ async function fetchHistoricalStockData(
     console.log(`🔧 Transforming data: using column "${column}" for timeRange ${timeRange}`);
     console.log(`📝 Sample raw data (first stock):`, data[0]);
     
-    const stocks: StockData[] = (data as any[])
-      .map((item: any) => ({
+    const stocks: StockData[] = (data as unknown as DatabaseStockRow[])
+      .map((item: DatabaseStockRow) => ({
         symbol: item.symbol,
         name: item.symbol, // We don't store display name in DB
         change: 0, // Not stored
-        changePercent: item[column] || 0,
+        changePercent: (item[column] as number) || 0,
         price: item.current_price || 0,
         volume: 0, // Not stored
         high: 0, // Not stored

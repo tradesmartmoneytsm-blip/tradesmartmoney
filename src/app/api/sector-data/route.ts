@@ -99,18 +99,35 @@ async function fetchHistoricalData(timeRange: string) {
       'Nifty 50': 'Nifty 50'
     };
     
-    const sectors: SectorData[] = data.map((row: any) => ({
-      name: symbolToDisplayName[row.symbol] || row.symbol,
-      change: row[column] || 0,
-      value: row.current_price ? `₹${Math.round(row.current_price).toLocaleString('en-IN')}` : 'N/A',
-      lastUpdated: new Date(row.updated_at)
-    }));
+    const sectors: SectorData[] = data.map((row) => {
+      const typedRow = row as unknown as { 
+        symbol: string; 
+        [key: string]: number | string | null | undefined; 
+        updated_at: string; 
+        current_price?: number 
+      };
+      return {
+        name: symbolToDisplayName[typedRow.symbol] || typedRow.symbol,
+        change: (typedRow[column] as number) || 0,
+        value: typedRow.current_price ? `₹${Math.round(typedRow.current_price).toLocaleString('en-IN')}` : 'N/A',
+        lastUpdated: new Date(typedRow.updated_at)
+      };
+    });
     
-    console.log(`✅ API: Found ${sectors.length} sectors from database (${timeRange})`);
+    // Deduplicate sectors by name (keep first occurrence)
+    const uniqueSectors = sectors.reduce((acc: SectorData[], current: SectorData) => {
+      const exists = acc.find(item => item.name === current.name);
+      if (!exists) {
+        acc.push(current);
+      }
+      return acc;
+    }, []);
+    
+    console.log(`✅ API: Found ${uniqueSectors.length} unique sectors from database (${timeRange})`);
     
     return NextResponse.json({ 
       success: true, 
-      data: sectors,
+      data: uniqueSectors,
       scrapedAt: new Date().toISOString(),
       source: 'database',
       timeRange
@@ -208,23 +225,18 @@ async function fetch1DData() {
 
     console.log(`✅ API: Found ${scrapedSectors.length} sectors (1D scraping)`);
     
-    // If no sectors found from scraping, return error
+    // If no sectors found from scraping, return empty array with success
     if (scrapedSectors.length === 0) {
-      console.error('❌ No sectors scraped from website');
-      console.error('Response status:', response.status);
-      console.error('Response content-type:', response.headers.get('content-type'));
-      console.error('HTML length:', html.length);
-      console.error('Table rows found:', $('table tr').length);
+      console.warn('⚠️ No sector indices found on Dhan (possibly showing G-Sec data only)');
       
       return NextResponse.json({ 
-        success: false, 
-        error: 'Failed to scrape sector data',
-        debug: {
-          status: response.status,
-          htmlLength: html.length,
-          tableRowsFound: $('table tr').length
-        }
-      }, { status: 500 });
+        success: true, 
+        data: [],
+        message: 'No sector data available at the moment. The data source may be temporarily unavailable.',
+        scrapedAt: new Date().toISOString(),
+        source: 'scraped',
+        timeRange: '1D'
+      }, { status: 200 });
     }
 
     return NextResponse.json({ 
@@ -237,6 +249,16 @@ async function fetch1DData() {
     
   } catch (error) {
     console.error('❌ Error scraping 1D data:', error);
-    throw error;
+    
+    // Return empty data instead of throwing error
+    return NextResponse.json({ 
+      success: true, 
+      data: [],
+      message: 'Unable to fetch sector data at the moment. Please try again later.',
+      scrapedAt: new Date().toISOString(),
+      source: 'scraped',
+      timeRange: '1D',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 200 });
   }
 }
