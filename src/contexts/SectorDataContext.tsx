@@ -94,6 +94,14 @@ export function SectorDataProvider({ children }: { children: ReactNode }) {
       const result = await response.json();
       
       if (result.success && result.data && Array.isArray(result.data)) {
+        // Handle empty data (e.g., when scraping fails but returns 200)
+        if (result.data.length === 0) {
+          console.warn(`⚠️ No sector data available for ${timeRange}:`, result.message || 'Unknown reason');
+          // Keep existing data, don't clear it
+          setIsLoading(false);
+          return;
+        }
+        
         // Sort from most positive to most negative
         const sortedData = [...result.data].sort((a, b) => {
           const aChange = typeof a.change === 'string' ? parseFloat(a.change) : a.change;

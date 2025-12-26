@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Activity } from 'lucide-react';
+import { Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SmartMoneyFlowContent } from './SmartMoneyFlowContent';
 import { SectorPerformanceHistogram } from './SectorPerformanceHistogram';
+import { ActivityManager } from './ActivityManager';
 
 interface EquitySubSection {
   id: string;
@@ -18,6 +19,8 @@ interface EquityProps {
 
 export function Equity({ initialSubSection }: EquityProps) {
   const [activeSubSection, setActiveSubSection] = useState(initialSubSection || 'smart-money-flow');
+  const [isSubmenuCollapsed, setIsSubmenuCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Update active subsection when initialSubSection prop changes
   useEffect(() => {
@@ -46,54 +49,119 @@ export function Equity({ initialSubSection }: EquityProps) {
   };
 
   return (
-    <article className="w-full px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 2xl:px-8 py-2 sm:py-3 md:py-4 lg:py-5">
-
-      {/* Compact Professional Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
-        {/* Compact Left Sidebar Navigation */}
-        <aside className="lg:col-span-1" role="navigation" aria-label="Equity sections">
-          <nav className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
-            <h2 className="text-sm lg:text-base font-bold text-gray-900 mb-2 font-serif">Equity Sections</h2>
-            <ul className="space-y-1" role="menu">
-              {subSections.map((section) => (
-                <li key={section.id} role="none">
+    <article className="w-full pl-0 pr-0 sm:pl-0 sm:pr-0 md:pl-0 md:pr-0 lg:pl-0 lg:pr-0 xl:pl-0 xl:pr-0 2xl:pl-0 2xl:pr-0 pt-1 pb-2 sm:pt-2 sm:pb-3 md:pt-2 md:pb-4">
+      {/* Three Column Layout: Left Submenu | Middle Content | Right Sector Performance */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-x-2">
+        
+        {/* Left Sidebar - Vertical Submenu (Collapsible) */}
+        {!isSubmenuCollapsed && (
+          <aside className="lg:col-span-2">
+            <div className="sticky top-4">
+              <div className="relative bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-2.5 py-2 flex items-center justify-between">
+                  <h3 className="text-white font-semibold text-xs">Equity Analysis</h3>
                   <button
-                    onClick={() => {
-                      // Navigate to separate equity subpage
-                      window.location.href = `/equity/${section.id}`;
-                    }}
-                    className={`w-full flex items-center space-x-2 px-3 py-2 lg:py-3 rounded-lg font-medium transition-all duration-300 text-left ${
-                      activeSubSection === section.id
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md'
-                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:shadow-sm'
-                    }`}
-                    role="menuitem"
-                    aria-current={activeSubSection === section.id ? 'page' : undefined}
-                    aria-label={`View ${section.label} - ${section.description}`}
+                    onClick={() => setIsSubmenuCollapsed(true)}
+                    className="p-1 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                    aria-label="Collapse submenu"
+                    title="Collapse submenu"
                   >
-                    <div className={`${activeSubSection === section.id ? 'text-blue-200' : 'text-gray-500'}`} aria-hidden="true">
-                      {section.icon}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-xs lg:text-sm">{section.label}</div>
-                      <div className={`text-xs hidden lg:block ${activeSubSection === section.id ? 'text-blue-200' : 'text-gray-500'}`}>{section.description}</div>
-                    </div>
+                    <ChevronLeft className="w-3.5 h-3.5 text-white" />
                   </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          
-          {/* Sector Performance Histogram - Below Submenu */}
-          <div className="mt-3">
-            <SectorPerformanceHistogram />
-          </div>
-        </aside>
+                </div>
 
-        {/* Main Content Area */}
-        <main className="lg:col-span-4" role="main" aria-label="Equity analysis content">
+                {/* Vertical Submenu Items */}
+                <nav className="p-2 space-y-0.5" aria-label="Equity subsections">
+                  {subSections.map((section) => {
+                    const isActive = activeSubSection === section.id;
+                    return (
+                      <button
+                        key={section.id}
+                        onClick={() => setActiveSubSection(section.id)}
+                        className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-md text-xs font-medium transition-all duration-200 text-left group relative ${
+                          isActive
+                            ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 shadow-sm'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
+                        aria-current={isActive ? 'page' : undefined}
+                      >
+                        <span className={`flex-shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
+                          {section.icon}
+                        </span>
+                        <span className="flex-1 truncate text-[11px] leading-tight">{section.label}</span>
+                        {isActive && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-gradient-to-b from-blue-600 to-purple-600 rounded-r-full" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
+              
+              {/* Activity Manager Below Submenu */}
+              <div className="mt-3">
+                <ActivityManager isEmbedded={true} />
+              </div>
+            </div>
+          </aside>
+        )}
+
+        {/* Expand Button for Submenu - When Collapsed */}
+        {isSubmenuCollapsed && (
+          <button
+            onClick={() => setIsSubmenuCollapsed(false)}
+            className="fixed left-4 top-24 z-30 flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg shadow-lg transition-all hover:shadow-xl"
+            aria-label="Expand submenu"
+            title="Show submenu"
+          >
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-xs font-medium">Menu</span>
+          </button>
+        )}
+
+        {/* Middle Content Area */}
+        <main 
+          className={`${
+            isSubmenuCollapsed && isSidebarCollapsed
+              ? 'lg:col-span-12'
+              : isSubmenuCollapsed
+              ? 'lg:col-span-10'
+              : isSidebarCollapsed
+              ? 'lg:col-span-10'
+              : 'lg:col-span-8'
+          }`} 
+          role="main" 
+          aria-label="Equity analysis content"
+          style={{ zoom: 0.9 }}
+        >
+          {/* Content */}
           {renderContent()}
         </main>
+
+        {/* Right Sidebar - Sector Performance (Collapsible) */}
+        {!isSidebarCollapsed && (
+          <aside className="lg:col-span-2">
+            <div className="sticky top-4">
+              <div className="relative rounded-lg shadow-md ring-1 ring-blue-200/40">
+                {/* Sector Performance - Full width */}
+                <SectorPerformanceHistogram onCollapse={() => setIsSidebarCollapsed(true)} />
+              </div>
+            </div>
+          </aside>
+        )}
+
+        {/* Expand Button for Sector Performance - When Collapsed */}
+        {isSidebarCollapsed && (
+          <button
+            onClick={() => setIsSidebarCollapsed(false)}
+            className="fixed right-4 top-24 z-30 p-2 bg-white hover:bg-gray-100 border border-gray-200 rounded-full shadow-md transition-all hover:shadow-lg"
+            aria-label="Expand sidebar"
+            title="Show market data"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </button>
+        )}
       </div>
     </article>
   );

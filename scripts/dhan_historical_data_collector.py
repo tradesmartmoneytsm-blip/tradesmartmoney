@@ -9,7 +9,7 @@ Only processes indices that are displayed in the Sector Performance UI
 Usage:
     python3 dhan_historical_data_collector.py                     # Default: Both sectors AND stocks
     python3 dhan_historical_data_collector.py --sectors-only      # Sectors only (skip stocks)
-    python3 dhan_historical_data_collector.py --limit 2           # Test with 2 sectors (includes stocks)
+    python3 dhan_historical_data_collector.py --limit 2           # Limit to 2 sectors (includes stocks)
 """
 
 import requests
@@ -291,28 +291,28 @@ class DhanHistoricalDataCollector:
         """
         # Map sector symbols to their Dhan URLs
         sector_url_mapping = {
-            'Nifty 50': 'https://dhan.co/indices/nifty-50-companies/',
-            'NIFTY Bank': 'https://dhan.co/indices/nifty-bank-companies/',
-            'Nifty Bank': 'https://dhan.co/indices/nifty-bank-companies/',
-            'NIFTY Auto': 'https://dhan.co/indices/nifty-auto-companies/',
-            'NIFTY IT': 'https://dhan.co/indices/nifty-it-companies/',
-            'NIFTY Pharma': 'https://dhan.co/indices/nifty-pharma-companies/',
-            'NIFTY FMCG': 'https://dhan.co/indices/nifty-fmcg-companies/',
-            'NIFTY Metal': 'https://dhan.co/indices/nifty-metal-companies/',
-            'NIFTY Realty': 'https://dhan.co/indices/nifty-realty-companies/',
-            'NIFTY Energy': 'https://dhan.co/indices/nifty-energy-companies/',
-            'NIFTY Media': 'https://dhan.co/indices/nifty-media-companies/',
-            'NIFTY PSU Bank': 'https://dhan.co/indices/nifty-psu-bank-companies/',
-            'Nifty Oil and Gas': 'https://dhan.co/indices/nifty-oil-and-gas-companies/',
-            'NIFTY Private Bank': 'https://dhan.co/indices/nifty-private-bank-companies/',
-            'NIFTY Infra': 'https://dhan.co/indices/nifty-infrastructure-companies/',
-            'Nifty Healthcare': 'https://dhan.co/indices/nifty-healthcare-companies/',
-            'Nifty Consumer Durable': 'https://dhan.co/indices/nifty-consumer-durable-companies/',
-            'NIFTY Consumption': 'https://dhan.co/indices/nifty-india-consumption-companies/',
-            'Finnifty': 'https://dhan.co/indices/nifty-financial-services-companies/'
+            'nifty 50': 'https://dhan.co/indices/nifty-50-companies/',
+            'nifty bank': 'https://dhan.co/indices/nifty-bank-companies/',
+            'nifty auto': 'https://dhan.co/indices/nifty-auto-companies/',
+            'nifty it': 'https://dhan.co/indices/nifty-it-companies/',
+            'nifty pharma': 'https://dhan.co/indices/nifty-pharma-companies/',
+            'nifty fmcg': 'https://dhan.co/indices/nifty-fmcg-companies/',
+            'nifty metal': 'https://dhan.co/indices/nifty-metal-companies/',
+            'nifty realty': 'https://dhan.co/indices/nifty-realty-companies/',
+            'nifty energy': 'https://dhan.co/indices/nifty-energy-companies/',
+            'nifty media': 'https://dhan.co/indices/nifty-media-companies/',
+            'nifty psu bank': 'https://dhan.co/indices/nifty-psu-bank-companies/',
+            'nifty oil and gas': 'https://dhan.co/indices/nifty-oil-and-gas-companies/',
+            'nifty private bank': 'https://dhan.co/indices/nifty-private-bank-companies/',
+            'nifty infra': 'https://dhan.co/indices/nifty-infrastructure-companies/',
+            'nifty healthcare': 'https://dhan.co/indices/nifty-healthcare-companies/',
+            'nifty consumer durable': 'https://dhan.co/indices/nifty-consumer-durable-companies/',
+            'nifty consumption': 'https://dhan.co/indices/nifty-india-consumption-companies/',
+            'finnifty': 'https://dhan.co/indices/nifty-financial-services-companies/'
         }
         
-        url = sector_url_mapping.get(sector_symbol)
+        # Case-insensitive lookup
+        url = sector_url_mapping.get(sector_symbol.lower())
         if not url:
             logging.warning(f"No URL mapping found for sector: {sector_symbol}")
             return []
@@ -650,23 +650,20 @@ def main():
     # Parse command line arguments
     # Example: python3 dhan_historical_data_collector.py                    # Both phases (default)
     # Example: python3 dhan_historical_data_collector.py --sectors-only     # Phase 1 only
-    # Example: python3 dhan_historical_data_collector.py --limit 2          # Test with 2 sectors (both phases)
+    # Example: python3 dhan_historical_data_collector.py --limit 2          # Limit to 2 sectors
     limit = None
     include_stocks = True  # Default: run both phases
     
     for i, arg in enumerate(sys.argv[1:]):
         if arg == '--stocks':
             include_stocks = True
-            print("Mode: Sectors + Stocks")
         elif arg == '--sectors-only':
             include_stocks = False
-            print("Mode: Sectors Only")
         elif arg == '--limit' and i + 1 < len(sys.argv) - 1:
             try:
                 limit = int(sys.argv[i + 2])
-                print(f"Running with limit: {limit} sectors")
             except (ValueError, IndexError):
-                print("Invalid limit argument. Processing all sectors.")
+                pass
     
     collector = DhanHistoricalDataCollector()
     success = collector.run(limit=limit, include_stocks=include_stocks)

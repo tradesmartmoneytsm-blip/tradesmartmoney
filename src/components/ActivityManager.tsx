@@ -13,11 +13,12 @@ import {
 import { IntradayActivity, IntradayActivityFilters } from '@/types/activities';
 import { supabase } from '@/lib/supabase';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface ActivityManagerProps {}
+interface ActivityManagerProps {
+  isEmbedded?: boolean;
+}
 
-export function ActivityManager({}: ActivityManagerProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function ActivityManager({ isEmbedded = false }: ActivityManagerProps) {
+  const [isOpen, setIsOpen] = useState(isEmbedded); // Auto-open if embedded
   const [activities, setActivities] = useState<IntradayActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
@@ -202,40 +203,47 @@ export function ActivityManager({}: ActivityManagerProps) {
 
   return (
     <>
-      {/* Floating Button - Left bottom, positioned above AdvanceDeclineWidget */}
-      <div className="fixed bottom-6 right-32 z-40 md:right-32 sm:right-28">
-        <button
-          onClick={() => setIsOpen(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 group relative"
-          title="Live Activities"
-        >
-          <Activity className="w-6 h-6 group-hover:scale-110 transition-transform" />
-          {activities.length > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-              {activities.length > 9 ? '9+' : activities.length}
-            </span>
-          )}
-        </button>
-      </div>
+      {/* Floating Button - Only show if not embedded */}
+      {!isEmbedded && (
+        <div className="fixed bottom-6 right-32 z-40 md:right-32 sm:right-28">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-purple-600 hover:bg-purple-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 group relative"
+            title="Live Activities"
+          >
+            <Activity className="w-6 h-6 group-hover:scale-110 transition-transform" />
+            {activities.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {activities.length > 9 ? '9+' : activities.length}
+              </span>
+            )}
+          </button>
+        </div>
+      )}
 
-      {/* Right Sidebar Panel */}
+      {/* Sidebar Panel or Embedded View */}
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/30 z-40 transition-opacity"
-            onClick={() => setIsOpen(false)}
-          />
+          {/* Backdrop - Only show if not embedded */}
+          {!isEmbedded && (
+            <div 
+              className="fixed inset-0 bg-black/30 z-40 transition-opacity"
+              onClick={() => setIsOpen(false)}
+            />
+          )}
           
-          {/* Vertical Sidebar */}
-          <div className="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-50 overflow-hidden flex flex-col animate-slide-in-right">
+          {/* Vertical Sidebar or Embedded Container */}
+          <div className={isEmbedded 
+            ? "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[500px]"
+            : "fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-50 overflow-hidden flex flex-col animate-slide-in-right"
+          }>
           {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-blue-600 text-white flex-shrink-0">
+            <div className={`flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-purple-600 to-blue-600 text-white flex-shrink-0 ${isEmbedded ? 'p-2.5' : 'p-4'}`}>
               <div className="flex items-center space-x-3">
-                <Activity className="w-5 h-5" />
+                <Activity className={isEmbedded ? "w-4 h-4" : "w-5 h-5"} />
                 <div>
-                  <h2 className="text-lg font-bold">Live Activities</h2>
-                  <p className="text-xs text-white/80">Real-time alerts</p>
+                  <h2 className={`font-bold ${isEmbedded ? 'text-xs' : 'text-lg'}`}>Live Activities</h2>
+                  {!isEmbedded && <p className="text-xs text-white/80">Real-time alerts</p>}
                 </div>
                 {isConnected && (
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" title="Connected"></span>
@@ -244,25 +252,27 @@ export function ActivityManager({}: ActivityManagerProps) {
               <div className="flex items-center space-x-2">
               <button
                 onClick={toggleSound}
-                  className="p-2 hover:bg-white/10 rounded transition-colors"
+                  className={`hover:bg-white/10 rounded transition-colors ${isEmbedded ? 'p-1' : 'p-2'}`}
                 title={isSoundEnabled ? 'Mute notifications' : 'Unmute notifications'}
               >
-                  {isSoundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                  {isSoundEnabled ? <Volume2 className={isEmbedded ? "w-3.5 h-3.5" : "w-4 h-4"} /> : <VolumeX className={isEmbedded ? "w-3.5 h-3.5" : "w-4 h-4"} />}
               </button>
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                  className="p-2 hover:bg-white/10 rounded transition-colors"
+                  className={`hover:bg-white/10 rounded transition-colors ${isEmbedded ? 'p-1' : 'p-2'}`}
                 title="Settings"
               >
-                  <Settings className="w-4 h-4" />
+                  <Settings className={isEmbedded ? "w-3.5 h-3.5" : "w-4 h-4"} />
               </button>
-              <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 hover:bg-white/10 rounded transition-colors"
-                  title="Close"
-              >
-                  <X className="w-5 h-5" />
-              </button>
+              {!isEmbedded && (
+                <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 hover:bg-white/10 rounded transition-colors"
+                    title="Close"
+                >
+                    <X className="w-5 h-5" />
+                </button>
+              )}
             </div>
           </div>
 
