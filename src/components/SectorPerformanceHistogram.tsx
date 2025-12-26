@@ -231,16 +231,17 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
         {/* Title and Time Range Buttons / Back Button */}
         <div className="mb-2">
           {selectedSector ? (
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               {/* Back Button */}
               <button
                 onClick={handleBackToSectors}
-                className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors flex-shrink-0"
               >
                 <ArrowLeft className="w-3 h-3" />
                 Back to Sectors
               </button>
-              <h3 className="text-[11px] font-semibold text-gray-900">
+              {/* Sector Name - Centered in remaining space */}
+              <h3 className="flex-1 text-center text-[11px] font-semibold text-gray-900">
                 {selectedSector} Stocks
               </h3>
             </div>
@@ -325,7 +326,7 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
           /* Sectors View - Horizontal Bar Chart Container */
           <div className="relative pl-24 pr-0 overflow-hidden" style={{ minHeight: `${sectorData.length * 22}px` }}>
             {/* Bars */}
-            <div className="space-y-0.5">
+            <div className="space-y-1.5">
               {sectorData.map((sector, index) => {
               // Ensure change is a number for comparison
               const changeValue = typeof sector.change === 'string' ? parseFloat(sector.change) : sector.change;
@@ -340,7 +341,7 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
                   title={`Click to view ${sector.name} stocks`}
                 >
                   {/* Sector Name - Fixed Left Column - Clickable */}
-                  <div className="absolute left-0 w-24 text-[11px] leading-tight text-gray-800 group-hover:text-blue-600 group-hover:underline pr-1 truncate transition-colors -translate-x-24 uppercase">
+                  <div className="absolute left-0 w-24 font-semibold text-xs leading-tight text-blue-600 group-hover:text-blue-800 group-hover:underline pr-1 truncate transition-colors -translate-x-24">
                     {sector.name}
                   </div>
 
