@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BarChart3, Zap, TrendingUp, DollarSign, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BarChart3, Zap, TrendingUp, DollarSign, ChevronLeft, ChevronRight, TrendingUpDown } from 'lucide-react';
 import { BitStrategyContent } from './BitStrategyContent';
 import { SwingAngleContent } from './SwingAngleContent';
 import { BottomFormationContent } from './BottomFormationContent';
 import { ValueBuyingContent } from './ValueBuyingContent';
+import { FutureSwingsEliteContent } from './FutureSwingsEliteContent';
 import { SectorPerformanceHistogram } from './SectorPerformanceHistogram';
 import { ActivityManager } from './ActivityManager';
 
@@ -21,7 +22,7 @@ interface SwingProps {
 }
 
 export function Swing({ initialSubSection }: SwingProps) {
-  const [activeSubSection, setActiveSubSection] = useState(initialSubSection || 'momentum-strategy');
+  const [activeSubSection, setActiveSubSection] = useState(initialSubSection || 'futures');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isSubmenuCollapsed, setIsSubmenuCollapsed] = useState(false);
 
@@ -33,6 +34,12 @@ export function Swing({ initialSubSection }: SwingProps) {
   }, [initialSubSection]);
 
   const subSections: SwingSubSection[] = [
+    { 
+      id: 'futures', 
+      label: 'Futures', 
+      icon: <TrendingUpDown className="w-4 h-4" />, 
+      description: 'Elite Futures Swing Strategy'
+    },
     { 
       id: 'momentum-strategy', 
       label: 'Momentum Strategy', 
@@ -61,6 +68,9 @@ export function Swing({ initialSubSection }: SwingProps) {
 
   const renderContent = () => {
     switch (activeSubSection) {
+      case 'futures':
+        return <FutureSwingsEliteContent />;
+
       case 'momentum-strategy':
         return <BitStrategyContent />;  // Reusing BitStrategyContent for now
 
@@ -74,7 +84,7 @@ export function Swing({ initialSubSection }: SwingProps) {
         return <ValueBuyingContent />;
 
       default:
-        return <BitStrategyContent />;
+        return <FutureSwingsEliteContent />;
     }
   };
 

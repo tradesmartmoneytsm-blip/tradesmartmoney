@@ -361,9 +361,9 @@ export function Navigation({
       return;
     }
     
-    // Handle Swing Trade navigation - navigate to Swing with Momentum strategy as default
+    // Handle Swing Trade navigation - navigate to Swing with Futures as default
     if (itemId === 'swing') {
-      window.location.href = '/swing-trades/momentum-strategy';
+      window.location.href = '/swing-trades';
       return;
     }
     
