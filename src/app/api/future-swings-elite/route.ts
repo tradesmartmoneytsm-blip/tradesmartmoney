@@ -8,6 +8,7 @@ interface FutureSwingTrade {
   stock_symbol: string;
   entry_date: string;
   entry_price: number;
+  cmp: number | null;
   stop_loss: number | null;
   target_price: number | null;
   exit_date: string | null;

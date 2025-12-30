@@ -8,6 +8,7 @@ interface Trade {
   stock_symbol: string;
   entry_date: string;
   entry_price: number;
+  cmp: number | null;
   stop_loss: number | null;
   target_price: number | null;
   exit_date: string | null;
@@ -93,6 +94,15 @@ export function FutureSwingsEliteContent() {
     if (percentage === null) return '-';
     const sign = percentage >= 0 ? '+' : '';
     return `${sign}${percentage.toFixed(2)}%`;
+  };
+
+  const calculatePnL = (trade: Trade) => {
+    // For running trades, calculate P&L based on CMP and entry price
+    if (trade.result === 'Running' && trade.cmp !== null) {
+      return ((trade.cmp - trade.entry_price) / trade.entry_price) * 100;
+    }
+    // For closed trades, use the stored percentage_change
+    return trade.percentage_change;
   };
 
   const getResultBadge = (result: string) => {
@@ -295,6 +305,9 @@ export function FutureSwingsEliteContent() {
                   Entry Price
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  CMP
+                </th>
+                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Stop Loss
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -304,14 +317,14 @@ export function FutureSwingsEliteContent() {
                   P&L %
                 </th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  Trade Status
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {getCurrentTrades().length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center">
+                  <td colSpan={8} className="px-4 py-8 text-center">
                     <div className="flex flex-col items-center justify-center">
                       <Activity className="w-12 h-12 text-gray-400 mb-2" />
                       <p className="text-sm text-gray-500">No trades found</p>
@@ -331,6 +344,13 @@ export function FutureSwingsEliteContent() {
                       <div className="text-sm text-gray-900">{formatPrice(trade.entry_price)}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-right">
+                      <div className={`text-sm font-medium ${
+                        trade.result === 'Running' ? 'text-blue-600' : 'text-gray-900'
+                      }`}>
+                        {trade.cmp !== null ? formatPrice(trade.cmp) : '-'}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-right">
                       <div className="text-sm text-red-600 font-medium">{formatPrice(trade.stop_loss)}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-right">
@@ -338,13 +358,13 @@ export function FutureSwingsEliteContent() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-right">
                       <div className={`text-sm font-semibold ${
-                        trade.percentage_change === null 
+                        calculatePnL(trade) === null 
                           ? 'text-gray-500'
-                          : trade.percentage_change >= 0 
+                          : calculatePnL(trade)! >= 0 
                           ? 'text-green-600' 
                           : 'text-red-600'
                       }`}>
-                        {formatPercentage(trade.percentage_change)}
+                        {formatPercentage(calculatePnL(trade))}
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-center">
