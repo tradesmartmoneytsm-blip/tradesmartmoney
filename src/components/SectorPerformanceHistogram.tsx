@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { TrendingUp, TrendingDown, ArrowLeft, ChevronRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import { useSectorData } from '@/contexts/SectorDataContext';
 
 interface AdvanceDeclineData {
@@ -28,12 +28,13 @@ interface SectorPerformanceHistogramProps {
 }
 
 export function SectorPerformanceHistogram({ className = '', onCollapse }: SectorPerformanceHistogramProps) {
-  const { sectorData, isLoading, timeRange, setTimeRange } = useSectorData();
+  const { sectorData, isLoading, timeRange, setTimeRange, refetch } = useSectorData();
   const [advanceDeclineData, setAdvanceDeclineData] = useState<AdvanceDeclineData | null>(null);
   const [adLoading, setAdLoading] = useState(true);
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   const [stocksData, setStocksData] = useState<StockData[]>([]);
   const [stocksLoading, setStocksLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Fetch advance-decline data
   const fetchAdvanceDecline = useCallback(async () => {
@@ -94,6 +95,19 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
     setStocksData([]);
   };
 
+  // Handle refresh - refetch both sector data and advance-decline data
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([
+        refetch(),
+        fetchAdvanceDecline()
+      ]);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   // Refetch stocks when time range changes (if a sector is selected)
   useEffect(() => {
     if (selectedSector) {
@@ -151,16 +165,27 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
       {/* Market Outlook Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-2.5 py-2 flex items-center justify-between rounded-t-lg">
         <h3 className="text-white font-semibold text-xs">Market Outlook</h3>
-        {onCollapse && (
+        <div className="flex items-center gap-1">
           <button
-            onClick={onCollapse}
-            className="p-1 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-            aria-label="Collapse sidebar"
-            title="Collapse sidebar"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="p-1 bg-white/20 hover:bg-white/30 rounded-lg transition-colors disabled:opacity-50"
+            aria-label="Refresh market outlook"
+            title="Refresh market outlook"
           >
-            <ChevronRight className="w-3.5 h-3.5 text-white" />
+            <RefreshCw className={`w-3.5 h-3.5 text-white ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>
-        )}
+          {onCollapse && (
+            <button
+              onClick={onCollapse}
+              className="p-1 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+              aria-label="Collapse sidebar"
+              title="Collapse sidebar"
+            >
+              <ChevronRight className="w-3.5 h-3.5 text-white" />
+            </button>
+          )}
+        </div>
       </div>
       
       <div className="bg-white rounded-b-lg border border-gray-200 pl-2 pt-2 pb-2 pr-0">
