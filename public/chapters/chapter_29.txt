@@ -1,0 +1,77 @@
+# Chapter 29
+📘 Chapter 29 — Stock Screening: Finding Opportunities Efficiently
+With thousands of listed companies, investors need systematic methods to identify suitable stocks. Stock screening uses financial, qualitative, and technical criteria to filter investments that meet predefined parameters.
+This chapter covers:
+	•	Importance of stock screening
+	•	Screening criteria and techniques
+	•	Tools for screening stocks
+	•	Combining screens with fundamental analysis
+	•	Practical checklist for investors
+
+29.1 Why Stock Screening Matters
+	•	Saves time and effort by narrowing the universe of stocks
+	•	Identifies high-quality companies based on specific criteria
+	•	Reduces emotional bias and impulsive selection
+	•	Helps discover value, growth, dividend, or sector-focused opportunities
+Key Insight: Stock screening is a preliminary step, followed by detailed analysis of shortlisted companies.
+
+29.2 Screening Criteria
+1. Fundamental Criteria
+	•	Earnings Growth: Consistent historical and projected growth
+	•	Profitability Ratios: ROE, ROCE, Net Profit Margin
+	•	Valuation Metrics: P/E, P/B, P/S, PEG ratio
+	•	Debt Levels: Debt-to-Equity, Interest Coverage
+	•	Dividend Yield & Payout: For income-focused investors
+2. Technical Criteria
+	•	Trend Analysis: Moving averages, trend direction
+	•	Momentum Indicators: RSI, MACD, stochastic
+	•	Volume Patterns: Accumulation/distribution signals
+	•	Support & Resistance Levels: Entry and exit points
+3. Qualitative Criteria
+	•	Sector or Industry Growth
+	•	Competitive Advantage / Moat
+	•	Management Quality
+	•	Regulatory or Policy Tailwinds
+	•	Brand Recognition and Customer Loyalty
+
+29.3 Screening Techniques
+	•	Single-Factor Screening
+	•	Filters stocks based on one metric (e.g., ROE > 20%)
+	•	Multi-Factor Screening
+	•	Combines multiple criteria (e.g., ROE > 20%, P/E < 25, Debt/Equity < 0.5)
+	•	Growth vs Value Screens
+	•	Growth: High earnings and sales growth
+	•	Value: Low valuation multiples relative to sector or historical averages
+	•	Sector-Specific Screens
+	•	Adjust metrics based on industry norms (e.g., P/B for banks, EV/EBITDA for energy)
+	•	Custom Screens
+	•	Combine financial, technical, and qualitative filters for personalized strategies
+
+29.4 Tools for Stock Screening
+	•	Financial Websites & Platforms: Screener.in, Moneycontrol, Yahoo Finance
+	•	Brokerage Platforms: Interactive dashboards for fundamental and technical filters
+	•	Excel / Google Sheets: Create custom filters using historical data
+	•	Professional Tools: Bloomberg, Capital IQ, FactSet for advanced screening
+Key Insight: Use screening as a starting point, followed by deep fundamental analysis for shortlisted stocks.
+
+29.5 Integrating Screening with Fundamental Analysis
+	•	Screen for high-quality stocks based on financial ratios
+	•	Apply valuation metrics to assess fair price
+	•	Check sector and macroeconomic trends
+	•	Examine management, competitive advantage, and growth potential
+	•	Validate timing with technical analysis if needed
+
+29.6 Practical Checklist for Stock Screening
+	•	Define investment objective: growth, value, dividend, or sector play
+	•	Determine screening criteria based on financial, technical, and qualitative factors
+	•	Use screening tools to shortlist potential stocks
+	•	Compare stocks within the sector and against benchmarks
+	•	Apply valuation filters to avoid overpaying
+	•	Check debt, liquidity, and profitability ratios
+	•	Evaluate management quality and business moat
+	•	Incorporate macro and sector trends
+	•	Perform technical checks for entry/exit timing if required
+	•	Conduct detailed fundamental analysis of shortlisted companies before investing
+Stock screening enables efficient identification of investment opportunities, saving time while focusing on quality companies aligned with your objectives.
+
+

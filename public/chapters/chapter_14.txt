@@ -1,0 +1,103 @@
+# Chapter 14
+📘 Chapter 14 — Financial Statement Analysis: Advanced Techniques for Investors
+Financial statements are the backbone of fundamental analysis. Beyond basic ratios, advanced techniques allow investors to uncover hidden risks, assess quality of earnings, and evaluate cash flow health.
+In this chapter, you will learn:
+	•	Importance of financial statement analysis
+	•	Key statements and their role
+	•	Advanced ratio analysis
+	•	Quality of earnings assessment
+	•	Cash flow and working capital evaluation
+	•	Red flags and forensic analysis
+	•	Practical checklist for investors
+
+14.1 Why Financial Statement Analysis Matters
+	•	Provides a transparent view of a company’s financial health
+	•	Helps differentiate real performance vs accounting gimmicks
+	•	Essential for valuation, risk management, and decision making
+Key Insight: A strong balance sheet and robust cash flows are better predictors of long-term success than reported profits alone.
+
+14.2 Key Financial Statements
+	•	Income Statement (Profit & Loss)
+	•	Tracks revenue, expenses, and profitability
+	•	Key focus: revenue growth, operating margins, net profit
+	•	Balance Sheet
+	•	Snapshot of assets, liabilities, and equity
+	•	Key focus: liquidity, leverage, capital structure
+	•	Cash Flow Statement
+	•	Tracks real cash movements: operations, investing, financing
+	•	Key focus: free cash flow, dividend coverage, debt servicing
+	•	Notes to Accounts
+	•	Provides critical qualitative information on accounting policies, contingent liabilities, and related party transactions
+
+14.3 Advanced Ratio Analysis
+Ratio Category
+Key Ratios
+Purpose
+Profitability
+ROE, ROCE, OPM, NPM
+Assess earnings efficiency
+Liquidity
+Current ratio, Quick ratio
+Evaluate short-term solvency
+Leverage
+Debt/Equity, ICR, Total Debt/EBITDA
+Assess financial risk
+Efficiency
+Inventory turnover, Debtor days, CCC
+Operational efficiency
+Valuation
+P/E, PEG, P/B, EV/EBITDA
+Relative valuation vs peers
+Combine ratios across statements for holistic analysis.
+
+14.4 Quality of Earnings Assessment
+	•	High reported profits may not reflect real cash flow
+	•	Techniques to assess quality:
+	•	Cash vs Accounting Profit
+	•	Compare Net Profit vs CFO
+	•	Persistent gap → aggressive accounting
+	•	Revenue Recognition Policies
+	•	Early recognition inflates revenue
+	•	Deferred revenue or long-term contracts may hide earnings
+	•	Non-Recurring Items
+	•	Extraordinary gains/losses, one-time adjustments
+	•	Exclude when assessing sustainable earnings
+	•	Margins Analysis
+	•	Declining margins despite rising revenue → cost pressure or inefficiency
+
+14.5 Cash Flow & Working Capital Analysis
+	•	Free Cash Flow (FCF)
+
+	•	Indicates cash available for dividends, debt repayment, and growth
+	•	Cash Flow from Operations vs Net Profit
+	•	CFO consistently > Net Profit → high-quality earnings
+	•	Working Capital Metrics
+	•	Inventory Days, Debtor Days, Payable Days, Cash Conversion Cycle (CCC)
+	•	Longer CCC → capital tied up, potential liquidity stress
+
+14.6 Financial Forensics: Detecting Red Flags
+	•	Unusually high revenue growth without cash flow increase
+	•	Rising receivables or inventory relative to sales
+	•	Frequent changes in accounting policies
+	•	High related-party transactions or unusual off-balance sheet items
+	•	Declining margins with stable or rising sales
+	•	High debt levels with declining interest coverage
+Detecting these early prevents capital loss and poor investment decisions.
+
+14.7 Integrating Financial Analysis with Valuation
+	•	Profitability + Cash Flow → supports DCF assumptions
+	•	Leverage + Liquidity → adjusts risk premium in WACC
+	•	Working Capital trends → assess sustainability of dividends and growth
+	•	Red flags → may lower intrinsic value or increase margin of safety
+
+14.8 Practical Checklist for Advanced Financial Analysis
+	•	Review historical income statements for revenue and margin trends
+	•	Check balance sheet stability – leverage, liquidity, equity growth
+	•	Analyze CFO and FCF for quality of earnings
+	•	Evaluate working capital efficiency – inventory, receivables, payables
+	•	Examine non-recurring items and accounting policies
+	•	Compare ratios against industry peers
+	•	Look for red flags or unusual patterns
+	•	Use findings to inform valuation and portfolio allocation
+A disciplined, advanced financial analysis provides confidence in stock selection and risk management.
+

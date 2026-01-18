@@ -11,7 +11,8 @@ import {
   Bot, 
   Home,
   X,
-  ArrowRight
+  ArrowRight,
+  BookOpen
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -73,6 +74,14 @@ export function CommandPalette({ isScrolled = false }: CommandPaletteProps) {
       keywords: ['ai', 'algo', 'algorithm', 'bot'],
       action: () => router.push('/algo-trading'),
       category: 'AI'
+    },
+    {
+      id: 'books',
+      label: 'Books',
+      icon: <BookOpen className="w-4 h-4" />,
+      keywords: ['books', 'reading', 'learning', 'education'],
+      action: () => router.push('/books'),
+      category: 'Education'
     },
   ];
 

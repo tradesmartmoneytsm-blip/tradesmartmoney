@@ -1,0 +1,199 @@
+# Chapter 7
+Chapter 7 — Financial Ratio Analysis: The Investor’s Microscope
+Financial ratios are the lens through which an investor can examine a company’s performance. They help answer questions like:
+	•	Is the company profitable?
+	•	How efficiently is it using assets?
+	•	How strong is its balance sheet?
+	•	How risky is it financially?
+	•	How does it compare to peers?
+Without ratios, financial statements are just numbers. Ratios turn numbers into insights.
+
+7.1 Why Ratios Matter
+Ratios allow investors to:
+	•	Compare companies across industries and sizes
+	•	Track trends over time
+	•	Detect hidden weaknesses
+	•	Understand capital allocation quality
+	•	Identify the best-performing companies with moat-like characteristics
+Important: Ratios must be interpreted in industry context and historical trends.
+
+7.2 The Five Key Categories of Ratios
+Financial ratios are broadly classified into five categories:
+	•	Profitability Ratios — Is the company earning well?
+	•	Liquidity Ratios — Can the company pay short-term obligations?
+	•	Solvency / Leverage Ratios — Can the company sustain long-term debt?
+	•	Efficiency / Activity Ratios — How well does the company use assets and working capital?
+	•	Valuation Ratios — Is the stock fairly priced relative to earnings, book value, or cash flow?
+
+7.3 Profitability Ratios
+1. Return on Equity (ROE)
+Formula:
+
+Interpretation:
+	•	High ROE → strong profit generation from shareholders’ money
+	•	Low ROE → poor capital utilization
+Professional tip:
+	•	Compare ROE to industry average and cost of equity
+	•	Watch for ROE inflated by high debt
+
+2. Return on Capital Employed (ROCE)
+Formula:
+
+Interpretation:
+	•	Measures efficiency of capital (debt + equity)
+	•	ROCE > 15–20% over years → strong business
+
+3. Net Profit Margin (NPM)
+Formula:
+
+Insight:
+	•	High margin → pricing power
+	•	Rising margin → efficiency or moat
+	•	Falling margin → competition, cost pressure
+
+4. Gross Profit Margin (GPM)
+Formula:
+
+Insight:
+	•	Shows operational efficiency
+	•	Useful for FMCG, manufacturing, retail
+
+7.4 Liquidity Ratios
+Liquidity ratios tell you whether the company can meet short-term obligations.
+1. Current Ratio
+Formula:
+
+Interpretation:
+	•	1.5–2 → healthy
+	•	<1 → cash crunch risk
+	•	3 → inefficient use of cash
+
+2. Quick Ratio (Acid Test)
+Formula:
+
+Insight:
+	•	Measures immediate liquidity without inventory
+
+7.5 Solvency / Leverage Ratios
+These ratios show long-term financial risk.
+1. Debt-to-Equity Ratio (D/E)
+Formula:
+
+Interpretation:
+	•	Low D/E → low risk, self-funded
+	•	Moderate D/E → balance between growth & risk
+	•	High D/E → financial risk, interest burden
+
+2. Interest Coverage Ratio (ICR)
+Formula:
+
+Interpretation:
+	•	ICR > 3 → comfortable
+	•	ICR < 2 → potential financial stress
+
+7.6 Efficiency / Activity Ratios
+Efficiency ratios reveal how well a company uses its resources.
+1. Asset Turnover Ratio
+Formula:
+
+	•	High → efficient asset use
+	•	Low → underutilized assets
+
+2. Inventory Turnover
+Formula:
+
+	•	High → fast-moving products
+	•	Low → slow-moving inventory, possible obsolescence
+
+3. Debtor Days / Receivable Turnover
+Formula:
+
+	•	Rising → slow collection, possible credit issues
+	•	Falling → efficient cash collection
+
+4. Payable Days
+Formula:
+
+	•	High → favorable supplier terms
+	•	Very high → delayed payments might indicate liquidity stress
+
+5. Cash Conversion Cycle (CCC)
+Formula:
+
+	•	Low / Negative CCC → highly efficient cash flow
+	•	High CCC → cash tied up in operations
+
+7.7 Valuation Ratios
+Valuation ratios help determine if the stock is fairly priced.
+1. Price-to-Earnings (P/E)
+Formula:
+
+	•	Compare to industry P/E and historical P/E
+	•	High P/E → growth premium or overvaluation
+	•	Low P/E → value or undervaluation
+
+2. Price-to-Book (P/B)
+Formula:
+
+	•	Useful for asset-heavy businesses
+	•	P/B > 3 → brand, moat, intangibles
+	•	P/B < 1 → undervalued or distressed
+
+3. PEG Ratio (P/E-to-Growth)
+Formula:
+
+	•	PEG ≈ 1 → fair value
+	•	PEG < 1 → undervalued
+	•	PEG > 1 → overvalued
+
+4. Dividend Yield & Payout Ratios
+	•	Dividend yield = Dividend / Market Price
+	•	Payout ratio = Dividend / Net Profit
+Insight:
+	•	High payout → mature company
+	•	Low payout → growth-focused
+
+7.8 Combining Ratios for Complete Picture
+Individual ratios are useful, but combined they reveal the real story:
+Scenario
+Ratios
+Interpretation
+High ROE, High ROCE, High NPM
+Strong business, profitable, moat likely
+
+High D/E, Low ICR
+Financial risk, leverage caution
+
+Low CCC, High CFO
+Excellent working capital management
+
+High P/E, PEG < 1
+Growth undervalued, check fundamentals
+
+Falling ROE, rising debt
+Warning: moat eroding, capital mismanagement
+
+
+7.9 Benchmarking Ratios Against Peers
+	•	Absolute numbers are less important than relative position vs competitors
+	•	Historical trends matter more than a single-year snapshot
+	•	Industry averages guide the analysis
+Pro Tip: Always combine ratios from income statement, balance sheet, and cash flow. This triangulation exposes hidden weaknesses and strengths.
+
+7.10 Common Mistakes in Ratio Analysis
+	•	Looking at one year in isolation
+	•	Ignoring industry differences
+	•	Blindly trusting reported numbers without cash flow check
+	•	Ignoring working capital dynamics
+	•	Misinterpreting high ROE due to high leverage
+
+7.11 The Ultimate Ratio Checklist for Investors
+	•	Profitability → ROE, ROCE, Margins
+	•	Liquidity → Current ratio, Quick ratio
+	•	Solvency → D/E, Interest coverage
+	•	Efficiency → Asset turnover, Inventory & Receivable days, CCC
+	•	Valuation → P/E, P/B, PEG, Dividend yield
+	•	Trend analysis → At least 5–10 years history
+	•	Peer benchmarking → Industry comparison
+Mastering ratio analysis = the ability to filter great businesses from mediocre ones quickly and reliably.
+

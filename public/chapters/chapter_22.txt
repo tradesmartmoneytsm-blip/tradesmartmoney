@@ -1,0 +1,90 @@
+# Chapter 22
+📘 Chapter 22 — Portfolio Management: Constructing a Winning Portfolio
+Investing in individual stocks is important, but how you combine them into a portfolio determines overall success. Portfolio management balances risk, return, and diversification to achieve long-term financial goals.
+This chapter covers:
+	•	Principles of portfolio management
+	•	Asset allocation strategies
+	•	Diversification techniques
+	•	Risk and return assessment
+	•	Monitoring and rebalancing
+	•	Practical checklist for investors
+
+22.1 What is Portfolio Management?
+	•	The process of selecting and managing a combination of investments
+	•	Goals:
+	•	Maximize returns
+	•	Minimize risk
+	•	Align with investment horizon and financial objectives
+Key Insight: A portfolio is more than the sum of individual stocks; correlation, risk, and diversification matter as much as stock selection.
+
+22.2 Principles of Portfolio Management
+	•	Diversification
+	•	Spread investments across sectors, asset classes, and geographies
+	•	Reduces unsystematic risk
+	•	Asset Allocation
+	•	Decide proportion of equity, debt, and alternative investments
+	•	Based on risk tolerance and investment horizon
+	•	Risk-Return Tradeoff
+	•	Higher returns require higher risk
+	•	Portfolio should match investor’s risk profile
+	•	Regular Monitoring
+	•	Track performance, market trends, and reallocate as needed
+	•	Discipline and Patience
+	•	Avoid emotional reactions to market fluctuations
+
+22.3 Asset Allocation Strategies
+	•	Strategic Asset Allocation
+	•	Long-term target allocation based on goals and risk tolerance
+	•	Example: 60% equity, 30% debt, 10% alternatives
+	•	Tactical Asset Allocation
+	•	Short-term adjustments based on market conditions or opportunities
+	•	Dynamic Asset Allocation
+	•	Gradual changes in allocation as age, risk tolerance, or market environment changes
+	•	Core-Satellite Approach
+	•	Core: Stable, low-risk investments
+	•	Satellite: High-growth or high-potential opportunities
+
+22.4 Diversification Techniques
+	•	Sector Diversification: Avoid concentration in one sector
+	•	Geographic Diversification: Spread across domestic and international markets
+	•	Market Cap Diversification: Large-cap stability, mid-cap growth, small-cap potential
+	•	Asset Class Diversification: Equities, debt, real estate, commodities, cash
+Key Insight: Diversification mitigates risk but does not eliminate market-wide risk.
+
+22.5 Risk and Return Assessment
+	•	Expected Return
+	•	Weighted average return of portfolio components
+	•	Portfolio Risk
+	•	Standard deviation or volatility of combined assets
+	•	Correlation
+	•	Low or negative correlation between assets reduces overall risk
+	•	Sharpe Ratio
+	•	Risk-adjusted return measure:
+
+	•	Drawdown Analysis
+	•	Measures potential losses from peak to trough
+
+22.6 Monitoring and Rebalancing
+	•	Periodic Review
+	•	Check performance relative to goals and benchmarks
+	•	Rebalancing
+	•	Restore original target allocation
+	•	Lock in gains and reduce overweighted assets
+	•	Performance Attribution
+	•	Analyze which stocks or sectors contributed to returns or losses
+	•	Risk Management
+	•	Adjust for changes in risk tolerance, market conditions, or personal circumstances
+
+22.7 Practical Checklist for Portfolio Management
+	•	Define investment objectives and horizon
+	•	Assess risk tolerance
+	•	Construct a diversified portfolio across sectors, geographies, and asset classes
+	•	Determine strategic and tactical asset allocation
+	•	Track portfolio performance and risk metrics regularly
+	•	Rebalance portfolio periodically
+	•	Monitor market trends, macroeconomic changes, and company fundamentals
+	•	Avoid over-concentration in single stock or sector
+	•	Maintain liquidity for opportunities or emergencies
+	•	Review and adjust portfolio based on life changes or goals
+Effective portfolio management balances risk, return, and discipline, providing the foundation for long-term wealth creation.
+

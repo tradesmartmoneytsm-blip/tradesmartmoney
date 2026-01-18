@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, DollarSign } from 'lucide-react';
+import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, DollarSign, BookOpen } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
 interface MarketIndex {
@@ -338,6 +338,26 @@ export function Navigation({
           description: 'Real-time strategy performance tracking'
         },
       ]
+    },
+    {
+      id: 'books',
+      label: 'Books',
+      icon: <BookOpen className={brandTokens.icons.sm} />,
+      description: 'Trading & investment books',
+      subItems: [
+        { 
+          id: 'recommended-books', 
+          label: 'Recommended Books', 
+          icon: <BookOpen className={brandTokens.icons.sm} />,
+          description: 'Curated collection of must-read trading books'
+        },
+        { 
+          id: 'my-books', 
+          label: 'Books Written by Me', 
+          icon: <BookOpen className={brandTokens.icons.sm} />,
+          description: 'Books authored by TradeSmart Money'
+        }
+      ]
     }
   ];
 
@@ -391,6 +411,12 @@ export function Navigation({
       return;
     }
     
+    // Handle Books navigation - navigate to Books page with recommended books as default
+    if (itemId === 'books') {
+      window.location.href = '/books';
+      return;
+    }
+    
     // Handle submenu clicks
     if (subItemId) {
       // Handle market submenus - navigate to separate pages
@@ -420,6 +446,12 @@ export function Navigation({
       // Handle US Stock Market submenus - navigate to US Stock Market subpages
       if (itemId === 'us-stock-market') {
         window.location.href = `/us-stock-market/${subItemId}`;
+        return;
+      }
+      
+      // Handle Books submenus - navigate to Books subpages
+      if (itemId === 'books') {
+        window.location.href = `/books/${subItemId}`;
         return;
       }
       

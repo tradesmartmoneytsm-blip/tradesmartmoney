@@ -1,0 +1,83 @@
+# Chapter 25
+📘 Chapter 25 — Risk Management in Investing: Protecting Your Capital
+Investing always involves risk. Successful investors focus on protecting capital while seeking returns. Risk management ensures that losses are controlled, and long-term wealth creation is achievable.
+This chapter covers:
+	•	Types of investment risks
+	•	Risk assessment techniques
+	•	Mitigation strategies
+	•	Portfolio risk management
+	•	Practical checklist for investors
+
+25.1 Why Risk Management Matters
+	•	Protects against catastrophic losses
+	•	Maintains portfolio stability during volatility
+	•	Allows investors to take calculated risks
+	•	Enhances long-term wealth creation
+Key Insight: Risk cannot be eliminated, but it can be measured, managed, and mitigated.
+
+25.2 Types of Investment Risks
+	•	Market Risk (Systematic Risk)
+	•	Affects entire markets due to economic, political, or global factors
+	•	Examples: Recession, interest rate hikes, geopolitical events
+	•	Specific Risk (Unsystematic Risk)
+	•	Company or sector-specific events
+	•	Examples: Management failure, product recalls, fraud
+	•	Liquidity Risk
+	•	Inability to sell an asset quickly without affecting price
+	•	Credit Risk
+	•	Risk of default by bond issuers or counterparties
+	•	Inflation Risk
+	•	Returns may not keep pace with rising prices
+	•	Currency Risk
+	•	For international investments, fluctuations in exchange rates
+	•	Regulatory & Political Risk
+	•	Policy changes impacting sectors or industries
+
+25.3 Risk Assessment Techniques
+	•	Standard Deviation & Volatility
+	•	Measures price fluctuation over time
+	•	Beta Coefficient
+	•	Sensitivity of a stock or portfolio to market movements
+	•	Beta > 1 → more volatile than market; Beta < 1 → less volatile
+	•	Value at Risk (VaR)
+	•	Estimates potential loss at a given confidence level
+	•	Stress Testing & Scenario Analysis
+	•	Simulates portfolio performance under extreme conditions
+	•	Diversification Analysis
+	•	Reduces unsystematic risk by spreading investments
+
+25.4 Mitigation Strategies
+	•	Diversification
+	•	Across sectors, geographies, asset classes, and market caps
+	•	Position Sizing
+	•	Limit exposure to any single stock or sector
+	•	Stop-Loss & Exit Strategies
+	•	Predetermined thresholds to minimize losses
+	•	Hedging
+	•	Using derivatives, options, or currency hedges to offset risks
+	•	Asset Allocation
+	•	Balance between equities, debt, alternatives, and cash
+	•	Quality Investing
+	•	Focus on fundamentally strong companies with sustainable cash flows
+
+25.5 Portfolio Risk Management
+	•	Combine systematic and unsystematic risk analysis
+	•	Monitor correlation between portfolio holdings
+	•	Regular rebalancing to maintain risk/return profile
+	•	Liquidity management ensures flexibility during market stress
+	•	Scenario planning for macroeconomic changes
+Key Insight: A well-structured portfolio minimizes downside without sacrificing long-term growth.
+
+25.6 Practical Checklist for Risk Management
+	•	Identify all potential risks impacting your portfolio
+	•	Evaluate volatility, beta, and historical performance
+	•	Diversify across assets, sectors, and geographies
+	•	Set position limits and stop-loss levels
+	•	Hedge strategically using derivatives or currency instruments
+	•	Allocate assets according to risk tolerance and investment horizon
+	•	Monitor portfolio regularly for overexposure or concentration
+	•	Review macroeconomic and sector trends for emerging risks
+	•	Maintain liquidity to handle market shocks
+	•	Rebalance portfolio periodically to align with risk profile
+Risk management is the foundation of sustainable investing. Protecting capital enables investors to stay in the market and capitalize on long-term opportunities.
+

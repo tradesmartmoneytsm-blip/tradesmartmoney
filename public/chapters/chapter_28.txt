@@ -1,0 +1,75 @@
+# Chapter 28
+📘 Chapter 28 — Valuation Techniques: Comparing Stocks Effectively
+Valuation is the cornerstone of fundamental analysis. It helps investors determine if a stock is undervalued, overvalued, or fairly priced. Understanding various valuation methods enables better decision-making and portfolio allocation.
+This chapter covers:
+	•	Importance of valuation
+	•	Common valuation techniques
+	•	Advanced valuation models
+	•	Sector-specific valuation considerations
+	•	Practical checklist for investors
+
+28.1 Why Valuation Matters
+	•	Determines intrinsic value of a stock relative to its market price
+	•	Helps avoid overpaying for growth or underestimating quality
+	•	Guides portfolio allocation between value and growth stocks
+	•	Enables comparison across companies in the same sector
+Key Insight: Valuation ensures disciplined investing and long-term wealth creation.
+
+28.2 Common Valuation Techniques
+1. Price-to-Earnings (P/E) Ratio
+	•	Formula:
+
+	•	Measures how much investors pay for each rupee of earnings
+	•	Compare with industry P/E, historical P/E, and growth expectations
+Pros: Simple, widely used Cons: Not reliable for companies with negative earnings
+
+2. Price-to-Book (P/B) Ratio
+	•	Formula:
+
+	•	Measures price relative to net asset value
+	•	Useful for asset-heavy companies (banks, manufacturing)
+Pros: Indicates margin of safety Cons: Less meaningful for intangible-heavy businesses
+
+3. Price-to-Sales (P/S) Ratio
+	•	Formula:
+
+	•	Compares market value with revenue generation
+	•	Useful for early-stage or high-growth companies
+
+4. Dividend Discount Model (DDM)
+	•	Formula:
+
+	•	Best for dividend-paying, stable companies
+	•	Focuses on present value of future dividends
+
+28.3 Advanced Valuation Models
+1. Discounted Cash Flow (DCF) Analysis
+	•	Formula:
+
+	•	Focuses on intrinsic value based on future cash flows
+	•	Requires assumptions for growth rate, WACC, and terminal value
+2. Enterprise Value Multiples
+	•	EV/EBITDA, EV/Sales
+	•	Useful for comparing firms with different capital structures
+	•	Reflects total firm value relative to earnings
+
+28.4 Sector-Specific Valuation Considerations
+	•	Tech Companies: High growth, use P/E, PEG, DCF
+	•	Banks & Financials: Focus on P/B, ROE, and credit quality
+	•	FMCG & Consumer Goods: P/E, dividend yield, and market share
+	•	Energy & Commodities: EV/EBITDA, P/S, and commodity prices
+Key Insight: Valuation must be contextual to sector characteristics and company fundamentals.
+
+28.5 Practical Checklist for Valuation
+	•	Determine appropriate valuation method based on sector and growth stage
+	•	Compare ratios with industry peers and historical trends
+	•	Evaluate growth assumptions in P/E, PEG, or DCF
+	•	Consider balance sheet strength and debt levels
+	•	Analyze dividend sustainability for DDM
+	•	Adjust for one-time events or extraordinary items
+	•	Check macro and sector trends influencing multiples
+	•	Maintain margin of safety to account for uncertainty
+	•	Use multiple valuation techniques for confirmation
+	•	Make investment decisions based on intrinsic value vs market price
+Valuation combines quantitative and qualitative analysis to identify opportunities and avoid overpaying, forming the foundation of intelligent investing.
+

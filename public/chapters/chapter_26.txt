@@ -1,0 +1,83 @@
+# Chapter 26
+📘 Chapter 26 — Behavioral Finance: Understanding Investor Psychology
+Investing is not just about numbers; psychology plays a crucial role in decision-making. Behavioral finance studies how emotions, cognitive biases, and social factors affect investor behavior and market outcomes.
+This chapter covers:
+	•	Key behavioral biases
+	•	Emotional influences on investing
+	•	Common mistakes and their impact
+	•	Strategies to overcome biases
+	•	Practical checklist for rational investing
+
+26.1 Why Behavioral Finance Matters
+	•	Investors often make irrational decisions driven by fear, greed, or overconfidence
+	•	Market anomalies often result from behavioral biases, not fundamentals
+	•	Understanding psychology helps investors avoid mistakes and improve returns
+Key Insight: Even well-informed investors can underperform due to cognitive and emotional errors.
+
+26.2 Common Behavioral Biases
+	•	Overconfidence Bias
+	•	Overestimating one’s knowledge or forecasting ability
+	•	Leads to excessive trading and underestimation of risk
+	•	Herding Behavior
+	•	Following the crowd rather than independent analysis
+	•	Can inflate bubbles or deepen market crashes
+	•	Anchoring Bias
+	•	Relying too heavily on initial information (e.g., past stock prices)
+	•	May prevent timely adjustments
+	•	Loss Aversion
+	•	Fear of losses outweighs desire for gains
+	•	Can cause holding losing investments too long
+	•	Confirmation Bias
+	•	Seeking information that supports existing beliefs
+	•	Ignores contrary evidence
+	•	Recency Bias
+	•	Giving too much weight to recent events
+	•	Overreacting to short-term performance
+	•	Mental Accounting
+	•	Treating money differently based on source or purpose
+	•	Can lead to poor allocation decisions
+
+26.3 Emotional Influences on Investing
+	•	Fear and Panic: Sell-offs during market declines
+	•	Greed: Buying at peaks due to hype
+	•	Regret Aversion: Avoiding decisions that may lead to perceived mistakes
+	•	Endowment Effect: Overvaluing assets simply because you own them
+Key Insight: Recognizing emotions helps prevent impulsive decisions and improves rational investing.
+
+26.4 Common Behavioral Mistakes
+	•	Chasing hot stocks or trends
+	•	Ignoring fundamentals due to market sentiment
+	•	Overtrading based on short-term news
+	•	Inadequate diversification due to overconfidence
+	•	Holding on to losing positions too long
+These mistakes can erode portfolio returns over time, even for fundamentally sound strategies.
+
+26.5 Strategies to Overcome Biases
+	•	Create a Written Investment Plan
+	•	Define goals, risk tolerance, and allocation
+	•	Follow the plan instead of reacting emotionally
+	•	Use Checklists
+	•	Ensure decisions are evidence-based and systematic
+	•	Diversification
+	•	Reduces risk from impulsive bets
+	•	Periodic Review
+	•	Reassess portfolio objectively
+	•	Avoid reacting to short-term market noise
+	•	Behavioral Awareness
+	•	Recognize own biases and cognitive tendencies
+	•	Focus on Fundamentals
+	•	Base decisions on company performance, valuation, and growth prospects
+
+26.6 Practical Checklist for Behavioral Discipline
+	•	Document investment objectives, strategies, and risk tolerance
+	•	Avoid decisions based on market rumors or hype
+	•	Evaluate stocks based on data, not emotions
+	•	Implement stop-losses and position limits to curb emotional trading
+	•	Regularly review portfolio performance vs goals
+	•	Maintain a long-term perspective, ignoring short-term volatility
+	•	Recognize own biases and tendencies
+	•	Seek second opinions or professional guidance when uncertain
+	•	Avoid overtrading to reduce cost and emotional stress
+	•	Celebrate discipline and adherence to process, not short-term wins
+Behavioral finance equips investors with psychological self-awareness, helping them avoid common traps and stay focused on long-term objectives.
+

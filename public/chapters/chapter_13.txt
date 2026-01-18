@@ -1,0 +1,95 @@
+# Chapter 13
+📘 Chapter 13 — Portfolio Construction & Asset Allocation: Balancing Risk and Reward
+Building a portfolio is more than picking good stocks—it’s about balancing risk, return, and long-term objectives. Even the best companies can underperform if portfolio risk is mismanaged.
+This chapter covers:
+	•	Principles of portfolio construction
+	•	Asset allocation strategies
+	•	Diversification and risk management
+	•	Sector and stock weighting
+	•	Rebalancing and monitoring
+	•	Practical checklist for investors
+
+13.1 Principles of Portfolio Construction
+	•	Risk vs. Return Trade-off
+	•	High-return assets → higher risk
+	•	Low-risk assets → lower return
+	•	Align portfolio with risk tolerance and investment horizon
+	•	Diversification
+	•	Spread investments across stocks, sectors, and asset classes
+	•	Reduces unsystematic (company-specific) risk
+	•	Liquidity
+	•	Ensure part of portfolio is easily convertible to cash
+	•	Avoid over-allocating to illiquid investments
+	•	Time Horizon
+	•	Short-term → focus on stability and liquidity
+	•	Long-term → focus on growth and compounding
+	•	Alignment with Goals
+	•	Income vs growth
+	•	Retirement planning, emergency fund, or wealth creation
+
+13.2 Asset Allocation Strategies
+1. Strategic Asset Allocation
+	•	Long-term, goal-oriented
+	•	Example: 60% equities, 30% debt, 10% cash
+	•	Reviewed periodically
+2. Tactical Asset Allocation
+	•	Adjusting asset weights based on short-term market outlook
+	•	Example: Overweight FMCG during inflation, underweight cyclical stocks
+3. Core-Satellite Approach
+	•	Core → stable, blue-chip stocks and bonds
+	•	Satellite → high-growth or sector bets to enhance returns
+4. Lifecycle or Age-Based Allocation
+	•	Younger investors → higher equity allocation
+	•	Older investors → higher fixed-income allocation
+
+13.3 Diversification
+	•	Across Sectors: FMCG, IT, Pharma, Banking, Industrials
+	•	Across Market Cap: Large-cap, Mid-cap, Small-cap
+	•	Across Asset Classes: Equities, Debt, Gold, REITs, Cash
+	•	Across Geographies: Domestic vs International exposure
+Benefit: Reduces volatility while maintaining growth potential.
+
+13.4 Stock & Sector Weighting
+1. Position Sizing
+	•	Limit exposure to individual stock → typically 5–10% per stock
+	•	Avoid overconcentration in a single position
+2. Sector Exposure
+	•	Avoid >25–30% in one sector
+	•	Consider cyclical vs defensive balance
+3. Risk-Based Allocation
+	•	Higher allocation to stable, low-beta stocks
+	•	Moderate allocation to growth/high-beta stocks
+	•	Small allocation to speculative or high-risk stocks
+
+13.5 Risk Management in Portfolio
+	•	Stop-loss & Exit Strategy
+	•	Predetermine thresholds for each stock
+	•	Avoid emotional decisions
+	•	Hedging
+	•	Use options, futures, or ETFs to reduce portfolio risk
+	•	Regular Monitoring
+	•	Track P/E, ROE, debt levels, and dividend trends of portfolio stocks
+	•	Compare sector performance vs index
+	•	Rebalancing
+	•	Periodically adjust portfolio to restore target allocation
+	•	Example: Equity allocation drifted to 70% → sell some to reduce risk
+
+13.6 Performance Measurement
+	•	Absolute Returns: Overall growth in portfolio value
+	•	Relative Returns: Performance vs benchmark (e.g., Nifty 50, S&P 500)
+	•	Risk-Adjusted Returns: Sharpe ratio, Treynor ratio, Sortino ratio
+Evaluate portfolio not just by returns, but returns per unit of risk.
+
+13.7 Practical Checklist for Portfolio Construction
+	•	Define financial goals and time horizon
+	•	Determine risk tolerance
+	•	Decide asset allocation (equity, debt, alternatives)
+	•	Diversify across stocks, sectors, and geographies
+	•	Limit position sizes and sector concentration
+	•	Monitor company fundamentals regularly
+	•	Track macro and industry trends for tactical adjustments
+	•	Use risk metrics like beta, standard deviation, and FCF coverage
+	•	Rebalance portfolio periodically
+	•	Ensure margin of safety for each stock
+Following this disciplined approach maximizes long-term wealth while minimizing risk exposure.
+

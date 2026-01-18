@@ -1,0 +1,111 @@
+# Chapter 17
+📘 Chapter 17 — Risk Management in Investing: Protecting Your Capital
+Investing without risk management is like sailing without a lifeboat. Even high-quality companies can underperform due to market volatility, economic cycles, or unforeseen events. This chapter teaches how to identify, measure, and mitigate investment risks.
+You will learn:
+	•	Types of investment risks
+	•	Measuring risk
+	•	Capital protection strategies
+	•	Portfolio-level risk management
+	•	Practical checklist for investors
+
+17.1 Why Risk Management is Crucial
+	•	Protecting capital is as important as seeking returns
+	•	Losses compound faster than gains, making recovery harder
+	•	Risk management ensures long-term survival and wealth creation
+Key Principle: Never risk more than you can afford to lose, and diversify across multiple dimensions.
+
+17.2 Types of Investment Risks
+	•	Market Risk (Systematic Risk)
+	•	Affects the entire market (e.g., economic slowdown, interest rate hikes)
+	•	Cannot be fully eliminated but can be hedged
+	•	Business Risk (Unsystematic Risk)
+	•	Specific to a company or sector (e.g., competition, product failure)
+	•	Can be mitigated through diversification
+	•	Liquidity Risk
+	•	Difficulty in converting assets to cash without loss
+	•	Common in small-cap stocks or private investments
+	•	Credit Risk / Counterparty Risk
+	•	Default by a company or issuer (bonds, loans, derivatives)
+	•	Inflation Risk
+	•	Purchasing power erosion due to rising prices
+	•	Long-term investments should outpace inflation
+	•	Regulatory / Political Risk
+	•	Policy changes, taxation, and geopolitical events
+	•	Affects sectors differently
+	•	Currency Risk (FX Risk)
+	•	For international investments
+	•	Fluctuating exchange rates impact returns
+
+17.3 Measuring Risk
+	•	Volatility / Standard Deviation
+	•	Measures price fluctuations around mean
+	•	Higher volatility → higher risk
+	•	Beta
+	•	Measures stock sensitivity to market movements
+	•	Beta >1 → more volatile than market; Beta <1 → less volatile
+	•	Value at Risk (VaR)
+	•	Estimates potential loss over a time period at a confidence level
+	•	Drawdown
+	•	Maximum loss from peak to trough in portfolio value
+	•	Debt Ratios & Interest Coverage
+	•	High leverage → higher financial risk
+
+17.4 Capital Protection Strategies
+	•	Diversification
+	•	Across asset classes, sectors, market caps, and geographies
+	•	Position Sizing
+	•	Limit exposure per stock or sector
+	•	Avoid over-concentration
+	•	Stop-Loss & Exit Strategy
+	•	Predetermine thresholds for selling
+	•	Hedging
+	•	Options, futures, or ETFs to offset downside risk
+	•	Margin of Safety
+	•	Buy below intrinsic value to buffer valuation errors
+	•	Regular Monitoring
+	•	Track macro trends, company fundamentals, and portfolio drift
+
+17.5 Portfolio-Level Risk Management
+	•	Correlation Analysis
+	•	Combine assets with low or negative correlation
+	•	Reduces overall portfolio volatility
+	•	Stress Testing
+	•	Evaluate portfolio under adverse macro or market scenarios
+	•	Rebalancing
+	•	Restore original target allocation periodically
+	•	Avoid overweighting overperforming sectors
+	•	Scenario Planning
+	•	Prepare for bear markets, interest rate shocks, or sector downturns
+
+17.6 Risk Metrics and Tools for Investors
+Metric
+Purpose
+Beta
+Market sensitivity
+Standard Deviation
+Volatility measurement
+Sharpe Ratio
+Risk-adjusted return
+Maximum Drawdown
+Historical loss potential
+Diversification Ratio
+Portfolio risk reduction
+Debt / Equity
+Financial leverage assessment
+Interest Coverage
+Ability to service debt
+Combining metrics gives quantitative and qualitative view of portfolio risk.
+
+17.7 Practical Checklist for Risk Management
+	•	Define personal risk tolerance and investment horizon
+	•	Diversify across asset classes, sectors, and geographies
+	•	Limit exposure to individual stocks or high-beta investments
+	•	Set stop-loss and exit strategies for each position
+	•	Incorporate margin of safety in every investment
+	•	Monitor macroeconomic indicators and policy changes
+	•	Rebalance portfolio periodically
+	•	Stress-test portfolio under adverse scenarios
+	•	Track risk metrics (Beta, drawdown, Sharpe ratio)
+	•	Maintain liquidity for opportunistic investing and emergencies
+Effective risk management ensures capital preservation, reduces volatility, and enhances long-term wealth creation.
+

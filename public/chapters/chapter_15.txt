@@ -1,0 +1,131 @@
+# Chapter 15
+📘 Chapter 15 — Advanced Valuation Techniques: Options, Scenarios & Sensitivity Analysis
+Basic valuation methods provide a starting point, but advanced techniques help investors navigate uncertainty. This chapter focuses on enhancing valuation models using scenario analysis, sensitivity testing, and option-based approaches.
+In this chapter, you will learn:
+	•	Limitations of basic valuation
+	•	Scenario analysis
+	•	Sensitivity analysis
+	•	Monte Carlo simulations
+	•	Real options valuation
+	•	Practical checklist for investors
+
+15.1 Why Advanced Valuation Matters
+	•	Business forecasts are uncertain; assumptions can vary widely
+	•	Small changes in growth rate, WACC, or margins can drastically affect intrinsic value
+	•	Advanced techniques allow investors to:
+	•	Quantify potential outcomes
+	•	Incorporate flexibility in business decisions
+	•	Improve risk-adjusted investment choices
+Key Insight: Understanding the range of possible valuations is more important than a single number.
+
+15.2 Scenario Analysis
+Definition: Evaluate valuation under different plausible future scenarios.
+Steps:
+	•	Define key variables: revenue growth, operating margins, CapEx, WACC
+	•	Construct scenarios:
+	•	Base Case → most likely assumptions
+	•	Optimistic Case → aggressive growth and margin assumptions
+	•	Pessimistic Case → conservative estimates or stress conditions
+	•	Calculate intrinsic value for each scenario
+	•	Assess probability-weighted value
+Example:
+Scenario
+Revenue Growth
+OPM
+WACC
+Intrinsic Value (₹)
+Pessimistic
+10%
+18%
+11%
+450
+Base Case
+15%
+22%
+10%
+520
+Optimistic
+20%
+25%
+9%
+620
+Scenario analysis shows the range of potential outcomes, not just a point estimate.
+
+15.3 Sensitivity Analysis
+Definition: Test how sensitive the valuation is to changes in key assumptions.
+Steps:
+	•	Identify critical variables: growth rate, discount rate, terminal value multiple
+	•	Adjust each variable ±10–20% and recalculate intrinsic value
+	•	Create a sensitivity table or tornado diagram
+Example Table:
+Variable
+Low
+Base
+High
+Revenue Growth
+12%
+15%
+18%
+WACC
+9%
+10%
+11%
+Terminal Growth
+2%
+3%
+4%
+Intrinsic Value
+480
+520
+570
+Sensitivity analysis identifies which assumptions drive valuation the most.
+
+15.4 Monte Carlo Simulation
+	•	Uses randomized inputs within defined ranges
+	•	Runs thousands of simulations to produce probability distribution of intrinsic value
+	•	Provides probability-weighted insights and helps quantify risk
+Steps:
+	•	Define ranges and distributions for inputs (growth, margins, WACC)
+	•	Generate random scenarios
+	•	Calculate intrinsic value for each iteration
+	•	Analyze the distribution, mean, median, and percentiles
+Monte Carlo adds statistical rigor to valuation under uncertainty.
+
+15.5 Real Options Valuation (ROV)
+Definition: Evaluates flexibility embedded in business decisions (like expansion, delay, abandonment) as an option.
+Examples:
+	•	Option to expand → company can invest in high-growth market
+	•	Option to delay → wait for market clarity before launching a product
+	•	Option to abandon → exit an underperforming division
+Steps:
+	•	Identify the option embedded in business decisions
+	•	Estimate potential cash flows if exercised
+	•	Apply option pricing methods (e.g., Black-Scholes, binomial trees)
+	•	Add option value to base DCF
+Real options capture strategic flexibility often ignored in traditional DCF.
+
+15.6 Practical Application for Investors
+	•	Combine multiple techniques: DCF, scenario, sensitivity, Monte Carlo, real options
+	•	Understand best-case, worst-case, and expected outcomes
+	•	Incorporate flexibility and strategic options in valuation
+	•	Use results to define margin of safety and risk limits
+
+15.7 Common Pitfalls in Advanced Valuation
+	•	Overconfidence in optimistic scenarios
+	•	Ignoring probability weighting of outcomes
+	•	Using unrealistic input ranges in Monte Carlo
+	•	Focusing only on base-case DCF
+	•	Treating option value as guaranteed cash flow
+Avoiding these pitfalls ensures robust and realistic valuation.
+
+15.8 Practical Checklist for Advanced Valuation
+	•	Start with base-case DCF
+	•	Perform scenario analysis (pessimistic, base, optimistic)
+	•	Conduct sensitivity analysis on key assumptions
+	•	Run Monte Carlo simulations if needed
+	•	Identify real options and estimate their value
+	•	Compare results with market prices and relative valuation metrics
+	•	Determine margin of safety for investment decisions
+	•	Monitor and update assumptions with new financial data
+Advanced valuation transforms uncertainty into informed decision-making.
+

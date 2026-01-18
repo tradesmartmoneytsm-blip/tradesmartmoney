@@ -1,0 +1,171 @@
+# Chapter 2
+Chapter 2 — Understanding Financial Statements in Depth
+This chapter teaches you how to read, interpret, adjust, and cross-check the three core financial statements — Balance Sheet, Income Statement, and Cash Flow Statement — so you can turn raw numbers into investment-quality insight. I’ve included worked examples, step-by-step ratio arithmetic, common accounting adjustments, warning signs, and a practical checklist you can use when analysing any company.
+
+2.1 Why financial statements matter
+Financial statements are a company’s language. Together they tell you:
+	•	What the business owns and owes (Balance Sheet).
+	•	How the business performed in a period (Income Statement).
+	•	Where cash came from and where it went (Cash Flow Statement).
+Reading them in isolation is risky — the intellectual muscle is in reconciling across all three.
+
+2.2 The Balance Sheet: structure, meaning, and deep checks
+2.2.1 Structure (brief)
+	•	Assets = Liabilities + Equity
+	•	Assets split into Current (convertible to cash within 12 months) and Non-current (PPE, intangibles).
+	•	Liabilities split into Current (due ≤ 12 months) and Non-current (loans, deferred tax).
+	•	Equity: share capital, reserves, retained earnings.
+2.2.2 What to probe
+	•	Working capital: Current Assets − Current Liabilities. Positive isn’t always good if high due to inventory build-up.
+	•	Capex & Fixed assets: growth capex vs maintenance capex.
+	•	Receivables & inventory days: are they moving unfavourably?
+	•	Hidden liabilities: leases, guarantees, contingent liabilities in notes.
+	•	Related party transactions: pricing, one-off transfers.
+	•	Intangibles: how much is goodwill and is it justified?
+2.2.3 Important ratios — with step-by-step arithmetic
+Example inputs (all numbers ₹ crore): Current Assets = 1,500; Current Liabilities = 900; Inventory = 600; Receivables = 450; Sales (TTM) = 6,000; COGS (TTM) = 3,600.
+Current ratio = Current Assets ÷ Current Liabilities. Compute digit-by-digit: 1500 ÷ 900 = 1.666... → round to 1.67.
+Quick ratio (acid test) = (Current Assets − Inventory) ÷ Current Liabilities = (1,500 − 600) ÷ 900 = 900 ÷ 900 = 1.00.
+Inventory days = (Inventory ÷ COGS) × 365 = (600 ÷ 3,600) × 365. Step: 600 ÷ 3,600 = 0.166666... → × 365 = 60.8333... → ≈ 61 days.
+Receivable days = (Receivables ÷ Sales) × 365 = (450 ÷ 6,000) × 365 = 0.075 × 365 = 27.375 → ≈ 27 days.
+These show the company converts receivables quickly but holds inventory ~61 days — reasonable for manufacturing/packaged goods.
+2.2.4 Adjustments you must make to the balance sheet
+	•	Capitalise operating leases (if off-balance sheet under older standards) — convert into present value of lease payments and add to debt and PPE.
+	•	Identify non-recurring assets (tax refunds, litigations) and exclude when computing operating capital.
+	•	Reclassify short-term investments depending on liquidity — do you treat them as cash equivalents?
+
+2.3 Income Statement (Profit & Loss) — what to read between the lines
+2.3.1 Basic structure
+	•	Revenue → COGS → Gross Profit → Operating Expenses → EBIT (Operating Profit) → Interest & Tax → Net Profit.
+2.3.2 Key margins to compute and interpret
+	•	Gross Margin = (Revenue − COGS) ÷ Revenue. If revenue = 6,000 and COGS = 3,600 → Gross Margin = 2,400 ÷ 6,000 = 0.4 = 40%.
+	•	Operating Margin = EBIT ÷ Revenue. If EBIT = 1,440 (example), Operating Margin = 1,440 ÷ 6,000 = 0.24 = 24%.
+	•	Net Margin = Net Profit ÷ Revenue.
+Margins tell you pricing power and operating efficiency. Compare margins across 3–5 years and to peers.
+2.3.3 Quality of earnings — essential checks
+	•	Cash vs accrual divergence: If net profit grows but cash from operations lags, earnings quality is suspect.
+	•	One-offs: Gains from asset sales, insurance claims — remove these for underlying performance.
+	•	Other income high? Verify it's not masking weak operating profit.
+	•	Provisioning changes: Falling provisions can boost short-term profit but hide risks.
+2.3.4 EBITDA vs EBIT vs Net Profit
+	•	EBITDA strips depreciation & amortisation (non-cash). Useful to compare capital intensity.
+	•	EBIT (operating profit) reflects business fundamentals after depreciation.
+	•	Use EBITDA margin for capital light businesses; EBIT/ROCE for capital intensive firms.
+
+2.4 Cash Flow Statement — the truth-teller
+2.4.1 Sections
+	•	Operating (CFO) — cash generated from core business. Highest importance for valuation.
+	•	Investing (CFI) — capex and investments (usually cash out).
+	•	Financing (CFF) — debt/equity issuance or dividends/repayments.
+2.4.2 Key checks
+	•	CFO should ideally trend with net profit. If a company keeps reporting big net profits but CFO is low/negative, investigate (aggressive receivable recognition, capitalising costs, inventory).
+	•	Capex vs depreciation: When capex >> depreciation for long periods, it could be aggressive expansion (ok if demand supports) or wasted spending.
+	•	Free Cash Flow (FCF) = CFO − Capex. Positive FCF over time is health signal.
+2.4.3 Example arithmetic (digit-by-digit)
+Suppose (₹ crore): CFO = 1,200; Capex = 800.
+FCF = 1,200 − 800 = 400.
+If Net Profit = 900 → CFO / Net Profit = 1,200 ÷ 900 = 1.333... → 1.33 (means cash generation stronger than accounting profit).
+2.4.4 Working capital changes
+A rise in receivables or inventory reduces CFO even if net profit is steady.
+
+2.5 From numbers to health signals — combining statements
+2.5.1 Reconcile profit to cash
+Start from Net Profit → add back non-cash items (depreciation) → account for working capital movement = CFO. Big divergence needs explanation.
+2.5.2 ROCE decomposition (the DuPont-like view)
+ROCE ≈ (Operating Margin) × (Asset Turnover).
+	•	If ROCE improves, check whether it’s margin expansion or better asset utilisation.
+	•	E.g., Operating Margin 24% × Asset Turnover 1.2 = ROCE ~28.8%.
+2.5.3 Capital allocation quality
+	•	Are profits being invested into high ROI projects, used to pay dividends, or wasted?
+	•	Track incremental ROIC (return on new invested capital).
+
+2.6 Common accounting adjustments and how to handle them
+	•	Capitalising vs Expensing
+	•	R&D, marketing, software — if capitalised, inflate assets and future profits; if expensed, lower current profit. Normalize by capitalising typical R&D for comparability.
+	•	Operating leases
+	•	Convert to debt + asset (right-of-use). Increases leverage; lowers EBITDA comparability.
+	•	One-time items
+	•	Separate recurring operating profits from non-recurring gains (legal settlements, sale of subsidiaries).
+	•	Related party transactions
+	•	Check pricing and frequency; large flows might mask real economics.
+	•	Tax adjustments
+	•	Deferred taxes can hide the effective tax burden — look at cash taxes paid over time.
+
+2.7 Forensic checks — red flags you must never ignore
+	•	Receivable days ballooning without revenue growth → possible revenue recognition abuse.
+	•	Inventory piling up while sales fall → demand problem or channel stuffing.
+	•	Sudden changes in working capital policies (e.g., extending customer credit terms).
+	•	Consistent negative CFO with positive net profit.
+	•	Large related-party loans or guarantees.
+	•	Frequent auditor changes or qualification comments in audit report.
+	•	Big jumps in other income that support net profit.
+	•	Aggressive capitalization of costs with little disclosure.
+
+2.8 Sector-specific considerations (applied view)
+	•	Consumer goods / Beverages: watch receivable days (distributors), inventory days (seasonality), promo spending (SG&A as % of sales), returnable packaging liabilities, container cost and regulatory changes (e.g., sugar tax, plastic rules).
+	•	Manufacturing: capex cycle, capacity utilisation, raw material volatility pass-through (input inflation).
+
+2.9 Practical templates & checklists
+Quick 10-point balance sheet checklist
+	•	Current ratio and quick ratio — trend for 3 years.
+	•	Inventory/Receivable days — direction and peer comparison.
+	•	Debt levels and maturity profile.
+	•	Cash balances vs short-term borrowings.
+	•	Capex obligations & CWIP aging.
+	•	Contingent liabilities (litigation).
+	•	Related party balances.
+	•	Non-operating assets (tax refunds, investments) — adjust out.
+	•	Intangible/goodwill analysis (impairment risk).
+	•	Presenter notes vs footnotes — only accept numbers with consistent disclosure.
+Income statement checklist
+	•	Revenue growth quality (volume vs price).
+	•	Operating expense leverage — SG&A as percentage.
+	•	Other income composition.
+	•	Tax rate vs statutory rate (any sweeteners?).
+	•	Adjusted EPS (exclude one-offs).
+Cash flow checklist
+	•	CFO trend vs net profit.
+	•	Capex vs depreciation.
+	•	Free cash flow pattern.
+	•	Financing patterns (equity call vs debt increase) and dividends sustainability.
+
+2.10 Building a normalized operating statement (practical method)
+	•	Start with reported revenue and COGS.
+	•	Remove one-off revenues/expenses.
+	•	Adjust depreciation for any capitalization policy differences.
+	•	Adjust for operating leases (amortise ROU depreciation and add interest if capitalised).
+	•	Compute normalized EBIT and EBITDA.
+	•	Use normalized margins to forecast future years conservatively.
+
+2.11 Worked mini-case: turning statements into a simple valuation input
+You want to build a 5-year cash flow forecast.
+Inputs needed:
+	•	Base revenue (TTM): ₹6,000 Cr
+	•	Revenue CAGR (next 5 years): 12%
+	•	Operating margin stable at 24%
+	•	Tax rate: 23%
+	•	Capex as % of revenue: 4% (i.e., 0.04 × revenue)
+	•	Depreciation ~ Capex long term for steady state assumption
+	•	Change in NWC as % of revenue: 1% (use as cash outflow)
+Year 1 Revenue = 6,000 × 1.12 = 6,720. (Digit-by-digit: 6,000 × 1.12 = 6,720.) Year 1 EBIT = 6,720 × 0.24 = 1,612.8. Tax = 1,612.8 × 0.23 = 370.944 → ≈ 371. NOPAT = 1,612.8 − 370.944 = 1,241.856 → ≈ 1,241.86. Capex = 6,720 × 0.04 = 268.8. ΔNWC = 6,720 × 0.01 = 67.2. FCF ≈ NOPAT + Depreciation − Capex − ΔNWC. If Depreciation ≈ Capex (steady state), Depreciation cancels Capex, so FCF ≈ NOPAT − ΔNWC = 1,241.856 − 67.2 = 1,174.656 Cr.
+This is the kind of number you feed into a DCF. (All steps shown so you can validate.)
+
+2.12 How to read the notes, and which lines you must never ignore
+	•	Significant accounting policies — revenue recognition, inventory valuation (FIFO/LIFO/weighted), depreciation methods.
+	•	Contingent liabilities and legal cases — quantify probability and potential cash outflow.
+	•	Related party transactions — pricing and volume; repeated large transactions are a red flag.
+	•	Segment reporting — identify low margin or loss-making segments.
+	•	Subsequent events — post-balance sheet events can change outlook materially.
+
+2.13 Final checklist before you buy
+	•	Are profits backed by cash (CFO)?
+	•	Is company reinvesting at > cost of capital? (ROIC > WACC)
+	•	Is leverage manageable relative to cash flow volatility?
+	•	Do margins look sustainable vs competition?
+	•	Are there one-time earnings drivers?
+	•	Do management’s statements and notes align with numbers?
+	•	Is valuation reasonable given growth and risk?
+
+2.14 Summary — practical takeaway
+Mastering financial statements is about contextualization and consistency checks. Numbers alone are inert; your job as an analyst is to convert them into a story: How does the company make money, where does that cash go, and how sustainable is the model? Use the arithmetic-by-step examples here to audit numbers in detail, apply the checklists, and always reconcile profit with cash.
+

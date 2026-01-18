@@ -9,7 +9,8 @@ import {
   BarChart3, 
   Newspaper,
   Bot,
-  Home
+  Home,
+  BookOpen
 } from 'lucide-react';
 import { CommandPalette } from './CommandPalette';
 
@@ -26,11 +27,13 @@ const navItems: NavItem[] = [
   { id: 'swing', label: 'Swing', icon: <TrendingUp className="w-5 h-5" />, href: '/swing-trades' },
   { id: 'news', label: 'News', icon: <Newspaper className="w-5 h-5" />, href: '/news' },
   { id: 'algo', label: 'AI Trading', icon: <Bot className="w-5 h-5" />, href: '/algo-trading' },
+  { id: 'books', label: 'Books', icon: <BookOpen className="w-5 h-5" />, href: '/books' },
 ];
 
 export function ModernNav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Force reload for Books menu
 
   useEffect(() => {
     const handleScroll = () => {
