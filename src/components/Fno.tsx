@@ -35,44 +35,57 @@ export function Fno({ initialSubSection }: FnoProps) {
 
   const subSections: FnoSubSection[] = [
     { 
-      id: 'option-analysis', 
-      label: 'Option Analysis', 
-      icon: <TrendingUp className="w-4 h-4" />, 
-      description: 'Advanced option chain analysis and institutional flow' 
-    },
-    { 
       id: 'futures-analysis', 
       label: 'Futures Analysis', 
       icon: <BarChart3 className="w-4 h-4" />, 
-      description: 'Futures market analysis and OI buildup patterns' 
+      description: 'Live OI buildup patterns and institutional positioning' 
+    },
+    { 
+      id: 'option-analysis', 
+      label: 'Option Chain Analysis', 
+      icon: <TrendingUp className="w-4 h-4" />, 
+      description: 'Real-time option flow and institutional activity' 
+    },
+    { 
+      id: 'smart-money-flow', 
+      label: 'Smart Money Flow', 
+      icon: <Activity className="w-4 h-4" />, 
+      description: 'Live institutional money flow tracking' 
     },
     { 
       id: 'most-active-calls-puts', 
-      label: 'Most Active Calls/Puts', 
+      label: 'Most Active Options', 
       icon: <Activity className="w-4 h-4" />, 
-      description: 'Most active options with highest trading activity' 
+      description: 'Most active calls/puts with highest volume' 
     },
     { 
       id: 'pcr-storm', 
-      label: 'PCR Storm', 
+      label: 'PCR Storm Detector', 
       icon: <Activity className="w-4 h-4" />, 
-      description: 'Put-Call Ratio storm detection and analysis' 
+      description: 'Real-time PCR anomaly detection' 
     },
     { 
       id: 'heatmap', 
       label: 'Options Heatmap', 
       icon: <BarChart3 className="w-4 h-4" />, 
-      description: 'Live heatmap of price, OI, and volume changes' 
+      description: 'Live price, OI, and volume heatmap' 
     },
   ];
 
   const renderContent = () => {
     switch (activeSubSection) {
+      case 'futures-analysis':
+        return <FuturesAnalysisContent />;
+
       case 'option-analysis':
         return <OptionAnalysisContent />;
 
-      case 'futures-analysis':
-        return <FuturesAnalysisContent />;
+      case 'smart-money-flow':
+        // Redirect to dedicated page for Smart Money Flow
+        if (typeof window !== 'undefined') {
+          window.location.href = '/equity/smart-money-flow';
+        }
+        return <div className="p-8 text-center">Redirecting to Smart Money Flow...</div>;
 
       case 'most-active-calls-puts':
         return <MostActiveCallsContent />;
@@ -84,7 +97,7 @@ export function Fno({ initialSubSection }: FnoProps) {
         return <HeatmapContent />;
 
       default:
-        return <OptionAnalysisContent />;
+        return <FuturesAnalysisContent />;
     }
   };
 
@@ -100,7 +113,7 @@ export function Fno({ initialSubSection }: FnoProps) {
               <div className="relative bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-2.5 py-2 flex items-center justify-between">
-                  <h3 className="text-white font-semibold text-xs">FNO Analysis</h3>
+                  <h3 className="text-white font-semibold text-xs">Intraday Trading</h3>
                   <button
                     onClick={() => setIsSubmenuCollapsed(true)}
                     className="p-1 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"

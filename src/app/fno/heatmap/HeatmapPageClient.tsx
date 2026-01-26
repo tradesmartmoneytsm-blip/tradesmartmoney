@@ -8,14 +8,18 @@ export function HeatmapPageClient() {
   const router = useRouter();
 
   const handleSectionChange = (section: string, subSection?: string) => {
-    // Handle FNO submenus - navigate to separate pages
-    if (section === 'fno' && subSection) {
-      router.push(`/fno/${subSection}`);
+    // Handle Intraday Trading submenus - navigate to separate pages
+    if (section === 'intraday' && subSection) {
+      if (subSection === 'smart-money-flow') {
+        router.push('/equity/smart-money-flow');
+      } else {
+        router.push(`/fno/${subSection}`);
+      }
       return;
     }
     
-    if (section === 'fno') {
-      router.push('/fno');
+    if (section === 'intraday') {
+      router.push('/fno/futures-analysis');
       return;
     }
     
@@ -38,7 +42,7 @@ export function HeatmapPageClient() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <Navigation 
-        activeSection="fno" 
+        activeSection="intraday" 
         onSectionChange={handleSectionChange}
       />
       <main className="relative" role="main" aria-label="F&O Heatmap">

@@ -8,15 +8,19 @@ export function SmartMoneyFlowPageClient() {
   const router = useRouter();
 
   const handleSectionChange = (section: string, subSection?: string) => {
-    // Handle Equity submenus - navigate to separate pages
-    if (section === 'equity' && subSection) {
-      router.push(`/equity/${subSection}`);
+    // Handle Intraday Trading submenus - navigate to separate pages
+    if (section === 'intraday' && subSection) {
+      if (subSection === 'smart-money-flow') {
+        router.push('/equity/smart-money-flow');
+      } else {
+        router.push(`/fno/${subSection}`);
+      }
       return;
     }
     
-    if (section === 'equity') {
-      // Stay on Equity main page
-      router.push('/equity');
+    if (section === 'intraday') {
+      // Default to futures analysis
+      router.push('/fno/futures-analysis');
       return;
     }
     
@@ -25,7 +29,7 @@ export function SmartMoneyFlowPageClient() {
       'home': '/',
       'market': '/market/sector-performance',
       'swing': '/swing-trades/momentum-strategy',
-      'fno': '/fno/option-analysis',
+      'intraday': '/fno/futures-analysis',
       'news': '/news',
       'eodscans': '/eod-scans',
       'algo-trading': '/algo-trading',
@@ -40,7 +44,7 @@ export function SmartMoneyFlowPageClient() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <Navigation 
-        activeSection="equity" 
+        activeSection="intraday" 
         onSectionChange={handleSectionChange}
       />
       <main className="relative" role="main" aria-label="SmartMoneyFlow Analysis">

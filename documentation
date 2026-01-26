@@ -1,0 +1,44 @@
+Algorithms
+    A] Cronjobs
+        1] EliteFutures.py
+            Scans Elite Futures Algorithm
+            tradingsmartapp/src/NextGenTradingSmartApp/EliteFutures.py
+            Table: elite_futures
+        2] Option Chain Analyzer
+            This algo analyzes option chains
+            tradesmartmoney/scripts/option_chain_analyzer.py
+            Table: option_chain_analysis    
+        3] Futures Analyzer
+            This algo analyzes futures Data
+            tradesmartmoney/scripts/futures_analyzer.py
+            Table: futures_analysis
+
+    B] Github Actions
+        1] Table Cleanup
+            This action deletes the data from the tables after 2 days
+            tradesmartmoney/.github/workflows/table-cleanup.yml
+            Tables: option_chain_analysis, futures_analysis
+        2] Data Flows
+            This action creates the data flows for the tables
+            tradesmartmoney/.github/workflows/data-flows.yml
+            Tables: option_chain_analysis, futures_analysis
+        3] Fetch Earnings Data
+            This action fetches the earnings data from the MoneyControl API
+            tradesmartmoney/.github/workflows/fetch-earnings-data.yml
+            Table: earnings_estimates
+        4] Fetch Historical Data
+            This action fetches the historical data from the NSE API
+            tradesmartmoney/.github/workflows/fetch-historical-data.yml
+            Table: historical_data
+        5] Fetch Most Active Stock Calls
+            This action fetches the most active stock calls from the NSE API
+            tradesmartmoney/.github/workflows/most-active-stock-calls-puts.yml
+            Tables: most_active_stock_calls, most_active_stock_puts
+        6] Fetch Most Active Stock Puts
+            This action fetches the most active stock puts from the NSE API
+            tradesmartmoney/.github/workflows/most-active-stock-calls-puts.yml
+            Tables: most_active_stock_calls, most_active_stock_puts
+        7] Fetch Intraday Activities
+            This action fetches the intraday activities from the NSE API
+            tradesmartmoney/.github/workflows/intraday-activities.yml
+            Tables: intraday_activities

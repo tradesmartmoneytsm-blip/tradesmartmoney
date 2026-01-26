@@ -208,54 +208,46 @@ export function Navigation({
       ]
     },
     {
-      id: 'fno',
-      label: 'FNO',
-      icon: <BarChart3 className={brandTokens.icons.sm} />,
-      description: 'Futures & Options trading analysis',
+      id: 'intraday',
+      label: 'Intraday Trading',
+      icon: <Activity className={brandTokens.icons.sm} />,
+      description: 'Complete intraday analysis: F&O, Smart Money Flow & Live Tracking',
       subItems: [
-        { 
-          id: 'option-analysis', 
-          label: 'Option Analysis', 
-          icon: <TrendingUp className={brandTokens.icons.sm} />,
-          description: 'Advanced option chain analysis and institutional flow'
-        },
         { 
           id: 'futures-analysis', 
           label: 'Futures Analysis', 
           icon: <BarChart3 className={brandTokens.icons.sm} />,
-          description: 'Futures market analysis and OI buildup patterns'
+          description: 'Live OI buildup patterns and institutional positioning'
+        },
+        { 
+          id: 'option-analysis', 
+          label: 'Option Chain Analysis', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Real-time option flow and institutional activity'
+        },
+        { 
+          id: 'smart-money-flow', 
+          label: 'Smart Money Flow', 
+          icon: <Activity className={brandTokens.icons.sm} />,
+          description: 'Live institutional money flow tracking'
         },
         { 
           id: 'most-active-calls-puts', 
-          label: 'Most Active Calls/Puts', 
+          label: 'Most Active Options', 
           icon: <Activity className={brandTokens.icons.sm} />,
-          description: 'Most active options with highest trading activity'
+          description: 'Most active calls/puts with highest volume'
         },
         { 
           id: 'pcr-storm', 
-          label: 'PCR Storm', 
+          label: 'PCR Storm Detector', 
           icon: <Activity className={brandTokens.icons.sm} />,
-          description: 'Put-Call Ratio storm detection and analysis'
+          description: 'Real-time PCR anomaly detection'
         },
         { 
           id: 'heatmap', 
           label: 'Options Heatmap', 
           icon: <BarChart3 className={brandTokens.icons.sm} />,
-          description: 'Live heatmap of price, OI, and volume changes'
-        }
-      ]
-    },
-    {
-      id: 'equity',
-      label: 'Equity',
-      icon: <DollarSign className={brandTokens.icons.sm} />,
-      description: 'Equity analysis and smart money flow',
-      subItems: [
-        { 
-          id: 'smart-money-flow', 
-          label: 'Intraday Smart Money Flow', 
-          icon: <Activity className={brandTokens.icons.sm} />,
-          description: 'Institutional Money Flow'
+          description: 'Live price, OI, and volume heatmap'
         }
       ]
     },
@@ -387,15 +379,9 @@ export function Navigation({
       return;
     }
     
-    // Handle FNO navigation - navigate to FNO with option analysis as default
-    if (itemId === 'fno') {
-      window.location.href = '/fno/option-analysis';
-      return;
-    }
-    
-    // Handle Equity navigation - navigate to Equity with smart money flow as default
-    if (itemId === 'equity') {
-      window.location.href = '/equity/smart-money-flow';
+    // Handle Intraday Trading navigation - navigate with futures analysis as default
+    if (itemId === 'intraday') {
+      window.location.href = '/fno/futures-analysis';
       return;
     }
     
@@ -431,15 +417,15 @@ export function Navigation({
         return;
       }
       
-      // Handle FNO submenus - navigate to FNO subpages
-      if (itemId === 'fno') {
-        window.location.href = `/fno/${subItemId}`;
-        return;
-      }
-      
-      // Handle Equity submenus - navigate to Equity subpages
-      if (itemId === 'equity') {
-        window.location.href = `/equity/${subItemId}`;
+      // Handle Intraday Trading submenus - navigate to appropriate subpages
+      if (itemId === 'intraday') {
+        // Smart Money Flow stays in /equity path
+        if (subItemId === 'smart-money-flow') {
+          window.location.href = '/equity/smart-money-flow';
+        } else {
+          // Other intraday items go to /fno path
+          window.location.href = `/fno/${subItemId}`;
+        }
         return;
       }
       
