@@ -151,48 +151,55 @@ def get_nse_data(url: str) -> Optional[str]:
     return None
 
 def fetch_futures_data(symbol: str, refresh_cookies: bool = False) -> Optional[Dict]:
-    """Fetch futures data using cookie-based approach (your proven method)"""
+    """Fetch futures data using cookie-based approach - prioritize OI spurts API that works after hours"""
     try:
         # Set cookies only when needed (performance optimization)
         if refresh_cookies or not cookies:
             set_cookie(SET_COOKIE_URL)
         
-        # Try different endpoints for futures data
-        endpoints = [
-            f"https://www.nseindia.com/api/quote-derivative?symbol={symbol}",
-            f"https://www.nseindia.com/api/equity-derivatives?symbol={symbol}",
-            f"https://www.nseindia.com/api/live-analysis-oi-spurts-underlyings?symbol={symbol}"
-        ]
+        # PRIORITY 1: Try OI spurts endpoint (works even when market closed!)
+        oi_spurts_url = f"https://www.nseindia.com/api/live-analysis-oi-spurts-underlyings?symbol={symbol}"
+        response_text = get_nse_data(oi_spurts_url)
         
-        for url in endpoints:
-            response_text = get_nse_data(url)
-            if response_text:
-                try:
-                    data = json.loads(response_text)
-                    
-                    
-                    if data and ('data' in data or 'stocks' in data or 'FUTSTK' in data or 'records' in data):
-                        logging.info(f"✅ Found valid data structure for {symbol}")
-                        # Add endpoint info to help with parsing
-                        data['_source_endpoint'] = url
-                        return data
-                    else:
-                        logging.info(f"⚠️ No valid data structure found for {symbol}")
-                except json.JSONDecodeError as e:
-                    logging.info(f"⚠️ JSON decode error for {symbol}: {e}")
-                    continue
-        
-        # For index futures, try specific endpoint
-        if symbol in ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY']:
-            url = f"https://www.nseindia.com/api/equity-derivatives?symbol={symbol}"
-            response_text = get_nse_data(url)
-            if response_text:
-                try:
-                    data = json.loads(response_text)
+        if response_text:
+            try:
+                data = json.loads(response_text)
+                if data and 'data' in data and len(data.get('data', [])) > 0:
+                    logging.info(f"✅ Found futures data for {symbol} from OI spurts API")
+                    data['_source_endpoint'] = 'oi-spurts'
                     return data
+            except json.JSONDecodeError as e:
+                logging.debug(f"⚠️ JSON decode error for OI spurts {symbol}: {e}")
+        
+        # PRIORITY 2: Try quote-derivative (works during market hours)
+        quote_url = f"https://www.nseindia.com/api/quote-derivative?symbol={symbol}"
+        response_text = get_nse_data(quote_url)
+        
+        if response_text:
+            try:
+                data = json.loads(response_text)
+                if data and 'stocks' in data and len(data.get('stocks', [])) > 0:
+                    logging.info(f"✅ Found futures data for {symbol} from quote-derivative API")
+                    data['_source_endpoint'] = 'quote-derivative'
+                    return data
+            except json.JSONDecodeError as e:
+                logging.debug(f"⚠️ JSON decode error for quote-derivative {symbol}: {e}")
+        
+        # For index futures, try equity-derivatives
+        if symbol in ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY']:
+            equity_deriv_url = f"https://www.nseindia.com/api/equity-derivatives?symbol={symbol}"
+            response_text = get_nse_data(equity_deriv_url)
+            if response_text:
+                try:
+                    data = json.loads(response_text)
+                    if data and 'data' in data:
+                        logging.info(f"✅ Found index futures data for {symbol}")
+                        data['_source_endpoint'] = 'equity-derivatives'
+                        return data
                 except json.JSONDecodeError:
                     pass
         
+        logging.warning(f"⚠️ No valid futures data found for {symbol} from any endpoint")
         return None
         
     except Exception as e:
@@ -216,6 +223,44 @@ def get_spot_price(symbol: str) -> float:
     
     return 0.0
 
+def get_previous_futures_price(symbol: str) -> float:
+    """Fetch previous day's futures price from Supabase database"""
+    try:
+        headers = {
+            'apikey': SUPABASE_SERVICE_ROLE_KEY,
+            'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE_KEY}',
+            'Content-Type': 'application/json'
+        }
+        
+        # Get yesterday's date
+        yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        
+        # Query previous day's futures analysis
+        url = f'{SUPABASE_URL}/rest/v1/futures_analysis'
+        params = {
+            'symbol': f'eq.{symbol}',
+            'trading_date': f'eq.{yesterday}',
+            'select': 'current_price',
+            'order': 'analysis_timestamp.desc',
+            'limit': '1'
+        }
+        
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data and len(data) > 0:
+                prev_price = float(data[0]['current_price'])
+                logging.debug(f"✅ {symbol}: Found previous futures price ₹{prev_price:.2f}")
+                return prev_price
+        
+        logging.debug(f"⚠️ {symbol}: No previous futures price found in database")
+        return 0.0
+        
+    except Exception as e:
+        logging.debug(f"⚠️ Error fetching previous futures price for {symbol}: {e}")
+        return 0.0
+
 def analyze_oi_buildup(current_price: float, prev_price: float, current_oi: int, prev_oi: int) -> Dict:
     """Analyze Open Interest buildup patterns"""
     
@@ -227,11 +272,11 @@ def analyze_oi_buildup(current_price: float, prev_price: float, current_oi: int,
     logging.debug(f"OI Analysis: Price {current_price:.2f} (prev {prev_price:.2f}), OI {current_oi:,} (prev {prev_oi:,})")
     logging.debug(f"Changes: Price {price_change:+.2f}, OI {oi_change:+,} ({oi_change_pct:+.1f}%)")
     
-    # More sensitive thresholds for better detection
+    # ORIGINAL proven thresholds - DO NOT CHANGE
     price_threshold = abs(current_price * 0.005)  # 0.5% price change threshold
     oi_threshold = abs(prev_oi * 0.02) if prev_oi > 0 else 1000  # 2% OI change threshold
     
-    # Determine buildup type with better sensitivity
+    # Determine buildup type - ORIGINAL LOGIC
     if abs(price_change) > price_threshold and abs(oi_change) > oi_threshold:
         if price_change > 0 and oi_change > 0:
             buildup_type = 'LONG_BUILDUP'
@@ -259,7 +304,7 @@ def analyze_oi_buildup(current_price: float, prev_price: float, current_oi: int,
         signal = 'NEUTRAL'
         strength = max(abs(oi_change_pct) * 0.3, abs(price_change / current_price * 100) * 2) if current_price > 0 else 0
     
-    # Determine strength level
+    # ORIGINAL strength level thresholds - DO NOT CHANGE
     if strength >= 20:
         strength_level = 'STRONG'
     elif strength >= 10:
@@ -598,8 +643,107 @@ def perform_futures_analysis(symbol: str, futures_data: Dict, spot_price: float)
         # Check which endpoint provided the data
         source_endpoint = futures_data.get('_source_endpoint', '')
         
+        # Handle OI SPURTS endpoint (works after hours!)
+        if source_endpoint == 'oi-spurts':
+            # This endpoint returns array of data directly
+            oi_data = futures_data.get('data', [])
+            if not oi_data:
+                return None
+            
+            # Find the symbol's data in the array
+            symbol_data = None
+            for item in oi_data:
+                if item.get('symbol') == symbol:
+                    symbol_data = item
+                    break
+            
+            if not symbol_data:
+                logging.warning(f"⚠️ Symbol {symbol} not found in OI spurts data")
+                return None
+            
+            # Extract data from OI spurts format
+            current_oi = int(symbol_data.get('latestOI', 0))
+            prev_oi = int(symbol_data.get('prevOI', 0))
+            change_in_oi = int(symbol_data.get('changeInOI', 0))
+            current_volume = int(symbol_data.get('volume', 0))
+            spot_price = float(symbol_data.get('underlyingValue', 0))
+            
+            # OI spurts doesn't have futures price, need to get actual price data
+            # Try to fetch from database first, then yfinance
+            prev_futures_price = get_previous_futures_price(symbol)
+            
+            # Get current futures price using yfinance for accuracy
+            try:
+                import yfinance as yf
+                ticker = yf.Ticker(f"{symbol}.NS")
+                # Use 5d to ensure we get at least 2 trading days (period="2d" only returns 1 day!)
+                hist = ticker.history(period="5d", interval="1d")
+                
+                if len(hist) >= 2:
+                    # Use last 2 available trading days for comparison
+                    prev_price = float(hist['Close'].iloc[-2])
+                    current_price = float(hist['Close'].iloc[-1])
+                    price_chg = current_price - prev_price
+                    logging.info(f"💹 {symbol}: {hist.index[-2].date()} ₹{prev_price:.2f} → {hist.index[-1].date()} ₹{current_price:.2f} ({price_chg:+.2f})")
+                elif len(hist) == 1:
+                    # Only 1 day available - use database previous price or approximate
+                    current_price = float(hist['Close'].iloc[-1])
+                    if prev_futures_price > 0:
+                        prev_price = prev_futures_price
+                        logging.info(f"💹 {symbol}: Using DB prev ₹{prev_price:.2f} vs yfinance current ₹{current_price:.2f}")
+                    else:
+                        # No previous data - use spot approximation
+                        prev_price = spot_price * 0.998  # Assume minimal change
+                        logging.warning(f"⚠️ {symbol}: No historical price, approximating")
+                else:
+                    raise Exception("No yfinance data")
+                    
+            except Exception as e:
+                logging.warning(f"⚠️ {symbol}: yfinance error ({str(e)[:50]}), using spot approximation")
+                # Fallback to spot-based approximation
+                current_price = spot_price * 1.0
+                if prev_futures_price > 0:
+                    prev_price = prev_futures_price
+                else:
+                    prev_price = spot_price * 0.998
+            
+            # Default values for missing data
+            open_price = current_price
+            high_price = current_price
+            low_price = current_price
+            close_price = current_price
+            vwap = current_price
+            total_buy_qty = 0
+            total_sell_qty = 0
+            
+            # Estimate expiry (last Thursday of current month)
+            now = datetime.now()
+            # Simple calculation: last Thursday is typically around day 25-31
+            # For futures, assume current month expiry
+            if now.day < 25:
+                # Current month expiry
+                current_month_expiry = now.replace(day=28).strftime('%Y-%m-%d')
+                days_to_expiry = max(28 - now.day, 1)
+            else:
+                # Next month expiry
+                next_month = now.month + 1 if now.month < 12 else 1
+                next_year = now.year if now.month < 12 else now.year + 1
+                current_month_expiry = now.replace(year=next_year, month=next_month, day=28).strftime('%Y-%m-%d')
+                days_to_expiry = 5
+            
+            
+            next_month = None  # OI spurts doesn't have next month data
+            
+            # Market depth and price action will use fallback logic
+            market_depth_analysis = {'imbalance': 'NEUTRAL', 'strength': 'LOW', 'buy_sell_ratio': 1.0, 'reasoning': 'OI Spurts API - no depth data'}
+            price_action_analysis = {'pattern': 'INSUFFICIENT_DATA', 'strength': 'LOW', 'vwap_position': 'NEUTRAL', 'reasoning': 'OI Spurts API - no OHLC data'}
+            
+            logging.info(f"📊 Using OI Spurts data for {symbol}: OI {current_oi:,}, Change {change_in_oi:,}, Vol {current_volume:,}")
+            
+            # For OI spurts, all variables are already set, skip to analysis
+            
         # Handle different data structures based on endpoint
-        if 'quote-derivative' in source_endpoint and 'stocks' in futures_data:
+        elif 'quote-derivative' in source_endpoint and 'stocks' in futures_data:
             # quote-derivative endpoint structure - filter for actual futures contracts
             stocks_data = futures_data['stocks']
             
@@ -611,18 +755,23 @@ def perform_futures_analysis(symbol: str, futures_data: Dict, spot_price: float)
             ]
             
             current_month = futures_contracts[0] if futures_contracts else None
+            
+            if not current_month:
+                return None
         elif 'data' in futures_data:
             # Other endpoints structure
             current_month = futures_data['data'][0] if futures_data['data'] else None
+            
+            if not current_month:
+                return None
         else:
             return None
-            
-        if not current_month:
-            return None
         
-        
-        # Extract next month futures (second contract)
-        if 'quote-derivative' in source_endpoint and 'stocks' in futures_data:
+        # Extract next month futures (second contract) - skip for oi-spurts
+        if source_endpoint == 'oi-spurts':
+            # Already set above, skip
+            pass
+        elif 'quote-derivative' in source_endpoint and 'stocks' in futures_data:
             # Use the same filtered futures contracts
             stocks_data = futures_data['stocks']
             futures_contracts = [
@@ -636,8 +785,11 @@ def perform_futures_analysis(symbol: str, futures_data: Dict, spot_price: float)
         else:
             next_month = None
         
-        # Extract data based on endpoint type
-        if 'quote-derivative' in source_endpoint:
+        # Extract data based on endpoint type - skip for oi-spurts (already extracted)
+        if source_endpoint == 'oi-spurts':
+            # Already extracted above, set expiry_str for later use
+            expiry_str = current_month_expiry
+        elif 'quote-derivative' in source_endpoint:
             # quote-derivative endpoint has futures data nested in metadata and tradeInfo
             metadata = current_month.get('metadata', {})
             market_depth = current_month.get('marketDeptOrderBook', {})
@@ -673,8 +825,8 @@ def perform_futures_analysis(symbol: str, futures_data: Dict, spot_price: float)
             
             # Carry cost data
             carry_cost = float(carry_info.get('carry', {}).get('lastPrice', 0))
-        else:
-            # Other endpoints (OI data only)
+        elif source_endpoint != 'oi-spurts':
+            # Other endpoints (OI data only) - NOT oi-spurts
             current_oi = int(current_month.get('latestOI', 0))
             prev_oi = int(current_month.get('prevOI', 0))
             change_in_oi = int(current_month.get('changeInOI', 0))
@@ -685,7 +837,10 @@ def perform_futures_analysis(symbol: str, futures_data: Dict, spot_price: float)
             prev_price = current_price
         
         # Calculate days to expiry
-        if 'quote-derivative' in source_endpoint:
+        if source_endpoint == 'oi-spurts':
+            # Already set above
+            expiry_str = current_month_expiry
+        elif 'quote-derivative' in source_endpoint:
             expiry_str = metadata.get('expiryDate', '')
         else:
             expiry_str = current_month.get('expiryDate', '')
@@ -706,14 +861,17 @@ def perform_futures_analysis(symbol: str, futures_data: Dict, spot_price: float)
         basis_analysis = analyze_basis_structure(current_price, spot_price, days_to_expiry)
         rollover_analysis = calculate_rollover_pressure(days_to_expiry, current_oi, next_month_oi, current_volume)
         
-        # Enhanced analysis using additional NSE data
-        if 'quote-derivative' in source_endpoint:
-            market_depth_analysis = analyze_market_depth(total_buy_qty, total_sell_qty, market_depth)
-            price_action_analysis = analyze_price_action(open_price, high_price, low_price, current_price, vwap)
-        else:
-            # Fallback for other endpoints
-            market_depth_analysis = {'imbalance': 'NEUTRAL', 'strength': 'LOW', 'buy_sell_ratio': 1.0, 'reasoning': 'No depth data'}
-            price_action_analysis = {'pattern': 'INSUFFICIENT_DATA', 'strength': 'LOW', 'vwap_position': 'NEUTRAL', 'reasoning': 'No OHLC data'}
+        # Enhanced analysis using additional NSE data  
+        # market_depth_analysis and price_action_analysis are already set above based on endpoint type
+        if source_endpoint != 'oi-spurts':
+            # For quote-derivative endpoint
+            if 'quote-derivative' in source_endpoint:
+                market_depth_analysis = analyze_market_depth(total_buy_qty, total_sell_qty, market_depth)
+                price_action_analysis = analyze_price_action(open_price, high_price, low_price, current_price, vwap)
+            else:
+                # Fallback for other endpoints
+                market_depth_analysis = {'imbalance': 'NEUTRAL', 'strength': 'LOW', 'buy_sell_ratio': 1.0, 'reasoning': 'No depth data'}
+                price_action_analysis = {'pattern': 'INSUFFICIENT_DATA', 'strength': 'LOW', 'vwap_position': 'NEUTRAL', 'reasoning': 'No OHLC data'}
         
         # Calculate price change once
         price_change_val = current_price - prev_price
@@ -725,7 +883,7 @@ def perform_futures_analysis(symbol: str, futures_data: Dict, spot_price: float)
             price_action_analysis, basis_analysis
         )
         
-        # Use simple trading algorithm for clear signals
+        # ORIGINAL signal classification - PROVEN LOGIC - DO NOT CHANGE
         overall_signal = trading_signal['signal']
         signal_strength = trading_signal['strength']
         confidence = trading_signal['confidence']
@@ -740,6 +898,7 @@ def perform_futures_analysis(symbol: str, futures_data: Dict, spot_price: float)
         else:
             overall_signal = 'NEUTRAL'
         
+        # ORIGINAL minimum threshold - DO NOT CHANGE
         # Ensure minimum signal strength for meaningful signals
         if overall_signal != 'NEUTRAL' and signal_strength < 15:
             overall_signal = 'NEUTRAL'
@@ -995,14 +1154,14 @@ def process_symbol_batch(symbols: List[str]) -> List[Dict]:
     
     return results
 
-def main():
+def main(force_run=False):
     """Main execution function"""
     logging.info("🚀 Starting Futures Analysis Collector")
     
     # Environment is now hardcoded - no validation needed
     
-    # Check market hours
-    if not is_market_hours():
+    # Check market hours (unless forced)
+    if not force_run and not is_market_hours():
         logging.info("⏰ Outside market hours - skipping futures analysis")
         return
     
@@ -1052,7 +1211,13 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        import sys
+        # Force run if --force flag is provided
+        if '--force' in sys.argv:
+            logging.info("🔧 FORCE MODE: Running futures analysis outside market hours for testing")
+            main(force_run=True)
+        else:
+            main()
     except KeyboardInterrupt:
         logging.info("🛑 Futures analysis interrupted by user")
         sys.exit(0)

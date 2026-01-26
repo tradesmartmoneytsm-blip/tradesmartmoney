@@ -178,16 +178,66 @@ def get_nse_data(url: str) -> Optional[str]:
     
     return None
 
-def fetch_option_chain_data(symbol: str) -> Optional[Dict]:
-    """Fetch option chain data from NSE official API using proven cookie method"""
+def fetch_option_chain_expiry_dates(symbol: str) -> Optional[List[str]]:
+    """Fetch available expiry dates for a symbol using NEW NSE API"""
     try:
         # Initialize cookies if not set
         if not nse_cookies:
             logging.info("🔐 Setting initial NSE cookies...")
             set_nse_cookie()
         
-        # NSE Official API endpoint
-        url = f"https://www.nseindia.com/api/option-chain-equities?symbol={symbol}"
+        # NEW NSE API endpoint for expiry dates
+        url = f"https://www.nseindia.com/api/NextApi/apiClient/GetQuoteApi?functionName=getOptionChainDropdown&symbol={symbol}"
+        
+        # Get data using proven cookie method
+        response_text = get_nse_data(url)
+        
+        if not response_text:
+            logging.warning(f"⚠️ No expiry data response for {symbol}")
+            return None
+            
+        # Try to parse JSON
+        try:
+            data = json.loads(response_text)
+        except ValueError as e:
+            logging.error(f"❌ Invalid JSON response for expiry dates {symbol}: {e}")
+            return None
+        
+        # Extract expiry dates from new API response
+        expiry_dates = data.get('expiryDates', [])
+        
+        if not expiry_dates:
+            logging.warning(f"⚠️ No expiry dates found for {symbol}")
+            return None
+            
+        logging.info(f"✅ Found {len(expiry_dates)} expiry dates for {symbol}")
+        return expiry_dates
+        
+    except Exception as e:
+        logging.error(f"❌ Error fetching expiry dates for {symbol}: {e}")
+        return None
+
+def fetch_option_chain_data(symbol: str) -> Optional[Dict]:
+    """Fetch option chain data from NEW NSE API"""
+    try:
+        # Initialize cookies if not set
+        if not nse_cookies:
+            logging.info("🔐 Setting initial NSE cookies...")
+            set_nse_cookie()
+        
+        # Step 1: Get available expiry dates
+        expiry_dates = fetch_option_chain_expiry_dates(symbol)
+        
+        if not expiry_dates:
+            logging.warning(f"⚠️ No expiry dates available for {symbol}")
+            return None
+        
+        # Step 2: Use the nearest expiry date (first one)
+        nearest_expiry = expiry_dates[0]
+        logging.info(f"📅 Using expiry date: {nearest_expiry} for {symbol}")
+        
+        # Step 3: Fetch option chain data with NEW NSE API
+        url = f"https://www.nseindia.com/api/NextApi/apiClient/GetQuoteApi?functionName=getOptionChainData&symbol={symbol}&params=expiryDate={nearest_expiry}"
         
         # Get data using proven cookie method
         response_text = get_nse_data(url)
@@ -198,18 +248,61 @@ def fetch_option_chain_data(symbol: str) -> Optional[Dict]:
             
         # Try to parse JSON
         try:
-            import json
             data = json.loads(response_text)
         except ValueError as e:
             logging.error(f"❌ Invalid JSON response for {symbol}: {e}")
+            logging.error(f"Response preview: {response_text[:500]}")
             return None
         
-        if not data or 'records' not in data:
-            logging.warning(f"⚠️ No option chain data found for {symbol}")
+        # Debug: Log the structure of the response
+        if data:
+            logging.debug(f"📋 Response keys for {symbol}: {list(data.keys())}")
+        
+        # Check for new API structure - may use different keys
+        if not data:
+            logging.warning(f"⚠️ Empty response for {symbol}")
             return None
+        
+        # NEW NSE API FORMAT (Jan 2026 onwards)
+        if 'data' in data and 'underlyingValue' in data:
+            # Transform new format to old format for compatibility with existing analysis
+            option_data = data.get('data', [])
             
-        logging.info(f"✅ Successfully fetched option chain for {symbol}")
-        return data
+            # Transform each option entry to match old format
+            transformed_data = []
+            for item in option_data:
+                # Extract strike price from CE or PE object
+                strike_price = item.get('CE', {}).get('strikePrice') or item.get('PE', {}).get('strikePrice', 0)
+                
+                transformed_item = {
+                    'strikePrice': strike_price,
+                    'expiryDate': item.get('expiryDates', nearest_expiry),
+                    'CE': item.get('CE', {}),
+                    'PE': item.get('PE', {})
+                }
+                transformed_data.append(transformed_item)
+            
+            # Wrap in old structure for compatibility
+            result = {
+                'records': {
+                    'data': transformed_data,
+                    'underlyingValue': data.get('underlyingValue', 0),
+                    'timestamp': data.get('timestamp', '')
+                }
+            }
+            
+            logging.info(f"✅ Successfully fetched option chain for {symbol} (Expiry: {nearest_expiry}) [Strikes: {len(transformed_data)}]")
+            return result
+        
+        # OLD API FORMAT (fallback for compatibility)
+        elif 'records' in data:
+            logging.info(f"✅ Successfully fetched option chain for {symbol} (Expiry: {nearest_expiry}) [OLD FORMAT]")
+            return data
+        
+        else:
+            logging.warning(f"⚠️ Unknown response structure for {symbol}")
+            logging.warning(f"Available keys: {list(data.keys())}")
+            return None
         
     except Exception as e:
         logging.error(f"❌ Unexpected error fetching NSE option chain for {symbol}: {e}")
