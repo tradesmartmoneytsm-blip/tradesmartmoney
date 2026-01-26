@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Activity, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Activity, ChevronLeft, ChevronRight, BarChart3, TrendingUp } from 'lucide-react';
 import { SmartMoneyFlowContent } from './SmartMoneyFlowContent';
 import { SectorPerformanceHistogram } from './SectorPerformanceHistogram';
 import { ActivityManager } from './ActivityManager';
@@ -31,10 +31,40 @@ export function Equity({ initialSubSection }: EquityProps) {
 
   const subSections: EquitySubSection[] = [
     { 
+      id: 'futures-analysis', 
+      label: 'Futures Analysis', 
+      icon: <BarChart3 className="w-4 h-4" />, 
+      description: 'Live OI buildup patterns' 
+    },
+    { 
+      id: 'option-analysis', 
+      label: 'Option Chain Analysis', 
+      icon: <TrendingUp className="w-4 h-4" />, 
+      description: 'Real-time option flow' 
+    },
+    { 
       id: 'smart-money-flow', 
-      label: 'Intraday Smart Money Flow', 
+      label: 'Smart Money Flow', 
       icon: <Activity className="w-4 h-4" />, 
       description: 'Institutional Money Flow' 
+    },
+    { 
+      id: 'most-active-calls-puts', 
+      label: 'Most Active Options', 
+      icon: <Activity className="w-4 h-4" />, 
+      description: 'Most active calls/puts' 
+    },
+    { 
+      id: 'pcr-storm', 
+      label: 'PCR Storm Detector', 
+      icon: <Activity className="w-4 h-4" />, 
+      description: 'PCR anomaly detection' 
+    },
+    { 
+      id: 'heatmap', 
+      label: 'Options Heatmap', 
+      icon: <BarChart3 className="w-4 h-4" />, 
+      description: 'Live OI and volume heatmap' 
     },
   ];
 
@@ -42,6 +72,38 @@ export function Equity({ initialSubSection }: EquityProps) {
     switch (activeSubSection) {
       case 'smart-money-flow':
         return <SmartMoneyFlowContent />;
+      
+      case 'futures-analysis':
+        // Redirect to futures analysis page
+        if (typeof window !== 'undefined') {
+          window.location.href = '/fno/futures-analysis';
+        }
+        return <div className="p-8 text-center">Redirecting...</div>;
+      
+      case 'option-analysis':
+        // Redirect to option analysis page
+        if (typeof window !== 'undefined') {
+          window.location.href = '/fno/option-analysis';
+        }
+        return <div className="p-8 text-center">Redirecting...</div>;
+      
+      case 'most-active-calls-puts':
+        if (typeof window !== 'undefined') {
+          window.location.href = '/fno/most-active-calls-puts';
+        }
+        return <div className="p-8 text-center">Redirecting...</div>;
+      
+      case 'pcr-storm':
+        if (typeof window !== 'undefined') {
+          window.location.href = '/fno/pcr-storm';
+        }
+        return <div className="p-8 text-center">Redirecting...</div>;
+      
+      case 'heatmap':
+        if (typeof window !== 'undefined') {
+          window.location.href = '/fno/heatmap';
+        }
+        return <div className="p-8 text-center">Redirecting...</div>;
 
       default:
         return <SmartMoneyFlowContent />;
@@ -60,7 +122,7 @@ export function Equity({ initialSubSection }: EquityProps) {
               <div className="relative bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-2.5 py-2 flex items-center justify-between">
-                  <h3 className="text-white font-semibold text-xs">Equity Analysis</h3>
+                  <h3 className="text-white font-semibold text-xs">Intraday Trading</h3>
                   <button
                     onClick={() => setIsSubmenuCollapsed(true)}
                     className="p-1 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"

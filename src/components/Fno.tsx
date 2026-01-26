@@ -7,6 +7,7 @@ import { FuturesAnalysisContent } from './FuturesAnalysisContent';
 import { MostActiveCallsContent } from './MostActiveCallsContent';
 import { PcrStormContent } from './PcrStormContent';
 import { HeatmapContent } from './HeatmapContent';
+import { SmartMoneyFlowContent } from './SmartMoneyFlowContent';
 import { SectorPerformanceHistogram } from './SectorPerformanceHistogram';
 import { ActivityManager } from './ActivityManager';
 
@@ -81,11 +82,7 @@ export function Fno({ initialSubSection }: FnoProps) {
         return <OptionAnalysisContent />;
 
       case 'smart-money-flow':
-        // Redirect to dedicated page for Smart Money Flow
-        if (typeof window !== 'undefined') {
-          window.location.href = '/equity/smart-money-flow';
-        }
-        return <div className="p-8 text-center">Redirecting to Smart Money Flow...</div>;
+        return <SmartMoneyFlowContent />;
 
       case 'most-active-calls-puts':
         return <MostActiveCallsContent />;
