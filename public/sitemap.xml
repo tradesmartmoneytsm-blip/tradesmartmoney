@@ -3,7 +3,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.tradesmartmoney.com/</loc>
-    <lastmod>2025-09-20</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -26,7 +26,7 @@
   <!-- Main Trading Features (High Priority for SEO) -->
   <url>
     <loc>https://www.tradesmartmoney.com/market</loc>
-    <lastmod>2025-09-20</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
@@ -97,9 +97,45 @@
   
   <url>
     <loc>https://www.tradesmartmoney.com/swing-trades</loc>
-    <lastmod>2025-09-20</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
+  </url>
+
+  <!-- Swing Trade Strategies -->
+  <url>
+    <loc>https://www.tradesmartmoney.com/swing-trades/momentum-strategy</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/swing-trades/swing-angle</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/swing-trades/bottom-formation</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/swing-trades/value-buying</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/swing-trades/bit-strategy</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
   </url>
   
   <url>
@@ -118,23 +154,131 @@
   
   <url>
     <loc>https://www.tradesmartmoney.com/news</loc>
-    <lastmod>2025-09-20</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
     <loc>https://www.tradesmartmoney.com/eod-scans</loc>
-    <lastmod>2025-09-20</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
+  </url>
+
+  <!-- Commodity & International Markets -->
+  <url>
+    <loc>https://www.tradesmartmoney.com/commodity</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/us-stock-market</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
   </url>
   
   <url>
     <loc>https://www.tradesmartmoney.com/algo-trading</loc>
-    <lastmod>2025-09-20</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
+  </url>
+
+  <!-- Books Section (NEW) -->
+  <url>
+    <loc>https://www.tradesmartmoney.com/books</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/books/recommended-books</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/books/my-books</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/books/my-books/fundamental-analysis</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/books/my-books/smart-money-trading</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/books/my-books/indian-market</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/books/my-books/algo-trading</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Intraday Trading (F&O) Section -->
+  <url>
+    <loc>https://www.tradesmartmoney.com/fno/futures-analysis</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/fno/option-analysis</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/equity/smart-money-flow</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/fno/most-active-calls-puts</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/fno/pcr-storm</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/fno/heatmap</loc>
+    <lastmod>2026-01-27</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
   </url>
 
   <!-- SEO Landing Pages -->
@@ -210,21 +354,6 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Admin Pages (Lower Priority) -->
-  <url>
-    <loc>https://www.tradesmartmoney.com/admin/blog</loc>
-    <lastmod>2025-09-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.tradesmartmoney.com/admin/swing-trades</loc>
-    <lastmod>2025-09-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  
   <!-- Educational Blog Posts -->
   <url>
     <loc>https://www.tradesmartmoney.com/blog/understanding-market-basics-beginners</loc>

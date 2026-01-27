@@ -1,19 +1,83 @@
 Algorithms
+Sector Performance Algorithm
+
+
     A] Cronjobs
+        # Table
+        -- Swing Trading Algorithms --
         1] EliteFutures.py
             Scans Elite Futures Algorithm
             tradingsmartapp/src/NextGenTradingSmartApp/EliteFutures.py
             Table: elite_futures
-        2] Option Chain Analyzer
+        -- Intraday Trading Algorithms --
+        1] Option Chain Analyzer
             This algo analyzes option chains
             tradesmartmoney/scripts/option_chain_analyzer.py
             Table: option_chain_analysis    
-        3] Futures Analyzer
+        2] Futures Analyzer
             This algo analyzes futures Data
             tradesmartmoney/scripts/futures_analyzer.py
             Table: futures_analysis
 
-    B] Github Actions
+        -- Sector Performance Algorithm --
+        1] Dhan Indices Collector
+            This algo collects the Dhan indices data like index name, index symbol, index id, index type, index category, index description, index created at, index updated at
+            tradesmartmoney/scripts/dhan_indices_collector.py
+            Table: dhan_sector_indices_config
+        2] Dhan Historical Data Collector
+            This algo collects the Dhan historical data like price change 7d, price change 30d, price change 90d, price change 52w, current price, updated at, created at
+            tradesmartmoney/scripts/dhan_historical_data_collector.py
+            Table: dhan_sector_data
+
+        Backup for Sector Performance Algorithm
+        1] Nse Sector Data Collector
+            This algo collects the NSE sector data like index name, index symbol, index id, index type, index category, index description, index created at, index updated at
+            tradesmartmoney/scripts/nse_sector_data_collector.py
+            Table: nse_sector_data
+        2] Nse Historical Data Collector
+            This algo collects the NSE historical data like price change 7d, price change 30d, price change 90d, price change 52w, current price, updated at, created at
+            tradesmartmoney/scripts/nse_historical_data_collector.py
+            Table: nse_sector_data
+
+       
+
+    B] Components & UI Elements
+        1] Sector Performance Menu (Right Sidebar)
+            1D Data from Dhan live page scraping
+            Historical Data 
+            Table: nse_sector_data
+            
+            
+            Data Sources:
+            a) Real-time Sector Data (1D):
+               - API: /api/sector-data?timeRange=1D
+               - Method: Web scraping from Dhan.co sector pages
+               - Update: Real-time during market hours
+               - No backend script needed (scraped on-demand)
+               
+            b) Historical Sector Data (7D, 30D, 90D, 52W):
+               - API: /api/sector-data?timeRange={7D|30D|90D|52W}
+               - Table: dhan_sector_data (Supabase)
+               - Script: scripts/dhan_historical_data_collector.py
+               - Execution: MANUAL (not scheduled in crontab)
+               - Recommendation: Run daily at market close
+               - Data Source: Dhan Historical OHLC API (openweb-ticks.dhan.co)
+               - Calculates: 7D, 30D, 90D, 52W price changes from OHLC data
+               - Usage: python3 dhan_historical_data_collector.py [--sectors-only] [--limit N]
+               
+            c) Sector Context Provider:
+               - File: src/contexts/SectorDataContext.tsx
+               - Auto-refresh: Every 1 minute during market hours
+               - Global state management using React Context
+               
+            Display Features:
+            - Shows 18 NSE sector indices
+            - Color-coded performance (red/green)
+            - Multiple timeframes (1D, 7D, 30D, 90D, 52W)
+            - Collapsible sidebar
+            - Available on: Market, Swing, Intraday pages
+
+    C] Github Actions
         1] Table Cleanup
             This action deletes the data from the tables after 2 days
             tradesmartmoney/.github/workflows/table-cleanup.yml

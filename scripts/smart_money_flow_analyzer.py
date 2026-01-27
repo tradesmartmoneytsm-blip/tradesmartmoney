@@ -311,7 +311,7 @@ class SmartMoneyFlowAnalyzer:
             logging.error(f"❌ Error storing activities: {e}")
             return False
 
-    def run_analysis(self):
+    def run_analysis(self, force_run=False):
         """Main execution function"""
         try:
             logging.info("🚀 Starting Smart Money Flow Analysis")
@@ -328,23 +328,29 @@ class SmartMoneyFlowAnalyzer:
                 ((hour == 9 and minute >= 20) or (10 <= hour <= 14) or (hour == 15 and minute <= 30))
             )
             
-            if not is_market_hours:
+            if not force_run and not is_market_hours:
                 logging.info(f"⏰ Outside market hours - Current time: {current_time.strftime('%Y-%m-%d %H:%M:%S')} IST")
                 return
             
-            # Perform money flow analysis
-            significant_flows = self.analyze_money_flow_pacing()
+            # TEMPORARILY DISABLED: Pacing algorithm comparison
+            # Just log that the script ran, data is already in nse_sector_data table
+            logging.info("⚠️ PACING ALGORITHM TEMPORARILY DISABLED")
+            logging.info("📊 Smart Money Flow data available in nse_sector_data table")
+            logging.info("   Frontend will show stocks sorted by turnover/volume")
             
-            if significant_flows:
-                # Store alerts in activities
-                self.store_activity_alerts(significant_flows)
-                
-                # Log summary
-                logging.info("📈 Top Smart Money Flow Alerts:")
-                for i, flow in enumerate(significant_flows[:5], 1):
-                    logging.info(f"   {i}. {flow['symbol']}: +{flow['percentage_increase']:.1f}% (₹{flow['increase_cr']}Cr increase)")
-            else:
-                logging.info("📊 No significant money flow increases detected")
+            # Perform money flow analysis (COMMENTED OUT)
+            # significant_flows = self.analyze_money_flow_pacing()
+            # 
+            # if significant_flows:
+            #     # Store alerts in activities
+            #     self.store_activity_alerts(significant_flows)
+            #     
+            #     # Log summary
+            #     logging.info("📈 Top Smart Money Flow Alerts:")
+            #     for i, flow in enumerate(significant_flows[:5], 1):
+            #         logging.info(f"   {i}. {flow['symbol']}: +{flow['percentage_increase']:.1f}% (₹{flow['increase_cr']}Cr increase)")
+            # else:
+            #     logging.info("📊 No significant money flow increases detected")
             
             logging.info("✅ Smart Money Flow Analysis Complete")
             
@@ -354,8 +360,15 @@ class SmartMoneyFlowAnalyzer:
 def main():
     """Main execution function"""
     try:
+        import sys
         analyzer = SmartMoneyFlowAnalyzer()
-        analyzer.run_analysis()
+        
+        # Force run if --force flag is provided
+        if '--force' in sys.argv:
+            logging.info("🔧 FORCE MODE: Running smart money flow analysis outside market hours for testing")
+            analyzer.run_analysis(force_run=True)
+        else:
+            analyzer.run_analysis()
         
     except KeyboardInterrupt:
         logging.info("⏹️ Analysis stopped by user")
