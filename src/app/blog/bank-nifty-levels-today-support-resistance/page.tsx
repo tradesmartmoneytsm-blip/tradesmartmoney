@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Script from 'next/script';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Bank Nifty Levels Today: Support Resistance & Trading Levels | TradeSmart Money',

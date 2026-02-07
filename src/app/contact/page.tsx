@@ -29,13 +29,48 @@ export default function Contact() {
       subject: formData.subject
     });
 
-    // Here you would integrate with your email service or backend
-    // For now, we'll just show a success message
-    setTimeout(() => {
-      alert('Thank you for your message! We will get back to you within 24 hours.');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+    try {
+      // Option 1: Use API route (when email service is configured)
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Success - also open mailto as fallback for direct email
+        alert(result.message);
+        
+        // Fallback: Open mailto link so they can also send directly
+        const mailtoLink = `mailto:tradesmartmoneytsm@gmail.com?subject=${encodeURIComponent(`[Contact Form] ${formData.subject}`)}&body=${encodeURIComponent(
+          `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+        )}`;
+        window.open(mailtoLink, '_blank');
+        
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        // Error - fallback to mailto
+        alert('There was an issue with the form. Opening your email client...');
+        const mailtoLink = `mailto:tradesmartmoneytsm@gmail.com?subject=${encodeURIComponent(`[Contact Form] ${formData.subject}`)}&body=${encodeURIComponent(
+          `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+        )}`;
+        window.location.href = mailtoLink;
+      }
+    } catch (error) {
+      // Network error - fallback to mailto
+      console.error('Form submission error:', error);
+      alert('Opening your email client to send the message...');
+      const mailtoLink = `mailto:tradesmartmoneytsm@gmail.com?subject=${encodeURIComponent(`[Contact Form] ${formData.subject}`)}&body=${encodeURIComponent(
+        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+      )}`;
+      window.location.href = mailtoLink;
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

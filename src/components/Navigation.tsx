@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, DollarSign, BookOpen } from 'lucide-react';
+import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, BookOpen } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
 interface MarketIndex {
