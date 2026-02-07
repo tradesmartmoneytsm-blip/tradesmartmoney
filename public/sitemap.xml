@@ -8,6 +8,42 @@
     <priority>1.0</priority>
   </url>
 
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://www.tradesmartmoney.com/privacy-policy</loc>
+    <lastmod>2026-02-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/terms-of-service</loc>
+    <lastmod>2026-02-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/cookies</loc>
+    <lastmod>2026-02-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/disclaimer</loc>
+    <lastmod>2026-02-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.tradesmartmoney.com/contact</loc>
+    <lastmod>2026-02-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- SEO Landing Pages (High Priority for Keywords) -->
   <url>
     <loc>https://www.tradesmartmoney.com/trade</loc>

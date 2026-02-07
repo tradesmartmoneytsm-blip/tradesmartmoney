@@ -161,6 +161,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/cookies" className="text-gray-300 hover:text-white transition-colors flex items-center">
+                  <Shield className="h-3 w-3 mr-2" />
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
                 <Link href="/disclaimer" className="text-gray-300 hover:text-white transition-colors flex items-center">
                   <Shield className="h-3 w-3 mr-2 text-yellow-400" />
                   Financial Disclaimer
