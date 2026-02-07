@@ -205,7 +205,7 @@ export default function BlogPost() {
                 
                 <section id="what-is-smart-money" className="mb-12">
                   <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-                    <TrendingUp className="w-8 h-8 mr-3 text-blue-600" />
+                    <TrendingUp className="w-8 h-8 mr-3 text-blue-600" aria-label="Smart money trading icon" />
                     What is Smart Money Trading?
                   </h2>
                   
@@ -217,7 +217,12 @@ export default function BlogPost() {
                   </div>
 
                   <p className="text-gray-700 text-lg leading-relaxed mb-6">
-                    Smart Money Trading involves analyzing and following the movement patterns of institutional investors to make informed trading decisions. Unlike retail traders who often react emotionally to market movements, institutional investors (the &ldquo;smart money&rdquo;) make calculated decisions based on comprehensive research, insider knowledge, and sophisticated analytical tools.
+                    Smart Money Trading involves analyzing and following the movement patterns of institutional investors to make informed trading decisions. Unlike retail traders who often react emotionally to market movements, institutional investors (the &ldquo;smart money&rdquo;) make calculated decisions based on comprehensive research, insider knowledge, and sophisticated analytical tools. 
+                    {/* SEO IMPROVEMENT #4: Internal Link */}
+                    Track real-time institutional money flow on our{' '}
+                    <Link href="/equity/smart-money-flow" className="text-blue-600 hover:underline font-medium">
+                      Smart Money Flow dashboard
+                    </Link>.
                   </p>
 
                   <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8">
@@ -254,7 +259,12 @@ export default function BlogPost() {
                   </h2>
 
                   <p className="text-gray-700 text-lg leading-relaxed mb-6">
-                    In the Indian market context, the main institutional players include Foreign Institutional Investors (FII), Domestic Institutional Investors (DII), Mutual Funds, Insurance Companies, and Pension Funds. Each has different investment mandates and time horizons.
+                    In the Indian market context, the main institutional players include Foreign Institutional Investors (FII), Domestic Institutional Investors (DII), Mutual Funds, Insurance Companies, and Pension Funds. Each has different investment mandates and time horizons. 
+                    {/* SEO IMPROVEMENT #4: Internal Link */}
+                    Monitor daily FII/DII buying and selling patterns on our{' '}
+                    <Link href="/market/fii-dii-activity" className="text-blue-600 hover:underline font-medium">
+                      institutional activity tracker
+                    </Link>.
                   </p>
 
                   <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -301,7 +311,12 @@ export default function BlogPost() {
                   </div>
 
                   <p className="text-gray-700 text-lg leading-relaxed mb-6">
-                    FII and DII data analysis is crucial for understanding market direction. When FIIs are net buyers, it often indicates positive global sentiment towards Indian markets. Conversely, DII buying can support markets during FII selling phases.
+                    FII and DII data analysis is crucial for understanding market direction. When FIIs are net buyers, it often indicates positive global sentiment towards Indian markets. Conversely, DII buying can support markets during FII selling phases. 
+                    {/* SEO IMPROVEMENT #4: Internal Link */}
+                    Analyze sector-wise institutional flows using our{' '}
+                    <Link href="/market/sector-performance" className="text-blue-600 hover:underline font-medium">
+                      sector performance analysis tool
+                    </Link>.
                   </p>
 
                   <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8">

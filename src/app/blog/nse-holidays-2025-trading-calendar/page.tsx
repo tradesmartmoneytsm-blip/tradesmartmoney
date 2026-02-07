@@ -1,10 +1,13 @@
 import { Metadata } from 'next';
+import Script from 'next/script';
+import Link from 'next/link';
 import { CalendarActions } from '@/components/CalendarActions';
 
 export const metadata: Metadata = {
   title: 'NSE Holidays 2025: Complete Trading Calendar & Market Timings | TradeSmart Money',
   description: 'Complete NSE BSE holidays 2025 list with trading calendar, market timings, and important dates. Plan your trading with official stock exchange holiday schedule.',
   keywords: 'NSE holidays 2025, BSE holidays 2025, stock market holidays, trading calendar 2025, market closed dates, NSE BSE schedule, Indian stock market calendar',
+  authors: [{ name: 'TradeSmart Team' }],
   openGraph: {
     title: 'NSE Holidays 2025: Complete Trading Calendar & Market Timings',
     description: 'Complete NSE BSE holidays 2025 list with trading calendar and market timings. Official stock exchange holiday schedule.',
@@ -31,6 +34,38 @@ export const metadata: Metadata = {
 };
 
 export default function NSEHolidays2025() {
+  // SEO IMPROVEMENT #1: Structured Data
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'NSE Holidays 2025: Complete Trading Calendar & Market Timings',
+    description: 'Complete NSE BSE holidays 2025 list with trading calendar, market timings, and important dates. Plan your trading with official stock exchange holiday schedule.',
+    image: 'https://www.tradesmartmoney.com/blog/nse-holidays-2025.jpg',
+    author: {
+      '@type': 'Organization',
+      name: 'TradeSmart Money',
+      url: 'https://www.tradesmartmoney.com',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'TradeSmart Money',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.tradesmartmoney.com/favicon.svg',
+      },
+    },
+    datePublished: '2025-01-10T05:30:00.000Z',
+    dateModified: '2025-02-07T05:30:00.000Z',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://www.tradesmartmoney.com/blog/nse-holidays-2025-trading-calendar',
+    },
+    articleSection: 'Trading Calendar',
+    keywords: 'NSE holidays 2025, BSE holidays, trading calendar',
+    wordCount: 1000,
+    timeRequired: 'PT5M',
+  };
+
   const holidays2025 = [
     { date: 'January 26, 2025', day: 'Sunday', occasion: 'Republic Day', markets: 'NSE, BSE Closed' },
     { date: 'March 14, 2025', day: 'Friday', occasion: 'Holi', markets: 'NSE, BSE Closed' },
@@ -52,11 +87,16 @@ export default function NSEHolidays2025() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <article className="bg-white shadow-lg rounded-lg overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-8">
+    <>
+      <Script id="article-schema" type="application/ld+json">
+        {JSON.stringify(articleSchema)}
+      </Script>
+
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <article className="bg-white shadow-lg rounded-lg overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-8">
             <div className="flex items-center mb-4">
               <span className="bg-green-500 text-xs font-semibold px-3 py-1 rounded-full">TRADING CALENDAR</span>
               <span className="ml-3 text-green-200 text-sm">Updated for 2025</span>
@@ -201,13 +241,22 @@ export default function NSEHolidays2025() {
                 <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
                   <h3 className="font-semibold text-blue-900">Settlement Schedules</h3>
                   <p className="text-blue-800 text-sm">
-                    T+1 settlement cycle means trades executed today will be settled tomorrow (if not a holiday).
+                    T+1 settlement cycle means trades executed today will be settled tomorrow (if not a holiday). 
+                    {/* SEO IMPROVEMENT #4: Internal Link */}
+                    Monitor your portfolio on our{' '}
+                    <Link href="/market" className="text-blue-900 hover:underline font-medium">
+                      live market dashboard
+                    </Link>.
                   </p>
                 </div>
                 <div className="bg-green-50 border-l-4 border-green-400 p-4">
                   <h3 className="font-semibold text-green-900">Derivative Expiry</h3>
                   <p className="text-green-800 text-sm">
-                    Options and Futures contracts expire on the last Thursday of each month (if not a holiday).
+                    Options and Futures contracts expire on the last Thursday of each month (if not a holiday). 
+                    Track expiry patterns on our{' '}
+                    <Link href="/fno/futures-analysis" className="text-green-900 hover:underline font-medium">
+                      futures analysis page
+                    </Link>.
                   </p>
                 </div>
                 <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
@@ -277,7 +326,27 @@ export default function NSEHolidays2025() {
             </div>
           </div>
         </article>
+
+        {/* SEO IMPROVEMENT #4: Related Platform Features */}
+        <div className="mt-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">Plan Your Trading Strategy</h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            <Link href="/swing-trades" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Swing Trading Strategies</h4>
+              <p className="text-gray-600 text-sm">Educational swing trading setups and analysis</p>
+            </Link>
+            <Link href="/market/fii-dii-activity" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">FII/DII Activity</h4>
+              <p className="text-gray-600 text-sm">Track institutional money flow patterns</p>
+            </Link>
+            <Link href="/blog/understanding-market-basics-beginners" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Market Basics Guide</h4>
+              <p className="text-gray-600 text-sm">Learn stock market fundamentals</p>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
+    </>
   );
 }

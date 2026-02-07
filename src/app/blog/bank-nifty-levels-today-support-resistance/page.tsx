@@ -1,9 +1,11 @@
 import { Metadata } from 'next';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Bank Nifty Levels Today: Support Resistance & Trading Levels | TradeSmart Money',
   description: 'Today\'s Bank Nifty support resistance levels, pivot points, and key trading levels for intraday and swing trading. Updated daily with technical analysis.',
   keywords: 'Bank Nifty levels today, Bank Nifty support resistance, Bank Nifty pivot points, Bank Nifty trading levels, BankNifty intraday levels, Bank Nifty technical analysis',
+  authors: [{ name: 'TradeSmart Team' }],
   openGraph: {
     title: 'Bank Nifty Levels Today: Support Resistance & Trading Levels',
     description: 'Today\'s Bank Nifty support resistance levels and key trading levels with technical analysis.',
@@ -70,11 +72,46 @@ export default function BankNiftyLevelsToday() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <article className="bg-white shadow-lg rounded-lg overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8">
+    <>
+      {/* SEO IMPROVEMENT #1: Structured Data */}
+      <Script id="article-schema" type="application/ld+json">
+        {JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: 'Bank Nifty Levels Today: Support Resistance & Trading Levels',
+          description: 'Today\'s Bank Nifty support resistance levels, pivot points, and key trading levels for intraday and swing trading. Updated daily with technical analysis.',
+          image: 'https://www.tradesmartmoney.com/blog/bank-nifty-levels-today.jpg',
+          author: {
+            '@type': 'Organization',
+            name: 'TradeSmart Money',
+            url: 'https://www.tradesmartmoney.com',
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'TradeSmart Money',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://www.tradesmartmoney.com/favicon.svg',
+            },
+          },
+          datePublished: '2025-02-01T05:30:00.000Z',
+          dateModified: '2025-02-07T05:30:00.000Z',
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': 'https://www.tradesmartmoney.com/blog/bank-nifty-levels-today-support-resistance',
+          },
+          articleSection: 'Market Analysis',
+          keywords: 'Bank Nifty levels, support resistance, trading levels, Bank Nifty analysis',
+          wordCount: 1200,
+          timeRequired: 'PT8M',
+        })}
+      </Script>
+
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <article className="bg-white shadow-lg rounded-lg overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8">
             <div className="flex items-center mb-4">
               <span className="bg-indigo-500 text-xs font-semibold px-3 py-1 rounded-full">LIVE LEVELS</span>
               <span className="ml-3 text-indigo-200 text-sm">{currentDate}</span>
@@ -266,7 +303,13 @@ export default function BankNiftyLevelsToday() {
                     <li>• <strong>Max Pain:</strong> 51,000</li>
                     <li>• <strong>Call OI:</strong> High at 52,000</li>
                     <li>• <strong>Put OI:</strong> High at 50,500</li>
-                    <li>• <strong>PCR:</strong> 1.25 (Bullish)</li>
+                    <li>• <strong>PCR:</strong> 1.25 (Bullish) - 
+                      {/* SEO IMPROVEMENT #4: Internal Link */}
+                      Track live PCR data on our{' '}
+                      <Link href="/fno/pcr-storm" className="text-yellow-900 hover:underline font-medium">
+                        PCR Storm page
+                      </Link>
+                    </li>
                   </ul>
                 </div>
                 <div className="bg-purple-50 p-6 rounded-lg">
@@ -333,6 +376,13 @@ export default function BankNiftyLevelsToday() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">⚠️ Risk Management Guidelines</h2>
               <div className="bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
+                <p className="text-gray-700 mb-4">
+                  {/* SEO IMPROVEMENT #4: Internal Link */}
+                  Learn comprehensive risk management strategies in our{' '}
+                  <Link href="/blog/risk-management-trading-education" className="text-blue-600 hover:underline font-medium">
+                    risk management guide
+                  </Link>.
+                </p>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="font-semibold text-yellow-900 mb-3">Position Sizing</h3>
@@ -397,7 +447,23 @@ export default function BankNiftyLevelsToday() {
             </div>
           </div>
         </article>
+
+        {/* SEO IMPROVEMENT #4: Related Articles */}
+        <div className="mt-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">Related Educational Resources</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            <Link href="/fno/option-analysis" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Live Bank Nifty Options Analysis</h4>
+              <p className="text-gray-600 text-sm">Real-time options chain data and analysis for Bank Nifty</p>
+            </Link>
+            <Link href="/blog/complete-guide-smart-money-trading-2025" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Smart Money Trading Guide</h4>
+              <p className="text-gray-600 text-sm">Learn institutional trading patterns and analysis</p>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
+    </>
   );
 }

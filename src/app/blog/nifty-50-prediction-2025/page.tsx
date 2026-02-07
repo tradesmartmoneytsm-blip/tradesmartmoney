@@ -1,9 +1,12 @@
 import { Metadata } from 'next';
+import Script from 'next/script';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Nifty 50 Prediction 2025: Expert Analysis & Target Levels | TradeSmart Money',
   description: 'Comprehensive Nifty 50 analysis and predictions for 2025. Expert insights on target levels, support resistance, FII DII data impact, and market outlook for Indian stock market.',
   keywords: 'Nifty 50 prediction 2025, Nifty target 2025, Indian stock market forecast, NSE Nifty analysis, market prediction India, Nifty 50 outlook, stock market 2025',
+  authors: [{ name: 'TradeSmart Team' }],
   openGraph: {
     title: 'Nifty 50 Prediction 2025: Expert Analysis & Target Levels',
     description: 'Comprehensive analysis and predictions for Nifty 50 in 2025. Expert insights on target levels and market outlook.',
@@ -31,11 +34,46 @@ export const metadata: Metadata = {
 
 export default function NiftyPrediction2025() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <article className="bg-white shadow-lg rounded-lg overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-8">
+    <>
+      {/* SEO IMPROVEMENT #1: Structured Data */}
+      <Script id="article-schema" type="application/ld+json">
+        {JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: 'Nifty 50 Prediction 2025: Expert Analysis & Target Levels',
+          description: 'Comprehensive Nifty 50 analysis and predictions for 2025. Expert insights on target levels, support resistance, FII DII data impact, and market outlook for Indian stock market.',
+          image: 'https://www.tradesmartmoney.com/blog/nifty-prediction-2025.jpg',
+          author: {
+            '@type': 'Organization',
+            name: 'TradeSmart Money',
+            url: 'https://www.tradesmartmoney.com',
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'TradeSmart Money',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://www.tradesmartmoney.com/favicon.svg',
+            },
+          },
+          datePublished: '2025-02-03T05:30:00.000Z',
+          dateModified: '2025-02-07T05:30:00.000Z',
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': 'https://www.tradesmartmoney.com/blog/nifty-50-prediction-2025',
+          },
+          articleSection: 'Market Outlook',
+          keywords: 'Nifty 50 prediction, market forecast, technical analysis, Indian stock market',
+          wordCount: 1400,
+          timeRequired: 'PT10M',
+        })}
+      </Script>
+
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <article className="bg-white shadow-lg rounded-lg overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-8">
             <div className="flex items-center mb-4">
               <span className="bg-blue-500 text-xs font-semibold px-3 py-1 rounded-full">MARKET ANALYSIS</span>
               <span className="ml-3 text-blue-200 text-sm">{new Date().toLocaleDateString()}</span>
@@ -68,7 +106,13 @@ export default function NiftyPrediction2025() {
                   <li>• Current Nifty 50 Level: ~24,000 (Hypothetical for educational purpose)</li>
                   <li>• YTD Performance: Positive momentum maintained</li>
                   <li>• Market Capitalization: Growing retail and institutional participation</li>
-                  <li>• FII/DII Activity: Balanced institutional flows</li>
+                  <li>• FII/DII Activity: Balanced institutional flows - 
+                    {/* SEO IMPROVEMENT #4: Internal Link */}
+                    Track live data on our{' '}
+                    <Link href="/market/fii-dii-activity" className="text-blue-900 hover:underline font-medium">
+                      FII/DII monitoring dashboard
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </section>
@@ -134,7 +178,12 @@ export default function NiftyPrediction2025() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Sector-wise Educational Analysis</h2>
               <p className="text-gray-700 mb-6">
                 Different sectors contribute varying weights to Nifty 50 performance. Here's our educational analysis 
-                of key sectors for 2025.
+                of key sectors for 2025. 
+                {/* SEO IMPROVEMENT #4: Internal Link */}
+                Monitor real-time sector performance on our{' '}
+                <Link href="/market/sector-performance" className="text-blue-600 hover:underline font-medium">
+                  sector performance dashboard
+                </Link>.
               </p>
               
               <div className="overflow-x-auto">
@@ -251,7 +300,23 @@ export default function NiftyPrediction2025() {
             </div>
           </div>
         </article>
+
+        {/* SEO IMPROVEMENT #4: Related Articles */}
+        <div className="mt-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">Related Analysis & Tools</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            <Link href="/market/sector-performance" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Live Sector Performance</h4>
+              <p className="text-gray-600 text-sm">Track real-time sector rotation and identify market leaders</p>
+            </Link>
+            <Link href="/market/market-sentiment" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Market Sentiment Dashboard</h4>
+              <p className="text-gray-600 text-sm">Monitor market breadth and sentiment indicators</p>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
+    </>
   );
 }
