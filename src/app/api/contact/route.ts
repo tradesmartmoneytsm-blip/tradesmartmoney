@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, readFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
+import { Resend } from 'resend';
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,40 +45,61 @@ export async function POST(request: NextRequest) {
       timestamp: submission.timestamp
     });
 
-    // Save to file system for persistence
-    try {
-      const dataDir = path.join(process.cwd(), 'data');
-      const filePath = path.join(dataDir, 'contact-submissions.json');
-
-      // Create data directory if it doesn't exist
-      if (!existsSync(dataDir)) {
-        await mkdir(dataDir, { recursive: true });
+    // Send email notification using Resend
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        
+        await resend.emails.send({
+          from: 'Contact Form <noreply@tradesmartmoney.com>',
+          to: ['tradesmartmoneytsm@gmail.com'],
+          replyTo: email,
+          subject: `[Contact Form] ${subject}`,
+          html: `
+            <h2>New Contact Form Submission</h2>
+            <p><strong>From:</strong> ${name} &lt;${email}&gt;</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+            <p><strong>Submitted:</strong> ${new Date(submission.timestamp).toLocaleString('en-IN')}</p>
+            <hr />
+            <h3>Message:</h3>
+            <p style="white-space: pre-wrap;">${message}</p>
+            <hr />
+            <p><em>Reply directly to this email to respond to ${name}</em></p>
+          `,
+        });
+        
+        console.log('✅ Email notification sent via Resend');
+      } catch (emailError) {
+        console.error('⚠️ Failed to send email:', emailError);
       }
-
-      // Read existing submissions or create new array
-      let submissions = [];
-      if (existsSync(filePath)) {
-        const fileContent = await readFile(filePath, 'utf-8');
-        submissions = JSON.parse(fileContent);
-      }
-
-      // Add new submission
-      submissions.push(submission);
-
-      // Write back to file
-      await writeFile(filePath, JSON.stringify(submissions, null, 2));
-      
-      console.log('✅ Contact submission saved to file system');
-    } catch (fileError) {
-      // Log error but don't fail the request
-      console.error('⚠️ Failed to save submission to file:', fileError);
+    } else {
+      console.warn('⚠️ RESEND_API_KEY not configured - email not sent');
     }
 
-    // TODO: In production, also send email notification
-    // Options:
-    // 1. Use Resend (recommended, easy setup): https://resend.com/docs/send-with-nextjs
-    // 2. Use SendGrid
-    // 3. Use Nodemailer with Gmail SMTP
+    // Save to file system for local development only
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        const dataDir = path.join(process.cwd(), 'data');
+        const filePath = path.join(dataDir, 'contact-submissions.json');
+
+        if (!existsSync(dataDir)) {
+          await mkdir(dataDir, { recursive: true });
+        }
+
+        let submissions = [];
+        if (existsSync(filePath)) {
+          const fileContent = await readFile(filePath, 'utf-8');
+          submissions = JSON.parse(fileContent);
+        }
+
+        submissions.push(submission);
+        await writeFile(filePath, JSON.stringify(submissions, null, 2));
+        
+        console.log('✅ Contact submission saved to file system (dev only)');
+      } catch (fileError) {
+        console.error('⚠️ Failed to save submission to file:', fileError);
+      }
+    }
     
     return NextResponse.json({
       success: true,

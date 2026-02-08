@@ -13,6 +13,7 @@ export default function Contact() {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     trackPageView('/contact', 'Contact Us');
@@ -21,6 +22,7 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus('idle');
     
     // Track form submission
     trackEvent('contact_form_submit', {
@@ -30,7 +32,6 @@ export default function Contact() {
     });
 
     try {
-      // Option 1: Use API route (when email service is configured)
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
@@ -42,32 +43,23 @@ export default function Contact() {
       const result = await response.json();
 
       if (response.ok) {
-        // Success - also open mailto as fallback for direct email
-        alert(result.message);
-        
-        // Fallback: Open mailto link so they can also send directly
-        const mailtoLink = `mailto:tradesmartmoneytsm@gmail.com?subject=${encodeURIComponent(`[Contact Form] ${formData.subject}`)}&body=${encodeURIComponent(
-          `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-        )}`;
-        window.open(mailtoLink, '_blank');
-        
+        // Success - show success message and clear form
+        setSubmitStatus('success');
         setFormData({ name: '', email: '', subject: '', message: '' });
+        
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => {
+          setSubmitStatus('idle');
+        }, 5000);
       } else {
-        // Error - fallback to mailto
-        alert('There was an issue with the form. Opening your email client...');
-        const mailtoLink = `mailto:tradesmartmoneytsm@gmail.com?subject=${encodeURIComponent(`[Contact Form] ${formData.subject}`)}&body=${encodeURIComponent(
-          `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-        )}`;
-        window.location.href = mailtoLink;
+        // Error from API
+        setSubmitStatus('error');
+        console.error('Form submission failed:', result.error);
       }
     } catch (error) {
-      // Network error - fallback to mailto
+      // Network error
       console.error('Form submission error:', error);
-      alert('Opening your email client to send the message...');
-      const mailtoLink = `mailto:tradesmartmoneytsm@gmail.com?subject=${encodeURIComponent(`[Contact Form] ${formData.subject}`)}&body=${encodeURIComponent(
-        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-      )}`;
-      window.location.href = mailtoLink;
+      setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
     }
@@ -211,6 +203,43 @@ export default function Contact() {
           <div className="bg-white rounded-lg shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
             
+            {/* Success Message */}
+            {submitStatus === 'success' && (
+              <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-green-800">Message sent successfully!</h3>
+                    <p className="mt-1 text-sm text-green-700">Thank you for contacting us. We&apos;ll get back to you within 24-48 hours.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {submitStatus === 'error' && (
+              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-red-800">Unable to send message</h3>
+                    <p className="mt-1 text-sm text-red-700">
+                      Please try again or email us directly at{' '}
+                      <a href="mailto:tradesmartmoneytsm@gmail.com" className="underline">tradesmartmoneytsm@gmail.com</a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
