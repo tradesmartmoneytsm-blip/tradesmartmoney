@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Script from 'next/script';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'Bank Nifty Levels Today: Support Resistance & Trading Levels | TradeSmart Money',
@@ -124,6 +125,18 @@ export default function BankNiftyLevelsToday() {
           </div>
 
           <div className="p-8">
+            {/* Featured Image */}
+            <div className="mb-8 rounded-lg overflow-hidden">
+              <Image
+                src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&h=600&fit=crop"
+                alt="Bank Nifty stock market chart showing support and resistance levels with technical indicators"
+                width={1200}
+                height={600}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+
             {/* Disclaimer */}
             <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-8">
               <p className="text-red-800 text-sm font-medium">
@@ -206,6 +219,35 @@ export default function BankNiftyLevelsToday() {
               </div>
             </section>
 
+            {/* Visual Guide Image */}
+            <section className="mb-8">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Understanding Support & Resistance Levels</h3>
+                <div className="grid md:grid-cols-2 gap-6 items-center">
+                  <div>
+                    <Image
+                      src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&h=400&fit=crop"
+                      alt="Trading chart illustration showing support and resistance zones with price action"
+                      width={600}
+                      height={400}
+                      className="rounded-lg shadow-lg"
+                    />
+                  </div>
+                  <div className="text-gray-700">
+                    <p className="mb-3">
+                      <strong>Support levels</strong> act as a floor where buying interest typically emerges, preventing prices from falling further.
+                    </p>
+                    <p className="mb-3">
+                      <strong>Resistance levels</strong> act as a ceiling where selling pressure emerges, preventing prices from rising further.
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      These levels are identified using historical price action, volume analysis, and institutional order flow data.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {/* Pivot Points */}
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">📈 Pivot Point Analysis</h2>
@@ -251,6 +293,23 @@ export default function BankNiftyLevelsToday() {
                   Above pivot suggests bullish sentiment, below pivot suggests bearish sentiment. 
                   This is calculated using previous day's High, Low, and Close prices.
                 </p>
+              </div>
+            </section>
+
+            {/* Chart Analysis Image */}
+            <section className="mb-8">
+              <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
+                <Image
+                  src="https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=1200&h=400&fit=crop"
+                  alt="Bank Nifty candlestick chart with pivot points, support and resistance levels marked"
+                  width={1200}
+                  height={400}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-semibold">Live Bank Nifty Chart Analysis</p>
+                  <p className="text-gray-200 text-sm">Technical indicators showing pivot points and key trading levels</p>
+                </div>
               </div>
             </section>
 
@@ -321,6 +380,39 @@ export default function BankNiftyLevelsToday() {
                     <li>• <strong>New Lows:</strong> None</li>
                     <li>• <strong>Sector Performance:</strong> Mixed</li>
                   </ul>
+                </div>
+              </div>
+            </section>
+
+            {/* Trading Psychology Image */}
+            <section className="mb-8">
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="relative h-48 rounded-lg overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&h=300&fit=crop"
+                    alt="Stock market trading floor showing institutional activity"
+                    width={400}
+                    height={300}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="relative h-48 rounded-lg overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop"
+                    alt="Financial data and market analytics dashboard"
+                    width={400}
+                    height={300}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="relative h-48 rounded-lg overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=400&h=300&fit=crop"
+                    alt="Bank Nifty index stocks and banking sector analysis"
+                    width={400}
+                    height={300}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </section>

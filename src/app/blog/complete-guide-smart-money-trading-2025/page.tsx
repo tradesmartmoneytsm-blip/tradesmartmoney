@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Calendar, User, Clock, Share2, BookOpen, TrendingUp, Target, Brain } from 'lucide-react';
 import Script from 'next/script';
 
@@ -203,6 +204,17 @@ export default function BlogPost() {
             <article className="lg:col-span-3 order-1 lg:order-2">
               <div className="prose prose-lg max-w-none">
                 
+                {/* Featured Content Image */}
+                <div className="mb-12 rounded-xl overflow-hidden shadow-2xl">
+                  <Image
+                    src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=1200&h=600&fit=crop"
+                    alt="Professional stock market trading floor showing institutional money flow and smart money concepts"
+                    width={1200}
+                    height={600}
+                    className="w-full h-auto"
+                  />
+                </div>
+
                 <section id="what-is-smart-money" className="mb-12">
                   <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
                     <TrendingUp className="w-8 h-8 mr-3 text-blue-600" aria-label="Smart money trading icon" />
@@ -252,6 +264,23 @@ export default function BlogPost() {
                   </div>
                 </section>
 
+                {/* Institutional Trading Image */}
+                <div className="mb-12">
+                  <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
+                    <Image
+                      src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1200&h=400&fit=crop"
+                      alt="Institutional trading floor with professional traders analyzing market data and money flow"
+                      width={1200}
+                      height={400}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                      <p className="text-white font-semibold text-lg">Institutional Players: The Smart Money</p>
+                      <p className="text-gray-200 text-sm">FII, DII, and major financial institutions driving market movements</p>
+                    </div>
+                  </div>
+                </div>
+
                 <section id="institutional-players" className="mb-12">
                   <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
                     <Target className="w-8 h-8 mr-3 text-purple-600" />
@@ -299,6 +328,24 @@ export default function BlogPost() {
                     </div>
                   </div>
                 </section>
+
+                {/* Data Analysis Visual */}
+                <div className="mb-12 grid md:grid-cols-2 gap-6">
+                  <Image
+                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop"
+                    alt="Financial market data analysis dashboard showing FII DII money flow patterns"
+                    width={600}
+                    height={400}
+                    className="rounded-lg shadow-lg"
+                  />
+                  <Image
+                    src="https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=600&h=400&fit=crop"
+                    alt="Stock market chart analysis with institutional trading patterns and smart money indicators"
+                    width={600}
+                    height={400}
+                    className="rounded-lg shadow-lg"
+                  />
+                </div>
 
                 <section id="fii-dii-analysis" className="mb-12">
                   <h2 className="text-3xl font-bold text-gray-900 mb-6">FII/DII Data Analysis</h2>

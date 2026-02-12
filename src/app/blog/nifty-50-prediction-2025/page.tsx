@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Script from 'next/script';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'Nifty 50 Prediction 2025: Expert Analysis & Target Levels | TradeSmart Money',
@@ -91,6 +92,36 @@ export default function NiftyPrediction2025() {
                 <strong>EDUCATIONAL DISCLAIMER:</strong> This analysis is for educational purposes only. We are not SEBI registered advisors. 
                 Market predictions are based on technical analysis and historical data. Please consult qualified professionals before making investment decisions.
               </p>
+            </div>
+
+            {/* Hero Image */}
+            <div className="mb-8 rounded-lg overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&h=500&fit=crop"
+                alt="Nifty 50 index chart showing market predictions and technical analysis for 2025"
+                width={1200}
+                height={500}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+
+            {/* Market Analysis Images */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <Image
+                src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&h=400&fit=crop"
+                alt="Indian stock market analysis with Nifty 50 trend indicators"
+                width={600}
+                height={400}
+                className="rounded-lg shadow-lg"
+              />
+              <Image
+                src="https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=600&h=400&fit=crop"
+                alt="Nifty 50 stocks performance chart with market outlook predictions"
+                width={600}
+                height={400}
+                className="rounded-lg shadow-lg"
+              />
             </div>
 
             {/* Current Market Overview */}

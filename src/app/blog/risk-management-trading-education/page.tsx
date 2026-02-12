@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import Script from 'next/script';
 import { ArrowLeft, BookOpen, Shield, TrendingDown, AlertTriangle, DollarSign } from 'lucide-react';
 
@@ -105,6 +106,36 @@ export default function RiskManagementPost() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Hero Image */}
+            <div className="mb-8 rounded-lg overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1200&h=500&fit=crop"
+                alt="Risk management in trading with charts showing stop loss and position sizing strategies"
+                width={1200}
+                height={500}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+
+            {/* Risk Management Visual */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <Image
+                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop"
+                alt="Financial risk assessment chart with portfolio diversification analysis"
+                width={600}
+                height={400}
+                className="rounded-lg shadow-lg"
+              />
+              <Image
+                src="https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=600&h=400&fit=crop"
+                alt="Trading risk management tools and position sizing calculator"
+                width={600}
+                height={400}
+                className="rounded-lg shadow-lg"
+              />
             </div>
 
             <div className="prose max-w-none">

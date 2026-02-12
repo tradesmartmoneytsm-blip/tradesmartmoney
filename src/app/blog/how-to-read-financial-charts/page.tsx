@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import Script from 'next/script';
 import { ArrowLeft, BookOpen, TrendingUp, BarChart3, Activity, AlertTriangle } from 'lucide-react';
 
@@ -103,6 +104,49 @@ export default function ChartReadingPost() {
                     We are not SEBI registered advisors. Chart reading requires practice and should not be the sole basis for investment decisions.
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Hero Image - Chart Analysis */}
+            <div className="mb-8 rounded-lg overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&h=500&fit=crop"
+                alt="Financial chart analysis showing candlestick patterns and technical indicators for beginners"
+                width={1200}
+                height={500}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+
+            {/* Chart Types Visual Grid */}
+            <div className="grid md:grid-cols-3 gap-4 mb-8">
+              <div className="relative rounded-lg overflow-hidden shadow-lg">
+                <Image
+                  src="https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=400&h=300&fit=crop"
+                  alt="Candlestick chart example showing price action and trading patterns"
+                  width={400}
+                  height={300}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="relative rounded-lg overflow-hidden shadow-lg">
+                <Image
+                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop"
+                  alt="Technical indicators on trading chart with moving averages and volume"
+                  width={400}
+                  height={300}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="relative rounded-lg overflow-hidden shadow-lg">
+                <Image
+                  src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=400&h=300&fit=crop"
+                  alt="Stock market chart reading tutorial for beginners"
+                  width={400}
+                  height={300}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 

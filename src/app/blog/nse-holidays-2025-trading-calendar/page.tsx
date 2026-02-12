@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Script from 'next/script';
 import Link from 'next/link';
+import Image from 'next/image';
 import { CalendarActions } from '@/components/CalendarActions';
 
 export const metadata: Metadata = {
@@ -108,6 +109,36 @@ export default function NSEHolidays2025() {
           </div>
 
           <div className="p-8">
+            {/* Hero Image */}
+            <div className="mb-8 rounded-lg overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=1200&h=400&fit=crop"
+                alt="NSE BSE trading calendar 2025 showing stock market holidays and trading sessions"
+                width={1200}
+                height={400}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+
+            {/* Calendar Visual */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <Image
+                src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&h=400&fit=crop"
+                alt="Stock market trading calendar with important dates and holidays marked"
+                width={600}
+                height={400}
+                className="rounded-lg shadow-lg"
+              />
+              <Image
+                src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&h=400&fit=crop"
+                alt="NSE BSE market trading floor during active trading session"
+                width={600}
+                height={400}
+                className="rounded-lg shadow-lg"
+              />
+            </div>
+
             {/* Quick Summary */}
             <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
               <h2 className="text-xl font-semibold text-blue-900 mb-3">📅 Quick Summary 2025</h2>

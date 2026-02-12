@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import Script from 'next/script';
 import { ArrowLeft, BookOpen, TrendingUp, BarChart3, Users, AlertTriangle } from 'lucide-react';
 
@@ -104,6 +105,43 @@ export default function MarketBasicsPost() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Hero Image */}
+            <div className="mb-8 rounded-lg overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=1200&h=500&fit=crop"
+                alt="Stock market basics for beginners showing trading floor and market participants"
+                width={1200}
+                height={500}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+
+            {/* Educational Images Grid */}
+            <div className="grid md:grid-cols-3 gap-4 mb-8">
+              <Image
+                src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop"
+                alt="Stock market chart showing price movements and trading volume"
+                width={400}
+                height={300}
+                className="rounded-lg shadow-md"
+              />
+              <Image
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop"
+                alt="Financial dashboard with market data and analysis tools"
+                width={400}
+                height={300}
+                className="rounded-lg shadow-md"
+              />
+              <Image
+                src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=400&h=300&fit=crop"
+                alt="Beginner investor learning about stock market fundamentals"
+                width={400}
+                height={300}
+                className="rounded-lg shadow-md"
+              />
             </div>
 
             <div className="prose max-w-none">
