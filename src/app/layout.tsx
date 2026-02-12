@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Poppins } from "next/font/google";
 import "./globals.css";
+import Script from 'next/script';
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { TrafficTracker } from '@/components/TrafficTracker';
 import { Footer } from '@/components/Footer';
@@ -237,7 +238,13 @@ export default function RootLayout({
         {/* Google Analytics */}
         <GoogleAnalytics />
         
-        
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6601377389077210"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       </head>
       <body className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable} font-inter antialiased min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50`}>
         {/* Skip link for accessibility */}
