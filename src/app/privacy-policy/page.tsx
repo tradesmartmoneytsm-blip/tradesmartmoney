@@ -71,6 +71,20 @@ export default function PrivacyPolicy() {
               <li>You can opt out of Google Analytics by visiting <a href="https://tools.google.com/dlpage/gaoptout" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Analytics Opt-out</a></li>
             </ul>
 
+            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">2a. Third-Party Advertising (Google AdSense)</h2>
+            <p className="text-gray-700 mb-4">
+              We use Google AdSense to display advertisements on our website. Google AdSense uses cookies and web beacons to serve ads based on your prior visits to our website and other websites on the Internet.
+            </p>
+            <ul className="list-disc pl-6 text-gray-700 mb-6">
+              <li>Third-party vendors, including Google, use cookies to serve ads based on a user&apos;s prior visits to our website or other websites</li>
+              <li>Google&apos;s use of advertising cookies enables it and its partners to serve ads based on your visit to our site and/or other sites on the Internet</li>
+              <li>You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a></li>
+              <li>You can also opt out of a third-party vendor&apos;s use of cookies by visiting the <a href="http://www.networkadvertising.org/managing/opt_out.asp" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Network Advertising Initiative opt-out page</a></li>
+            </ul>
+            <p className="text-gray-700 mb-6">
+              For more information on Google&apos;s privacy policy, please visit <a href="https://policies.google.com/technologies/ads" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google&apos;s Advertising Privacy Policy</a>.
+            </p>
+
             <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">3. How We Use Your Information</h2>
             <p className="text-gray-700 mb-4">We use the information we collect to:</p>
             <ul className="list-disc pl-6 text-gray-700 mb-6">
