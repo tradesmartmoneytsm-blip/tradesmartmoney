@@ -1,5 +1,1 @@
-# ads.txt file for tradesmartmoney.com
-# This file ensures ads are only served by authorized sellers
-
-# Google AdSense - Required for AdSense approval
-google.com, pub-6601377389077210, DIRECT, f08c47fec0942fa0 
+google.com, pub-6601377389077210, DIRECT, f08c47fec0942fa0
