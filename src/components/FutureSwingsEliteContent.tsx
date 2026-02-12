@@ -47,7 +47,6 @@ export function FutureSwingsEliteContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'running' | 'closed'>('running');
-  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -55,7 +54,7 @@ export function FutureSwingsEliteContent() {
 
   const fetchData = async () => {
     try {
-      setRefreshing(true);
+      setLoading(true);
       const response = await fetch('/api/future-swings-elite');
       const result: ApiResponse = await response.json();
 
@@ -73,7 +72,6 @@ export function FutureSwingsEliteContent() {
       console.error('Error fetching future swings elite:', err);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   };
 
@@ -278,14 +276,6 @@ export function FutureSwingsEliteContent() {
               Closed ({closedTrades.length})
             </button>
           </div>
-          <button
-            onClick={fetchData}
-            disabled={refreshing}
-            className="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors disabled:opacity-50"
-            title="Refresh data"
-          >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-          </button>
         </div>
       </div>
 
