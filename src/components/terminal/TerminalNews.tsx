@@ -31,7 +31,7 @@ const CATEGORY_BADGE: Record<string, string> = {
 export function TerminalNews() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<NewsFilter>('all');
+  const [filter, setFilter] = useState<NewsFilter>('india');
 
   const load = useCallback(async () => {
     try {
@@ -77,7 +77,7 @@ export function TerminalNews() {
           setArticles((prev) => [
             article,
             ...prev.filter((a) => a.id !== article.id && a.url !== article.url),
-          ].slice(0, 60));
+          ].slice(0, 100));
         },
       )
       .subscribe();

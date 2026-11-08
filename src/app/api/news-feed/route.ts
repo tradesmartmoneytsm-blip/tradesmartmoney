@@ -40,7 +40,7 @@ const formatTimestamp = (isIso: string): string => {
   }
 };
 
-const fetchCachedArticles = async (limit = 24): Promise<NewsArticle[]> => {
+const fetchCachedArticles = async (limit = 100): Promise<NewsArticle[]> => {
   const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
   let { data, error } = await supabaseAdmin
     .from('news_articles')

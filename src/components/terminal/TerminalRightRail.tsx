@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { Newspaper, Radio, CandlestickChart, Zap } from 'lucide-react';
-import { LiveScanner } from '@/components/LiveScanner';
 import { TerminalMovers } from './TerminalMovers';
 import { TerminalNews } from './TerminalNews';
+import { LiveActivities } from './LiveActivities';
 
 type RightTab = 'news' | 'scanner' | 'movers' | 'patterns';
 
@@ -61,7 +61,7 @@ export function TerminalRightRail({ onSelectSymbol, selectedSymbol }: TerminalRi
           }`}
         >
           <Radio className="h-3.5 w-3.5" />
-          Live Scanner
+          Live Activities
         </button>
         <button
           type="button"
@@ -82,12 +82,8 @@ export function TerminalRightRail({ onSelectSymbol, selectedSymbol }: TerminalRi
           </div>
         )}
         {tab === 'scanner' && (
-          <div className="h-full overflow-auto p-1">
-            <LiveScanner
-              appearance="light"
-              compact
-              onSelectSymbol={onSelectSymbol}
-            />
+          <div className="h-full overflow-hidden">
+            <LiveActivities onSelectSymbol={onSelectSymbol} />
           </div>
         )}
         {tab === 'movers' && (
@@ -99,18 +95,9 @@ export function TerminalRightRail({ onSelectSymbol, selectedSymbol }: TerminalRi
           </div>
         )}
         {tab === 'patterns' && (
-          <div className="flex h-full flex-col items-center justify-center gap-3 px-4 text-center">
-            <CandlestickChart className="h-10 w-10 text-gray-300" />
-            <p className="text-sm text-gray-700">Candlestick pattern radar</p>
-            <p className="text-xs text-gray-500">
-              Phase 2: pattern scans from EOD and swing modules. Use swing strategies meanwhile.
-            </p>
-            <a
-              href="/swing-trades"
-              className="text-xs font-semibold text-blue-600 hover:text-blue-800"
-            >
-              Open swing strategies →
-            </a>
+          <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center">
+            <CandlestickChart className="h-8 w-8 text-gray-300" />
+            <p className="text-sm font-semibold text-gray-500">Coming soon</p>
           </div>
         )}
       </div>
