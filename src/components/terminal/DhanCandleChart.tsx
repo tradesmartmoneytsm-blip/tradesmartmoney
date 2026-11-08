@@ -188,15 +188,20 @@ export function DhanCandleChart({
         throw new Error('No candles for this interval (market may be closed). Try 1D.');
       }
 
-      const data: CandlestickData<Time>[] = sortDedupeCandles(json.candles).map(
-        (c: { time: number; open: number; high: number; low: number; close: number }) => ({
-          time: c.time as UTCTimestamp,
-          open: c.open,
-          high: c.high,
-          low: c.low,
-          close: c.close,
-        }),
-      );
+      const candles = json.candles as Array<{
+        time: number;
+        open: number;
+        high: number;
+        low: number;
+        close: number;
+      }>;
+      const data: CandlestickData<Time>[] = sortDedupeCandles(candles).map((c) => ({
+        time: c.time as UTCTimestamp,
+        open: c.open,
+        high: c.high,
+        low: c.low,
+        close: c.close,
+      }));
 
       try {
         seriesRef.current?.setData(data);
