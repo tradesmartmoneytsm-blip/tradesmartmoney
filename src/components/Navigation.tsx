@@ -1,8 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, BookOpen } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, BookOpen, ChevronDown } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
+
+function resolveActiveSubSection(pathname: string): string | undefined {
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments[0] === 'swing-trades') return segments[1] || 'futures';
+  if (segments[0] === 'fno' && segments[1]) return segments[1];
+  if (segments[0] === 'equity' && segments[1]) return segments[1];
+  if (segments[0] === 'books' && segments[1]) return segments[1];
+  if (segments[0] === 'eod-scans' && segments[1]) return segments[1];
+  if (segments[0] === 'algo-trading' && segments[1]) return segments[1];
+  if (segments[0] === 'terminal') return 'terminal';
+  if (segments[0] === 'live-scanner') return 'live-scanner';
+  return undefined;
+}
 
 interface MarketIndex {
   name: string;
@@ -24,6 +38,10 @@ export function Navigation({
   const [marketIndices, setMarketIndices] = useState<MarketIndex[]>([]);
   const [, setLastUpdated] = useState<Date | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [expandedMobileSection, setExpandedMobileSection] = useState<string | null>(null);
+  const pathname = usePathname();
+  const activeSubSection = resolveActiveSubSection(pathname);
 
   // Handle market index click - redirect to TradingView
   const handleIndexClick = (indexName: string) => {
@@ -106,116 +124,38 @@ export function Navigation({
           !target.closest('[aria-label*="navigation menu"]')) {
         setShowMobileMenu(false);
       }
+
+      if (openDropdown && !target.closest('[data-nav-dropdown]')) {
+        setOpenDropdown(null);
+      }
     };
 
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, [showMobileMenu]);
+  }, [showMobileMenu, openDropdown]);
 
   const menuItems = [
-    {
-      id: 'market',
-      label: 'Market',
-      icon: <Building2 className={brandTokens.icons.sm} />,
-      description: 'Live market data and analysis',
-      subItems: [
-        { 
-          id: 'sector-performance', 
-          label: 'Sector Performance', 
-          icon: <BarChart3 className={brandTokens.icons.sm} />,
-          description: 'Real-time sector analysis and performance metrics'
-        },
-        { 
-          id: 'fii-dii-activity', 
-          label: 'FII DII Activity', 
-          icon: <Building2 className={brandTokens.icons.sm} />,
-          description: 'Foreign and domestic institutional investment flows'
-        },
-        { 
-          id: 'top-gainers', 
-          label: 'Top Gainers', 
-          icon: <TrendingUp className={brandTokens.icons.sm} />,
-          description: 'Stocks with highest price appreciation'
-        },
-        { 
-          id: 'top-losers', 
-          label: 'Top Losers', 
-          icon: <TrendingUp className={brandTokens.icons.sm} />,
-          description: 'Stocks with significant price decline'
-        },
-        { 
-          id: 'long-buildup', 
-          label: 'Long Built Up', 
-          icon: <TrendingUp className={brandTokens.icons.sm} />,
-          description: 'Stocks showing long position accumulation'
-        },
-                { 
-          id: 'short-buildup', 
-          label: 'Short Built Up',
-          icon: <TrendingUp className={brandTokens.icons.sm} />,
-          description: 'Stocks with increasing short positions'
-        },
-        { 
-          id: '52w-high', 
-          label: '52W High',
-          icon: <TrendingUp className={brandTokens.icons.sm} />,
-          description: 'Stocks near their 52-week high prices'
-        },
-        { 
-          id: '52w-low', 
-          label: '52W Low',
-          icon: <TrendingDown className={brandTokens.icons.sm} />,
-          description: 'Stocks near their 52-week low prices'
-        },
-        { 
-          id: 'market-sentiment', 
-          label: 'Market Sentiment',
-          icon: <Activity className={brandTokens.icons.sm} />,
-          description: 'AI-powered Indian market sentiment analysis'
-        },
-      ]
-    },
-    {
-      id: 'swing',
-      label: 'Swing Trade',
-      icon: <TrendingUp className={brandTokens.icons.sm} />,
-      description: 'Multi-day trading examples and analysis',
-      subItems: [
-        { 
-          id: 'momentum-strategy', 
-          label: 'Momentum Strategy', 
-          icon: <BarChart3 className={brandTokens.icons.sm} />,
-          description: 'Momentum-Based Trading Analysis'
-        },
-        { 
-          id: 'swing-angle', 
-          label: 'Swing Angle', 
-          icon: <TrendingUp className={brandTokens.icons.sm} />,
-          description: 'Angular Momentum Strategy'
-        },
-        { 
-          id: 'bottom-formation', 
-          label: 'Bottom Formation', 
-          icon: <TrendingUp className={brandTokens.icons.sm} />,
-          description: 'Reversal Pattern Strategy'
-        },
-        { 
-          id: 'value-buying', 
-          label: 'Value Buying', 
-          icon: <TrendingUp className={brandTokens.icons.sm} />,
-          description: 'Oversold Quality Stocks'
-        }
-      ]
-    },
     {
       id: 'intraday',
       label: 'Intraday Trading',
       icon: <Activity className={brandTokens.icons.sm} />,
       description: 'Complete intraday analysis: F&O, Smart Money Flow & Live Tracking',
       subItems: [
-        { 
-          id: 'futures-analysis', 
-          label: 'Futures Analysis', 
+        {
+          id: 'terminal',
+          label: 'Trading Terminal',
+          icon: <BarChart3 className={brandTokens.icons.sm} />,
+          description: 'Watchlist, chart, scanner & news in one workspace'
+        },
+        {
+          id: 'live-scanner',
+          label: 'Live Scanner',
+          icon: <Activity className={brandTokens.icons.sm} />,
+          description: 'Live day/weekly/monthly/52-week highs & lows, circuit filters'
+        },
+        {
+          id: 'futures-analysis',
+          label: 'Futures Analysis',
           icon: <BarChart3 className={brandTokens.icons.sm} />,
           description: 'Live OI buildup patterns and institutional positioning'
         },
@@ -252,16 +192,40 @@ export function Navigation({
       ]
     },
     {
-      id: 'commodity',
-      label: 'Commodity',
-      icon: <BarChart3 className={brandTokens.icons.sm} />,
-      description: 'Commodity trading analysis and signals',
+      id: 'swing',
+      label: 'Swing Trade',
+      icon: <TrendingUp className={brandTokens.icons.sm} />,
+      description: 'Multi-day trading examples and analysis',
       subItems: [
+        {
+          id: 'futures',
+          label: 'Futures',
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Elite Futures Swing Strategy',
+        },
         { 
-          id: 'coming-soon', 
-          label: 'Coming Soon', 
-          icon: <Activity className={brandTokens.icons.sm} />,
-          description: 'Commodity analysis features coming soon'
+          id: 'momentum-strategy', 
+          label: 'Momentum Strategy', 
+          icon: <BarChart3 className={brandTokens.icons.sm} />,
+          description: 'Momentum-Based Trading Analysis'
+        },
+        { 
+          id: 'swing-angle',
+          label: 'Swing Angle', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Angular Momentum Strategy'
+        },
+        { 
+          id: 'bottom-formation',
+          label: 'Bottom Formation', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Reversal Pattern Strategy'
+        },
+        { 
+          id: 'value-buying',
+          label: 'Value Buying', 
+          icon: <TrendingUp className={brandTokens.icons.sm} />,
+          description: 'Oversold Quality Stocks'
         }
       ]
     },
@@ -367,60 +331,48 @@ export function Navigation({
       return;
     }
     
-    // Handle Market navigation - navigate to Market with sector performance as default
-    if (itemId === 'market') {
-      window.location.href = '/market/sector-performance';
-      return;
-    }
-    
-    // Handle Swing Trade navigation - navigate to Swing with Futures as default
-    if (itemId === 'swing') {
-      window.location.href = '/swing-trades';
-      return;
-    }
-    
-    // Handle Intraday Trading navigation - navigate with futures analysis as default
-    if (itemId === 'intraday') {
-      window.location.href = '/fno/futures-analysis';
-      return;
-    }
-    
-    // Handle Commodity navigation - navigate to Commodity with coming soon as default
-    if (itemId === 'commodity') {
-      window.location.href = '/commodity';
-      return;
-    }
-    
-    // Handle US Stock Market navigation - navigate to US Stock Market with coming soon as default
-    if (itemId === 'us-stock-market') {
-      window.location.href = '/us-stock-market';
-      return;
-    }
-    
-    // Handle Books navigation - navigate to Books page with recommended books as default
-    if (itemId === 'books') {
-      window.location.href = '/books';
-      return;
+    // Parent-default navigation: only when NO submenu item was clicked.
+    // (Previously these ran before the submenu routing below, so any submenu
+    // click under these sections fell into the default redirect — e.g. clicking
+    // Intraday > Live Scanner loaded Futures Analysis.)
+    if (!subItemId) {
+      if (itemId === 'swing') {
+        window.location.href = '/swing-trades';
+        return;
+      }
+      if (itemId === 'intraday') {
+        window.location.href = '/fno/futures-analysis';
+        return;
+      }
+      if (itemId === 'us-stock-market') {
+        window.location.href = '/us-stock-market';
+        return;
+      }
+      if (itemId === 'books') {
+        window.location.href = '/books';
+        return;
+      }
     }
     
     // Handle submenu clicks
     if (subItemId) {
-      // Handle market submenus - navigate to separate pages
-      if (itemId === 'market') {
-        window.location.href = `/market/${subItemId}`;
-        return;
-      }
       
       // Handle Swing Trade submenus - navigate to Swing subpages
       if (itemId === 'swing') {
-        window.location.href = `/swing-trades/${subItemId}`;
+        window.location.href =
+          subItemId === 'futures' ? '/swing-trades' : `/swing-trades/${subItemId}`;
         return;
       }
       
       // Handle Intraday Trading submenus - navigate to appropriate subpages
       if (itemId === 'intraday') {
-        // Smart Money Flow stays in /equity path
-        if (subItemId === 'smart-money-flow') {
+        // Live Scanner has its own top-level page
+        if (subItemId === 'terminal') {
+          window.location.href = '/terminal';
+        } else if (subItemId === 'live-scanner') {
+          window.location.href = '/live-scanner';
+        } else if (subItemId === 'smart-money-flow') {
+          // Smart Money Flow stays in /equity path
           window.location.href = '/equity/smart-money-flow';
         } else {
           // Other intraday items go to /fno path
@@ -448,6 +400,20 @@ export function Navigation({
     
     onSectionChange(itemId, subItemId);
     setShowMobileMenu(false);
+  };
+
+  const handleParentClick = (itemId: string, hasSubItems: boolean) => {
+    if (hasSubItems) {
+      setOpenDropdown((current) => (current === itemId ? null : itemId));
+      return;
+    }
+    handleMenuItemClick(itemId);
+  };
+
+  const handleSubItemClick = (itemId: string, subItemId: string) => {
+    setOpenDropdown(null);
+    setShowMobileMenu(false);
+    handleMenuItemClick(itemId, subItemId);
   };
 
   const formatCurrency = (value: number) => {
@@ -599,28 +565,69 @@ export function Navigation({
 
                   {/* Desktop Navigation - Immediately After Branding */}
                   <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 flex-wrap ml-2 lg:ml-3 xl:ml-5 menu-container">
-                    {menuItems.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => handleMenuItemClick(item.id)}
-                        className={`menu-item flex items-center space-x-1 px-2.5 py-1 rounded-lg font-medium transition-all duration-300 group text-xs sm:text-sm whitespace-nowrap ${
-                          activeSection === item.id
-                            ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg'
-                            : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
-                        }`}
-                      >
-                        <div className={`p-1 rounded ${
-                          activeSection === item.id
-                            ? 'bg-white/20'
-                            : 'bg-gray-100 group-hover:bg-blue-100'
-                        }`}>
-                          <div className="w-4 h-4 flex items-center justify-center">
-                            {React.cloneElement(item.icon, { className: 'w-4 h-4' })}
-                          </div>
+                    {menuItems.map((item) => {
+                      const hasSubItems = Boolean(item.subItems?.length);
+                      const isActive = activeSection === item.id;
+                      const isOpen = openDropdown === item.id;
+
+                      return (
+                        <div key={item.id} className="relative" data-nav-dropdown>
+                          <button
+                            onClick={() => handleParentClick(item.id, hasSubItems)}
+                            className={`menu-item flex items-center space-x-1 px-2.5 py-1 rounded-lg font-medium transition-all duration-300 group text-xs sm:text-sm whitespace-nowrap ${
+                              isActive
+                                ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white shadow-lg'
+                                : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                            }`}
+                            aria-expanded={hasSubItems ? isOpen : undefined}
+                            aria-haspopup={hasSubItems ? 'menu' : undefined}
+                          >
+                            <div className={`p-1 rounded ${
+                              isActive ? 'bg-white/20' : 'bg-gray-100 group-hover:bg-blue-100'
+                            }`}>
+                              <div className="w-4 h-4 flex items-center justify-center">
+                                {React.cloneElement(item.icon, { className: 'w-4 h-4' })}
+                              </div>
+                            </div>
+                            <span className="whitespace-nowrap">{item.label}</span>
+                            {hasSubItems && (
+                              <ChevronDown
+                                className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''} ${
+                                  isActive ? 'text-white/90' : 'text-gray-400'
+                                }`}
+                              />
+                            )}
+                          </button>
+
+                          {hasSubItems && isOpen && (
+                            <div
+                              className="absolute top-full left-0 mt-1 min-w-[220px] bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-50"
+                              role="menu"
+                            >
+                              {item.subItems!.map((sub) => {
+                                const isSubActive =
+                                  isActive && activeSubSection === sub.id;
+                                return (
+                                  <button
+                                    key={sub.id}
+                                    role="menuitem"
+                                    onClick={() => handleSubItemClick(item.id, sub.id)}
+                                    className={`w-full flex items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
+                                      isSubActive
+                                        ? 'bg-blue-50 text-blue-700 font-medium'
+                                        : 'text-gray-700 hover:bg-gray-50'
+                                    }`}
+                                  >
+                                    <span className="text-gray-400 flex-shrink-0">{sub.icon}</span>
+                                    <span>{sub.label}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
-                        <span className="whitespace-nowrap">{item.label}</span>
-                      </button>
-                    ))}
+                      );
+                    })}
                   </div>
 
                   {/* Mobile Menu Button - Push to Right */}
@@ -646,33 +653,74 @@ export function Navigation({
       {showMobileMenu && (
         <div className="lg:hidden bg-white border-t border-gray-200 shadow-xl">
           <div className="px-3 py-3 space-y-1 max-h-[60vh] overflow-y-auto">
-            {menuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleMenuItemClick(item.id)}
-                className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                  activeSection === item.id
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
-                }`}
-              >
-                <div className={`p-2 rounded-lg ${
-                  activeSection === item.id 
-                    ? 'bg-white/20' 
-                    : 'bg-blue-50'
-                }`}>
-                  {item.icon}
+            {menuItems.map((item) => {
+              const hasSubItems = Boolean(item.subItems?.length);
+              const isActive = activeSection === item.id;
+              const isExpanded = expandedMobileSection === item.id;
+
+              return (
+                <div key={item.id}>
+                  <button
+                    onClick={() => {
+                      if (hasSubItems) {
+                        setExpandedMobileSection(isExpanded ? null : item.id);
+                      } else {
+                        handleMenuItemClick(item.id);
+                      }
+                    }}
+                    className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                      isActive
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
+                    }`}
+                  >
+                    <div className={`p-2 rounded-lg ${
+                      isActive ? 'bg-white/20' : 'bg-blue-50'
+                    }`}>
+                      {item.icon}
+                    </div>
+                    <div className="text-left flex-1">
+                      <div className="font-semibold text-sm">{item.label}</div>
+                    </div>
+                    {hasSubItems ? (
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''} ${
+                          isActive ? 'text-white/80' : 'text-gray-400'
+                        }`}
+                      />
+                    ) : (
+                      <div className="text-gray-400">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+
+                  {hasSubItems && isExpanded && (
+                    <div className="ml-4 mt-1 mb-2 space-y-0.5 border-l-2 border-blue-100 pl-2">
+                      {item.subItems!.map((sub) => {
+                        const isSubActive = isActive && activeSubSection === sub.id;
+                        return (
+                          <button
+                            key={sub.id}
+                            onClick={() => handleSubItemClick(item.id, sub.id)}
+                            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left ${
+                              isSubActive
+                                ? 'bg-blue-50 text-blue-700 font-medium'
+                                : 'text-gray-600 hover:bg-gray-50'
+                            }`}
+                          >
+                            {sub.icon}
+                            <span>{sub.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-                <div className="text-left flex-1">
-                  <div className="font-semibold text-sm">{item.label}</div>
-                </div>
-                <div className="text-gray-400">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </button>
-            ))}
+              );
+            })}
             
             {/* Mobile-specific Blog Access */}
             <button

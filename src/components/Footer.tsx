@@ -1,10 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { TrendingUp, Mail, Shield, FileText, HelpCircle, Building2, Instagram, Twitter, Youtube } from 'lucide-react';
 
 export function Footer() {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
+
+  if (pathname?.startsWith('/terminal')) {
+    return null;
+  }
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -67,11 +73,6 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-lg mb-4">Platform</h3>
             <ul className="space-y-3 text-sm">
-              <li>
-                <Link href="/market" className="text-gray-300 hover:text-white transition-colors">
-                  Market Analysis
-                </Link>
-              </li>
               <li>
                 <Link href="/swing-trades" className="text-gray-300 hover:text-white transition-colors">
                   Swing Trades

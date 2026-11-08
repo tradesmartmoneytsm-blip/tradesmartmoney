@@ -20,7 +20,6 @@ export function ValueBuyingPageClient() {
     
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market/sector-performance',
       'fno': '/fno/option-analysis',
       'news': '/news',
       'eodscans': '/eod-scans',

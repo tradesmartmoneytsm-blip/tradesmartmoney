@@ -1,11 +1,13 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { ActivityManager } from './ActivityManager';
 
 export function ConditionalActivityManager() {
-  // ActivityManager now appears on all pages as a floating button
-  
-  // Show ActivityManager on all pages (as floating button)
+  const pathname = usePathname();
+  if (pathname?.startsWith('/terminal')) {
+    return null;
+  }
   return <ActivityManager />;
 }
 

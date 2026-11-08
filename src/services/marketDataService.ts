@@ -7,6 +7,8 @@ interface SectorData {
   value: string;
   marketCap?: number;
   lastUpdated?: Date;
+  /** Dhan index slug for 1D constituent fetch */
+  seosym?: string;
 }
 
 class MarketDataService {

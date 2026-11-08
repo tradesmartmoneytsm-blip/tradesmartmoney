@@ -7,62 +7,6 @@ interface SubmenuCardsProps {
 }
 
 const submenuData = {
-  market: {
-    title: 'Market Analysis',
-    description: 'Choose your market analysis focus',
-    gradient: 'from-blue-600 via-blue-700 to-purple-600',
-    icon: <Building2 className="w-8 h-8" />,
-    subItems: [
-      { 
-        id: 'sector-performance', 
-        label: 'Sector Performance', 
-        icon: <BarChart3 className={brandTokens.icons.sm} />,
-        description: 'Real-time sector analysis and performance metrics'
-      },
-      { 
-        id: 'fii-dii-activity', 
-        label: 'FII DII Activity', 
-        icon: <Building2 className={brandTokens.icons.sm} />,
-        description: 'Foreign and domestic institutional investment flows'
-      },
-      { 
-        id: 'top-gainers', 
-        label: 'Top Gainers', 
-        icon: <TrendingUp className={brandTokens.icons.sm} />,
-        description: 'Stocks with highest price appreciation'
-      },
-      { 
-        id: 'top-losers', 
-        label: 'Top Losers', 
-        icon: <TrendingUp className={brandTokens.icons.sm} />,
-        description: 'Stocks with significant price decline'
-      },
-      { 
-        id: 'long-buildup', 
-        label: 'Long Built Up', 
-        icon: <TrendingUp className={brandTokens.icons.sm} />,
-        description: 'Stocks showing long position accumulation'
-      },
-      { 
-        id: 'short-buildup', 
-        label: 'Short Built Up', 
-        icon: <TrendingUp className={brandTokens.icons.sm} />,
-        description: 'Stocks with increasing short positions'
-      },
-      { 
-        id: '52w-high', 
-        label: '52W High', 
-        icon: <TrendingUp className={brandTokens.icons.sm} />,
-        description: 'Stocks near their 52-week high prices'
-      },
-      { 
-        id: '52w-low', 
-        label: '52W Low', 
-        icon: <TrendingDown className={brandTokens.icons.sm} />,
-        description: 'Stocks near their 52-week low prices'
-      },
-    ]
-  },
   eodscans: {
     title: 'EOD Scans',
     description: 'End-of-day technical analysis tools',

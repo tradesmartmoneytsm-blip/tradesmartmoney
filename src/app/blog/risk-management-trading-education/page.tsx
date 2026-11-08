@@ -182,10 +182,7 @@ export default function RiskManagementPost() {
                   <p className="text-gray-700 text-sm">
                     The risk of losses due to overall market movements. Even good stocks can fall during market downturns. 
                     {/* SEO IMPROVEMENT #4: Internal Link */}
-                    Track market-wide movements with our{' '}
-                    <Link href="/market/top-gainers" className="text-blue-600 hover:underline">
-                      top gainers and losers analysis
-                    </Link>.
+                    Track market-wide movements with our top gainers and losers analysis.
                   </p>
                 </div>
                 <div className="border border-gray-200 p-4 rounded-lg">
@@ -273,11 +270,7 @@ export default function RiskManagementPost() {
               <p className="text-gray-700 mb-4">
                 Diversification involves spreading risk across different investments to reduce overall portfolio risk. 
                 {/* SEO IMPROVEMENT #4: Internal Link */}
-                Use our{' '}
-                <Link href="/market/sector-performance" className="text-blue-600 hover:underline font-medium">
-                  sector performance analysis
-                </Link>{' '}
-                to identify opportunities across different sectors.
+                Use our sector performance analysis to identify opportunities across different sectors.
               </p>
               
               <div className="space-y-4 mb-8">

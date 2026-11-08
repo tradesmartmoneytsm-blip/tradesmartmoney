@@ -23,7 +23,6 @@ export function BitStrategyPageClient() {
     // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market/sector-performance',
       'fno': '/fno/option-analysis',
       'news': '/news',
       'eodscans': '/eod-scans',

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Calendar, User, Clock, Eye, MessageCircle, Share2, Bookmark, 
-  Twitter, Linkedin, Copy, ChevronLeft, ChevronRight,
+  Twitter, Linkedin, Copy, ChevronLeft,
   Heart, TrendingUp, BarChart3, Activity,
   Star, Award, CheckCircle, AlertCircle, Lightbulb, Zap
 } from 'lucide-react';
@@ -374,13 +374,6 @@ export function BlogPostTemplate({ post, relatedPosts }: BlogPostTemplateProps) 
                         "The best time to follow smart money is during market corrections. Institutional buying 
                         during fear often marks significant bottoms." - Raj Patel, Senior Market Analyst
                       </p>
-                      <Link 
-                        href="/market"
-                        className="inline-flex items-center bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-                      >
-                        View Live FII/DII Data
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Link>
                     </div>
                   </div>
                 </div>

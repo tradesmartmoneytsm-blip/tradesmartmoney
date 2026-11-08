@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import * as cheerio from 'cheerio';
-import { getWebScrapingHeaders } from '@/lib/api-headers';
 import { createClient } from '@supabase/supabase-js';
+import { buildMarketOutlook1DSectors } from '@/lib/dhan-sector-indices';
 
 interface SectorData {
   name: string;
@@ -9,6 +8,7 @@ interface SectorData {
   changePercent?: number;
   value: string;
   lastUpdated: Date;
+  seosym?: string;
 }
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ejnuocizpsfcobhyxgrd.supabase.co';
@@ -141,124 +141,36 @@ async function fetchHistoricalData(timeRange: string) {
 
 async function fetch1DData() {
   try {
-    console.log('🔄 API: Fetching 1D sector data via scraping...');
-    
-    const response = await fetch('https://dhan.co/all-nse-indices/', {
-      headers: getWebScrapingHeaders()
-    });
+    console.log('🔄 API: Building 1D Market Outlook sector basket...');
+    const items = await buildMarketOutlook1DSectors();
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+    const sectors: SectorData[] = items.map((item) => ({
+      name: item.name,
+      change: item.change,
+      value: item.value,
+      lastUpdated: item.lastUpdated,
+      seosym: item.seosym,
+    }));
 
-    const html = await response.text();
-    const $ = cheerio.load(html);
-    
-    // NSE Index mapping - expanded to include major indices
-    const nseIndexMapping: Record<string, string> = {
-      'IT': 'NIFTY IT',
-      'NIFTY BANK': 'NIFTY BANK',
-      'PSU Bank': 'NIFTY PSU BANK',
-      'Private Bank': 'NIFTY PRIVATE BANK',
-      'Pharma': 'NIFTY PHARMA',
-      'Auto': 'NIFTY AUTO',
-      'FMCG': 'NIFTY FMCG',
-      'Energy': 'NIFTY ENERGY',
-      'Oil & Gas': 'NIFTY OIL AND GAS',
-      'Metals': 'NIFTY METAL',
-      'Realty': 'NIFTY REALTY',
-      'Nifty 50': 'NIFTY 50',
-      'Finnifty': 'FINNIFTY',
-      'Healthcare': 'NIFTY HEALTHCARE',
-      'Consumption': 'NIFTY CONSUMPTION', 
-      'CONSR DURBL': 'NIFTY CONSUMER DURABLE',
-      'Infrastructure': 'NIFTY INFRA',
-      'Media': 'NIFTY MEDIA'
-    };
-    
-    const scrapedSectors: SectorData[] = [];
-    
-    // Log the first few rows for debugging
-    console.log('📊 Parsing table data...');
-    const firstRow = $('table tr').first();
-    console.log('First row HTML:', firstRow.html()?.substring(0, 200));
-    
-    // Parse the table data
-    $('table tr').each((index, row) => {
-      const cells = $(row).find('td');
-      
-      // Log first 3 rows for debugging
-      if (index < 3) {
-        console.log(`Row ${index}: ${cells.length} cells`);
-        if (cells.length >= 3) {
-          console.log(`  - Cell 0: ${$(cells[0]).text().trim()}`);
-          console.log(`  - Cell 1: ${$(cells[1]).text().trim()}`);
-          console.log(`  - Cell 2: ${$(cells[2]).text().trim()}`);
-        }
-      }
-      
-      if (cells.length >= 3) {
-        const indexNameText = $(cells[0]).text().trim();
-        const ltpText = $(cells[1]).text().trim();
-        const changeText = $(cells[2]).text().trim();
-        
-        // Find matching sector for this NSE index (exact match to avoid duplicates)
-        for (const [sectorName, nseIndex] of Object.entries(nseIndexMapping)) {
-          if (indexNameText.toLowerCase() === nseIndex.toLowerCase()) {
-            const ltp = parseFloat(ltpText.replace(/[^0-9.-]/g, ''));
-            const changeMatch = changeText.match(/([-+]?\d+\.?\d*)/);
-            const change = changeMatch ? parseFloat(changeMatch[1]) : 0;
-            
-            if (!isNaN(ltp) && !isNaN(change)) {
-              scrapedSectors.push({
-                name: sectorName,
-                change: Number(change.toFixed(2)),
-                value: `₹${Math.round(ltp).toLocaleString('en-IN')}`,
-                lastUpdated: new Date()
-              });
-              break; // Found the sector, move to next row
-            }
-          }
-        }
-      }
-    });
+    console.log(`✅ API: Found ${sectors.length} sector indices (1D)`);
 
-    console.log(`✅ API: Found ${scrapedSectors.length} sectors (1D scraping)`);
-    
-    // If no sectors found from scraping, return empty array with success
-    if (scrapedSectors.length === 0) {
-      console.warn('⚠️ No sector indices found on Dhan (possibly showing G-Sec data only)');
-      
-      return NextResponse.json({ 
-        success: true, 
-        data: [],
-        message: 'No sector data available at the moment. The data source may be temporarily unavailable.',
-        scrapedAt: new Date().toISOString(),
-        source: 'scraped',
-        timeRange: '1D'
-      }, { status: 200 });
-    }
-
-    return NextResponse.json({ 
-      success: true, 
-      data: scrapedSectors,
+    return NextResponse.json({
+      success: true,
+      data: sectors,
       scrapedAt: new Date().toISOString(),
-      source: 'scraped',
-      timeRange: '1D'
+      source: 'dhan-next-data',
+      timeRange: '1D',
     });
-    
   } catch (error) {
-    console.error('❌ Error scraping 1D data:', error);
-    
-    // Return empty data instead of throwing error
-    return NextResponse.json({ 
-      success: true, 
+    console.error('❌ Error fetching 1D sector data:', error);
+    return NextResponse.json({
+      success: true,
       data: [],
       message: 'Unable to fetch sector data at the moment. Please try again later.',
       scrapedAt: new Date().toISOString(),
-      source: 'scraped',
+      source: 'dhan-next-data',
       timeRange: '1D',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 200 });
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
   }
 }

@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
-import { Globe, Clock, ExternalLink, RefreshCw, TrendingUp, Building2, FileText, BarChart3, Briefcase, Search, ArrowLeft } from 'lucide-react';
+import { Globe, Clock, ExternalLink, RefreshCw, TrendingUp, Building2, FileText, BarChart3, Briefcase, Search, ArrowLeft, Zap } from 'lucide-react';
+import { TradingViewNews } from './TradingViewNews';
+import { NewsTicker } from './NewsTicker';
+import { supabase } from '@/lib/supabase';
 
 // Lazy load the EarningsEstimates component
 const EarningsEstimates = lazy(() => import('./EarningsEstimates').then(module => ({ default: module.EarningsEstimates })));
@@ -45,7 +48,8 @@ interface StockNewsData {
 
 // Main news types
 const NEWS_TYPES = [
-  { id: 'market', name: 'Market News', icon: Globe, description: 'General market and sector news' },
+  { id: 'live', name: 'Live Feed', icon: Zap, description: 'Real-time news via TradingView' },
+  { id: 'market', name: 'India News', icon: Globe, description: 'Indian market and sector news' },
   { id: 'stock', name: 'Stock News', icon: BarChart3, description: 'Company-specific news and analysis' }
 ];
 
@@ -134,7 +138,7 @@ export function News() {
   const [activeCategory, setActiveCategory] = useState('all');
   
   // Main News Type State
-  const [activeNewsType, setActiveNewsType] = useState('market');
+  const [activeNewsType, setActiveNewsType] = useState('live');
   
   // Stock News State
   const [stockMode, setStockMode] = useState<'list' | 'search'>('list');
@@ -147,31 +151,71 @@ export function News() {
   // Sample fallback articles (in case API fails)
   const fallbackArticles = FALLBACK_ARTICLES;
 
-  const fetchAllNews = useCallback(async () => {
-    setLoading(true);
+  const fetchAllNews = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       // Use our server-side API instead of direct RSS fetching
       const response = await fetch('/api/news-feed');
       const data = await response.json();
-      
-      if (data.success && data.articles) {
+
+      if (data.success && data.articles?.length) {
         setNewsArticles(data.articles);
         setLastUpdated(new Date(data.lastUpdated).toLocaleTimeString());
-        console.log(`✅ News: Loaded ${data.articles.length} articles`);
-      } else {
-        // Use fallback articles if API fails
+      } else if (!silent) {
+        // Use fallback articles only in dev/first-render when the API has nothing yet
         setNewsArticles(fallbackArticles);
         setLastUpdated('Using cached articles');
-        console.log('⚠️ News: Using fallback articles');
       }
     } catch (error) {
       console.error('Failed to fetch news:', error);
-      setNewsArticles(fallbackArticles);
-      setLastUpdated('Using cached articles');
+      if (!silent && newsArticles.length === 0) {
+        setNewsArticles(fallbackArticles);
+        setLastUpdated('Using cached articles');
+      }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
-  }, [fallbackArticles]);
+  }, [fallbackArticles, newsArticles.length]);
+
+  // ── Realtime updates: prepend new INSERTs from Supabase ──
+  useEffect(() => {
+    const toArticle = (row: Record<string, string>): NewsArticle => ({
+      id: row.id,
+      title: row.title,
+      summary: (row.summary || '').substring(0, 150) + ((row.summary || '').length > 150 ? '...' : ''),
+      category: row.category,
+      timestamp: 'Just now',
+      impact: (row.impact as NewsArticle['impact']) || 'Neutral',
+      source: row.source,
+      url: row.source_url,
+      pubDate: row.published_at,
+    });
+
+    const channel = supabase
+      .channel('india-news-feed')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'news_articles' },
+        (payload: { new: Record<string, string> }) => {
+          const article = toArticle(payload.new);
+          setNewsArticles((prev) => [
+            article,
+            ...prev.filter((a) => a.url !== article.url && a.id !== article.id),
+          ].slice(0, 30));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // ── Background refresh every 2.5 minutes (silent, no spinner) ──
+  useEffect(() => {
+    const timer = setInterval(() => fetchAllNews(true), 150_000);
+    return () => clearInterval(timer);
+  }, [fetchAllNews]);
 
   // Stock News Functions
   const fetchStockList = useCallback(async () => {
@@ -261,6 +305,9 @@ export function News() {
       {/* Header Advertisement */}
       {/* Auto ads will handle all ad placement automatically */}
 
+      {/* Live headline ticker */}
+      <NewsTicker className="mb-4" />
+
       <div className="modern-card p-6">
         {/* Main Header */}
         <div className="flex items-center justify-between mb-6">
@@ -285,8 +332,9 @@ export function News() {
                 }
               </h2>
               <p className="text-gray-600 text-sm">
-                {loading ? 'Updating...' : 
-                 activeNewsType === 'stock' && selectedStock 
+                {loading ? 'Updating...' :
+                 activeNewsType === 'live' ? 'Real-time market news, powered by TradingView' :
+                 activeNewsType === 'stock' && selectedStock
                    ? `${selectedStock.newsCount} articles found`
                    : `Last updated: ${lastUpdated}`
                 }
@@ -294,7 +342,8 @@ export function News() {
       </div>
           </div>
           
-          <button 
+          {activeNewsType !== 'live' && (
+          <button
             onClick={() => {
               if (activeNewsType === 'market') {
                 fetchAllNews();
@@ -312,6 +361,7 @@ export function News() {
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             <span className="text-sm font-medium">Refresh</span>
           </button>
+          )}
         </div>
 
         {/* Main News Type Tabs */}
@@ -669,6 +719,11 @@ export function News() {
           </>
         )}
         
+        {/* Live TradingView News Feed */}
+        {activeNewsType === 'live' && (
+          <TradingViewNews height={650} className="rounded-lg overflow-hidden border border-gray-100" />
+        )}
+
         {/* In-Content Advertisement */}
         {/* Auto ads will handle all ad placement automatically */}
       </div>

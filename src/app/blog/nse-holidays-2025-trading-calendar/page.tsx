@@ -274,10 +274,7 @@ export default function NSEHolidays2025() {
                   <p className="text-blue-800 text-sm">
                     T+1 settlement cycle means trades executed today will be settled tomorrow (if not a holiday). 
                     {/* SEO IMPROVEMENT #4: Internal Link */}
-                    Monitor your portfolio on our{' '}
-                    <Link href="/market" className="text-blue-900 hover:underline font-medium">
-                      live market dashboard
-                    </Link>.
+                    Monitor your portfolio on our live market dashboard.
                   </p>
                 </div>
                 <div className="bg-green-50 border-l-4 border-green-400 p-4">
@@ -365,10 +362,6 @@ export default function NSEHolidays2025() {
             <Link href="/swing-trades" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Swing Trading Strategies</h4>
               <p className="text-gray-600 text-sm">Educational swing trading setups and analysis</p>
-            </Link>
-            <Link href="/market/fii-dii-activity" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">FII/DII Activity</h4>
-              <p className="text-gray-600 text-sm">Track institutional money flow patterns</p>
             </Link>
             <Link href="/blog/understanding-market-basics-beginners" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Market Basics Guide</h4>

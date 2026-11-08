@@ -18,26 +18,9 @@ const STORAGE_KEY = 'sector_performance_data';
 const STORAGE_TIMESTAMP_KEY = 'sector_performance_timestamp';
 const REFRESH_INTERVAL = 60 * 1000; // 1 minute
 
-// Fallback data if API fails
-const getFallbackData = (): SectorData[] => [
-  { name: 'Nifty Consumer Durables', change: 0.35, value: '₹37,200', lastUpdated: new Date() },
-  { name: 'CONSUMER GOODS', change: 0.08, value: '₹54,918', lastUpdated: new Date() },
-  { name: 'Consumption', change: 0.02, value: '₹12,209', lastUpdated: new Date() },
-  { name: 'AUTOMOBILE', change: -0.01, value: '₹27,538', lastUpdated: new Date() },
-  { name: 'MEDIA & ENTERTAINMENT', change: -0.22, value: '₹1,432', lastUpdated: new Date() },
-  { name: 'Nifty Healthcare Index', change: -0.42, value: '₹14,662', lastUpdated: new Date() },
-  { name: 'PHARMA', change: -0.47, value: '₹22,618', lastUpdated: new Date() },
-  { name: 'Bank Nifty', change: -0.66, value: '₹59,052', lastUpdated: new Date() },
-  { name: 'Nifty Financial Services', change: -0.66, value: '₹25,888', lastUpdated: new Date() },
-  { name: 'Nifty Financial Services 25/50', change: -0.71, value: '₹27,415', lastUpdated: new Date() },
-  { name: 'Energy', change: -0.82, value: '₹34,738', lastUpdated: new Date() },
-  { name: 'Nifty Oil & Gas', change: -0.88, value: '₹35,746', lastUpdated: new Date() },
-  { name: 'PSU Bank', change: -0.95, value: '₹55,459', lastUpdated: new Date() },
-  { name: 'IT', change: -0.98, value: '₹38,024', lastUpdated: new Date() },
-  { name: 'PVT Bank', change: -1.15, value: '₹56,273', lastUpdated: new Date() },
-  { name: 'CONSTRUCTION', change: -1.21, value: '₹9,510', lastUpdated: new Date() },
-  { name: 'METALS', change: -1.27, value: '₹10,406', lastUpdated: new Date() }
-];
+function cacheKeyForRange(timeRange: string) {
+  return `${STORAGE_KEY}_${timeRange}`;
+}
 
 export function SectorDataProvider({ children }: { children: ReactNode }) {
   const [sectorData, setSectorData] = useState<SectorData[]>([]);
@@ -45,35 +28,23 @@ export function SectorDataProvider({ children }: { children: ReactNode }) {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [timeRange, setTimeRange] = useState('1D');
 
-  // Load initial data from localStorage
+  // Load cached data for current time range
   useEffect(() => {
     try {
-      const cachedData = localStorage.getItem(STORAGE_KEY);
-      const cachedTimestamp = localStorage.getItem(STORAGE_TIMESTAMP_KEY);
-      
+      const cachedData = localStorage.getItem(cacheKeyForRange(timeRange));
+      const cachedTimestamp = localStorage.getItem(`${STORAGE_TIMESTAMP_KEY}_${timeRange}`);
+
       if (cachedData) {
-        const parsedData = JSON.parse(cachedData);
-        setSectorData(parsedData);
-        setIsLoading(false);
-        
+        setSectorData(JSON.parse(cachedData));
         if (cachedTimestamp) {
           setLastUpdated(new Date(cachedTimestamp));
         }
-        
-        console.log('✅ Loaded sector data from cache');
-      } else {
-        // No cache, use fallback
-        const fallback = getFallbackData();
-        setSectorData(fallback);
-        setIsLoading(false);
+        console.log(`✅ Loaded sector cache (${timeRange})`);
       }
     } catch (error) {
       console.error('Error loading cached sector data:', error);
-      const fallback = getFallbackData();
-      setSectorData(fallback);
-      setIsLoading(false);
     }
-  }, []);
+  }, [timeRange]);
 
   // Fetch sector data from API
   const fetchSectorData = useCallback(async () => {

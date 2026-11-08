@@ -7,7 +7,7 @@ import { TrafficTracker } from '@/components/TrafficTracker';
 import { Footer } from '@/components/Footer';
 import { StructuredData } from '@/components/StructuredData';
 import { AdvanceDeclineWidget } from '@/components/AdvanceDeclineWidget';
-import { ConditionalActivityManager } from '@/components/ConditionalActivityManager';
+import { ConditionalLiveTV } from '@/components/ConditionalLiveTV';
 import { SectorDataProvider } from '@/contexts/SectorDataContext';
 
 // Primary font - Inter (excellent readability, modern)
@@ -261,8 +261,8 @@ export default function RootLayout({
           {children}
         </main>
           
-          {/* Activity Manager - Floating button (appears on all pages) */}
-          <ConditionalActivityManager />
+          {/* Zee Business English Live TV - Floating button (appears on all pages) */}
+          <ConditionalLiveTV />
           
         <Footer />
         

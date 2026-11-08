@@ -290,10 +290,7 @@ export default function BlogPost() {
                   <p className="text-gray-700 text-lg leading-relaxed mb-6">
                     In the Indian market context, the main institutional players include Foreign Institutional Investors (FII), Domestic Institutional Investors (DII), Mutual Funds, Insurance Companies, and Pension Funds. Each has different investment mandates and time horizons. 
                     {/* SEO IMPROVEMENT #4: Internal Link */}
-                    Monitor daily FII/DII buying and selling patterns on our{' '}
-                    <Link href="/market/fii-dii-activity" className="text-blue-600 hover:underline font-medium">
-                      institutional activity tracker
-                    </Link>.
+                    Monitor daily FII/DII buying and selling patterns on our institutional activity tracker.
                   </p>
 
                   <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -353,17 +350,14 @@ export default function BlogPost() {
                   <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
                     <h3 className="font-bold text-yellow-800 mb-3">💡 Pro Tip:</h3>
                     <p className="text-yellow-800">
-                      Track the FII/DII flow patterns on <Link href="/market" className="underline font-medium hover:text-yellow-900">our platform&apos;s dedicated section</Link>. Consistent buying by DIIs often indicates strong domestic confidence, while FII flows reflect global sentiment towards Indian markets.
+                      Track the FII/DII flow patterns on our platform&apos;s dedicated section. Consistent buying by DIIs often indicates strong domestic confidence, while FII flows reflect global sentiment towards Indian markets.
                     </p>
                   </div>
 
                   <p className="text-gray-700 text-lg leading-relaxed mb-6">
                     FII and DII data analysis is crucial for understanding market direction. When FIIs are net buyers, it often indicates positive global sentiment towards Indian markets. Conversely, DII buying can support markets during FII selling phases. 
                     {/* SEO IMPROVEMENT #4: Internal Link */}
-                    Analyze sector-wise institutional flows using our{' '}
-                    <Link href="/market/sector-performance" className="text-blue-600 hover:underline font-medium">
-                      sector performance analysis tool
-                    </Link>.
+                    Analyze sector-wise institutional flows using our sector performance analysis tool.
                   </p>
 
                   <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8">
@@ -425,7 +419,7 @@ export default function BlogPost() {
                         <ul className="space-y-2 text-gray-700">
                           <li>✅ Monitor FII/DII flows daily</li>
                           <li>✅ Track institutional ownership changes</li>
-                          <li>✅ <Link href="/market" className="text-blue-600 hover:text-blue-800 underline">Analyze sector rotation patterns</Link></li>
+                          <li>✅ Analyze sector rotation patterns</li>
                           <li>✅ Follow smart money accumulation zones</li>
                         </ul>
                       </div>
@@ -434,7 +428,7 @@ export default function BlogPost() {
                         <ul className="space-y-2 text-gray-700">
                           <li>🛡️ Position sizing based on conviction</li>
                           <li>🛡️ Stop losses at key support levels</li>
-                          <li>🛡️ <Link href="/market" className="text-purple-600 hover:text-purple-800 underline">Diversification across sectors</Link></li>
+                          <li>🛡️ Diversification across sectors</li>
                           <li>🛡️ Regular portfolio rebalancing</li>
                         </ul>
                       </div>
@@ -449,12 +443,6 @@ export default function BlogPost() {
                     Access real-time FII/DII data, institutional flow analysis, and smart money tracking tools on our platform.
                   </p>
                                                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link 
-                      href="/market"
-                      className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-                    >
-                      View Live FII/DII Data
-                    </Link>
                     <Link 
                       href="/intraday-trades"
                       className="bg-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-800 transition-colors"

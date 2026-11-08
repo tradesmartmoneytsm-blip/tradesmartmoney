@@ -234,7 +234,7 @@ export function ActivityManager({ isEmbedded = false }: ActivityManagerProps) {
           
           {/* Vertical Sidebar or Embedded Container */}
           <div className={isEmbedded 
-            ? "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[500px]"
+            ? "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col max-h-[220px]"
             : "fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-50 overflow-hidden flex flex-col animate-slide-in-right"
           }>
           {/* Header */}
@@ -319,8 +319,8 @@ export function ActivityManager({ isEmbedded = false }: ActivityManagerProps) {
                   <span className="ml-3 text-gray-600 text-sm">Loading activities...</span>
                 </div>
               ) : activities.length === 0 ? (
-                <div className="text-center py-12">
-                  <Activity className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <div className={`text-center ${isEmbedded ? 'py-4' : 'py-12'}`}>
+                  <Activity className={`mx-auto mb-2 text-gray-300 ${isEmbedded ? 'w-8 h-8' : 'w-12 h-12'}`} />
                 <p className="text-sm font-medium text-orange-600">Coming Soon</p>
                 <p className="text-xs text-gray-400 mt-1">
                   Live intraday activities will be available soon

@@ -16,7 +16,6 @@ export function EodScansPageClient() {
     // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market',
       'swing': '/swing-trades',
       'intraday': '/intraday-trades',
       'news': '/news',

@@ -3,8 +3,8 @@
   "installCommand": "npm install --legacy-peer-deps",
   "crons": [
     {
-      "path": "/api/cron/daily-fii-dii",
-      "schedule": "30 13 * * 1-5"
+      "path": "/api/cron/update-news",
+      "schedule": "30 3 * * 1-5"
     }
   ],
   "headers": [

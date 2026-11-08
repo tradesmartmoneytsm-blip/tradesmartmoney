@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getWebScrapingHeaders } from '@/lib/api-headers';
 import { createClient } from '@supabase/supabase-js';
+import { companiesUrlFromSeosym, fetchDhanIndexList, resolveSeosym } from '@/lib/dhan-sector-indices';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -192,17 +193,35 @@ async function fetchHistoricalStockData(
 }
 
 // Fetch 1D stock data from Dhan (scraping)
-async function fetch1DStockData(sector: string): Promise<NextResponse> {
-  console.log(`📊 Fetching 1D stocks for sector: ${sector}`);
+async function fetch1DStockData(sector: string, seosymParam?: string | null): Promise<NextResponse> {
+  console.log(`📊 Fetching 1D stocks for sector: ${sector}${seosymParam ? ` (seosym=${seosymParam})` : ''}`);
 
-  // Get the Dhan URL for this sector
-  const dhanUrl = SECTOR_TO_DHAN_URL[sector];
-  
+  let dhanUrl: string | undefined;
+
+  if (seosymParam) {
+    dhanUrl = companiesUrlFromSeosym(seosymParam);
+  } else if (SECTOR_TO_DHAN_URL[sector]) {
+    dhanUrl = SECTOR_TO_DHAN_URL[sector];
+  } else {
+    try {
+      const list = await fetchDhanIndexList();
+      const resolved = resolveSeosym(sector, list);
+      if (resolved) {
+        dhanUrl = companiesUrlFromSeosym(resolved.seosym);
+      }
+    } catch (e) {
+      console.warn('Could not resolve sector via index list:', e);
+    }
+  }
+
   if (!dhanUrl) {
     console.error(`❌ No Dhan URL mapping found for sector: ${sector}`);
     return NextResponse.json(
-      { success: false, error: `No data source configured for sector: ${sector}` },
-      { status: 404 }
+      {
+        success: false,
+        error: `No constituent list for “${sector}”. Try another index or switch to 7D.`,
+      },
+      { status: 404 },
     );
   }
 
@@ -285,6 +304,7 @@ async function fetch1DStockData(sector: string): Promise<NextResponse> {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const sector = searchParams.get('sector');
+  const seosym = searchParams.get('seosym');
   const timeRange = searchParams.get('timeRange') as '1D' | '7D' | '30D' | '90D' | '52W' || '1D';
 
   if (!sector) {
@@ -296,7 +316,7 @@ export async function GET(request: NextRequest) {
 
   // Route based on time range
   if (timeRange === '1D') {
-    return await fetch1DStockData(sector);
+    return await fetch1DStockData(sector, seosym);
   } else {
     return await fetchHistoricalStockData(sector, timeRange);
   }

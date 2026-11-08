@@ -21,7 +21,6 @@ export function IntradayTradesPageClient() {
     // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market',
       'swing': '/swing-trades',
       'smart-money-flow': '/smart-money-flow',
       'news': '/news',

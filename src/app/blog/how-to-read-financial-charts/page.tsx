@@ -157,11 +157,7 @@ export default function ChartReadingPost() {
                 understand how a stock's price has behaved historically and identify potential patterns. Learning to read 
                 charts is like learning a new language - it takes time and practice. 
                 {/* SEO IMPROVEMENT #4: Internal Link */}
-                You can practice chart reading with live data on our{' '}
-                <Link href="/market/sector-performance" className="text-blue-600 hover:underline font-medium">
-                  sector performance charts
-                </Link>{' '}
-                and explore{' '}
+                You can practice chart reading with live data on our sector performance charts and explore{' '}
                 <Link href="/swing-trades" className="text-blue-600 hover:underline font-medium">
                   swing trading examples
                 </Link>.
@@ -300,11 +296,7 @@ export default function ChartReadingPost() {
                 Volume is the number of shares traded during a specific time period. It's crucial for understanding 
                 the strength of price movements. 
                 {/* SEO IMPROVEMENT #4: Internal Link */}
-                Monitor volume patterns on our{' '}
-                <Link href="/market/top-gainers" className="text-blue-600 hover:underline font-medium">
-                  top gainers page
-                </Link>{' '}
-                to identify strong moves.
+                Monitor volume patterns on our top gainers page to identify strong moves.
               </p>
               <div className="bg-blue-50 p-4 rounded-lg mb-6">
                 <ul className="list-disc pl-4 text-gray-700">

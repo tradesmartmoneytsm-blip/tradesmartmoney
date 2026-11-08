@@ -20,7 +20,6 @@ export default function MomentumStrategyPageClient() {
     
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market/sector-performance',
       'fno': '/fno/option-analysis',
       'equity': '/equity/smart-money-flow',
       'news': '/news',

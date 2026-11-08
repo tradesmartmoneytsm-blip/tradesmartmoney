@@ -79,50 +79,6 @@ export const trackConversion = {
   }
 };
 
-// Track business events
-export const trackBusinessEvent = {
-  // Track when user views FII/DII data
-  viewFiiDiiData: () => {
-    trackEvent('view_fii_dii_data', {
-      event_category: 'engagement',
-      event_label: 'FII DII Activity'
-    });
-  },
-
-  // Track when user views sector performance
-  viewSectorPerformance: () => {
-    trackEvent('view_sector_performance', {
-      event_category: 'engagement',
-      event_label: 'Sector Performance'
-    });
-  },
-
-  // Track manual refresh actions
-  manualRefresh: (section: string) => {
-    trackEvent('manual_refresh', {
-      event_category: 'user_interaction',
-      event_label: section
-    });
-  },
-
-  // Track navigation between sections
-  navigate: (from: string, to: string) => {
-    trackEvent('navigation', {
-      event_category: 'user_interaction',
-      from_section: from,
-      to_section: to
-    });
-  },
-
-  // Track time spent on platform features
-  timeSpent: (section: string, seconds: number) => {
-    trackEvent('time_on_section', {
-      event_category: 'engagement',
-      event_label: section,
-      value: seconds
-    });
-  }
-};
 
 // Declare gtag for TypeScript
 declare global {

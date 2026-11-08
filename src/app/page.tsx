@@ -11,7 +11,7 @@ import { ModernHero } from '@/components/ui/ModernHero';
 const SwingTrades = lazy(() => import('@/components/SwingTrades').then(module => ({ default: module.SwingTrades })));
 const IntradayTrades = lazy(() => import('@/components/IntradayTrades').then(module => ({ default: module.IntradayTrades })));
 const News = lazy(() => import('@/components/News').then(module => ({ default: module.News })));
-const Market = lazy(() => import('@/components/Market').then(module => ({ default: module.Market })));
+
 const EodScans = lazy(() => import('@/components/EodScans').then(module => ({ default: module.EodScans })));
 const AlgoTrading = lazy(() => import('@/components/AlgoTrading').then(module => ({ default: module.AlgoTrading })));
 import { Brain, Bot, Settings, ArrowRight, BookOpen, TrendingUp } from 'lucide-react';
@@ -120,7 +120,6 @@ function HomeComponent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [activeSection, setActiveSection] = useState('home'); // Changed default to 'home'
-  const [activeMarketSubSection, setActiveMarketSubSection] = useState('market'); // Default to show submenu cards
   const [activeEodScansSubSection, setActiveEodScansSubSection] = useState('eodscans'); // Default to show submenu cards
   const [activeAlgoTradingSubSection, setActiveAlgoTradingSubSection] = useState('algo-trading'); // Default to show submenu cards
 
@@ -130,12 +129,10 @@ function HomeComponent() {
     const subsection = searchParams.get('subsection');
     
     if (section) {
-      setActiveSection(section as 'home' | 'swing' | 'intraday' | 'news' | 'market' | 'eodscans' | 'algo-trading');
+      setActiveSection(section as 'home' | 'swing' | 'intraday' | 'news' | 'eodscans' | 'algo-trading');
       
       // Handle subsections
-      if (section === 'market' && subsection) {
-        setActiveMarketSubSection(subsection);
-      } else if (section === 'eodscans' && subsection) {
+      if (section === 'eodscans' && subsection) {
         setActiveEodScansSubSection(subsection);
       } else if (section === 'algo-trading' && subsection) {
         setActiveAlgoTradingSubSection(subsection);
@@ -146,7 +143,6 @@ function HomeComponent() {
   const handleSectionChange = (section: string) => {
     // Navigate to dedicated pages for better SEO
     const routes: { [key: string]: string } = {
-      'market': '/market/sector-performance',
       'swing': '/swing-trades/momentum-strategy', 
       'fno': '/fno/option-analysis',
       'equity': '/equity/smart-money-flow',
@@ -165,7 +161,7 @@ function HomeComponent() {
     
     // Handle homepage sections (for backward compatibility)
     const previousSection = activeSection;
-    setActiveSection(section as 'home' | 'swing' | 'intraday' | 'news' | 'market' | 'eodscans' | 'algo-trading');
+    setActiveSection(section as 'home' | 'swing' | 'intraday' | 'news' | 'eodscans' | 'algo-trading');
 
     // Scroll to top smoothly when navigating to a different main section
     if (previousSection !== section) {
@@ -210,23 +206,6 @@ function HomeComponent() {
         return (
           <Suspense fallback={<LoadingFallback />}>
             <News />
-          </Suspense>
-        );
-      case 'market':
-        // Show submenu cards if no specific subsection, otherwise show the Market component
-        if (!activeMarketSubSection || activeMarketSubSection === 'market') {
-          return <SubmenuCards section="market" onSubItemClick={(sectionId, subItemId) => {
-            // For market section, navigate to separate pages
-            if (sectionId === 'market') {
-              router.push(`/market/${subItemId}`);
-            } else {
-              handleSectionChange(sectionId);
-            }
-          }} />;
-        }
-        return (
-          <Suspense fallback={<LoadingFallback />}>
-            <Market initialSubSection={activeMarketSubSection} />
           </Suspense>
         );
       case 'eodscans':

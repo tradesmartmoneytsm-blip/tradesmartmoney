@@ -35,7 +35,7 @@ export function BookReader({ bookTitle, bookSubtitle, chapters, bookFile, coverG
     
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market',
+      'market': '/terminal',
       'swing': '/swing-trades',
       'news': '/news',
       'algo-trading': '/algo-trading',

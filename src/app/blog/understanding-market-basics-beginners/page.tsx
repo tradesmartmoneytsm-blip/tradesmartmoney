@@ -150,10 +150,7 @@ export default function MarketBasicsPost() {
                 The stock market is a platform where shares of publicly-held companies are bought and sold. 
                 Think of it as a giant marketplace where instead of fruits and vegetables, people trade ownership 
                 pieces (called shares or stocks) of companies. {/* SEO IMPROVEMENT #4: Internal Link */}
-                You can track real-time market movements on our{' '}
-                <Link href="/market/sector-performance" className="text-blue-600 hover:underline font-medium">
-                  sector performance dashboard
-                </Link> to see how different sectors perform throughout the day.
+                You can track real-time market movements on our sector performance dashboard to see how different sectors perform throughout the day.
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Key Players in the Indian Stock Market</h3>
@@ -176,10 +173,7 @@ export default function MarketBasicsPost() {
                   <p className="text-gray-700 text-sm">
                     Large organizations like mutual funds, insurance companies, and foreign investors (FII/DII). 
                     {/* SEO IMPROVEMENT #4: Internal Link */}
-                    Track their activity on our{' '}
-                    <Link href="/market/fii-dii-activity" className="text-green-700 hover:underline font-medium">
-                      FII/DII monitoring page
-                    </Link>.
+                    Track their activity on our FII/DII monitoring page.
                   </p>
                 </div>
               </div>
@@ -220,10 +214,7 @@ export default function MarketBasicsPost() {
                 Stock prices are determined by supply and demand. When more people want to buy a stock (demand) 
                 than sell it (supply), the price goes up. When more people want to sell than buy, the price goes down. 
                 {/* SEO IMPROVEMENT #4: Internal Link */}
-                Monitor live price movements and market sentiment with our{' '}
-                <Link href="/market/market-sentiment" className="text-blue-600 hover:underline font-medium">
-                  market sentiment indicators
-                </Link>.
+                Monitor live price movements and market sentiment with our market sentiment indicators.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mb-3">Factors Affecting Stock Prices:</h4>

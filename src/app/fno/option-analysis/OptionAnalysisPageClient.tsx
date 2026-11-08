@@ -27,7 +27,6 @@ export function OptionAnalysisPageClient() {
     // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market',
       'swing': '/swing-trades',
       'news': '/news',
       'eodscans': '/eod-scans',

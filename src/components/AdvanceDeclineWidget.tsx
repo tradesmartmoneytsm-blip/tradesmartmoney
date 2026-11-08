@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import { TrendingUp, TrendingDown, X, BarChart3 } from 'lucide-react';
 
 interface AdvanceDeclineData {
@@ -20,6 +21,7 @@ interface AdvanceDeclineResponse {
 }
 
 export function AdvanceDeclineWidget() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState<AdvanceDeclineData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -107,6 +109,10 @@ export function AdvanceDeclineWidget() {
 
   const latest = getLatestData();
   const sentiment = getSentiment();
+
+  if (pathname?.startsWith('/terminal')) {
+    return null;
+  }
 
   return (
     <>

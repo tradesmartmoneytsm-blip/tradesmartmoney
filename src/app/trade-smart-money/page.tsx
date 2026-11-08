@@ -78,7 +78,7 @@ export default function TradeSmartMoneyPage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
-              href="/market"
+              href="/smart-money-flow"
               className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-3"
             >
               <BarChart3 className="w-5 h-5" />
@@ -340,7 +340,7 @@ export default function TradeSmartMoneyPage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
-              href="/market"
+              href="/smart-money-flow"
               className="group bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-8 py-4 rounded-lg font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all duration-300 flex items-center gap-3"
             >
               <TrendingUp className="w-5 h-5" />

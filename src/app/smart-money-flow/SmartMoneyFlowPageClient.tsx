@@ -17,7 +17,6 @@ export function SmartMoneyFlowPageClient() {
     // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market',
       'swing': '/swing-trades',
       'intraday': '/intraday-trades',
       'news': '/news',

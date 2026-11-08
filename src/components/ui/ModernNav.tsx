@@ -23,7 +23,6 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: 'home', label: 'Home', icon: <Home className="w-5 h-5" />, href: '/' },
-  { id: 'market', label: 'Market', icon: <BarChart3 className="w-5 h-5" />, href: '/market' },
   { id: 'swing', label: 'Swing', icon: <TrendingUp className="w-5 h-5" />, href: '/swing-trades' },
   { id: 'news', label: 'News', icon: <Newspaper className="w-5 h-5" />, href: '/news' },
   { id: 'algo', label: 'AI Trading', icon: <Bot className="w-5 h-5" />, href: '/algo-trading' },

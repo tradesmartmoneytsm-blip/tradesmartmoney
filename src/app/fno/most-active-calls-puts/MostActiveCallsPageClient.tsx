@@ -27,7 +27,6 @@ export function MostActiveCallsPageClient() {
     // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market/sector-performance',
       'swing': '/swing-trades/momentum-strategy',
       'news': '/news',
       'eodscans': '/eod-scans',

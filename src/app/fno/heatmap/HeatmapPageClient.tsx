@@ -26,7 +26,6 @@ export function HeatmapPageClient() {
     // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market',
       'swing': '/swing-trades',
       'news': '/news',
       'eodscans': '/eod-scans',

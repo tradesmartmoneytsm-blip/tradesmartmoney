@@ -27,7 +27,6 @@ export function SmartMoneyFlowPageClient() {
     // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market/sector-performance',
       'swing': '/swing-trades/momentum-strategy',
       'intraday': '/fno/futures-analysis',
       'news': '/news',

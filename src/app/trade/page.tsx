@@ -81,7 +81,7 @@ export default function TradePage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
-              href="/market"
+              href="/live-scanner"
               className="group bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-green-700 hover:to-blue-700 transition-all duration-300 flex items-center gap-3"
             >
               <Play className="w-5 h-5" />
@@ -410,7 +410,7 @@ export default function TradePage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
-              href="/market"
+              href="/live-scanner"
               className="group bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-4 rounded-lg font-semibold hover:from-green-500 hover:to-blue-600 transition-all duration-300 flex items-center gap-3"
             >
               <Play className="w-5 h-5" />

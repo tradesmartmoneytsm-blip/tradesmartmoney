@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, TrendingDown, ArrowLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import { useSectorData } from '@/contexts/SectorDataContext';
+import { displaySectorName } from '@/lib/dhan-sector-indices';
 
 interface AdvanceDeclineData {
   advances: number;
@@ -25,13 +26,18 @@ interface StockData {
 interface SectorPerformanceHistogramProps {
   className?: string;
   onCollapse?: () => void;
+  /**
+   * When provided, clicking a stock name opens its chart in the caller
+   * (e.g. the embedded terminal) instead of linking out to TradingView.
+   */
+  onStockClick?: (symbol: string) => void;
 }
 
-export function SectorPerformanceHistogram({ className = '', onCollapse }: SectorPerformanceHistogramProps) {
+export function SectorPerformanceHistogram({ className = '', onCollapse, onStockClick }: SectorPerformanceHistogramProps) {
   const { sectorData, isLoading, timeRange, setTimeRange, refetch } = useSectorData();
   const [advanceDeclineData, setAdvanceDeclineData] = useState<AdvanceDeclineData | null>(null);
   const [adLoading, setAdLoading] = useState(true);
-  const [selectedSector, setSelectedSector] = useState<string | null>(null);
+  const [selectedSector, setSelectedSector] = useState<{ name: string; seosym?: string } | null>(null);
   const [stocksData, setStocksData] = useState<StockData[]>([]);
   const [stocksLoading, setStocksLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -65,28 +71,37 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
   }, [fetchAdvanceDecline]);
 
   // Fetch stocks for selected sector
-  const fetchSectorStocks = useCallback(async (sectorName: string) => {
-    setStocksLoading(true);
-    try {
-      const response = await fetch(`/api/sector-stocks?sector=${encodeURIComponent(sectorName)}&timeRange=${timeRange}`);
-      const result = await response.json();
-      
-      if (result.success && result.data) {
-        // Data is already sorted by changePercent (highest to lowest) from API
-        setStocksData(result.data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch sector stocks:', error);
-      setStocksData([]);
-    } finally {
-      setStocksLoading(false);
-    }
-  }, [timeRange]);
+  const fetchSectorStocks = useCallback(
+    async (sectorName: string, seosym?: string) => {
+      setStocksLoading(true);
+      try {
+        const params = new URLSearchParams({
+          sector: sectorName,
+          timeRange,
+        });
+        if (seosym) params.set('seosym', seosym);
+        const response = await fetch(`/api/sector-stocks?${params.toString()}`);
+        const result = await response.json();
 
-  // Handle sector click
-  const handleSectorClick = (sectorName: string) => {
-    setSelectedSector(sectorName);
-    fetchSectorStocks(sectorName);
+        if (result.success && result.data) {
+          setStocksData(result.data);
+        } else {
+          setStocksData([]);
+          console.warn('Sector stocks:', result.error || result.message);
+        }
+      } catch (error) {
+        console.error('Failed to fetch sector stocks:', error);
+        setStocksData([]);
+      } finally {
+        setStocksLoading(false);
+      }
+    },
+    [timeRange],
+  );
+
+  const handleSectorClick = (sectorName: string, seosym?: string) => {
+    setSelectedSector({ name: sectorName, seosym });
+    fetchSectorStocks(sectorName, seosym);
   };
 
   // Handle back to sectors view
@@ -111,7 +126,7 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
   // Refetch stocks when time range changes (if a sector is selected)
   useEffect(() => {
     if (selectedSector) {
-      fetchSectorStocks(selectedSector);
+      fetchSectorStocks(selectedSector.name, selectedSector.seosym);
     }
   }, [timeRange, selectedSector, fetchSectorStocks]);
 
@@ -122,7 +137,7 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
     }
 
     const interval = setInterval(() => {
-      fetchSectorStocks(selectedSector);
+      fetchSectorStocks(selectedSector.name, selectedSector.seosym);
     }, 60000); // 1 minute
 
     return () => clearInterval(interval);
@@ -267,7 +282,7 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
               </button>
               {/* Sector Name - Centered in remaining space */}
               <h3 className="flex-1 text-center text-[11px] font-semibold text-gray-900">
-                {selectedSector} Stocks
+                {displaySectorName(selectedSector.name)} Stocks
               </h3>
             </div>
           ) : (
@@ -317,16 +332,27 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
                       key={`${stock.symbol}-${index}`}
                       className="flex items-center gap-3 h-7 pr-4 hover:bg-gray-50 transition-colors"
                     >
-                      {/* Left: Symbol (clickable - links to TradingView) */}
-                      <a
-                        href={`https://www.tradingview.com/chart/?symbol=NSE:${stock.symbol}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-semibold text-xs text-blue-600 hover:text-blue-800 hover:underline w-28 flex-shrink-0 truncate cursor-pointer lg:text-xs lg:w-28 md:text-[11px] md:w-24 max-md:text-[10px] max-md:w-20"
-                        title={`View ${stock.symbol} chart on TradingView`}
-                      >
-                        {stock.symbol}
-                      </a>
+                      {/* Left: Symbol (clickable — opens in terminal when wired, else TradingView) */}
+                      {onStockClick ? (
+                        <button
+                          type="button"
+                          onClick={() => onStockClick(stock.symbol)}
+                          className="text-left font-semibold text-xs text-blue-600 hover:text-blue-800 hover:underline w-28 flex-shrink-0 truncate cursor-pointer lg:text-xs lg:w-28 md:text-[11px] md:w-24 max-md:text-[10px] max-md:w-20"
+                          title={`Open ${stock.symbol} chart in the trading terminal`}
+                        >
+                          {stock.symbol}
+                        </button>
+                      ) : (
+                        <a
+                          href={`https://www.tradingview.com/chart/?symbol=NSE:${stock.symbol}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-xs text-blue-600 hover:text-blue-800 hover:underline w-28 flex-shrink-0 truncate cursor-pointer lg:text-xs lg:w-28 md:text-[11px] md:w-24 max-md:text-[10px] max-md:w-20"
+                          title={`View ${stock.symbol} chart on TradingView`}
+                        >
+                          {stock.symbol}
+                        </a>
+                      )}
                       
                       {/* Middle: Volume & Market Cap (stacked) */}
                       <div className="text-[9px] text-gray-500 flex-shrink-0 hidden md:block leading-tight max-md:text-[8px]">
@@ -362,12 +388,12 @@ export function SectorPerformanceHistogram({ className = '', onCollapse }: Secto
                 <div
                   key={`${sector.name}-${index}`}
                   className="relative flex items-center h-5 cursor-pointer group"
-                  onClick={() => handleSectorClick(sector.name)}
-                  title={`Click to view ${sector.name} stocks`}
+                  onClick={() => handleSectorClick(sector.name, sector.seosym)}
+                  title={displaySectorName(sector.name)}
                 >
                   {/* Sector Name - Fixed Left Column - Clickable */}
                   <div className="absolute left-0 w-24 font-semibold text-xs leading-tight text-blue-600 group-hover:text-blue-800 group-hover:underline pr-1 truncate transition-colors -translate-x-24">
-                    {sector.name}
+                    {displaySectorName(sector.name)}
                   </div>
 
                   {isPositive ? (

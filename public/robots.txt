@@ -4,7 +4,6 @@ User-agent: *
 Allow: /
 
 # Main Trading Features - High Priority for Search Engines
-Allow: /market
 Allow: /swing-trades
 Allow: /intraday-trades
 Allow: /news

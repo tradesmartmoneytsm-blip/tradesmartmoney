@@ -23,7 +23,6 @@ export function CommodityPageClient() {
     // Navigate to different sections
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market',
       'swing': '/swing-trades',
       'fno': '/fno',
       'equity': '/equity',

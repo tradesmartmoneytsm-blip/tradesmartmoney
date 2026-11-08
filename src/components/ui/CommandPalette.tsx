@@ -44,14 +44,6 @@ export function CommandPalette({ isScrolled = false }: CommandPaletteProps) {
       category: 'Navigation'
     },
     {
-      id: 'market',
-      label: 'Market Analysis',
-      icon: <BarChart3 className="w-4 h-4" />,
-      keywords: ['market', 'analysis', 'sector'],
-      action: () => router.push('/market'),
-      category: 'Market'
-    },
-    {
       id: 'swing',
       label: 'Swing Trades',
       icon: <TrendingUp className="w-4 h-4" />,

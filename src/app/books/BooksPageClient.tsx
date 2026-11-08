@@ -385,7 +385,6 @@ export function BooksPageClient() {
     
     const routes: { [key: string]: string } = {
       'home': '/',
-      'market': '/market',
       'swing': '/swing-trades',
       'news': '/news',
       'algo-trading': '/algo-trading',

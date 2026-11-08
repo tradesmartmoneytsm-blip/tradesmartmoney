@@ -26,13 +26,6 @@ export default function NotFound() {
           
           <div className="flex flex-wrap gap-2 justify-center">
             <Link 
-              href="/market" 
-              className="text-blue-600 hover:text-blue-800 text-sm underline"
-            >
-              Market Data
-            </Link>
-            <span className="text-gray-300">•</span>
-            <Link 
               href="/swing-trades" 
               className="text-blue-600 hover:text-blue-800 text-sm underline"
             >

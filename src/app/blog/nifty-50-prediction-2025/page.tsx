@@ -139,10 +139,7 @@ export default function NiftyPrediction2025() {
                   <li>• Market Capitalization: Growing retail and institutional participation</li>
                   <li>• FII/DII Activity: Balanced institutional flows - 
                     {/* SEO IMPROVEMENT #4: Internal Link */}
-                    Track live data on our{' '}
-                    <Link href="/market/fii-dii-activity" className="text-blue-900 hover:underline font-medium">
-                      FII/DII monitoring dashboard
-                    </Link>
+                    Track live data on our FII/DII monitoring dashboard
                   </li>
                 </ul>
               </div>
@@ -211,10 +208,7 @@ export default function NiftyPrediction2025() {
                 Different sectors contribute varying weights to Nifty 50 performance. Here's our educational analysis 
                 of key sectors for 2025. 
                 {/* SEO IMPROVEMENT #4: Internal Link */}
-                Monitor real-time sector performance on our{' '}
-                <Link href="/market/sector-performance" className="text-blue-600 hover:underline font-medium">
-                  sector performance dashboard
-                </Link>.
+                Monitor real-time sector performance on our sector performance dashboard.
               </p>
               
               <div className="overflow-x-auto">
@@ -332,20 +326,6 @@ export default function NiftyPrediction2025() {
           </div>
         </article>
 
-        {/* SEO IMPROVEMENT #4: Related Articles */}
-        <div className="mt-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Related Analysis & Tools</h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Link href="/market/sector-performance" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Live Sector Performance</h4>
-              <p className="text-gray-600 text-sm">Track real-time sector rotation and identify market leaders</p>
-            </Link>
-            <Link href="/market/market-sentiment" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-all">
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Market Sentiment Dashboard</h4>
-              <p className="text-gray-600 text-sm">Monitor market breadth and sentiment indicators</p>
-            </Link>
-          </div>
-        </div>
       </div>
     </div>
     </>
