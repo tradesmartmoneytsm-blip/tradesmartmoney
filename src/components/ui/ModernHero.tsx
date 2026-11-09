@@ -85,7 +85,7 @@ export function ModernHero() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
           >
-            <Link href="/live-scanner">
+            <Link href="/terminal">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -157,4 +157,3 @@ export function ModernHero() {
     </section>
   );
 }
-
