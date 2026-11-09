@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LiveScanner } from '@/components/LiveScanner';
+import { LiveActivities } from '@/components/terminal/LiveActivities';
 import { Navigation } from '@/components/Navigation';
 import { MarketOutlookRail } from '@/components/layout/MarketOutlookRail';
 
@@ -59,13 +59,17 @@ export function LiveScannerPageClient() {
                   Live Market Scanner
                 </h1>
                 <p className="mt-1 max-w-3xl text-sm text-gray-600">
-                  Real-time detection of stocks at day, weekly, monthly and 52-week highs/lows,
-                  plus upper/lower circuit filters — auto-refreshing every 15 seconds during market hours.
-                  Toggle between all listed stocks and the F&O universe.
+                  Dhan DEXT–style live activity feed: Stocks, F&amp;O, and index filters with Symbol ·
+                  Highlight · LTP · Volume · Time. Updates via ScanX polling (~12s); full push parity needs
+                  Dhan live-scan WebSocket.
                 </p>
               </header>
 
-              <LiveScanner />
+              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                <div className="h-[min(72vh,720px)] min-h-[420px]">
+                  <LiveActivities />
+                </div>
+              </div>
 
               <p className="mt-4 text-xs text-gray-400">
                 Disclaimer: Market data is delayed and sourced from third-party feeds.

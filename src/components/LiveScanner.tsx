@@ -8,6 +8,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { SCANNER_BASKET_OPTIONS } from '@/lib/scanner-basket';
 import { Loader2, RefreshCw, TrendingUp, TrendingDown, ExternalLink, AlertCircle, Radio } from 'lucide-react';
 
 interface NormalizedStock {
@@ -120,6 +121,7 @@ export function LiveScanner({
   const isTerminal = appearance === 'terminal';
   const [activeScan, setActiveScan] = useState<ScanKey>('dayHigh');
   const [scope, setScope] = useState<Scope>('all');
+  const [universe, setUniverse] = useState('nifty-500');
   const [data, setData] = useState<LiveScannerPayload | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -130,13 +132,18 @@ export function LiveScanner({
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const scopeRef = useRef(scope);
   scopeRef.current = scope;
+  const universeRef = useRef(universe);
+  universeRef.current = universe;
 
   const fetchScanner = useCallback(async (showSpinner: boolean) => {
     if (showSpinner) setIsRefreshing(true);
     try {
-      const response = await fetch(`/api/live-scanner?scope=${scopeRef.current}&count=50`, {
+      const response = await fetch(
+        `/api/live-scanner?universe=${encodeURIComponent(universeRef.current)}&count=50`,
+        {
         cache: 'no-store',
-      });
+        },
+      );
       if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       const payload = await response.json() as LiveScannerPayload;
       if (!payload.success) throw new Error(payload.error || 'Scanner failed');
@@ -180,14 +187,22 @@ export function LiveScanner({
     };
   }, [fetchScanner]);
 
-  // Refetch when scope toggles
+  const handleUniverseChange = (next: string) => {
+    if (next === universe) return;
+    setUniverse(next);
+    setIsLoading(true);
+    universeRef.current = next;
+    const nextScope: Scope = next === 'fno' ? 'fno' : 'all';
+    setScope(nextScope);
+    scopeRef.current = nextScope;
+    fetchScanner(false);
+  };
+
+  // Legacy scope toggle (F&O vs all market) — maps to universe ids.
   const handleScopeChange = (next: Scope) => {
     if (next === scope) return;
-    setScope(next);
-    setIsLoading(true);
-    // fetchScanner reads scope from ref — update ref synchronously
-    scopeRef.current = next;
-    fetchScanner(false);
+    const mapped = next === 'fno' ? 'fno' : universe === 'fno' ? 'nifty-500' : universe;
+    handleUniverseChange(mapped);
   };
 
   const activeResult: ScanResult | undefined = data?.scans?.[activeScan];
@@ -250,7 +265,19 @@ export function LiveScanner({
           </h2>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={universe}
+            onChange={(e) => handleUniverseChange(e.target.value)}
+            className="rounded-lg border border-white/20 bg-white/10 px-2 py-1 text-xs font-semibold text-white"
+            aria-label="Index universe"
+          >
+            {SCANNER_BASKET_OPTIONS.map((opt) => (
+              <option key={opt.id} value={opt.id} className="text-gray-900">
+                {opt.label}
+              </option>
+            ))}
+          </select>
           {/* Scope toggle */}
           <div className="flex rounded-lg bg-white/10 p-0.5" role="group" aria-label="Scanner scope">
             <button

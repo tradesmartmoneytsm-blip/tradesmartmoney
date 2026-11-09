@@ -68,7 +68,7 @@ export function TerminalRightRail({ onSelectSymbol, selectedSymbol }: TerminalRi
           }`}
         >
           <Radio className="h-3.5 w-3.5" />
-          Live Activities
+          Live Scanner
         </button>
         <button
           type="button"
@@ -89,8 +89,8 @@ export function TerminalRightRail({ onSelectSymbol, selectedSymbol }: TerminalRi
           </div>
         )}
         {tab === 'scanner' && (
-          <div className="h-full overflow-hidden">
-            <LiveActivities onSelectSymbol={onSelectSymbol} />
+          <div className="flex h-full min-h-0 flex-col overflow-hidden">
+            <LiveActivities selectedSymbol={selectedSymbol} onSelectSymbol={onSelectSymbol} />
           </div>
         )}
         {tab === 'movers' && (

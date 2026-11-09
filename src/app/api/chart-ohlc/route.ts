@@ -4,6 +4,8 @@ import { sortDedupeCandles } from '@/lib/chart-candles';
 export const dynamic = 'force-dynamic';
 
 const DHAN_OHLC_URL = 'https://openweb-ticks.dhan.co/getDataH';
+/** Intraday candles (1m–60m) — DEXT uses `getData`, not `getDataH`. */
+const DHAN_INTRADAY_URL = 'https://openweb-ticks.dhan.co/getData';
 const DHAN_SCANX_URL = 'https://ow-scanx-analytics.dhan.co/customscan/fetchdt';
 
 const DHAN_HEADERS: HeadersInit = {
@@ -156,7 +158,12 @@ function lookbackDays(interval: string): number {
   // ~10 years of NSE daily bars (~2,450+ sessions); 3650 calendar days
   if (interval === 'D' || interval === '1D') return 3650;
   if (interval === '60' || interval === '1h') return 30;
+  if (interval === '15' || interval === '15m') return 15;
   return 10;
+}
+
+function isDailyChartInterval(interval: string): boolean {
+  return interval === 'D' || interval === '1D';
 }
 
 export async function GET(request: Request) {
@@ -178,19 +185,35 @@ export async function GET(request: Request) {
     const end = Math.floor(Date.now() / 1000);
     const start = end - days * 24 * 60 * 60;
 
-    const body = {
-      EXCH: 'NSE',
-      SYM: symbol,
-      SEG: 'E',
-      INST: 'EQUITY',
-      EXPCODE: 0,
-      SEC_ID: sid,
-      START: start,
-      END: end,
-      INTERVAL: dhanIv,
-    };
+    const daily = isDailyChartInterval(dhanIv);
+    const body = daily
+      ? {
+          EXCH: 'NSE',
+          SYM: symbol,
+          SEG: 'E',
+          INST: 'EQUITY',
+          EXPCODE: 0,
+          SEC_ID: sid,
+          START: start,
+          END: end,
+          INTERVAL: dhanIv,
+        }
+      : {
+          SYM: symbol,
+          EXCH: 'NSE',
+          SEG: 'E',
+          INST: 'EQUITY',
+          EXPCODE: 0,
+          SEC_ID: sid,
+          START: start,
+          END: end,
+          START_TIME: new Date(start * 1000).toString(),
+          END_TIME: new Date(end * 1000).toString(),
+          INTERVAL: dhanIv,
+          CLOSEONLY: false,
+        };
 
-    const res = await fetch(DHAN_OHLC_URL, {
+    const res = await fetch(daily ? DHAN_OHLC_URL : DHAN_INTRADAY_URL, {
       method: 'POST',
       headers: DHAN_HEADERS,
       body: JSON.stringify(body),
@@ -211,19 +234,19 @@ export async function GET(request: Request) {
     let candles = sortDedupeCandles(
       Array.from({ length: len }, (_, i) => ({
         time: raw.t[i],
-        open: raw.o[i],
-        high: raw.h[i],
-        low: raw.l[i],
-        close: raw.c[i],
-        volume: raw.v[i] ?? 0,
-      })),
+        open: Number(raw.o?.[i] ?? raw.c?.[i] ?? 0),
+        high: Number(raw.h?.[i] ?? raw.c?.[i] ?? 0),
+        low: Number(raw.l?.[i] ?? raw.c?.[i] ?? 0),
+        close: Number(raw.c?.[i] ?? 0),
+        volume: raw.v?.[i] ?? 0,
+      })).filter((c) => c.close > 0),
     );
 
     // Dhan's OHLC history omits special sessions (e.g. Muhurat trading), so the
     // last bar can lag behind the live session. Merge the live snapshot
     // whenever it is at least as recent as the newest bar — this backfills the
     // missing session and keeps the forming candle current on regular days.
-    const snapshot = await fetchLiveSnapshot(symbol);
+    const snapshot = daily ? await fetchLiveSnapshot(symbol) : null;
     if (snapshot) {
       const lastDateKey = candles.length ? istDateKey(candles[candles.length - 1].time) : null;
       if (lastDateKey === null || snapshot.dateKey >= lastDateKey) {

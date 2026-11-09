@@ -1,46 +1,65 @@
 import { NextResponse } from 'next/server';
-import { fetchAllScans } from '@/lib/dhan-scanx';
-import { fetchIndexConstituents, constituentSymbols } from '@/lib/dhan-index-constituents';
+import { SCANS, fetchAllScans, fetchScan, type ScanResult } from '@/lib/dhan-scanx';
+import { filterStocksByBasket, resolveScannerBasket } from '@/lib/scanner-basket';
 
 /**
- * Live Scanner API — Dhan ScanX multi-scan bundle for the terminal.
- * Supports a `universe` filter: nifty-50 | nifty-100 | nifty-200 | nifty-500 | fno.
+ * Live Scanner API — Dhan ScanX (DEXT / ScanX parity).
+ * Query: scope via `universe` (all | fno | nifty-50 …), optional `scan` for one tab, `count`.
  */
 
 export const dynamic = 'force-dynamic';
 
 export type { LiveScannerPayload, ScanResult } from '@/lib/dhan-scanx';
 
-const NIFTY_UNIVERSES = new Set(['nifty-50', 'nifty-100', 'nifty-200', 'nifty-500']);
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const universeParam = (searchParams.get('universe') || 'nifty-50').toLowerCase();
-    const scope: 'all' | 'fno' = universeParam === 'fno' ? 'fno' : 'all';
+    const universeParam = (searchParams.get('universe') || searchParams.get('basket') || 'nifty-500').toLowerCase();
+    const scanParam = searchParams.get('scan');
     const countParam = parseInt(searchParams.get('count') || '50', 10);
-    const count = Number.isFinite(countParam) ? Math.min(Math.max(countParam, 10), 250) : 50;
+    const count = Number.isFinite(countParam) ? Math.min(Math.max(countParam, 10), 100) : 50;
 
-    const payload = await fetchAllScans(scope, count);
+    const { scope, seosym } = resolveScannerBasket(universeParam);
+    const fetchCount = seosym ? Math.min(250, count * 4) : count;
 
-    // Filter each scan to the selected NIFTY index's constituents.
-    if (NIFTY_UNIVERSES.has(universeParam)) {
-      try {
-        const constituents = await fetchIndexConstituents(universeParam);
-        const symbols = constituentSymbols(constituents);
-        for (const key of Object.keys(payload.scans)) {
-          const scan = payload.scans[key];
-          scan.rows = scan.rows.filter((r) => symbols.has(r.symbol.toUpperCase()));
-          scan.total = scan.rows.length;
-        }
-      } catch {
-        // Constituents fetch failed → keep unfiltered rather than empty.
+    if (scanParam && SCANS[scanParam]) {
+      const result = await fetchScan(scanParam, scope, fetchCount);
+      const rows = await filterStocksByBasket(result.rows, seosym, count);
+      const scan: ScanResult = { ...result, rows, total: rows.length };
+      return NextResponse.json(
+        {
+          success: true,
+          mode: 'single',
+          universe: universeParam,
+          scope,
+          asOf: scan.asOf,
+          scan,
+          timestamp: new Date().toISOString(),
+        },
+        { headers: { 'Cache-Control': 'no-store' } },
+      );
+    }
+
+    const payload = await fetchAllScans(scope, fetchCount);
+
+    if (seosym) {
+      for (const key of Object.keys(payload.scans)) {
+        const scan = payload.scans[key];
+        scan.rows = await filterStocksByBasket(scan.rows, seosym, count);
+        scan.total = scan.rows.length;
+      }
+    } else {
+      for (const key of Object.keys(payload.scans)) {
+        const scan = payload.scans[key];
+        scan.rows = scan.rows.slice(0, count);
+        scan.total = scan.rows.length;
       }
     }
 
-    return NextResponse.json(payload, {
-      headers: { 'Cache-Control': 'no-store' },
-    });
+    return NextResponse.json(
+      { ...payload, universe: universeParam, mode: 'bundle' },
+      { headers: { 'Cache-Control': 'no-store' } },
+    );
   } catch (error) {
     console.error('❌ Live scanner failed:', error);
     return NextResponse.json(

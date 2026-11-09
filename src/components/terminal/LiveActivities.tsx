@@ -1,229 +1,284 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Radio, TrendingDown, TrendingUp } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import {
+  DEFAULT_DEXT_STOCKS_INDEX,
+  DHAN_LIVESCAN_INDICES,
+  resolveLiveScanUniverse,
+} from '@/lib/dhan-livescan-indices';
+import { highlightForScanKey } from '@/lib/dhan-livescan-highlights';
+import type { NormalizedStock } from '@/lib/dhan-scanx';
 
-type Universe = 'nifty-50' | 'nifty-100' | 'nifty-200' | 'nifty-500' | 'fno';
+type Segment = 'stocks' | 'fno' | 'commodity';
 
-const UNIVERSES: { id: Universe; label: string }[] = [
-  { id: 'nifty-50', label: 'NIFTY 50' },
-  { id: 'nifty-100', label: 'NIFTY 100' },
-  { id: 'nifty-200', label: 'NIFTY 200' },
-  { id: 'nifty-500', label: 'NIFTY 500' },
+const SEGMENTS: { id: Segment; label: string }[] = [
+  { id: 'stocks', label: 'Stocks' },
   { id: 'fno', label: 'F&O' },
+  { id: 'commodity', label: 'Commodity' },
 ];
 
-/** Activity kinds, in display order. */
-const SCANS: Array<{ key: string; label: string; dir: 'up' | 'down' }> = [
-  { key: 'dayHigh', label: 'Day High', dir: 'up' },
-  { key: 'dayLow', label: 'Day Low', dir: 'down' },
-  { key: 'weekHigh', label: 'Weekly High', dir: 'up' },
-  { key: 'weekLow', label: 'Weekly Low', dir: 'down' },
-  { key: 'monthHigh', label: 'Monthly High', dir: 'up' },
-  { key: 'monthLow', label: 'Monthly Low', dir: 'down' },
-  { key: 'yearHigh', label: '52W High', dir: 'up' },
-  { key: 'yearLow', label: '52W Low', dir: 'down' },
-  { key: 'upperCircuit', label: 'Upper Circuit', dir: 'up' },
-  { key: 'lowerCircuit', label: 'Lower Circuit', dir: 'down' },
-];
+const SCANS = [
+  'dayHigh',
+  'dayLow',
+  'weekHigh',
+  'weekLow',
+  'monthHigh',
+  'monthLow',
+  'yearHigh',
+  'yearLow',
+  'upperCircuit',
+  'lowerCircuit',
+] as const;
 
 interface Activity {
-  key: string;
+  id: string;
   symbol: string;
   name: string;
   seoSymbol?: string;
   sid?: number;
-  label: string;
+  highlight: string;
+  bullish: boolean;
   ltp: number;
-  dir: 'up' | 'down';
+  volume: number;
+  time: Date;
   fresh: boolean;
 }
 
-const POLL_MS = 12000;
+const POLL_MS = 12_000;
 const MAX_ROWS = 250;
+const FETCH_COUNT = 100;
+
+const STOCK_INDICES = DHAN_LIVESCAN_INDICES.filter((i) => i.secId !== 311);
+
+function formatVolume(volume: number): string {
+  if (!Number.isFinite(volume) || volume <= 0) return '—';
+  if (volume >= 1_00_00_000) return `${(volume / 1_00_00_000).toFixed(2)} Cr`;
+  if (volume >= 1_00_000) return `${(volume / 1_00_000).toFixed(2)} L`;
+  if (volume >= 1_000) return `${(volume / 1_000).toFixed(2)} K`;
+  return String(Math.round(volume));
+}
+
+function formatTime(d: Date): string {
+  return d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
 
 interface LiveActivitiesProps {
+  selectedSymbol?: string;
   onSelectSymbol?: (symbol: string, seoSymbol?: string, sid?: number) => void;
 }
 
-/**
- * Live Activities — realtime single-row feed of stocks hitting
- * day/week/month/52-week highs & lows and circuits, filtered by universe.
- */
-export function LiveActivities({ onSelectSymbol }: LiveActivitiesProps) {
-  const [universe, setUniverse] = useState<Universe>('nifty-50');
+/** DEXT Live Scanner UI — ScanX polling until optional Dhan JWT WebSocket proxy exists. */
+export function LiveActivities({ selectedSymbol, onSelectSymbol }: LiveActivitiesProps) {
+  const [segment, setSegment] = useState<Segment>('fno');
+  const [indexKey, setIndexKey] = useState(DEFAULT_DEXT_STOCKS_INDEX.key);
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [asOf, setAsOf] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const seenRef = useRef<Set<string>>(new Set());
+  const [asOf, setAsOf] = useState<string | null>(null);
+  const snapRef = useRef<Map<string, { ltp: number }>>(new Map());
   const seededRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const universe = useMemo(() => {
+    if (segment === 'fno') return 'fno';
+    if (segment === 'commodity') return 'all';
+    return resolveLiveScanUniverse(indexKey);
+  }, [segment, indexKey]);
+
+  const indexLabel = useMemo(() => {
+    if (segment === 'fno') return 'F&O Stocks';
+    if (segment === 'commodity') return 'Commodity';
+    return DHAN_LIVESCAN_INDICES.find((i) => i.key === indexKey)?.label ?? indexKey;
+  }, [segment, indexKey]);
+
   const load = useCallback(async () => {
+    if (segment === 'commodity') {
+      setActivities([]);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await fetch(`/api/live-scanner?universe=${universe}&count=250`, {
+      const res = await fetch(`/api/live-scanner?universe=${universe}&count=${FETCH_COUNT}`, {
         cache: 'no-store',
       });
       const json = await res.json();
       if (!json?.success || !json.scans) return;
+      setAsOf(json.asOf ?? null);
 
-      const nextAll: Activity[] = [];
-      for (const scan of SCANS) {
-        const rows = json.scans[scan.key]?.rows ?? [];
+      const now = new Date();
+      const prev = snapRef.current;
+      const nextSnap = new Map<string, { ltp: number }>();
+      const fresh: Activity[] = [];
+      const seed: Activity[] = [];
+
+      for (const scanKey of SCANS) {
+        const meta = highlightForScanKey(scanKey);
+        const rows: NormalizedStock[] = json.scans[scanKey]?.rows ?? [];
         for (const r of rows) {
-          nextAll.push({
-            key: `${scan.key}:${r.symbol}`,
+          const snapKey = `${scanKey}:${r.symbol}`;
+          nextSnap.set(snapKey, { ltp: r.ltp });
+          const base: Omit<Activity, 'fresh' | 'id' | 'time'> = {
             symbol: r.symbol,
-            name: r.name,
+            name: r.name || r.symbol,
             seoSymbol: r.seoSymbol,
             sid: r.sid,
-            label: scan.label,
+            highlight: meta.highlight,
+            bullish: meta.bullish,
             ltp: r.ltp,
-            dir: scan.dir,
-            fresh: false,
-          });
+            volume: r.volume,
+          };
+          if (!seededRef.current) {
+            seed.push({
+              ...base,
+              id: `seed:${snapKey}`,
+              time: now,
+              fresh: false,
+            });
+          } else {
+            const old = prev.get(snapKey);
+            if (!old || old.ltp !== r.ltp) {
+              fresh.push({
+                ...base,
+                id: `${snapKey}:${now.getTime()}`,
+                time: now,
+                fresh: true,
+              });
+            }
+          }
         }
       }
 
-      const nowKeys = new Set(nextAll.map((a) => a.key));
-      let combined: Activity[];
+      snapRef.current = nextSnap;
 
       if (!seededRef.current) {
-        // First snapshot for this universe — seed without flashing everything.
-        combined = nextAll;
         seededRef.current = true;
-      } else {
-        const fresh = nextAll
-          .filter((a) => !seenRef.current.has(a.key))
-          .map((a) => ({ ...a, fresh: true }));
-        const rest = nextAll.filter((a) => seenRef.current.has(a.key));
-        combined = [...fresh, ...rest];
-        if (fresh.length && scrollRef.current) {
-          scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        setActivities(seed.slice(0, MAX_ROWS));
+      } else if (fresh.length) {
+        setActivities((cur) =>
+          [...fresh, ...cur.map((a) => ({ ...a, fresh: false }))].slice(0, MAX_ROWS),
+        );
+        scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      seenRef.current = nowKeys;
-
-      setActivities(combined.slice(0, MAX_ROWS));
-      setAsOf(json.asOf ?? null);
       setLoading(false);
     } catch {
       setLoading(false);
     }
-  }, [universe]);
+  }, [universe, segment]);
 
   useEffect(() => {
-    load();
+    snapRef.current = new Map();
+    seededRef.current = false;
+    setActivities([]);
+    setLoading(true);
+    void load();
+  }, [universe, segment, load]);
+
+  useEffect(() => {
     const id = setInterval(() => {
-      if (!document.hidden) load();
+      if (!document.hidden) void load();
     }, POLL_MS);
     return () => clearInterval(id);
   }, [load]);
 
-  const changeUniverse = (u: Universe) => {
-    if (u === universe) return;
-    setUniverse(u);
-    seenRef.current = new Set();
-    seededRef.current = false;
-    setActivities([]);
-    setLoading(true);
-  };
+  const selectClass =
+    'w-full min-w-0 cursor-pointer appearance-none truncate rounded border border-gray-200 bg-gray-50 px-2 py-1 pr-7 text-[10px] font-semibold text-gray-800 focus:border-blue-400 focus:outline-none';
 
   return (
-    <div className="flex h-full flex-col bg-white text-gray-900">
-      {/* Header + universe filters */}
-      <div className="shrink-0 border-b border-gray-100 px-2 pt-1.5 pb-1">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
-            </span>
-            <span className="text-[11px] font-bold text-gray-700">Live Activities</span>
-          </div>
-          {asOf && <span className="text-[10px] tabular-nums text-gray-400">{asOf}</span>}
-        </div>
-
-        <div className="mt-1 flex gap-1 overflow-x-auto pb-0.5">
-          {UNIVERSES.map((u) => (
+    <div className="flex h-full min-h-0 flex-col bg-white text-gray-900">
+      <div className="shrink-0 space-y-1 border-b border-gray-100 px-2 py-1.5">
+        <div className="flex gap-1">
+          {SEGMENTS.map((s) => (
             <button
-              key={u.id}
+              key={s.id}
               type="button"
-              onClick={() => changeUniverse(u.id)}
-              className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold transition-colors ${
-                universe === u.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              onClick={() => setSegment(s.id)}
+              className={`flex-1 rounded-md px-2 py-1 text-[10px] font-bold ${
+                segment === s.id ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              {u.label}
+              {s.label}
             </button>
           ))}
         </div>
+
+        {segment === 'stocks' && (
+          <div className="relative">
+            <select
+              aria-label="Index basket"
+              className={selectClass}
+              value={indexKey}
+              onChange={(e) => setIndexKey(e.target.value)}
+            >
+              {STOCK_INDICES.map((opt) => (
+                <option key={opt.key} value={opt.key}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-gray-400" />
+          </div>
+        )}
+
+        {segment === 'fno' && (
+          <p className="text-[10px] font-semibold text-gray-500">Universe: F&O Stocks</p>
+        )}
+        {segment === 'commodity' && (
+          <p className="text-[10px] text-amber-700">Commodity live scans — coming soon.</p>
+        )}
       </div>
 
-      {/* Scrolling activity feed */}
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
-        {loading && activities.length === 0 ? (
-          <div className="flex items-center justify-center gap-2 py-6 text-xs text-gray-400">
-            <Radio className="h-4 w-4 animate-pulse" />
-            Watching market…
-          </div>
-        ) : activities.length === 0 ? (
-          <div className="py-6 text-center text-xs text-gray-400">
-            No live activities right now.
-          </div>
-        ) : (
-          <ul className="divide-y divide-gray-50">
-            {activities.map((a) => {
-              const up = a.dir === 'up';
-              return (
-                <li key={a.key}>
-                  <button
-                    type="button"
-                    onClick={() => onSelectSymbol?.(a.symbol, a.seoSymbol, a.sid)}
-                    className={`flex w-full items-center gap-2 px-3 py-1.5 text-left transition-colors hover:bg-blue-50 ${
-                      a.fresh ? 'bg-emerald-50/70' : ''
-                    }`}
-                    title={a.name}
-                  >
-                    <span
-                      className={`relative flex h-1.5 w-1.5 shrink-0 ${
-                        a.fresh ? 'animate-pulse' : ''
-                      }`}
-                    >
-                      <span
-                        className={`inline-flex h-1.5 w-1.5 rounded-full ${
-                          up ? 'bg-emerald-500' : 'bg-red-500'
-                        }`}
-                      />
-                    </span>
-                    <span className="min-w-0 flex-1 truncate">
-                      <span className="text-xs font-semibold text-gray-900">{a.symbol}</span>
-                      <span className="ml-1.5">
-                        {up ? (
-                          <TrendingUp className="inline h-3 w-3 -translate-y-px text-emerald-600" />
-                        ) : (
-                          <TrendingDown className="inline h-3 w-3 -translate-y-px text-red-600" />
-                        )}
-                      </span>
-                      <span
-                        className={`ml-1.5 text-[10px] font-semibold ${
-                          up ? 'text-emerald-700' : 'text-red-600'
-                        }`}
-                      >
-                        {a.label}
-                      </span>
-                    </span>
-                    <span className="shrink-0 text-[11px] tabular-nums text-gray-600">
-                      ₹{a.ltp.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-gray-50 px-2 py-0.5 text-[9px] text-gray-400">
+        <span className="truncate">{indexLabel}</span>
+        <span className="shrink-0 tabular-nums">{asOf ? `Feed ${asOf}` : 'ScanX polling'}</span>
+      </div>
+
+      <div className="grid shrink-0 grid-cols-[minmax(0,1.15fr)_minmax(0,1.35fr)_auto_auto_auto] gap-1 border-b border-gray-100 bg-gray-50 px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">
+        <span>Symbol</span>
+        <span>Highlight</span>
+        <span className="text-right">LTP</span>
+        <span className="text-right">Vol</span>
+        <span className="text-right">Time</span>
+      </div>
+
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+        {loading && activities.length === 0 && (
+          <p className="p-4 text-center text-xs text-gray-400">Loading live scanner…</p>
         )}
+        {segment === 'commodity' && (
+          <p className="p-4 text-center text-xs text-gray-400">Commodity requires DEXT commodity WS.</p>
+        )}
+        {!loading && segment !== 'commodity' && activities.length === 0 && (
+          <p className="p-4 text-center text-xs text-gray-400">No live highlights in {indexLabel}.</p>
+        )}
+        {activities.map((a) => {
+          const active = selectedSymbol === a.symbol;
+          return (
+            <button
+              key={a.id}
+              type="button"
+              title={a.name}
+              onClick={() => onSelectSymbol?.(a.symbol, a.seoSymbol, a.sid)}
+              className={`grid w-full grid-cols-[minmax(0,1.15fr)_minmax(0,1.35fr)_auto_auto_auto] gap-1 border-b border-gray-50 px-2 py-1.5 text-left text-xs hover:bg-blue-50 ${
+                a.fresh ? 'bg-emerald-50/60' : ''
+              } ${active ? 'bg-blue-50' : ''}`}
+            >
+              <span className="truncate font-semibold text-gray-900">{a.name}</span>
+              <span
+                className={`truncate text-[10px] font-semibold ${
+                  a.bullish ? 'text-emerald-700' : 'text-red-600'
+                }`}
+              >
+                {a.highlight}
+              </span>
+              <span className="text-right tabular-nums text-[11px] text-gray-800">
+                {a.ltp.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+              </span>
+              <span className="text-right text-[10px] tabular-nums text-gray-500">{formatVolume(a.volume)}</span>
+              <span className="text-right text-[10px] tabular-nums text-gray-400">{formatTime(a.time)}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

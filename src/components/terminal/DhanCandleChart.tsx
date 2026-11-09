@@ -79,11 +79,14 @@ const INTERVAL_LABELS: Record<ChartInterval, string> = {
   D: '1D',
 };
 
-// Only show daily (1D) candles for now.
-const AVAILABLE_INTERVALS: ChartInterval[] = ['D'];
+const AVAILABLE_INTERVALS: ChartInterval[] = ['5', 'D'];
 
 /** Default viewport: ~8 months of NSE sessions (API still loads ~10Y). */
 const DEFAULT_VISIBLE_DAILY_BARS = 170;
+/** ~1 session of 5m bars on NSE (6h15m). */
+const DEFAULT_VISIBLE_5M_BARS = 78;
+
+const INTRADAY_REFRESH_MS = 60_000;
 
 function applyInitialDailyViewport(chart: IChartApi, barCount: number, extraBars = 0) {
   if (barCount <= 0) return;
@@ -91,6 +94,16 @@ function applyInitialDailyViewport(chart: IChartApi, barCount: number, extraBars
   chart.timeScale().setVisibleLogicalRange({
     from: barCount - visible,
     to: barCount - 0.5 + extraBars,
+  });
+}
+
+function applyInitialIntradayViewport(chart: IChartApi, barCount: number, interval: ChartInterval) {
+  if (barCount <= 0) return;
+  const cap = interval === '5' ? DEFAULT_VISIBLE_5M_BARS : 120;
+  const visible = Math.min(barCount, cap);
+  chart.timeScale().setVisibleLogicalRange({
+    from: barCount - visible,
+    to: barCount - 0.5,
   });
 }
 
@@ -229,6 +242,9 @@ export function DhanCandleChart({
         const shouldRefit = resetViewportRef.current || timeframe !== 'D';
         if (timeframe === 'D' && resetViewportRef.current) {
           applyInitialDailyViewport(chartRef.current, data.length, patternOverlayRef.current ? 12 : 0);
+          resetViewportRef.current = false;
+        } else if (timeframe !== 'D' && resetViewportRef.current) {
+          applyInitialIntradayViewport(chartRef.current, data.length, timeframe);
           resetViewportRef.current = false;
         } else if (timeframe !== 'D') {
           chartRef.current.timeScale().fitContent();
@@ -418,12 +434,13 @@ export function DhanCandleChart({
   }, [theme]);
 
   useEffect(() => {
-    loadData();
+    void loadData();
+    const pollMs = timeframe === 'D' ? 120_000 : INTRADAY_REFRESH_MS;
     const poll = window.setInterval(() => {
-      if (!document.hidden) loadData();
-    }, 60_000);
+      if (!document.hidden) void loadData();
+    }, pollMs);
     return () => window.clearInterval(poll);
-  }, [loadData]);
+  }, [loadData, timeframe]);
 
   const tvSym = buildTradingViewSymbol(symbol);
 
@@ -539,7 +556,9 @@ export function DhanCandleChart({
       <p
         className={`shrink-0 border-t px-2 py-0.5 text-[9px] ${ui.borderSoft} ${ui.textFaint}`}
       >
-        ~10Y daily data · starts zoomed ~8M · scroll or pinch to explore · Dhan · IST
+        {timeframe === 'D'
+          ? '~10Y daily · zoom ~8M · scroll or pinch · Dhan · IST'
+          : `${INTERVAL_LABELS[timeframe]} · ~10 sessions · auto-refresh 1m · Dhan · IST`}
       </p>
     </div>
   );
