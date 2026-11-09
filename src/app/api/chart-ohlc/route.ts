@@ -61,10 +61,6 @@ function istDateKey(unixSeconds: number): string {
   return new Date(unixSeconds * 1000 + IST_OFFSET_MS).toISOString().slice(0, 10);
 }
 
-function currentIstDateKey(): string {
-  return istDateKey(Math.floor(Date.now() / 1000));
-}
-
 /** Midnight IST for a `YYYY-MM-DD` key, expressed as a UTC unix timestamp. */
 function istMidnightUtcSeconds(dateKey: string): number {
   const [y, m, d] = dateKey.split('-').map(Number);
@@ -116,14 +112,22 @@ async function fetchLiveSnapshot(symbol: string): Promise<LiveSnapshot | null> {
     if (!row) return null;
 
     const open = Number(row.Open);
-    const high = Number(row.High);
-    const low = Number(row.Low);
-    const close = Number(row.Close ?? row.Ltp);
+    // ScanX's `Close` can remain at the previous session's close while the
+    // market is live. `Ltp` is the current session price and must form the
+    // close of the live daily candle.
+    const close = Number(row.Ltp ?? row.Close);
+    const rawHigh = Number(row.High);
+    const rawLow = Number(row.Low);
     if (
-      ![open, high, low, close].every((n) => Number.isFinite(n) && n > 0)
+      ![open, rawHigh, rawLow, close].every((n) => Number.isFinite(n) && n > 0)
     ) {
       return null;
     }
+
+    // Guard against small feed update-order differences so the live candle
+    // always satisfies low <= open/close <= high.
+    const high = Math.max(rawHigh, open, close);
+    const low = Math.min(rawLow, open, close);
 
     const dateKey = parseIstTradeDateKey(String(row.LastTradeTime ?? ''));
     if (!dateKey) return null;
@@ -215,21 +219,26 @@ export async function GET(request: Request) {
       })),
     );
 
-    // Special sessions (e.g. Muhurat trading) are absent from Dhan's OHLC
-    // history; merge today's live snapshot so the current session candle shows.
+    // Dhan's OHLC history omits special sessions (e.g. Muhurat trading), so the
+    // last bar can lag behind the live session. Merge the live snapshot
+    // whenever it is at least as recent as the newest bar — this backfills the
+    // missing session and keeps the forming candle current on regular days.
     const snapshot = await fetchLiveSnapshot(symbol);
-    if (snapshot && snapshot.dateKey === currentIstDateKey()) {
-      candles = sortDedupeCandles([
-        ...candles.filter((c) => istDateKey(c.time) !== snapshot.dateKey),
-        {
-          time: istMidnightUtcSeconds(snapshot.dateKey),
-          open: snapshot.open,
-          high: snapshot.high,
-          low: snapshot.low,
-          close: snapshot.close,
-          volume: snapshot.volume,
-        },
-      ]);
+    if (snapshot) {
+      const lastDateKey = candles.length ? istDateKey(candles[candles.length - 1].time) : null;
+      if (lastDateKey === null || snapshot.dateKey >= lastDateKey) {
+        candles = sortDedupeCandles([
+          ...candles.filter((c) => istDateKey(c.time) !== snapshot.dateKey),
+          {
+            time: istMidnightUtcSeconds(snapshot.dateKey),
+            open: snapshot.open,
+            high: snapshot.high,
+            low: snapshot.low,
+            close: snapshot.close,
+            volume: snapshot.volume,
+          },
+        ]);
+      }
     }
 
     return NextResponse.json({

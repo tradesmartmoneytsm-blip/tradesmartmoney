@@ -2,11 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import {
+  createSeriesMarkers,
   createChart,
   CandlestickSeries,
+  LineSeries,
+  LineStyle,
   ColorType,
   type IChartApi,
   type ISeriesApi,
+  type IPriceLine,
+  type ISeriesMarkersPluginApi,
   type CandlestickData,
   type Time,
   type UTCTimestamp,
@@ -16,6 +21,7 @@ import { sortDedupeCandles } from '@/lib/chart-candles';
 import { tradingViewChartUrl, buildTradingViewSymbol } from '@/lib/tradingview';
 import { THEME_UI, type TerminalTheme } from './theme';
 import { TerminalThemeSelect } from './TerminalThemeSelect';
+import type { TrendlineOverlay } from '@/lib/trendline-patterns';
 
 export type ChartInterval = '5' | '15' | '60' | 'D';
 
@@ -30,6 +36,8 @@ interface DhanCandleChartProps {
   onThemeChange?: (theme: TerminalTheme) => void;
   /** Called when the user submits a new symbol from the header search box. */
   onSymbolChange?: (symbol: string) => void;
+  /** Active trendline signal to draw after selecting it from Patterns. */
+  patternOverlay?: TrendlineOverlay;
 }
 
 /** lightweight-charts palettes for each terminal appearance. */
@@ -77,12 +85,12 @@ const AVAILABLE_INTERVALS: ChartInterval[] = ['D'];
 /** Default viewport: ~8 months of NSE sessions (API still loads ~10Y). */
 const DEFAULT_VISIBLE_DAILY_BARS = 170;
 
-function applyInitialDailyViewport(chart: IChartApi, barCount: number) {
+function applyInitialDailyViewport(chart: IChartApi, barCount: number, extraBars = 0) {
   if (barCount <= 0) return;
   const visible = Math.min(barCount, DEFAULT_VISIBLE_DAILY_BARS);
   chart.timeScale().setVisibleLogicalRange({
     from: barCount - visible,
-    to: barCount - 0.5,
+    to: barCount - 0.5 + extraBars,
   });
 }
 
@@ -91,13 +99,18 @@ export function DhanCandleChart({
   sid,
   interval: initialInterval = 'D',
   className = '',
-  theme = 'dark',
+  theme = 'light',
   onThemeChange,
   onSymbolChange,
+  patternOverlay,
 }: DhanCandleChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
+  const resistanceSeriesRef = useRef<ISeriesApi<'Line'> | null>(null);
+  const supportSeriesRef = useRef<ISeriesApi<'Line'> | null>(null);
+  const patternMarkerRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null);
+  const patternPriceLinesRef = useRef<IPriceLine[]>([]);
   const [timeframe, setTimeframe] = useState<ChartInterval>(initialInterval);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -108,6 +121,10 @@ export function DhanCandleChart({
   const searchRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<number | null>(null);
   const resetViewportRef = useRef(true);
+  const currentThemeRef = useRef(theme);
+  const patternOverlayRef = useRef(patternOverlay);
+  currentThemeRef.current = theme;
+  patternOverlayRef.current = patternOverlay;
   const ui = THEME_UI[theme];
 
   // Keep the search box in sync when the symbol changes externally
@@ -209,11 +226,18 @@ export function DhanCandleChart({
         throw new Error(e instanceof Error ? e.message : 'Invalid candle series');
       }
       if (chartRef.current) {
+        const shouldRefit = resetViewportRef.current || timeframe !== 'D';
         if (timeframe === 'D' && resetViewportRef.current) {
-          applyInitialDailyViewport(chartRef.current, data.length);
+          applyInitialDailyViewport(chartRef.current, data.length, patternOverlayRef.current ? 12 : 0);
           resetViewportRef.current = false;
         } else if (timeframe !== 'D') {
           chartRef.current.timeScale().fitContent();
+        }
+
+        // Re-fit the price scale when the symbol changes so candles don't
+        // stay stuck at the previous stock's price level.
+        if (shouldRefit) {
+          chartRef.current.priceScale('right').applyOptions({ autoScale: true });
         }
       }
       const last = json.candles[json.candles.length - 1];
@@ -230,7 +254,7 @@ export function DhanCandleChart({
     const el = containerRef.current;
     if (!el) return;
 
-    const palette = CHART_PALETTE[theme];
+    const palette = CHART_PALETTE[currentThemeRef.current];
 
     const chart = createChart(el, {
       layout: {
@@ -263,9 +287,31 @@ export function DhanCandleChart({
       wickUpColor: palette.up,
       wickDownColor: palette.down,
     });
+    const resistanceSeries = chart.addSeries(LineSeries, {
+      color: '#2563eb',
+      lineWidth: 2,
+      lineStyle: LineStyle.Solid,
+      priceLineVisible: false,
+      lastValueVisible: false,
+      crosshairMarkerVisible: false,
+      title: 'Descending resistance',
+    });
+    const supportSeries = chart.addSeries(LineSeries, {
+      color: '#2563eb',
+      lineWidth: 2,
+      lineStyle: LineStyle.Solid,
+      priceLineVisible: false,
+      lastValueVisible: false,
+      crosshairMarkerVisible: false,
+      title: 'Rising support',
+    });
+    const patternMarkers = createSeriesMarkers(series);
 
     chartRef.current = chart;
     seriesRef.current = series;
+    resistanceSeriesRef.current = resistanceSeries;
+    supportSeriesRef.current = supportSeries;
+    patternMarkerRef.current = patternMarkers;
 
     const ro = new ResizeObserver(() => chart.applyOptions({ width: el.clientWidth, height: el.clientHeight }));
     ro.observe(el);
@@ -275,8 +321,76 @@ export function DhanCandleChart({
       chart.remove();
       chartRef.current = null;
       seriesRef.current = null;
+      resistanceSeriesRef.current = null;
+      supportSeriesRef.current = null;
+      patternMarkerRef.current = null;
+      patternPriceLinesRef.current = [];
     };
   }, []);
+
+  // Draw the complete structure selected in Patterns; other symbol selections clear it.
+  useEffect(() => {
+    const resistance = resistanceSeriesRef.current;
+    const support = supportSeriesRef.current;
+    const candles = seriesRef.current;
+    const markers = patternMarkerRef.current;
+    if (!resistance || !support || !candles || !markers) return;
+
+    for (const priceLine of patternPriceLinesRef.current) candles.removePriceLine(priceLine);
+    patternPriceLinesRef.current = [];
+
+    if (!patternOverlay) {
+      resistance.setData([]);
+      support.setData([]);
+      markers.setMarkers([]);
+      return;
+    }
+
+    const isBreakout = patternOverlay.type === 'breakout';
+    const resistanceLine = patternOverlay.lines.find((line) => line.kind === 'descending-resistance');
+    const supportLine = patternOverlay.lines.find((line) => line.kind === 'rising-support');
+    resistance.setData(resistanceLine ? [
+      { time: resistanceLine.startTime as UTCTimestamp, value: resistanceLine.startPrice },
+      { time: resistanceLine.endTime as UTCTimestamp, value: resistanceLine.endPrice },
+    ] : []);
+    support.setData(supportLine ? [
+      { time: supportLine.startTime as UTCTimestamp, value: supportLine.startPrice },
+      { time: supportLine.endTime as UTCTimestamp, value: supportLine.endPrice },
+    ] : []);
+
+    for (const level of patternOverlay.levels) {
+      patternPriceLinesRef.current.push(
+        candles.createPriceLine({
+          price: level.price,
+          color: level.kind === 'support' ? '#16a34a' : '#dc2626',
+          lineWidth: 2,
+          lineStyle: LineStyle.Solid,
+          axisLabelVisible: true,
+          title: level.kind === 'support' ? 'Support' : 'Resistance',
+        }),
+      );
+    }
+
+    markers.setMarkers([
+      {
+        time: patternOverlay.signalTime as UTCTimestamp,
+        position: isBreakout ? 'belowBar' : 'aboveBar',
+        shape: isBreakout ? 'arrowUp' : 'arrowDown',
+        color: isBreakout ? '#059669' : '#dc2626',
+        text: isBreakout ? 'TL BO' : 'TL BD',
+        size: 2,
+      },
+    ]);
+
+    // Include the projected part of the trendline in view when a pattern is selected.
+    const barCount = seriesRef.current?.data().length ?? 0;
+    if (barCount > 0) {
+      chartRef.current?.timeScale().setVisibleLogicalRange({
+        from: Math.max(0, barCount - DEFAULT_VISIBLE_DAILY_BARS),
+        to: barCount - 0.5 + 12,
+      });
+    }
+  }, [patternOverlay]);
 
   // Re-apply chart colors when the terminal appearance changes (keeps data/zoom).
   useEffect(() => {

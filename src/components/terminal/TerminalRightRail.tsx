@@ -5,11 +5,18 @@ import { Newspaper, Radio, CandlestickChart, Zap } from 'lucide-react';
 import { TerminalMovers } from './TerminalMovers';
 import { TerminalNews } from './TerminalNews';
 import { LiveActivities } from './LiveActivities';
+import { TrendlinePatterns } from './TrendlinePatterns';
+import type { TrendlineOverlay } from '@/lib/trendline-patterns';
 
 type RightTab = 'news' | 'scanner' | 'movers' | 'patterns';
 
 interface TerminalRightRailProps {
-  onSelectSymbol?: (symbol: string, seoSymbol?: string, sid?: number) => void;
+  onSelectSymbol?: (
+    symbol: string,
+    seoSymbol?: string,
+    sid?: number,
+    trendline?: TrendlineOverlay,
+  ) => void;
   /** Currently charted symbol — highlights the matching movers row. */
   selectedSymbol?: string;
 }
@@ -95,9 +102,8 @@ export function TerminalRightRail({ onSelectSymbol, selectedSymbol }: TerminalRi
           </div>
         )}
         {tab === 'patterns' && (
-          <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center">
-            <CandlestickChart className="h-8 w-8 text-gray-300" />
-            <p className="text-sm font-semibold text-gray-500">Coming soon</p>
+          <div className="h-full overflow-hidden">
+            <TrendlinePatterns onSelectSymbol={onSelectSymbol} />
           </div>
         )}
       </div>

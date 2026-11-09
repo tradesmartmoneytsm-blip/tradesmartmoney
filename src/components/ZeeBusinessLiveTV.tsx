@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Tv, X } from 'lucide-react';
 
-/** Zee Business English live TV — official embed endpoint from zeebiz.com. */
+/** Zee Business live TV — official embed endpoint from zeebiz.com. */
 const LIVE_TV_EMBED_URL = 'https://www.zeebiz.com/live-tv/embed';
 
 interface ZeeBusinessLiveTVProps {
@@ -15,7 +15,7 @@ interface ZeeBusinessLiveTVProps {
 }
 
 /**
- * Zee Business English live TV player.
+ * Zee Business live TV player.
  * Replaces the old "Live Activities" floating widget.
  */
 export function ZeeBusinessLiveTV({ isEmbedded = false }: ZeeBusinessLiveTVProps) {
@@ -36,7 +36,7 @@ export function ZeeBusinessLiveTV({ isEmbedded = false }: ZeeBusinessLiveTVProps
       <iframe
         src={LIVE_TV_EMBED_URL}
         className="absolute inset-0 h-full w-full border-0"
-        title="Zee Business English — Live TV"
+        title="Zee Business — Live TV"
         allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
         allowFullScreen
         loading="lazy"
@@ -55,7 +55,7 @@ export function ZeeBusinessLiveTV({ isEmbedded = false }: ZeeBusinessLiveTVProps
         <Tv className={isEmbedded ? 'h-4 w-4' : 'h-5 w-5'} />
         <div>
           <h2 className={`font-bold leading-tight ${isEmbedded ? 'text-xs' : 'text-base'}`}>
-            Zee Business English
+            Zee Business
           </h2>
           <p className={`text-white/80 ${isEmbedded ? 'text-[10px]' : 'text-xs'}`}>
             Live TV · Markets &amp; Business News
@@ -100,8 +100,8 @@ export function ZeeBusinessLiveTV({ isEmbedded = false }: ZeeBusinessLiveTVProps
           type="button"
           onClick={() => setIsOpen(true)}
           className="group relative rounded-full bg-red-600 p-4 text-white shadow-lg transition-all duration-200 hover:bg-red-700 hover:shadow-xl"
-          title="Watch Zee Business English live"
-          aria-label="Zee Business English live TV"
+          title="Watch Zee Business live"
+          aria-label="Zee Business live TV"
         >
           <Tv className="h-6 w-6 transition-transform group-hover:scale-110" />
           <span className="absolute -right-1 -top-1 flex h-5 items-center rounded-full bg-white px-1 text-[9px] font-extrabold text-red-600 shadow">
@@ -123,7 +123,7 @@ export function ZeeBusinessLiveTV({ isEmbedded = false }: ZeeBusinessLiveTVProps
             <div className="flex flex-col gap-3 p-4">
               {player}
               <p className="text-xs text-gray-500">
-                Zee Business English — live share market, business &amp; economy news.
+                Zee Business — live share market, business &amp; economy news.
                 Streamed from Zee Business.
               </p>
             </div>

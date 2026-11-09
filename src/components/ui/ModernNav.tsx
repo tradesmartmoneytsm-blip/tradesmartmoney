@@ -6,7 +6,6 @@ import {
   Menu, 
   X, 
   TrendingUp, 
-  BarChart3, 
   Newspaper,
   Bot,
   Home,
@@ -168,4 +167,3 @@ export function ModernNav() {
     </>
   );
 }
-

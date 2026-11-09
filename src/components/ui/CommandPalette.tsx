@@ -6,7 +6,6 @@ import { Command } from 'cmdk';
 import { 
   Search, 
   TrendingUp, 
-  BarChart3, 
   Newspaper, 
   Bot, 
   Home,
@@ -200,4 +199,3 @@ export function CommandPalette({ isScrolled = false }: CommandPaletteProps) {
     </>
   );
 }
-

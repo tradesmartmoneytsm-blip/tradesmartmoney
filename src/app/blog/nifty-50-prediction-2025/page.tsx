@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import Script from 'next/script';
-import Link from 'next/link';
 import Image from 'next/image';
 
 export const metadata: Metadata = {

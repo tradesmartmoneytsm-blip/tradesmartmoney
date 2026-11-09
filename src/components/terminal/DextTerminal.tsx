@@ -10,6 +10,7 @@ import {
   readStoredTerminalTheme,
   type TerminalTheme,
 } from './theme';
+import type { TrendlineOverlay } from '@/lib/trendline-patterns';
 
 interface DextTerminalProps {
   /**
@@ -32,8 +33,9 @@ interface DextTerminalProps {
 export function DextTerminal({ embedded = false, selectedSymbol }: DextTerminalProps) {
   const [chartSymbol, setChartSymbol] = useState(selectedSymbol ?? 'RELIANCE');
   const [chartSid, setChartSid] = useState<number | undefined>(2885);
+  const [patternOverlay, setPatternOverlay] = useState<TrendlineOverlay | undefined>();
   // Chart-only appearance theme (shell chrome is fixed dark).
-  const [theme, setTheme] = useState<TerminalTheme>('dark');
+  const [theme, setTheme] = useState<TerminalTheme>('light');
 
   useEffect(() => {
     setTheme(readStoredTerminalTheme());
@@ -49,6 +51,7 @@ export function DextTerminal({ embedded = false, selectedSymbol }: DextTerminalP
     if (!selectedSymbol) return;
     const ticker = selectedSymbol.replace(/^NSE:/, '').toUpperCase();
     setChartSymbol(ticker);
+    setPatternOverlay(undefined);
     // Let the chart API resolve the security id for the new symbol.
     setChartSid(undefined);
   }, [selectedSymbol]);
@@ -64,12 +67,16 @@ export function DextTerminal({ embedded = false, selectedSymbol }: DextTerminalP
     };
   }, [embedded]);
 
-  const selectSymbol = useCallback((symbol: string, _seoSymbol?: string, sid?: number) => {
-    const ticker = symbol.replace(/^NSE:/, '').toUpperCase();
-    setChartSymbol(ticker);
-    if (typeof sid === 'number') setChartSid(sid);
-    else setChartSid(undefined);
-  }, []);
+  const selectSymbol = useCallback(
+    (symbol: string, _seoSymbol?: string, sid?: number, trendline?: TrendlineOverlay) => {
+      const ticker = symbol.replace(/^NSE:/, '').toUpperCase();
+      setChartSymbol(ticker);
+      setPatternOverlay(trendline);
+      if (typeof sid === 'number') setChartSid(sid);
+      else setChartSid(undefined);
+    },
+    [],
+  );
 
   return (
     <div
@@ -92,6 +99,7 @@ export function DextTerminal({ embedded = false, selectedSymbol }: DextTerminalP
                 interval="D"
                 theme={theme}
                 onThemeChange={changeTheme}
+                patternOverlay={patternOverlay}
                 onSymbolChange={(sym) => selectSymbol(sym)}
               />
             </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Bell, User, Menu, X, TrendingUp, TrendingDown, BarChart3, Newspaper, Building2, Microscope, Bot, Activity, BookOpen, ChevronDown } from 'lucide-react';
+import { Bell, User, Menu, X, TrendingUp, BarChart3, Newspaper, Microscope, Bot, Activity, BookOpen, ChevronDown } from 'lucide-react';
 import { brandTokens } from '@/lib/design-tokens';
 
 function resolveActiveSubSection(pathname: string): string | undefined {
@@ -745,4 +745,4 @@ export function Navigation({
 
     </nav>
   );
-} 
+}

@@ -28,12 +28,12 @@ export function isTerminalTheme(value: string | null): value is TerminalTheme {
 }
 
 export function readStoredTerminalTheme(): TerminalTheme {
-  if (typeof window === 'undefined') return 'dark';
+  if (typeof window === 'undefined') return 'light';
   try {
     const saved = window.localStorage.getItem(TERMINAL_THEME_STORAGE_KEY);
-    return isTerminalTheme(saved) ? saved : 'dark';
+    return isTerminalTheme(saved) ? saved : 'light';
   } catch {
-    return 'dark';
+    return 'light';
   }
 }
 
